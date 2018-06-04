@@ -14,12 +14,12 @@ from allennlp.models.archival import load_archive
 from allennlp.service.predictors import Predictor
 from allennlp.service.db import InMemoryDemoDatabase
 
-from server import make_app
+from server.app import make_app
 
 TEST_ARCHIVE_FILES = {
-        'machine-comprehension': 'fixtures/bidaf/model.tar.gz',
-        'semantic-role-labeling': 'fixtures/srl/model.tar.gz',
-        'textual-entailment': 'fixtures/decomposable_attention/model.tar.gz'
+        'machine-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
+        'semantic-role-labeling': 'tests/fixtures/srl/model.tar.gz',
+        'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz'
 }
 
 PREDICTORS = {

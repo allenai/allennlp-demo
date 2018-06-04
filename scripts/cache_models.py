@@ -5,8 +5,8 @@ import sys
 
 from allennlp.common.file_utils import cached_path
 
-from models import MODELS
-from allennlp.common.file_utils import cached_path
+from server.models import MODELS
+
 print(f"Downloading {len(MODELS)} models.")
 for i, (model, demo_model) in enumerate(MODELS.items()):
     url = demo_model.archive_file

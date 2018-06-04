@@ -27,26 +27,28 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y
 ARG allennlp_version
 RUN if [ -z $allennlp_version ]; then pip install allennlp; else pip install allennlp==$allennlp_version; fi
 
+# Install postgres binary
+RUN pip install psycopg2-binary
+
 # Download spacy and NLTK models
 RUN python -m nltk.downloader punkt
 RUN spacy download en_core_web_sm
 
 # Cache models early, they're huge
-COPY cache_models.py cache_models.py
-COPY models.py models.py
-RUN ./cache_models.py
+COPY scripts/ scripts/
+COPY server/models.py server/models.py
+ENV PYTHONPATH=.
+RUN ./scripts/cache_models.py
 
 # Now install and build the demo
 COPY demo/ demo/
-COPY build_demo.py build_demo.py
-RUN ./build_demo.py
+RUN ./scripts/build_demo.py
 
-COPY fixtures/ fixtures/
-COPY server.py server.py
-COPY server_test.py server_test.py
+COPY tests/ tests/
+COPY server/ server/
 
-RUN pytest server_test.py
+RUN pytest tests/
 
 EXPOSE 8000
 
-ENTRYPOINT ["./server.py"]
+ENTRYPOINT ["./server/app.py"]
