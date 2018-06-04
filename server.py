@@ -75,8 +75,9 @@ def main():
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", PORT, PORT)
     http_server.serve_forever()
 
-def make_app(demo_db: Optional[DemoDatabase] = None) -> Flask:
-    build_dir = os.path.join(DEMO_DIR, 'build')
+def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> Flask:
+    if build_dir is None:
+        build_dir = os.path.join(DEMO_DIR, 'build')
 
     if not os.path.exists(build_dir):
         logger.error("app directory %s does not exist, aborting", build_dir)

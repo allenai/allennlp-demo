@@ -41,7 +41,11 @@ COPY demo/ demo/
 COPY build_demo.py build_demo.py
 RUN ./build_demo.py
 
+COPY fixtures/ fixtures/
 COPY server.py server.py
+COPY server_test.py server_test.py
+
+RUN pytest server_test.py
 
 EXPOSE 8000
 
