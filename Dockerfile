@@ -27,6 +27,10 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y
 ARG allennlp_version
 RUN if [ -z $allennlp_version ]; then pip install allennlp; else pip install allennlp==$allennlp_version; fi
 
+# Download spacy and NLTK models
+RUN python -m nltk.downloader punkt
+RUN spacy download en_core_web_sm
+
 # Cache models early, they're huge
 COPY cache_models.py cache_models.py
 COPY models.py models.py

@@ -33,6 +33,7 @@ PORT = os.environ.get("ALLENNLP_DEMO_PORT") or 8000
 DEMO_DIR = os.environ.get("ALLENNLP_DEMO_DIRECTORY") or 'demo/'
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger.setLevel(logging.INFO)
 
 class ServerError(Exception):
     status_code = 400
@@ -66,6 +67,7 @@ def main():
     CORS(app)
 
     for name, demo_model in MODELS.items():
+        logger.info(f"loading {name} model")
         predictor = demo_model.predictor()
         app.predictors[name] = predictor
 
