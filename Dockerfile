@@ -2,6 +2,7 @@
 # It creates an environment that includes a pip installation of allennlp.
 
 FROM python:3.6.3-jessie
+LABEL maintainer="allennlp-contact@allenai.org"
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
@@ -19,12 +20,25 @@ LABEL com.nvidia.volumes.needed="nvidia_driver"
 
 WORKDIR /stage/allennlp
 
-# Install npm
+# Install npm early so layer is cached when mucking with the demo
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
 
+# Install allennlp early so layer is cached when mucking with the demo
 ARG allennlp_version
 RUN if [ -z $allennlp_version ]; then pip install allennlp; else pip install allennlp==$allennlp_version; fi
 
-LABEL maintainer="allennlp-contact@allenai.org"
+# Cache models early, they're huge
+COPY cache_models.py cache_models.py
+COPY models.py models.py
+RUN ./cache_models.py
 
-ENTRYPOINT ["allennlp"]
+# Now install and build the demo
+COPY demo/ demo/
+COPY build_demo.py build_demo.py
+RUN ./build_demo.py
+
+COPY server.py server.py
+
+EXPOSE 8000
+
+ENTRYPOINT ["./server.py"]
