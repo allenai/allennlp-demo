@@ -40,6 +40,10 @@ COPY server/models.py server/models.py
 ENV PYTHONPATH=.
 RUN ./scripts/cache_models.py
 
+# Optional argument to set an environment variable with the Git SHA
+ARG SOURCE_COMMIT
+ENV SOURCE_COMMIT $SOURCE_COMMIT
+
 # Now install and build the demo
 COPY demo/ demo/
 RUN ./scripts/build_demo.py
