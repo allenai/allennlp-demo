@@ -1,5 +1,4 @@
-# This Dockerfile is meant for downstream use of AllenNLP.
-# It creates an environment that includes a pip installation of allennlp.
+# This Dockerfile is used to serve the AllenNLP demo.
 
 FROM python:3.6.3-jessie
 LABEL maintainer="allennlp-contact@allenai.org"
