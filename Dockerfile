@@ -56,4 +56,3 @@ RUN pytest tests/
 EXPOSE 8000
 
 ENTRYPOINT ["./server/app.py"]
-
