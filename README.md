@@ -2,6 +2,8 @@
 
 This repository is a work-in-progress attempt to split the demo into its own repository.
 
+Here is an example for how to manually build the Docker image and run the demo.
+
 ```
 $ export GIT_HASH=`git log -1 --pretty=format:"%H"`
 $ docker build -t allennlp/demo:$GIT_HASH .
