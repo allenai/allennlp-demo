@@ -1,4 +1,6 @@
-# Work in progress
+# AllenNLP Demo
+
+This repository is a work-in-progress attempt to split the demo into its own repository.
 
 ```
 $ export GIT_HASH=`git log -1 --pretty=format:"%H"`
