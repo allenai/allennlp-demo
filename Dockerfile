@@ -1,5 +1,5 @@
-# This Dockerfile is meant for downstream use of AllenNLP.
-# It creates an environment that includes a pip installation of allennlp.
+# This Dockerfile is used to serve the AllenNLP demo.
+# TODO(michaels): use a base AllenNLP Docker image.
 
 FROM python:3.6.3-jessie
 LABEL maintainer="allennlp-contact@allenai.org"
@@ -39,6 +39,10 @@ COPY scripts/ scripts/
 COPY server/models.py server/models.py
 ENV PYTHONPATH=.
 RUN ./scripts/cache_models.py
+
+# Optional argument to set an environment variable with the Git SHA
+ARG SOURCE_COMMIT
+ENV SOURCE_COMMIT $SOURCE_COMMIT
 
 # Now install and build the demo
 COPY demo/ demo/
