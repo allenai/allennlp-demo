@@ -1,4 +1,5 @@
 # This Dockerfile is used to serve the AllenNLP demo.
+# TODO(michaels): use a base AllenNLP Docker image.
 
 FROM python:3.6.3-jessie
 LABEL maintainer="allennlp-contact@allenai.org"
