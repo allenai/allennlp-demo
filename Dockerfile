@@ -55,4 +55,6 @@ RUN pytest tests/
 
 EXPOSE 8000
 
+ENV ALLENNLP_DEMO_DIRECTORY /stage/allennlp/demo
+
 ENTRYPOINT ["./server/app.py"]
