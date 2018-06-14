@@ -63,7 +63,7 @@ def main():
     if demo_db is None:
         logger.warning("demo db credentials not provided, so not using demo db")
 
-    app = make_app(demo_db)
+    app = make_app(demo_db=demo_db)
     CORS(app)
 
     for name, demo_model in MODELS.items():
