@@ -32,7 +32,7 @@ RUN pytest tests/
 
 # Optional argument to set an environment variable with the Git SHA
 ARG SOURCE_COMMIT
-ENV SOURCE_COMMIT $SOURCE_COMMIT
+ENV ALLENNLP_DEMO_SOURCE_COMMIT $SOURCE_COMMIT
 
 EXPOSE 8000
 
