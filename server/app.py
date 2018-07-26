@@ -244,7 +244,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     def info() -> Response:  # pylint: disable=unused-variable
         """List metadata about the running webserver"""
         uptime = str(datetime.now(pytz.utc) - start_time)
-        git_version = os.environ.get('SOURCE_COMMIT') or ""
+        git_version = os.environ.get('ALLENNLP_DEMO_SOURCE_COMMIT') or ""
         return jsonify({
                 "start_time": start_time_str,
                 "uptime": uptime,
