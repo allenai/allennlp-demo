@@ -1,8 +1,8 @@
 # AllenNLP Demo
 
-This repository is a work-in-progress attempt to split the demo into its own repository.
+This repository contains the AllenNLP demo.
 
-Here is an example for how to manually build the Docker image and run the demo.
+Here is an example for how to manually build the Docker image and run the demo on port 8000.
 
 ```
 $ export GIT_HASH=`git log -1 --pretty=format:"%H"`
