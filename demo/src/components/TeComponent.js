@@ -118,11 +118,11 @@ const teExamples = [
           </div>
           <div className="form__field">
             <label htmlFor="input--te-premise">Premise</label>
-            <input onChange={this.handlePremiseChange} id="input--te-premise" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;A black dog chased a cat throught the park.&quot;" value={tePremiseValue} />
+            <input onChange={this.handlePremiseChange} id="input--te-premise" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;A large, gray elephant walked beside a herd of zebras.&quot;" value={tePremiseValue} />
           </div>
           <div className="form__field">
             <label htmlFor="input--te-hypothesis">Hypothesis</label>
-            <input onChange={this.handleHypothesisChange} id="input--te-hypothesis" type="text" required="true" value={teHypothesisValue} placeholder="E.g. &quot;The cat is black.&quot;" />
+            <input onChange={this.handleHypothesisChange} id="input--te-hypothesis" type="text" required="true" value={teHypothesisValue} placeholder="E.g. &quot;The elephant was lost.&quot;" />
           </div>
           <div className="form__field form__field--btn">
             <Button enabled={outputState !== "working"} runModel={runTeModel} inputs={teInputs} />
