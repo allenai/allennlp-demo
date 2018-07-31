@@ -30,5 +30,9 @@ MODELS = {
         'constituency-parsing': DemoModel(
                 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz',  # pylint: disable=line-too-long
                 'constituency-parser'
+        ),
+        'dependency-parsing': DemoModel(
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz',  # pylint: disable=line-too-long
+                'biaffine-dependency-parser'
         )
 }
