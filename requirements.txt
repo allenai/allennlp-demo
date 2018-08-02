@@ -1,0 +1,2 @@
+allennlp
+psycopg2-binary
