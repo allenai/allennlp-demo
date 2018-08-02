@@ -1,11 +1,26 @@
-from allennlp.service.predictors import DemoModel
-
+from allennlp.predictors import Predictor
+from allennlp.models.archival import load_archive
 # This maps from the name of the task
 # to the ``DemoModel`` indicating the location of the trained model
 # and the type of the ``Predictor``.  This is necessary, as you might
 # have multiple models (for example, a NER tagger and a POS tagger)
 # that have the same ``Predictor`` wrapper. The corresponding model
 # will be served at the `/predict/<name-of-task>` API endpoint.
+
+class DemoModel:
+    """
+    A demo model is determined by both an archive file
+    (representing the trained model)
+    and a choice of predictor
+    """
+    def __init__(self, archive_file: str, predictor_name: str) -> None:
+        self.archive_file = archive_file
+        self.predictor_name = predictor_name
+
+    def predictor(self) -> Predictor:
+        archive = load_archive(self.archive_file)
+        return Predictor.from_archive(archive, self.predictor_name)
+
 MODELS = {
         'machine-comprehension': DemoModel(
                 'https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz',  # pylint: disable=line-too-long
@@ -32,7 +47,7 @@ MODELS = {
                 'constituency-parser'
         ),
         'dependency-parsing': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz',  # pylint: disable=line-too-long
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-2018.08.01.tar.gz',  # pylint: disable=line-too-long
                 'biaffine-dependency-parser'
         )
 }

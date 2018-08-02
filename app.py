@@ -23,9 +23,9 @@ import pytz
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.service.db import DemoDatabase, PostgresDemoDatabase
 from allennlp.service.permalinks import int_to_slug, slug_to_int
-from allennlp.service.predictors import Predictor, DemoModel
+from allennlp.service.predictors import Predictor
 
-from server.models import MODELS
+from server.models import MODELS, DemoModel
 
 # Can override cache size with an environment variable. If it's 0 then disable caching altogether.
 CACHE_SIZE = os.environ.get("FLASK_CACHE_SIZE") or 128
