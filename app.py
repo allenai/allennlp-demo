@@ -21,9 +21,9 @@ import psycopg2
 import pytz
 
 from allennlp.common.util import JsonDict, peak_memory_mb
-from allennlp.service.permalinks import int_to_slug, slug_to_int
-from allennlp.service.predictors import Predictor
+from allennlp.predictors import Predictor
 
+from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
 from server.models import MODELS, DemoModel
 
