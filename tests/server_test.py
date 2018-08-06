@@ -12,9 +12,9 @@ from allennlp.common.util import JsonDict
 from allennlp.common.testing import AllenNlpTestCase
 from allennlp.models.archival import load_archive
 from allennlp.service.predictors import Predictor
-from allennlp.service.db import InMemoryDemoDatabase
 
 from server.app import make_app
+from server.db import InMemoryDemoDatabase
 
 TEST_ARCHIVE_FILES = {
         'machine-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
