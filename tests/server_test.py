@@ -13,7 +13,7 @@ from allennlp.common.testing import AllenNlpTestCase
 from allennlp.models.archival import load_archive
 from allennlp.service.predictors import Predictor
 
-from server.app import make_app
+from app import make_app
 from server.db import InMemoryDemoDatabase
 
 TEST_ARCHIVE_FILES = {
