@@ -24,6 +24,7 @@ COPY demo/ demo/
 RUN ./scripts/build_demo.py
 
 COPY tests/ tests/
+COPY app.py app.py
 COPY server/ server/
 
 RUN pytest tests/
