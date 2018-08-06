@@ -7,6 +7,7 @@ import McComponent from './components/McComponent';
 import CorefComponent from './components/CorefComponent'
 import NamedEntityComponent from './components/NamedEntityComponent'
 import ConstituencyParserComponent from './components/ConstituencyParserComponent'
+import DependencyParserComponent from './components/DependencyParserComponent'
 import Menu from './components/Menu';
 import ModelIntro from './components/ModelIntro'
 import { PaneTop } from './components/Pane'
@@ -121,6 +122,9 @@ class Demo extends React.Component {
       }
       else if (selectedModel === "constituency-parsing") {
         return (<ConstituencyParserComponent requestData={requestData} responseData={responseData}/>)
+      }
+      else if (selectedModel === "dependency-parsing") {
+        return (<DependencyParserComponent requestData={requestData} responseData={responseData}/>)
       }
       else if (selectedModel === "user-models") {
         const modelRequest = "User Contributed Models"

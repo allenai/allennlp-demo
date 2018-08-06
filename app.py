@@ -23,9 +23,9 @@ import pytz
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.service.db import DemoDatabase, PostgresDemoDatabase
 from allennlp.service.permalinks import int_to_slug, slug_to_int
-from allennlp.service.predictors import Predictor, DemoModel
+from allennlp.service.predictors import Predictor
 
-from server.models import MODELS
+from server.models import MODELS, DemoModel
 
 # Can override cache size with an environment variable. If it's 0 then disable caching altogether.
 CACHE_SIZE = os.environ.get("FLASK_CACHE_SIZE") or 128
@@ -255,12 +255,14 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     # As a SPA, we need to return index.html for /model-name and /model-name/permalink
     @app.route('/semantic-role-labeling')
     @app.route('/constituency-parsing')
+    @app.route('/dependency-parsing')
     @app.route('/machine-comprehension')
     @app.route('/textual-entailment')
     @app.route('/coreference-resolution')
     @app.route('/named-entity-recognition')
     @app.route('/semantic-role-labeling/<permalink>')
     @app.route('/constituency-parsing/<permalink>')
+    @app.route('/dependency-parsing/<permalink>')
     @app.route('/machine-comprehension/<permalink>')
     @app.route('/textual-entailment/<permalink>')
     @app.route('/coreference-resolution/<permalink>')
