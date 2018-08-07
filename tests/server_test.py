@@ -13,6 +13,7 @@ from allennlp.common.testing import AllenNlpTestCase
 from allennlp.models.archival import load_archive
 from allennlp.service.predictors import Predictor
 
+import app
 from app import make_app
 from server.db import InMemoryDemoDatabase
 
@@ -150,14 +151,13 @@ class TestFlask(AllenNlpTestCase):
             assert len(predictor.calls) == 2
 
     def test_disable_caching(self):
-        from app import CACHE_SIZE
-        CACHE_SIZE = 0
+        app.CACHE_SIZE = 0
 
         predictor = CountingPredictor()
-        app = make_app(build_dir=self.TEST_DIR)
-        app.predictors = {"counting": predictor}
-        app.testing = True
-        client = app.test_client()
+        application = make_app(build_dir=self.TEST_DIR)
+        application.predictors = {"counting": predictor}
+        application.testing = True
+        client = application.test_client()
 
         data = {"input1": "this is input 1", "input2": 10}
         key = json.dumps(data)
@@ -183,11 +183,11 @@ class TestFlask(AllenNlpTestCase):
             assert cm.code == -1  # pylint: disable=no-member
 
     def test_permalinks_fail_gracefully_with_no_database(self):
-        app = make_app(build_dir=self.TEST_DIR)
+        application = make_app(build_dir=self.TEST_DIR)
         predictor = CountingPredictor()
-        app.predictors = {"counting": predictor}
-        app.testing = True
-        client = app.test_client()
+        application.predictors = {"counting": predictor}
+        application.testing = True
+        client = application.test_client()
 
         # Make a prediction, no permalinks.
         data = {"some": "input"}
@@ -205,11 +205,11 @@ class TestFlask(AllenNlpTestCase):
 
     def test_permalinks_work(self):
         db = InMemoryDemoDatabase()
-        app = make_app(build_dir=self.TEST_DIR, demo_db=db)
+        application = make_app(build_dir=self.TEST_DIR, demo_db=db)
         predictor = CountingPredictor()
-        app.predictors = {"counting": predictor}
-        app.testing = True
-        client = app.test_client()
+        application.predictors = {"counting": predictor}
+        application.testing = True
+        client = application.test_client()
 
         def post(endpoint: str, data: JsonDict) -> Response:
             return client.post(endpoint, content_type="application/json", data=json.dumps(data))
