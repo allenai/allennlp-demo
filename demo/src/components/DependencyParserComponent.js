@@ -11,20 +11,20 @@ import { Tree } from 'hierplane';
 *******************************************************************************/
 
 const dependencyParserSentences = [
-  "Pierre Vinken died aged 81; immortalised aged 61.",
-  "James went to the corner shop to buy some eggs, milk and bread for breakfast.",
-  "If you bring $10 with you tomorrow, can you pay for me to eat too?",
-  "True self-control is waiting until the movie starts to eat your popcorn.",
+  "James ate some cheese whilst thinking about the play.",
+  "She decided not to take the house she'd viewed yesterday.",
+  "The proportion of PepsiCo’s revenue coming from healthier food and beverages has risen from 38% in 2006 to 50%.",
+  "CRISPR-Cas9 is a versatile genome editing technology for studying the functions of genetic elements."
 ];
 
 const title = "Dependency Parsing";
 const description = (
   <span>
     <span>
-    A dependency parser analyzes the grammatical structure of a sentence, establishing relationships between "head" words and words which modify those heads. 
+    A dependency parser analyzes the grammatical structure of a sentence, establishing relationships between "head" words and words which modify those heads.
     This demo is an implementation of a neural model for dependency parsing using biaffine classifiers on top of a bidirectional LSTM based on
     </span>
-    <a href="https://arxiv.org/abs/1611.01734" target="_blank" rel="noopener noreferrer">{' '} Deep Biaffine Attention for Neural Dependency Parsing (Dozat, 2017)</a>
+    <a href="https://arxiv.org/abs/1611.01734" target="_blank" rel="noopener noreferrer">{' '} Deep Biaffine Attention for Neural Dependency Parsing (Dozat, 2017).</a>
   </span>
 );
 
