@@ -1,9 +1,10 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import { PaneLeft, PaneRight } from './Pane'
-import Button from './Button'
-import ModelIntro from './ModelIntro'
+import { PaneLeft, PaneRight } from './Pane';
+import Button from './Button';
+import Highlight from './Highlight';
+import ModelIntro from './ModelIntro';
 
 // LOC, PER, ORG, MISC
 
@@ -204,6 +205,31 @@ class NerOutput extends React.Component {
 
     return (
       <div className="model__content model__content--ner-output">
+        <div className="form__field">
+          <div className="passage model__content__summary highlight-container--bottom-labels">
+            {/* TODO: replace the following simulated output with dynamic content. */}
+            {/* BEGIN simulated output. */}
+              <Highlight label="Org" color="blue" tooltip="Organization">AllenNLP</Highlight>
+              <span> is </span>
+              <span> a </span>
+              <Highlight label="Org" color="blue" tooltip="Organization">PyTorch</Highlight>
+              <span> - </span>
+              <span> based </span>
+              <span> natural </span>
+              <span> language </span>
+              <span> processing </span>
+              <span> library </span>
+              <span> developed </span>
+              <span> at </span>
+              <span> the </span>
+              <Highlight label="Org" color="blue" tooltip="Organization">Allen Institute for Artificial Intelligence</Highlight>
+              <span> in </span>
+              <Highlight label="Loc" color="green" tooltip="Location">Seattle</Highlight>
+              <span> . </span>
+            {/* END simulated output. */}
+          </div>
+        </div>
+
         <div className="form__field">
           <table className="ner-table">
             <tbody>
