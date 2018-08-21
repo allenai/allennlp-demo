@@ -437,21 +437,202 @@ class _NerComponent extends React.Component {
     const words = responseData && responseData.words;
     const tags = responseData && responseData.tags;
 
-    if (responseData !== null) {
-      console.log("number of tokens:");
-      console.log(words.length);
-      console.log("---------------------");
-      console.log("words:");
-      console.log(words);
-      console.log("---------------------");
-      console.log("tags:");
-      console.log(tags);
-      console.log("---------------------");
-    }
+    // if (responseData !== null) {
+    //   console.log("number of tokens:");
+    //   console.log(words.length);
+    //   console.log("---------------------");
+    //   console.log("words:");
+    //   console.log(words);
+    //   console.log("---------------------");
+    //   console.log("tags:");
+    //   console.log(tags);
+    //   console.log("---------------------");
+    // }
+
+    const hcTags = ["U-ORG", "O", "O", "U-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "I-ORG", "I-ORG", "L-ORG", "O", "U-LOC", "O"];
+
+    const hcWords = ["AllenNLP", "is", "a", "PyTorch", "-", "based", "natural", "language", "processing", "library", "developed", "at", "the", "Allen", "Institute", "for", "Artificial", "Intelligence", "in", "Seattle", "."];
+
+    const formattedTokens = [
+      {
+        text: "AllenNLP",
+        entity: "ORG"
+      },
+      {
+        text: "is",
+        entity: null
+      },
+      {
+        text: "a",
+        entity: null
+      },
+      {
+        text: "PyTorch",
+        entity: "ORG"
+      },
+      {
+        text: "-",
+        entity: null
+      },
+      {
+        text: "based",
+        entity: null
+      },
+      {
+        text: "natural",
+        entity: null
+      },
+      {
+        text: "language",
+        entity: null
+      },
+      {
+        text: "processing",
+        entity: null
+      },
+      {
+        text: "library",
+        entity: null
+      },
+      {
+        text: "developed",
+        entity: null
+      },
+      {
+        text: "at",
+        entity: null
+      },
+      {
+        text: "the",
+        entity: null
+      },
+      {
+        text: "Allen Institute for Artificial Intelligence",
+        entity: "ORG"
+      },
+      {
+        text: "in",
+        entity: null
+      },
+      {
+        text: "Seattle",
+        entity: "LOC"
+      },
+      {
+        text: ".",
+        entity: null
+      },
+    ];
+
+    let dynamicTokens = [];
+
+    // tags.forEach(function (tag, i) {
+    //   if (tag === "O") {
+    //     // "O" = "Outside"
+    //     colorClasses.push("");
+    //     spanLengths[i] = 1;
+    //     lastSpanStart = undefined;
+    //   } else if (tag[0] === "B") {
+    //     // "B" = "Beginning"
+    //     currentColor = (currentColor + 1) % 2;
+    //     colorClasses.push("color" + currentColor);
+    //     // Add a span with length 1, but don't "close it"
+    //     lastSpanStart = i;
+    //     spanLengths[i] = 1;
+    //   } else if (tag[0] === "U") {
+    //     // "U" = "Unit"
+    //     currentColor = (currentColor + 1) % 2;
+    //     colorClasses.push("color" + currentColor);
+    //     spanLengths[i] = 1;
+    //     lastSpanStart = undefined;
+    //   } else /* (tag[0] == "L") */ {
+    //     // "L" = "Last" (last token in a contiguous list of tokens representing a single entity)
+    //     colorClasses.push("color" + currentColor);
+    //     spanLengths[lastSpanStart] = spanLengths[lastSpanStart] + 1;
+    //   }
+    // });
+
+    // "B" = "Beginning" (first token in a sequence of tokens comprising an entity)
+    // "I" = "Inside" (token in a sequence of tokens (that isn't first or last in its sequence) comprising an entity)
+    // "L" = "Last" (last token in a sequence of tokens comprising an entity)
+    // "O" = "Outside" (token that isn't associated with any entities)
+    // "U" = "Unit" (A single token representing a single entity)
+    let spanGroup = "";
+    hcTags.forEach(function (tag, i) {
+      let tokenObj = {};
+      if (tag === "O") {
+        tokenObj = {
+          text: hcWords[i],
+          entity: null
+        }
+        dynamicTokens.push(tokenObj);
+      } else if (tag[0] === "U") {
+        tokenObj = {
+          text: hcWords[i],
+          entity: tag.slice(2)
+        }
+        dynamicTokens.push(tokenObj);
+      } else if (tag[0] === "B") {
+        spanGroup = `${hcWords[i]} `;
+      } else if (tag[0] === "I") {
+        spanGroup += `${hcWords[i]} `;
+      } else if (tag[0] === "L") {
+        spanGroup += `${hcWords[i]}`;
+        tokenObj = {
+          text: spanGroup,
+          entity: tag.slice(2)
+        }
+        dynamicTokens.push(tokenObj);
+      }
+        // const truncatedTags = hcWords.slice(i + 1, hcWords.length);
+        // let index = 0;
+        // while (index < truncatedTags.length) {
+        //   spanGroup = `${spanGroup} ${truncatedTags[index]}`;
+        //   index++;
+        //
+        //   // if (breakCondition) {
+        //   //   break;
+        //   // }
+        // }
+        // tokenObj = {
+        //   text: spanGroup,
+        //   entity: tag.slice(2)
+        // }
+
+      // else if (tag[0] === "I") {
+      //   spanGroup = `${spanGroup} ${tag[i]}`;
+      // } else /* if (tag[0] === "L") */ {
+      //   spanGroup = `${spanGroup} ${tag[i]}`;
+      //   tokenObj = {
+      //     text: spanGroup,
+      //     entity: tag.slice(2)
+      //   }
+      // }
+    });
+
+    console.log("words:");
+    console.log(hcWords);
+    console.log("---------------------");
+    console.log("tags:");
+    console.log(hcTags);
+    console.log("---------------------");
+    console.log("formattedTokens:");
+    console.log(formattedTokens);
+    console.log("---------------------");
+    console.log("dynamicTokens:");
+    console.log(dynamicTokens);
+    console.log("---------------------");
 
     return (
       <div className="pane model">
         <PaneLeft>
+          <div className="model__content model__content--ner-output">
+            <div className="form__field">
+              <div className="passage model__content__summary highlight-container--bottom-labels">
+                {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
+              </div>
+            </div>
+          </div>
           <NerInput runNerModel={this.runNerModel}
             outputState={this.state.outputState}
             sentence={sentence} />
