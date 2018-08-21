@@ -1670,8 +1670,17 @@ svg {
 Highlight Component Styles
 ********************************************/
 
+.highlight-container {
+  line-height: 36px !important;
+}
+
 .highlight-container--bottom-labels {
   line-height: 52px !important;
+}
+
+.highlight-container,
+.highlight-container--bottom-labels {
+  cursor: default;
 }
 
 .highlight {
@@ -1693,6 +1702,9 @@ Highlight Component Styles
 
 .highlight.bottom {
   padding: 0px 5px 16px 5px;
+}
+
+.highlight.short-text {
   text-align: center;
 }
 
@@ -1751,11 +1763,11 @@ Highlight Component Styles
   display: none;
 }
 
-.highlight.trigger {
+.highlight.clickable {
   cursor: pointer;
 }
 
-.highlight.trigger:active {
+.highlight.clickable:active {
   opacity: 0.5;
   transition-duration: 0s;
 }

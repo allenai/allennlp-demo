@@ -1,9 +1,10 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
-import { withRouter } from 'react-router-dom'
-import {PaneLeft, PaneRight} from './Pane'
-import Button from './Button'
-import ModelIntro from './ModelIntro'
+import { withRouter } from 'react-router-dom';
+import { PaneLeft, PaneRight } from './Pane';
+import Button from './Button';
+import Highlight from './Highlight';
+import ModelIntro from './ModelIntro';
 
 
 /*******************************************************************************
@@ -116,8 +117,32 @@ class CorefOutput extends React.Component {
       super();
       this.state = {
         selectedCluster: -1,
+        activeIds: [],
+        selectedId: null,
       };
+
       this.onClusterMouseover = this.onClusterMouseover.bind(this);
+      this.handleHighlightClick = this.handleHighlightClick.bind(this);
+      this.handleHighlightMouseOver = this.handleHighlightMouseOver.bind(this);
+      this.handleHighlightMouseOut = this.handleHighlightMouseOut.bind(this);
+    }
+
+    handleHighlightClick(id) {
+      this.setState({
+        selectedId: id,
+      });
+    }
+
+    handleHighlightMouseOver(id, prevState) {
+      this.setState(prevState => ({
+        activeIds: [...prevState.activeIds, id],
+      }));
+    }
+
+    handleHighlightMouseOut(id, prevState) {
+      this.setState(prevState => ({
+        activeIds: prevState.activeIds.filter(i => (i === this.state.selectedId)),
+      }));
     }
 
     onClusterMouseover(index) {
@@ -125,6 +150,7 @@ class CorefOutput extends React.Component {
     }
 
     render() {
+      console.log(this.state.selectedId);
       const { doc, clusters } = this.props;
       var clusteredDocument = doc.map((word, wordIndex) => {
         var membershipClusters = [];
@@ -151,6 +177,203 @@ class CorefOutput extends React.Component {
 
       return (
         <div className="model__content">
+          <div className="form__field">
+            <div className="passage model__content__summary highlight-container">
+              {/* TODO: replace the following simulated output with dynamic content. */}
+              {/* BEGIN simulated output. */}
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="blue"
+                  id="1"
+                  label="1"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>Paul Allen</Highlight>
+                <span> was </span>
+                <span> born </span>
+                <span> on </span>
+                <span> January </span>
+                <span> 21 </span>
+                <span> , </span>
+                <span> 1953 </span>
+                <span> , </span>
+                <span> in </span>
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="green"
+                  id="2"
+                  label="2"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>Seattle</Highlight>
+                <span> , </span>
+                <span> Washington </span>
+                <span> , </span>
+                <span> to </span>
+                <span> Kenneth </span>
+                <span> Sam </span>
+                <span> Allen </span>
+                <span> and </span>
+                <span> Edna </span>
+                <span> Faye </span>
+                <span> Allen </span>
+                <span> . </span>
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="blue"
+                  id="1"
+                  label="1"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>Allen</Highlight>
+                <span> attended </span>
+                <span> Lakeside </span>
+                <span> School </span>
+                <span> , </span>
+                <span> a </span>
+                <span> private </span>
+                <span> school </span>
+                <span> in </span>
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="green"
+                  id="2"
+                  label="2"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>Seattle</Highlight>
+                <span> , </span>
+                <span> where </span>
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="blue"
+                  id="1"
+                  label="1"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>he</Highlight>
+                <span> befriended </span>
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="pink"
+                  id="3"
+                  label="3"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>Bill Gates</Highlight>
+                <span> , </span>
+                <span> two </span>
+                <span> years </span>
+                <span> younger </span>
+                <span> , </span>
+                <span> with </span>
+                <span> whom </span>
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="blue"
+                  id="1"
+                  label="1"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>he</Highlight>
+                <span> shared </span>
+                <span> an </span>
+                <span> enthusiasm </span>
+                <span> for </span>
+                <span> computers </span>
+                <span> . </span>
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="orange"
+                  id="4"
+                  label="4"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>
+                  <Highlight
+                    activeIds={this.state.activeIds}
+                    clickable={true}
+                    color="blue"
+                    id="1"
+                    label="1"
+                    labelPosition="left"
+                    onClick={this.handleHighlightClick}
+                    onMouseOver={this.handleHighlightMouseOver}
+                    onMouseOut={this.handleHighlightMouseOut}>Paul</Highlight>
+                  <span> and </span>
+                  <Highlight
+                    activeIds={this.state.activeIds}
+                    clickable={true}
+                    color="pink"
+                    id="3"
+                    label="3"
+                    labelPosition="left"
+                    onClick={this.handleHighlightClick}
+                    onMouseOver={this.handleHighlightMouseOver}
+                    onMouseOut={this.handleHighlightMouseOut}>Bill</Highlight>
+                </Highlight>
+                <span> used </span>
+                <span> a </span>
+                <span> teletype </span>
+                <span> terminal </span>
+                <span> at </span>
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="orange"
+                  id="4"
+                  label="4"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>their</Highlight>
+                <span> high </span>
+                <span> school </span>
+                <span> , </span>
+                <span> Lakeside </span>
+                <span> , </span>
+                <span> to </span>
+                <span> develop </span>
+                <Highlight
+                  activeIds={this.state.activeIds}
+                  clickable={true}
+                  color="orange"
+                  id="4"
+                  label="4"
+                  labelPosition="left"
+                  onClick={this.handleHighlightClick}
+                  onMouseOver={this.handleHighlightMouseOver}
+                  onMouseOut={this.handleHighlightMouseOut}>their</Highlight>
+                <span> programming </span>
+                <span> skills </span>
+                <span> on </span>
+                <span> several </span>
+                <span> time </span>
+                <span> - </span>
+                <span> sharing </span>
+                <span> computer </span>
+                <span> systems </span>
+                <span> . </span>
+            {/* END simulated output. */}
+          </div>
+        </div>
+
           <div className="form__field">
             <label>Clusters</label>
             <div className="model__content__summary">
