@@ -120,11 +120,30 @@ class NerInput extends React.Component {
 *******************************************************************************/
 
 const tagDescriptions = {
-  'PER': 'person',
-  'LOC': 'location',
-  'ORG': 'organization',
-  'MISC': 'other'
+  'PER': 'Person',
+  'LOC': 'Location',
+  'ORG': 'Organization',
+  'MISC': 'Miscellaneous'
 }
+
+// const entityLookup = {
+//   "PER": {
+//     tooltip: "Person",
+//     color: "pink"
+//   },
+//   "LOC": {
+//     tooltip: "Location",
+//     color: "green"
+//   },
+//   "ORG": {
+//     tooltip: "Organization",
+//     color: "blue"
+//   },
+//   "MISC": {
+//     tooltip: "Miscellaneous",
+//     color: "gray"
+//   }
+// }
 
 // Render the NER tag for a single word as a table cell
 class NerTagCell extends React.Component {
@@ -155,6 +174,43 @@ class NerWordCell extends React.Component {
   }
 }
 
+class TokenSpan extends React.Component {
+  render() {
+    const { token } = this.props;
+
+    const entityLookup = {
+      "PER": {
+        tooltip: "Person",
+        color: "pink"
+      },
+      "LOC": {
+        tooltip: "Location",
+        color: "green"
+      },
+      "ORG": {
+        tooltip: "Organization",
+        color: "blue"
+      },
+      "MISC": {
+        tooltip: "Miscellaneous",
+        color: "gray"
+      }
+    }
+
+    const entity = token.entity;
+
+    if (entity !== null) {
+      // If token has entity value then highlight the span
+      return (<Highlight label={entity} color={entityLookup[entity].color} tooltip={entityLookup[entity].tooltip}>{token.text}</Highlight>);
+    } else {
+      // If no entity, just show raw text
+      return (<span> {token.text} </span>);
+    }
+  }
+}
+
+
+
 class NerOutput extends React.Component {
   render() {
     const { words, tags } = this.props;
@@ -170,8 +226,18 @@ class NerOutput extends React.Component {
     let spanLengths = {};
     let lastSpanStart;
 
+
+
+    // "B-" = "Beginning" (first token in a contiguous list of tokens representing a single entity)
+    // "I-" = "Inside" (token in a contiguous list of tokens (that isn't first or last) representing a single entity)
+    // "L-" = "Last" (last token in a contiguous list of tokens representing a single entity)
+    // "O-" = "Outside" (token that isn't associated with an entity)
+    // "U-" = "Unit" (A single token representing a single entity)
+
+
     tags.forEach(function (tag, i) {
       if (tag === "O") {
+        // "O" = "Outside" (tokens that aren't part of a named entity span)
         // "O" tag, so append "" for "no color"
         colorClasses.push("");
 
@@ -179,6 +245,7 @@ class NerOutput extends React.Component {
         spanLengths[i] = 1;
         lastSpanStart = undefined;
       } else if (tag[0] === "B") {
+        // "B" = "Beginning" (first token in a contiguous list of tokens representing a single entity)
         // "B-" tag, so toggle the current color and then append
         currentColor = (currentColor + 1) % 2;
         colorClasses.push("color" + currentColor);
@@ -187,6 +254,7 @@ class NerOutput extends React.Component {
         lastSpanStart = i;
         spanLengths[i] = 1;
       } else if (tag[0] === "U") {
+        // "U" = "Unit" (A single token representing a single entity)
         // Single length span
         currentColor = (currentColor + 1) % 2;
         colorClasses.push("color" + currentColor);
@@ -195,38 +263,91 @@ class NerOutput extends React.Component {
         spanLengths[i] = 1;
         lastSpanStart = undefined;
       } else /* (tag[0] == "L") */ {
+        // "L" = "Last" (last token in a contiguous list of tokens representing a single entity)
         // "L-" tag, so append the current color
         colorClasses.push("color" + currentColor);
 
         // Extend the length of the currently open span.
         spanLengths[lastSpanStart] = spanLengths[lastSpanStart] + 1;
       }
-    })
+    });
+
+    const formattedTokens = [
+      {
+        text: "AllenNLP",
+        entity: "ORG"
+      },
+      {
+        text: "is",
+        entity: null
+      },
+      {
+        text: "a",
+        entity: null
+      },
+      {
+        text: "PyTorch",
+        entity: "ORG"
+      },
+      {
+        text: "-",
+        entity: null
+      },
+      {
+        text: "based",
+        entity: null
+      },
+      {
+        text: "natural",
+        entity: null
+      },
+      {
+        text: "language",
+        entity: null
+      },
+      {
+        text: "processing",
+        entity: null
+      },
+      {
+        text: "library",
+        entity: null
+      },
+      {
+        text: "developed",
+        entity: null
+      },
+      {
+        text: "at",
+        entity: null
+      },
+      {
+        text: "the",
+        entity: null
+      },
+      {
+        text: "Allen Institute for Artificial Intelligence",
+        entity: "ORG"
+      },
+      {
+        text: "in",
+        entity: null
+      },
+      {
+        text: "Seattle",
+        entity: "LOC"
+      },
+      {
+        text: ".",
+        entity: null
+      },
+    ];
 
     return (
       <div className="model__content model__content--ner-output">
         <div className="form__field">
           <div className="passage model__content__summary highlight-container--bottom-labels">
-            {/* TODO: replace the following simulated output with dynamic content. */}
-            {/* BEGIN simulated output. */}
-              <Highlight label="Org" color="blue" tooltip="Organization">AllenNLP</Highlight>
-              <span> is </span>
-              <span> a </span>
-              <Highlight label="Org" color="blue" tooltip="Organization">PyTorch</Highlight>
-              <span> - </span>
-              <span> based </span>
-              <span> natural </span>
-              <span> language </span>
-              <span> processing </span>
-              <span> library </span>
-              <span> developed </span>
-              <span> at </span>
-              <span> the </span>
-              <Highlight label="Org" color="blue" tooltip="Organization">Allen Institute for Artificial Intelligence</Highlight>
-              <span> in </span>
-              <Highlight label="Loc" color="green" tooltip="Location">Seattle</Highlight>
-              <span> . </span>
-            {/* END simulated output. */}
+            {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </div>
         </div>
 
@@ -309,11 +430,24 @@ class _NerComponent extends React.Component {
   }
 
   render() {
+
     const { requestData, responseData } = this.props;
 
     const sentence = requestData && requestData.sentence;
     const words = responseData && responseData.words;
     const tags = responseData && responseData.tags;
+
+    if (responseData !== null) {
+      console.log("number of tokens:");
+      console.log(words.length);
+      console.log("---------------------");
+      console.log("words:");
+      console.log(words);
+      console.log("---------------------");
+      console.log("tags:");
+      console.log(tags);
+      console.log("---------------------");
+    }
 
     return (
       <div className="pane model">
