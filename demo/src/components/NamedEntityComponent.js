@@ -42,7 +42,7 @@ const description = (
     </span>
     <a href = "https://www.clips.uantwerpen.be/conll2003/ner/" target="_blank" rel="noopener noreferrer">{' '} CoNLL-2003 {' '}</a>
     <span>
-      NER dataset. It is not state of the art on that task, but it's not terrible either.
+      NER dataset. It is not state of the art on that task, but it&#39;s not terrible either.
       (This is also the model constructed in our
     </span>
     <a href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/creating_a_model.md" target="_blank" rel="noopener noreferrer">{' '}Creating a Model{' '}</a>
