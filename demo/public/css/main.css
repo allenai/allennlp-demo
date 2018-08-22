@@ -1665,3 +1665,270 @@ svg {
   background-color: #CBB700;
   color: black;
 }
+
+/********************************************
+Highlight Component Styles
+********************************************/
+
+.highlight-container {
+  line-height: 36px !important;
+}
+
+.highlight-container--bottom-labels {
+  line-height: 52px !important;
+  padding: 10px 1.125em
+}
+
+.highlight-container,
+.highlight-container--bottom-labels {
+  cursor: default;
+}
+
+.highlight {
+  border: 2px solid rgba(160,170,182,1);
+  background: rgba(160,170,182,0.05);
+  margin: 0 2px -5px 2px;
+  padding: 0px 5px;
+  box-shadow: 2px 4px 20px rgba(0,0,0,0.1);
+  position: relative;
+  display: inline-block;
+  line-height: 24px;
+  cursor: default;
+  min-width: 26px;
+  transition: background-color .2s ease,
+              color .2s ease,
+              box-shadow .2s ease,
+              opacity .2s ease;
+}
+
+.highlight.bottom {
+  padding: 0px 5px 16px 5px;
+}
+
+.highlight.short-text {
+  text-align: center;
+}
+
+.highlight.bottom:after {
+  display: block;
+  position: absolute;
+  height: 15px;
+  background: rgba(160,170,182,1);
+  content: attr(data-label);
+  text-align: center;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  font-size: 11px;
+  line-height: 16px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.highlight.active {
+  background: rgba(160,170,182,1);
+  color: #fff;
+}
+
+.highlight.left:before,
+.highlight.right:after {
+  display: inline-block;
+  height: 100%;
+  padding: 0 8px;
+  vertical-align: top;
+  margin: 0 5px 0 -5px;
+  background: rgba(160,170,182,1);
+  content: attr(data-label);
+  font-size: 11px;
+  line-height: 24px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.highlight.left:before {
+
+}
+
+.highlight.right:after {
+  margin: 0 -5px 0 5px;
+}
+
+.highlight.left:after,
+.highlight.right:before {
+  display: none;
+}
+
+.highlight.clickable {
+  cursor: pointer;
+}
+
+.highlight.clickable:active {
+  opacity: 0.5;
+  transition-duration: 0s;
+}
+
+/********************************************/
+
+/* BLUE */
+/* NER Organization */
+.highlight.blue {
+  border-color: rgba(71,176,250,1);
+  background: rgba(71,176,250,0.05);
+}
+
+.highlight.blue:before,
+.highlight.blue:after {
+  background-color: rgba(71,176,250,1);
+}
+
+.highlight.blue.active {
+  background: rgba(71,176,250,1);
+}
+
+/********************************************/
+
+/* GREEN */
+/* NER Location */
+.highlight.green {
+  border-color: rgba(148,166,85,1);
+  background: rgba(148,166,85,0.05);
+}
+
+.highlight.green:before,
+.highlight.green:after {
+  background-color: rgba(148,166,85,1);
+}
+
+.highlight.green.active {
+  background: rgba(148,166,85,1);
+}
+
+/********************************************/
+
+/* PINK */
+/* NER Location */
+.highlight.pink {
+  border-color: rgba(208,99,135,1);
+  background: rgba(208,99,135,0.05);
+}
+
+.highlight.pink:before,
+.highlight.pink:after {
+  background-color: rgba(208,99,135,1);
+}
+
+.highlight.pink.active {
+  background: rgba(208,99,135,1);
+}
+
+/********************************************/
+
+/* PURPLE */
+/* NER Location */
+.highlight.purple {
+  border-color: rgba(155,91,188,1);
+  background: rgba(155,91,188,0.05);
+}
+
+.highlight.purple:before,
+.highlight.purple:after {
+  background-color: rgba(155,91,188,1);
+}
+
+.highlight.purple.active {
+  background: rgba(155,91,188,1);
+}
+
+/********************************************/
+
+/* ORANGE */
+/* NER Location */
+.highlight.orange {
+  border-color: rgba(222,159,50,1);
+  background: rgba(222,159,50,0.05);
+}
+
+.highlight.orange:before,
+.highlight.orange:after {
+  background-color: rgba(222,159,50,1);
+}
+
+.highlight.orange.active {
+  background: rgba(222,159,50,1);
+}
+
+/********************************************/
+
+/* TEAL */
+/* NER Location */
+.highlight.teal {
+  border-color: rgba(87,177,174,1);
+  background: rgba(87,177,174,0.05);
+}
+
+.highlight.teal:before,
+.highlight.teal:after {
+  background-color: rgba(87,177,174,1);
+}
+
+.highlight.teal.active {
+  background: rgba(87,177,174,1);
+}
+
+/********************************************/
+
+.highlight__tooltip {
+  display: block;
+  position: absolute;
+  box-shadow: 0 0 30px rgba(0,0,0,.2);
+  border-radius: 6px;
+  background: rgba(70,70,70,.9);
+  padding: 4px 9px 5px 9px;
+  opacity: 0;
+  z-index: -9;
+  left: 50%;
+  top: 100%;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #fff;
+  transform: translate(-50%, -6px);
+  transition: opacity .2s ease,
+              z-index .2s ease,
+              transform .2s ease .3s;
+  font-weight: bold;
+  white-space: nowrap;
+  user-select: none;
+  cursor: default;
+}
+
+.highlight__tooltip:before {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  margin-top: -6px;
+  margin-left: -6px;
+  content: "";
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 6px 6px 6px;
+  border-color: transparent transparent rgba(70,70,70,.9) transparent;
+}
+
+.highlight:hover .highlight__tooltip {
+  z-index: 9;
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
+}
+
+.highlight__tooltip:hover {
+  z-index: -9 !important;
+}
