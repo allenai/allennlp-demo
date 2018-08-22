@@ -169,11 +169,11 @@ class NerOutput extends React.Component {
 
     // Defining an empty array for building a list of formatted token objects.
     let formattedTokens = [];
-    // Defining an empty string to store temporary span text.
+    // Defining an empty string to store temporary span text (this field is used to build up the entire text in a single BIL span).
     let spanStr = "";
     // Iterate through array of tags from response data.
     tags.forEach(function (tag, i) {
-      // Defining an empty object var to store temporary token data.
+      // Defining an empty object to store temporary token data.
       let tokenObj = {};
       if (tag === "O") { // If this tag is not part of an entity:
         // Build token object using this token's word and set entity to null.
