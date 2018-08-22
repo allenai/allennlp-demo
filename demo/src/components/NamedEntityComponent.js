@@ -8,7 +8,6 @@ import ModelIntro from './ModelIntro';
 
 // LOC, PER, ORG, MISC
 
-
 /*******************************************************************************
   <NamedEntityInput/> Component
 *******************************************************************************/
@@ -114,70 +113,15 @@ class NerInput extends React.Component {
   }
 }
 
-
 /*******************************************************************************
-  <NerOutput /> Component
+  <TokenSpan /> Component
 *******************************************************************************/
-
-const tagDescriptions = {
-  'PER': 'Person',
-  'LOC': 'Location',
-  'ORG': 'Organization',
-  'MISC': 'Miscellaneous'
-}
-
-// const entityLookup = {
-//   "PER": {
-//     tooltip: "Person",
-//     color: "pink"
-//   },
-//   "LOC": {
-//     tooltip: "Location",
-//     color: "green"
-//   },
-//   "ORG": {
-//     tooltip: "Organization",
-//     color: "blue"
-//   },
-//   "MISC": {
-//     tooltip: "Miscellaneous",
-//     color: "gray"
-//   }
-// }
-
-// Render the NER tag for a single word as a table cell
-class NerTagCell extends React.Component {
-
-  render() {
-    const { tag, colorClass, colSpan } = this.props;
-
-    // Don't show "O" tags, and slice off all the "B-" and "I-" prefixes.
-    const tagText = tag === "O" ? "" : tag.slice(2);
-
-    // Use the tag description as the tooltip.
-    const description = tagDescriptions[tagText] || null;
-
-    return (
-      <td data-tooltip={description} colSpan={colSpan} className={colorClass + ' ner-tag ner-tag-' + tagText.toLowerCase()}>
-        {tagText}
-      </td>
-    )
-  }
-}
-
-// Render a NER-tagged word as a table cell
-class NerWordCell extends React.Component {
-  render() {
-    const { word, colorClass } = this.props;
-
-    return (<td className={colorClass + ' ner-word'}>{word}</td>)
-  }
-}
 
 class TokenSpan extends React.Component {
   render() {
     const { token } = this.props;
 
+    // Lookup table for entity style values:
     const entityLookup = {
       "PER": {
         tooltip: "Person",
@@ -199,149 +143,72 @@ class TokenSpan extends React.Component {
 
     const entity = token.entity;
 
-    if (entity !== null) {
-      // If token has entity value then highlight the span
+    if (entity !== null) { // If token has entity value:
+      // Display entity text wrapped in a <Highlight /> component.
       return (<Highlight label={entity} color={entityLookup[entity].color} tooltip={entityLookup[entity].tooltip}>{token.text}</Highlight>);
-    } else {
-      // If no entity, just show raw text
+    } else { // If no entity:
+      // Display raw text.
       return (<span> {token.text} </span>);
     }
   }
 }
 
-
+/*******************************************************************************
+  <NerOutput /> Component
+*******************************************************************************/
 
 class NerOutput extends React.Component {
   render() {
     const { words, tags } = this.props;
 
-    // Create an array indicating what color to highlight each tag cell.
-    // For "O" tags this should be -1, indicating no color.
-    // Otherwise it should toggle between 0 and 1 every time a "B-" tag occurs.
-    var colorClasses = [];
-    var currentColor = 1;
+    // "B" = "Beginning" (first token in a sequence of tokens comprising an entity)
+    // "I" = "Inside" (token in a sequence of tokens (that isn't first or last in its sequence) comprising an entity)
+    // "L" = "Last" (last token in a sequence of tokens comprising an entity)
+    // "O" = "Outside" (token that isn't associated with any entities)
+    // "U" = "Unit" (A single token representing a single entity)
 
-    // We want to merge consecutive identical tags and use `colspan=n`.
-    // In order to do that, we create a dictionary from starting indexes to span lengths.
-    let spanLengths = {};
-    let lastSpanStart;
-
-
-
-    // "B-" = "Beginning" (first token in a contiguous list of tokens representing a single entity)
-    // "I-" = "Inside" (token in a contiguous list of tokens (that isn't first or last) representing a single entity)
-    // "L-" = "Last" (last token in a contiguous list of tokens representing a single entity)
-    // "O-" = "Outside" (token that isn't associated with an entity)
-    // "U-" = "Unit" (A single token representing a single entity)
-
-
+    // Defining an empty array for building a list of formatted token objects.
+    let formattedTokens = [];
+    // Defining an empty string to store temporary span text.
+    let spanStr = "";
+    // Iterate through array of tags from response data.
     tags.forEach(function (tag, i) {
-      if (tag === "O") {
-        // "O" = "Outside" (tokens that aren't part of a named entity span)
-        // "O" tag, so append "" for "no color"
-        colorClasses.push("");
-
-        // Add a span with length 1 and close it.
-        spanLengths[i] = 1;
-        lastSpanStart = undefined;
-      } else if (tag[0] === "B") {
-        // "B" = "Beginning" (first token in a contiguous list of tokens representing a single entity)
-        // "B-" tag, so toggle the current color and then append
-        currentColor = (currentColor + 1) % 2;
-        colorClasses.push("color" + currentColor);
-
-        // Add a span with length 1, but don't "close it"
-        lastSpanStart = i;
-        spanLengths[i] = 1;
-      } else if (tag[0] === "U") {
-        // "U" = "Unit" (A single token representing a single entity)
-        // Single length span
-        currentColor = (currentColor + 1) % 2;
-        colorClasses.push("color" + currentColor);
-
-        // Add a span with length 1 and close it.
-        spanLengths[i] = 1;
-        lastSpanStart = undefined;
-      } else /* (tag[0] == "L") */ {
-        // "L" = "Last" (last token in a contiguous list of tokens representing a single entity)
-        // "L-" tag, so append the current color
-        colorClasses.push("color" + currentColor);
-
-        // Extend the length of the currently open span.
-        spanLengths[lastSpanStart] = spanLengths[lastSpanStart] + 1;
+      // Defining an empty object var to store temporary token data.
+      let tokenObj = {};
+      if (tag === "O") { // If this tag is not part of an entity:
+        // Build token object using this token's word and set entity to null.
+        tokenObj = {
+          text: words[i],
+          entity: null
+        }
+        // Append array of formatted token objects with this token object.
+        formattedTokens.push(tokenObj);
+      } else if (tag[0] === "U") { // If this tag is a unit token:
+        // Build token object using this token's word and entity.
+        tokenObj = {
+          text: words[i],
+          entity: tag.slice(2) // tag value with "U-" stripped from the beginning
+        }
+        // Append array of formatted token objects with this token object.
+        formattedTokens.push(tokenObj);
+      } else if (tag[0] === "B") { // If this tag is beginning of a span:
+        // Reset span string to current token's word.
+        spanStr = `${words[i]}`;
+      } else if (tag[0] === "I") { // If this tag is inside a span:
+        // Append current word to span string w/ space at beginning.
+        spanStr += ` ${words[i]} `;
+      } else if (tag[0] === "L") { // If this tag is last in a span:
+        // Append current word to span string w/ space at beginning.
+        spanStr += ` ${words[i]}`;
+        // Build token object using final span string and entity tag for this token.
+        tokenObj = {
+          text: spanStr,
+          entity: tag.slice(2) // tag value with "L-" stripped from the beginning
+        }
+        // Append array of formatted token objects with this token object.
+        formattedTokens.push(tokenObj);
       }
     });
-
-    const formattedTokens = [
-      {
-        text: "AllenNLP",
-        entity: "ORG"
-      },
-      {
-        text: "is",
-        entity: null
-      },
-      {
-        text: "a",
-        entity: null
-      },
-      {
-        text: "PyTorch",
-        entity: "ORG"
-      },
-      {
-        text: "-",
-        entity: null
-      },
-      {
-        text: "based",
-        entity: null
-      },
-      {
-        text: "natural",
-        entity: null
-      },
-      {
-        text: "language",
-        entity: null
-      },
-      {
-        text: "processing",
-        entity: null
-      },
-      {
-        text: "library",
-        entity: null
-      },
-      {
-        text: "developed",
-        entity: null
-      },
-      {
-        text: "at",
-        entity: null
-      },
-      {
-        text: "the",
-        entity: null
-      },
-      {
-        text: "Allen Institute for Artificial Intelligence",
-        entity: "ORG"
-      },
-      {
-        text: "in",
-        entity: null
-      },
-      {
-        text: "Seattle",
-        entity: "LOC"
-      },
-      {
-        text: ".",
-        entity: null
-      },
-    ];
 
     return (
       <div className="model__content model__content--ner-output">
@@ -349,28 +216,6 @@ class NerOutput extends React.Component {
           <div className="passage model__content__summary highlight-container--bottom-labels">
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </div>
-        </div>
-
-        <div className="form__field">
-          <table className="ner-table">
-            <tbody>
-              <tr>
-                {
-                  tags.map((tag, i) => {
-                    const colSpan = spanLengths[i];
-                    if (colSpan) {
-                      return <NerTagCell tag={tag} key={i} colSpan={colSpan} colorClass={colorClasses[i]} />
-                    } else {
-                      return null;
-                    }
-                  })
-                }
-              </tr>
-              <tr>
-                {words.map((word, i) => <NerWordCell word={word} key={i} colorClass={colorClasses[i]} />)}
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     )
@@ -430,209 +275,14 @@ class _NerComponent extends React.Component {
   }
 
   render() {
-
     const { requestData, responseData } = this.props;
-
     const sentence = requestData && requestData.sentence;
     const words = responseData && responseData.words;
     const tags = responseData && responseData.tags;
 
-    // if (responseData !== null) {
-    //   console.log("number of tokens:");
-    //   console.log(words.length);
-    //   console.log("---------------------");
-    //   console.log("words:");
-    //   console.log(words);
-    //   console.log("---------------------");
-    //   console.log("tags:");
-    //   console.log(tags);
-    //   console.log("---------------------");
-    // }
-
-    const hcTags = ["U-ORG", "O", "O", "U-ORG", "O", "O", "O", "O", "O", "O", "O", "O", "O", "B-ORG", "I-ORG", "I-ORG", "I-ORG", "L-ORG", "O", "U-LOC", "O"];
-
-    const hcWords = ["AllenNLP", "is", "a", "PyTorch", "-", "based", "natural", "language", "processing", "library", "developed", "at", "the", "Allen", "Institute", "for", "Artificial", "Intelligence", "in", "Seattle", "."];
-
-    const formattedTokens = [
-      {
-        text: "AllenNLP",
-        entity: "ORG"
-      },
-      {
-        text: "is",
-        entity: null
-      },
-      {
-        text: "a",
-        entity: null
-      },
-      {
-        text: "PyTorch",
-        entity: "ORG"
-      },
-      {
-        text: "-",
-        entity: null
-      },
-      {
-        text: "based",
-        entity: null
-      },
-      {
-        text: "natural",
-        entity: null
-      },
-      {
-        text: "language",
-        entity: null
-      },
-      {
-        text: "processing",
-        entity: null
-      },
-      {
-        text: "library",
-        entity: null
-      },
-      {
-        text: "developed",
-        entity: null
-      },
-      {
-        text: "at",
-        entity: null
-      },
-      {
-        text: "the",
-        entity: null
-      },
-      {
-        text: "Allen Institute for Artificial Intelligence",
-        entity: "ORG"
-      },
-      {
-        text: "in",
-        entity: null
-      },
-      {
-        text: "Seattle",
-        entity: "LOC"
-      },
-      {
-        text: ".",
-        entity: null
-      },
-    ];
-
-    let dynamicTokens = [];
-
-    // tags.forEach(function (tag, i) {
-    //   if (tag === "O") {
-    //     // "O" = "Outside"
-    //     colorClasses.push("");
-    //     spanLengths[i] = 1;
-    //     lastSpanStart = undefined;
-    //   } else if (tag[0] === "B") {
-    //     // "B" = "Beginning"
-    //     currentColor = (currentColor + 1) % 2;
-    //     colorClasses.push("color" + currentColor);
-    //     // Add a span with length 1, but don't "close it"
-    //     lastSpanStart = i;
-    //     spanLengths[i] = 1;
-    //   } else if (tag[0] === "U") {
-    //     // "U" = "Unit"
-    //     currentColor = (currentColor + 1) % 2;
-    //     colorClasses.push("color" + currentColor);
-    //     spanLengths[i] = 1;
-    //     lastSpanStart = undefined;
-    //   } else /* (tag[0] == "L") */ {
-    //     // "L" = "Last" (last token in a contiguous list of tokens representing a single entity)
-    //     colorClasses.push("color" + currentColor);
-    //     spanLengths[lastSpanStart] = spanLengths[lastSpanStart] + 1;
-    //   }
-    // });
-
-    // "B" = "Beginning" (first token in a sequence of tokens comprising an entity)
-    // "I" = "Inside" (token in a sequence of tokens (that isn't first or last in its sequence) comprising an entity)
-    // "L" = "Last" (last token in a sequence of tokens comprising an entity)
-    // "O" = "Outside" (token that isn't associated with any entities)
-    // "U" = "Unit" (A single token representing a single entity)
-    let spanGroup = "";
-    hcTags.forEach(function (tag, i) {
-      let tokenObj = {};
-      if (tag === "O") {
-        tokenObj = {
-          text: hcWords[i],
-          entity: null
-        }
-        dynamicTokens.push(tokenObj);
-      } else if (tag[0] === "U") {
-        tokenObj = {
-          text: hcWords[i],
-          entity: tag.slice(2)
-        }
-        dynamicTokens.push(tokenObj);
-      } else if (tag[0] === "B") {
-        spanGroup = `${hcWords[i]} `;
-      } else if (tag[0] === "I") {
-        spanGroup += `${hcWords[i]} `;
-      } else if (tag[0] === "L") {
-        spanGroup += `${hcWords[i]}`;
-        tokenObj = {
-          text: spanGroup,
-          entity: tag.slice(2)
-        }
-        dynamicTokens.push(tokenObj);
-      }
-        // const truncatedTags = hcWords.slice(i + 1, hcWords.length);
-        // let index = 0;
-        // while (index < truncatedTags.length) {
-        //   spanGroup = `${spanGroup} ${truncatedTags[index]}`;
-        //   index++;
-        //
-        //   // if (breakCondition) {
-        //   //   break;
-        //   // }
-        // }
-        // tokenObj = {
-        //   text: spanGroup,
-        //   entity: tag.slice(2)
-        // }
-
-      // else if (tag[0] === "I") {
-      //   spanGroup = `${spanGroup} ${tag[i]}`;
-      // } else /* if (tag[0] === "L") */ {
-      //   spanGroup = `${spanGroup} ${tag[i]}`;
-      //   tokenObj = {
-      //     text: spanGroup,
-      //     entity: tag.slice(2)
-      //   }
-      // }
-    });
-
-    console.log("words:");
-    console.log(hcWords);
-    console.log("---------------------");
-    console.log("tags:");
-    console.log(hcTags);
-    console.log("---------------------");
-    console.log("formattedTokens:");
-    console.log(formattedTokens);
-    console.log("---------------------");
-    console.log("dynamicTokens:");
-    console.log(dynamicTokens);
-    console.log("---------------------");
-
     return (
       <div className="pane model">
         <PaneLeft>
-          <div className="model__content model__content--ner-output">
-            <div className="form__field">
-              <div className="passage model__content__summary highlight-container--bottom-labels">
-                {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
-              </div>
-            </div>
-          </div>
           <NerInput runNerModel={this.runNerModel}
             outputState={this.state.outputState}
             sentence={sentence} />
@@ -645,6 +295,6 @@ class _NerComponent extends React.Component {
   }
 }
 
-const NerComponent = withRouter(_NerComponent)
+const NerComponent = withRouter(_NerComponent);
 
 export default NerComponent;

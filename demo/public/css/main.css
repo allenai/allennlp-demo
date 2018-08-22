@@ -1676,6 +1676,7 @@ Highlight Component Styles
 
 .highlight-container--bottom-labels {
   line-height: 52px !important;
+  padding: 10px 1.125em
 }
 
 .highlight-container,
