@@ -47,7 +47,7 @@ MODELS = {
                 'constituency-parser'
         ),
         'dependency-parsing': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-2018.08.01.tar.gz',  # pylint: disable=line-too-long
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz',  # pylint: disable=line-too-long
                 'biaffine-dependency-parser'
         )
 }
