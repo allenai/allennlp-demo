@@ -1,3 +1,6 @@
+__pycache__
+demo/build/
+
 # Logs
 logs
 *.log
