@@ -7,6 +7,7 @@ import React from 'react';
 export default class Highlight extends React.Component {
   render() {
     const {
+      activeDepths,   // object
       activeIds,      // string[] | number[]
       children,       // object | string
       color,          // string
@@ -25,16 +26,18 @@ export default class Highlight extends React.Component {
       tooltip         // string
     } = this.props;
 
+    const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
+
     return (
       <span
         className={`highlight
           ${labelPosition ? labelPosition : "bottom"}
           ${color ? color : ""}
-          ${selectedId === id ? "selected" : ""}
-          ${isClicking && activeIds && activeIds.includes(id) ? "clicking" : ""}
+          ${selectedId && selectedId === id ? "selected" : ""}
+          ${isClicking && activeDepths.ids[deepestIndex] === id ? "clicking active" : ""}
           ${isClickable ? "clickable" : ""}
           ${typeof(children) === "string" && children.length < 8 ? "short-text" : ""}
-          ${activeIds && activeIds.includes(id) ? "active" : ""}`
+          ${!isClicking && activeIds && activeIds.includes(id) ? "active" : ""}`
         }
         data-label={label}
         data-id={id}

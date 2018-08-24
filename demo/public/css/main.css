@@ -1696,14 +1696,14 @@ Highlight Component Styles
   line-height: 24px;
   cursor: default;
   min-width: 26px;
-  transition: background-color .2s ease,
-              color .2s ease,
-              box-shadow .2s ease,
-              opacity .2s ease;
 }
 
+.highlight,
 .highlight span {
-  transition: color .2s ease;
+  transition: background-color .1s ease,
+              color .1s ease,
+              box-shadow .1s ease,
+              opacity .1s ease;
 }
 
 .highlight .highlight {
@@ -1796,6 +1796,13 @@ Highlight Component Styles
 
 .highlight.clickable.clicking {
   opacity: 0.5;
+  transition-duration: 0s;
+}
+
+.clicking .highlight,
+.clicking .highlight span,
+.clicking .highlight:before,
+.clicking .highlight:after {
   transition-duration: 0s;
 }
 

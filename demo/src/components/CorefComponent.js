@@ -219,7 +219,7 @@ class CorefOutput extends React.Component {
   }
 
   render() {
-    const { activeIds, isClicking, selectedId } = this.state;
+    const { activeIds, activeDepths, isClicking, selectedId } = this.state;
     const { tokens, clusters } = this.props;
 
     const spanTree = transformToTree(tokens, clusters);
@@ -232,6 +232,7 @@ class CorefOutput extends React.Component {
         typeof(token) === "object" ? (
           <Highlight
             key={idx}
+            activeDepths={activeDepths}
             activeIds={activeIds}
             color={getColor(token.cluster)}
             depth={depth}
@@ -257,7 +258,7 @@ class CorefOutput extends React.Component {
     return (
       <div className="model__content">
         <div className="form__field">
-          <div className="passage model__content__summary highlight-container">
+          <div className={`passage model__content__summary highlight-container${isClicking ? " clicking" : ""}`}>
             {spanWrapper(spanTree, 0)}
           </div>
         </div>
