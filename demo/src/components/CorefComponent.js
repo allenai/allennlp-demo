@@ -108,63 +108,6 @@ class CorefInput extends React.Component {
 }
 
 /*******************************************************************************
-  <SpanWrapper /> Component
-*******************************************************************************/
-
-// This is the component that calls itself when we recurse over the span tree.
-class SpanWrapper extends React.Component {
-  render() {
-    const { activeIds,
-            data,
-            isClicking,
-            isHighlightText,
-            onMouseDown,
-            onMouseOver,
-            onMouseOut,
-            onMouseUp } = this.props;
-
-    const colors = ["blue", "green", "pink", "orange", "purple", "teal"];
-    const getColor = (index) => colors[index <= colors.length ? index : "gray"];
-
-    return (
-      <span>
-        {data.map((token, idx) =>
-          <span key={idx}>
-            {typeof(token) === "object" ? (
-              <Highlight
-                activeIds={activeIds}
-                id={token.cluster}
-                isClickable={true}
-                isClicking={isClicking}
-                label={token.cluster}
-                labelPosition="left"
-                color={getColor(token.cluster)}
-                onMouseDown={onMouseDown}
-                onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}
-                onMouseUp={onMouseUp}>
-                {/* Call self */}
-                <SpanWrapper
-                  data={token.contents}
-                  activeIds={activeIds}
-                  isHighlightText={true}
-                  isClicking={isClicking}
-                  onMouseDown={onMouseDown}
-                  onMouseOver={onMouseOver}
-                  onMouseOut={onMouseOut}
-                  onMouseUp={onMouseUp} />
-              </Highlight>
-            ) : (
-              <span>{`${isHighlightText ? "" : " "}${token} `}</span>
-            )}
-          </span>
-        )}
-      </span>
-    );
-  }
-}
-
-/*******************************************************************************
   <CorefOutput /> Component
 *******************************************************************************/
 
@@ -211,6 +154,7 @@ class CorefOutput extends React.Component {
     }
 
     render() {
+      const { activeIds, isClicking } = this.state;
       const { tokens, clusters } = this.props;
 
       // Span tree data transform code courtesy of Michael S.
@@ -264,19 +208,39 @@ class CorefOutput extends React.Component {
 
       const spanTree = insideClusters[0].contents;
 
+      const colors = ["blue", "green", "pink", "orange", "purple", "teal"];
+      const getColor = (index) => colors[index <= colors.length ? index : "gray"];
+
+      const spanWrapper = (data, isHighlightText) => {
+        return data.map((token, idx) =>
+          <span key={idx}>
+            {typeof(token) === "object" ? (
+              <Highlight
+                activeIds={activeIds}
+                id={token.cluster}
+                isClickable={true}
+                isClicking={isClicking}
+                label={token.cluster}
+                labelPosition="left"
+                color={getColor(token.cluster)}
+                onMouseDown={this.handleHighlightMouseDown}
+                onMouseOver={this.handleHighlightMouseOver}
+                onMouseOut={this.handleHighlightMouseOut}
+                onMouseUp={this.handleHighlightMouseUp}>
+                {spanWrapper(token.contents, true)}
+              </Highlight>
+            ) : (
+              <span>{`${isHighlightText ? "" : " "}${token} `}</span>
+            )}
+          </span>
+        );
+      }
+
       return (
         <div className="model__content">
           <div className="form__field">
             <div className="passage model__content__summary highlight-container">
-              <SpanWrapper
-                data={spanTree}
-                activeIds={this.state.activeIds}
-                isHighlightText={false}
-                isClicking={this.state.isClicking}
-                onMouseDown={this.handleHighlightMouseDown}
-                onMouseOver={this.handleHighlightMouseOver}
-                onMouseOut={this.handleHighlightMouseOut}
-                onMouseUp={this.handleHighlightMouseUp} />
+              {spanWrapper(spanTree, false)}
             </div>
           </div>
         </div>
