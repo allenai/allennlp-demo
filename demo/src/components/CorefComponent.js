@@ -395,21 +395,6 @@ class _CorefComponent extends React.Component {
       return (
         <div className="pane model">
           <PaneLeft>
-
-            <div className="model__content">
-              <div className="form__field">
-                <div className="passage model__content__summary highlight-container">
-                  <Highlight color="blue" label="x" labelPosition="left">blue</Highlight>
-                  <Highlight color="green" label="x" labelPosition="left">green</Highlight>
-                  <Highlight color="pink" label="x" labelPosition="left">pink</Highlight>
-                  <Highlight color="orange" label="x" labelPosition="left">orange</Highlight>
-                  <Highlight color="purple" label="x" labelPosition="left">purple</Highlight>
-                  <Highlight color="teal" label="x" labelPosition="left">teal</Highlight>
-                  <Highlight color="gray" label="x" labelPosition="left">gray</Highlight>
-                </div>
-              </div>
-            </div>
-
             <CorefInput runCorefModel={this.runCorefModel} outputState={this.state.outputState} doc={inputDoc}/>
           </PaneLeft>
           <PaneRight outputState={this.state.outputState}>
