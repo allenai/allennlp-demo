@@ -107,23 +107,6 @@ class CorefInput extends React.Component {
     }
 }
 
-
-
-// <Highlight
-//   activeIds={this.state.activeIds}
-//   clickable={true}
-//   color="orange"
-//   id="4"
-//   label="4"
-//   labelPosition="left"
-//   onClick={this.handleHighlightClick}
-//   onMouseOver={this.handleHighlightMouseOver}
-//   onMouseOut={this.handleHighlightMouseOut}>their</Highlight>
-
-
-
-
-
 /*******************************************************************************
   <SpanWrapper /> Component
 *******************************************************************************/
@@ -131,7 +114,12 @@ class CorefInput extends React.Component {
 // This is the component that calls itself when we recurse over the span tree.
 class SpanWrapper extends React.Component {
   render() {
-    const { data, activeIds, onClick, onMouseOver, onMouseOut } = this.props;
+    const { activeIds,
+            data,
+            isHighlightText,
+            onClick,
+            onMouseOver,
+            onMouseOut } = this.props;
 
     const colors = ["blue", "green", "pink", "orange", "purple", "teal"];
     const getColor = (index) => colors[index <= colors.length ? index : "gray"];
@@ -151,10 +139,10 @@ class SpanWrapper extends React.Component {
                 onClick={onClick}
                 onMouseOver={onMouseOver}
                 onMouseOut={onMouseOut}>
-                <SpanWrapper data={token.contents} />
+                <SpanWrapper data={token.contents} isHighlightText={true} />
               </Highlight>
             ) : (
-              <span> {token} </span>
+              <span>{`${isHighlightText ? "" : " "}${token} `}</span>
             )}
           </span>
         )}
@@ -176,7 +164,6 @@ class CorefOutput extends React.Component {
         selectedId: null,
       };
 
-      this.onClusterMouseover = this.onClusterMouseover.bind(this);
       this.handleHighlightClick = this.handleHighlightClick.bind(this);
       this.handleHighlightMouseOver = this.handleHighlightMouseOver.bind(this);
       this.handleHighlightMouseOut = this.handleHighlightMouseOut.bind(this);
@@ -200,35 +187,10 @@ class CorefOutput extends React.Component {
       }));
     }
 
-    onClusterMouseover(index) {
-      this.setState( { selectedCluster: index });
-    }
-
     render() {
       const { tokens, clusters } = this.props;
-      var annotatedTokens = tokens.map((word, wordIndex) => {
-        var membershipClusters = [];
-        clusters.forEach((cluster, clusterIndex) => {
-          cluster.forEach((span) => {
-            if (wordIndex >= span[0] && wordIndex <= span[1]) {
-              membershipClusters.push(clusterIndex);
-            }
-          });
-        });
-        return { word : word, clusters : membershipClusters }
-      });
 
-      var wordStyle = (annotatedToken) => {
-        var clusters = annotatedToken['clusters'];
-
-        if (clusters.includes(this.state.selectedCluster)) {
-          return "coref__span";
-        }
-        else {
-          return "unselected";
-        }
-      }
-
+      // Span tree data transform code courtesy of Michael S.
       function contains(span, index) {
         return index >= span[0] && index <= span[1];
       }
@@ -279,49 +241,18 @@ class CorefOutput extends React.Component {
 
       const spanTree = insideClusters[0].contents;
 
-      // For dev output
-      const spanTreeLog = JSON.stringify(spanTree, null, 2).replace(/\"([^(\")"]+)\":/g,"$1:"); // eslint-disable-line no-useless-escape
-
       return (
         <div className="model__content">
-
           <div className="form__field">
             <div className="passage model__content__summary highlight-container">
               <SpanWrapper
                 data={spanTree}
                 activeIds={this.state.activeIds}
+                isHighlightText={false}
                 onClick={this.handleHighlightClick}
                 onMouseOver={this.handleHighlightMouseOver}
                 onMouseOut={this.handleHighlightMouseOut} />
             </div>
-          </div>
-
-          <div className="form__field">
-            <label>Clusters</label>
-            <div className="model__content__summary">
-            <ul>
-              {clusters.map((cluster, index) =>
-               <li key={ index }>
-                {cluster.map((span, wordIndex) =>
-                  <a key={ wordIndex } onMouseEnter={ () => this.onClusterMouseover(index) }> {tokens.slice(span[0], span[1] + 1).join(" ")},</a>
-                )}
-               </li>
-            )}
-            </ul>
-            </div>
-          </div>
-
-          <div className="form__field">
-            <label>Document</label>
-            <div className="passage model__content__summary">
-            {annotatedTokens.map((annotatedToken, index) =>
-              <span key={ index } className={ wordStyle(annotatedToken) }> {annotatedToken['word']}</span>
-            )}
-            </div>
-          </div>
-
-          <div className="form__field">
-            <pre><code>{spanTreeLog}</code></pre>
           </div>
         </div>
       );
