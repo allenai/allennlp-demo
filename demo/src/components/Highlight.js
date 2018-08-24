@@ -9,14 +9,17 @@ export default class Highlight extends React.Component {
     const {
       activeIds,      // string[] | number[]
       children,       // object | string
-      clickable,      // boolean
       color,          // string
       id,             // string | number
+      isClickable,    // boolean
+      isClicking,     // boolean
       label,          // string
       labelPosition,  // string
       onClick,        // function
+      onMouseDown,    // function
       onMouseOver,    // function
       onMouseOut,     // function
+      onMouseUp,      // function
       tooltip         // string
     } = this.props;
 
@@ -25,15 +28,18 @@ export default class Highlight extends React.Component {
         className={`highlight
           ${labelPosition ? labelPosition : "bottom"}
           ${color ? color : ""}
-          ${clickable ? "clickable" : ""}
+          ${isClicking && activeIds && activeIds.includes(id) ? "clicking" : ""}
+          ${isClickable ? "clickable" : ""}
           ${typeof(children) === "string" && children.length < 8 ? "short-text" : ""}
           ${activeIds && activeIds.includes(id) ? "active" : ""}`
         }
         data-label={label}
         data-id={id}
         onClick={onClick ? () => { onClick(id) } : null}
+        onMouseDown={onMouseDown ? () => { onMouseDown(id) } : null}
         onMouseOver={onMouseOver ? () => { onMouseOver(id) } : null}
-        onMouseOut={onMouseOut ? () => { onMouseOut(id) } : null}>
+        onMouseOut={onMouseOut ? () => { onMouseOut(id) } : null}
+        onMouseUp={onMouseUp ? () => { onMouseUp(id) } : null}>
         {children}
         {tooltip ? (
           <span className="highlight__tooltip">{tooltip}</span>

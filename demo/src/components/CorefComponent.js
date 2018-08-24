@@ -116,10 +116,12 @@ class SpanWrapper extends React.Component {
   render() {
     const { activeIds,
             data,
+            isClicking,
             isHighlightText,
-            onClick,
+            onMouseDown,
             onMouseOver,
-            onMouseOut } = this.props;
+            onMouseOut,
+            onMouseUp } = this.props;
 
     const colors = ["blue", "green", "pink", "orange", "purple", "teal"];
     const getColor = (index) => colors[index <= colors.length ? index : "gray"];
@@ -131,15 +133,26 @@ class SpanWrapper extends React.Component {
             {typeof(token) === "object" ? (
               <Highlight
                 activeIds={activeIds}
-                clickable={true}
                 id={token.cluster}
+                isClickable={true}
+                isClicking={isClicking}
                 label={token.cluster}
                 labelPosition="left"
                 color={getColor(token.cluster)}
-                onClick={onClick}
+                onMouseDown={onMouseDown}
                 onMouseOver={onMouseOver}
-                onMouseOut={onMouseOut}>
-                <SpanWrapper data={token.contents} isHighlightText={true} />
+                onMouseOut={onMouseOut}
+                onMouseUp={onMouseUp}>
+                {/* Call self */}
+                <SpanWrapper
+                  data={token.contents}
+                  activeIds={activeIds}
+                  isHighlightText={true}
+                  isClicking={isClicking}
+                  onMouseDown={onMouseDown}
+                  onMouseOver={onMouseOver}
+                  onMouseOut={onMouseOut}
+                  onMouseUp={onMouseUp} />
               </Highlight>
             ) : (
               <span>{`${isHighlightText ? "" : " "}${token} `}</span>
@@ -162,16 +175,26 @@ class CorefOutput extends React.Component {
         selectedCluster: -1,
         activeIds: [],
         selectedId: null,
+        isClicking: false
       };
 
-      this.handleHighlightClick = this.handleHighlightClick.bind(this);
+      this.handleHighlightMouseDown = this.handleHighlightMouseDown.bind(this);
       this.handleHighlightMouseOver = this.handleHighlightMouseOver.bind(this);
       this.handleHighlightMouseOut = this.handleHighlightMouseOut.bind(this);
+      this.handleHighlightMouseUp = this.handleHighlightMouseUp.bind(this);
     }
 
-    handleHighlightClick(id) {
+    handleHighlightMouseDown(id) {
       this.setState({
         selectedId: id,
+        activeIds: [id],
+        isClicking: true
+      });
+    }
+
+    handleHighlightMouseUp(id) {
+      this.setState({
+        isClicking: false
       });
     }
 
@@ -249,9 +272,11 @@ class CorefOutput extends React.Component {
                 data={spanTree}
                 activeIds={this.state.activeIds}
                 isHighlightText={false}
-                onClick={this.handleHighlightClick}
+                isClicking={this.state.isClicking}
+                onMouseDown={this.handleHighlightMouseDown}
                 onMouseOver={this.handleHighlightMouseOver}
-                onMouseOut={this.handleHighlightMouseOut} />
+                onMouseOut={this.handleHighlightMouseOut}
+                onMouseUp={this.handleHighlightMouseUp} />
             </div>
           </div>
         </div>
