@@ -20,6 +20,7 @@ export default class Highlight extends React.Component {
       onMouseOver,    // function
       onMouseOut,     // function
       onMouseUp,      // function
+      selectedId,     // string | number
       tooltip         // string
     } = this.props;
 
@@ -28,6 +29,7 @@ export default class Highlight extends React.Component {
         className={`highlight
           ${labelPosition ? labelPosition : "bottom"}
           ${color ? color : ""}
+          ${selectedId === id ? "selected" : ""}
           ${isClicking && activeIds && activeIds.includes(id) ? "clicking" : ""}
           ${isClickable ? "clickable" : ""}
           ${typeof(children) === "string" && children.length < 8 ? "short-text" : ""}

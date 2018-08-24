@@ -154,7 +154,7 @@ class CorefOutput extends React.Component {
     }
 
     render() {
-      const { activeIds, isClicking } = this.state;
+      const { activeIds, isClicking, selectedId } = this.state;
       const { tokens, clusters } = this.props;
 
       // Span tree data transform code courtesy of Michael S.
@@ -212,7 +212,7 @@ class CorefOutput extends React.Component {
       const getColor = (index) => colors[index <= colors.length ? index : "gray"];
 
       // This is the function that calls itself when we recurse over the span tree.
-      const spanWrapper = (data, isHighlightText) => {
+      const spanWrapper = (data) => {
         return data.map((token, idx) =>
           typeof(token) === "object" ? (
             <Highlight
@@ -227,9 +227,10 @@ class CorefOutput extends React.Component {
               onMouseDown={this.handleHighlightMouseDown}
               onMouseOver={this.handleHighlightMouseOver}
               onMouseOut={this.handleHighlightMouseOut}
-              onMouseUp={this.handleHighlightMouseUp}>
+              onMouseUp={this.handleHighlightMouseUp}
+              selectedId={selectedId}>
               {/* Call Self */}
-              {spanWrapper(token.contents, true)}
+              {spanWrapper(token.contents)}
             </Highlight>
           ) : (
             <span key={idx}>{token} </span>
@@ -241,7 +242,7 @@ class CorefOutput extends React.Component {
         <div className="model__content">
           <div className="form__field">
             <div className="passage model__content__summary highlight-container">
-              {spanWrapper(spanTree, false)}
+              {spanWrapper(spanTree)}
             </div>
           </div>
         </div>

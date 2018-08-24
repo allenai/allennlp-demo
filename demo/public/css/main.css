@@ -1790,6 +1790,10 @@ Highlight Component Styles
   cursor: pointer;
 }
 
+.highlight.clickable.clickable.selected {
+  cursor: default;
+}
+
 .highlight.clickable.clicking {
   opacity: 0.5;
   transition-duration: 0s;
