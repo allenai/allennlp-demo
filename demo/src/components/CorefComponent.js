@@ -170,6 +170,7 @@ class CorefOutput extends React.Component {
     this.state = {
       selectedCluster: -1,
       activeIds: [],
+      activeDepths: {ids:[],depths:[]},
       selectedId: null,
       isClicking: false
     };
@@ -180,18 +181,29 @@ class CorefOutput extends React.Component {
     this.handleHighlightMouseUp = this.handleHighlightMouseUp.bind(this);
   }
 
-  handleHighlightMouseDown(id) {
+  handleHighlightMouseDown(id, depth) {
+    let depthTable = this.state.activeDepths;
+    depthTable.ids.push(id);
+    depthTable.depths.push(depth);
+
     this.setState({
-      selectedId: id,
+      selectedId: null,
       activeIds: [id],
+      activeDepths: depthTable,
       isClicking: true
     });
   }
 
-  handleHighlightMouseUp(id) {
-    this.setState({
-      isClicking: false
-    });
+  handleHighlightMouseUp(id, prevState) {
+    const depthTable = this.state.activeDepths;
+    const deepestIndex = depthTable.depths.indexOf(Math.max(...depthTable.depths));
+
+    this.setState(prevState => ({
+      selectedId: depthTable.ids[deepestIndex],
+      isClicking: false,
+      activeDepths: {ids:[],depths:[]},
+      activeIds: [...prevState.activeIds, id],
+    }));
   }
 
   handleHighlightMouseOver(id, prevState) {
@@ -215,25 +227,26 @@ class CorefOutput extends React.Component {
     const getColor = (index) => colors[index <= colors.length ? index : "gray"];
 
     // This is the function that calls itself when we recurse over the span tree.
-    const spanWrapper = (data) => {
+    const spanWrapper = (data, depth) => {
       return data.map((token, idx) =>
         typeof(token) === "object" ? (
           <Highlight
             key={idx}
             activeIds={activeIds}
+            color={getColor(token.cluster)}
+            depth={depth}
             id={token.cluster}
             isClickable={true}
             isClicking={isClicking}
             label={token.cluster}
             labelPosition="left"
-            color={getColor(token.cluster)}
             onMouseDown={this.handleHighlightMouseDown}
             onMouseOver={this.handleHighlightMouseOver}
             onMouseOut={this.handleHighlightMouseOut}
             onMouseUp={this.handleHighlightMouseUp}
             selectedId={selectedId}>
             {/* Call Self */}
-            {spanWrapper(token.contents)}
+            {spanWrapper(token.contents, depth + 1)}
           </Highlight>
         ) : (
           <span key={idx}>{token} </span>
@@ -245,7 +258,7 @@ class CorefOutput extends React.Component {
       <div className="model__content">
         <div className="form__field">
           <div className="passage model__content__summary highlight-container">
-            {spanWrapper(spanTree)}
+            {spanWrapper(spanTree, 0)}
           </div>
         </div>
       </div>

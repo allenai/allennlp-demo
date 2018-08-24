@@ -10,6 +10,7 @@ export default class Highlight extends React.Component {
       activeIds,      // string[] | number[]
       children,       // object | string
       color,          // string
+      depth,          // number
       id,             // string | number
       isClickable,    // boolean
       isClicking,     // boolean
@@ -37,8 +38,9 @@ export default class Highlight extends React.Component {
         }
         data-label={label}
         data-id={id}
+        data-depth={depth}
         onClick={onClick ? () => { onClick(id) } : null}
-        onMouseDown={onMouseDown ? () => { onMouseDown(id) } : null}
+        onMouseDown={onMouseDown ? () => { onMouseDown(id, depth) } : null}
         onMouseOver={onMouseOver ? () => { onMouseOver(id) } : null}
         onMouseOut={onMouseOut ? () => { onMouseOut(id) } : null}
         onMouseUp={onMouseUp ? () => { onMouseUp(id) } : null}>
