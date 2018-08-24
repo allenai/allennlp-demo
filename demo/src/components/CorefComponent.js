@@ -211,28 +211,29 @@ class CorefOutput extends React.Component {
       const colors = ["blue", "green", "pink", "orange", "purple", "teal"];
       const getColor = (index) => colors[index <= colors.length ? index : "gray"];
 
+      // This is the function that calls itself when we recurse over the span tree.
       const spanWrapper = (data, isHighlightText) => {
         return data.map((token, idx) =>
-          <span key={idx}>
-            {typeof(token) === "object" ? (
-              <Highlight
-                activeIds={activeIds}
-                id={token.cluster}
-                isClickable={true}
-                isClicking={isClicking}
-                label={token.cluster}
-                labelPosition="left"
-                color={getColor(token.cluster)}
-                onMouseDown={this.handleHighlightMouseDown}
-                onMouseOver={this.handleHighlightMouseOver}
-                onMouseOut={this.handleHighlightMouseOut}
-                onMouseUp={this.handleHighlightMouseUp}>
-                {spanWrapper(token.contents, true)}
-              </Highlight>
-            ) : (
-              <span>{`${isHighlightText ? "" : " "}${token} `}</span>
-            )}
-          </span>
+          typeof(token) === "object" ? (
+            <Highlight
+              key={idx}
+              activeIds={activeIds}
+              id={token.cluster}
+              isClickable={true}
+              isClicking={isClicking}
+              label={token.cluster}
+              labelPosition="left"
+              color={getColor(token.cluster)}
+              onMouseDown={this.handleHighlightMouseDown}
+              onMouseOver={this.handleHighlightMouseOver}
+              onMouseOut={this.handleHighlightMouseOut}
+              onMouseUp={this.handleHighlightMouseUp}>
+              {/* Call Self */}
+              {spanWrapper(token.contents, true)}
+            </Highlight>
+          ) : (
+            <span key={idx}>{token} </span>
+          )
         );
       }
 

@@ -1711,6 +1711,10 @@ Highlight Component Styles
   margin-bottom: 3px;
 }
 
+.highlight + span:not(.highlight):before {
+  content: " ";
+}
+
 .highlight.bottom {
   padding: 0px 5px 16px 5px;
 }
