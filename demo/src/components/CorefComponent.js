@@ -108,6 +108,75 @@ class CorefInput extends React.Component {
 }
 
 /*******************************************************************************
+  <SpanWrapper /> Component
+*******************************************************************************/
+
+class SpanWrapper extends React.Component {
+  render() {
+    const { data } = this.props;
+
+    // const foo = JSON.stringify(data, null, 2).replace(/\"([^(\")"]+)\":/g,"$1:")
+    //
+    // return (
+    //   <span>{foo}</span>
+    // );
+    // return data.map((i) => <span key={i}>test</span>);
+
+    // return (
+    //   <span>
+    //   {data.map((token, idx) =>
+    //     <span key={idx}>{typeof(token) === "object" ? (
+    //       <strong> REF_CLUSTER_{token.cluster} </strong>
+    //     ) : (<span> {token} </span>)}</span>
+    //   )}
+    //   </span>
+    // );
+
+    return (
+      <span>
+      {data.map((token, idx) =>
+        <span key={idx}>{typeof(token) === "object" ? (
+          <Highlight label={token.cluster} labelPosition="left"><SpanWrapper data={token.contents} /></Highlight>
+        ) : (<span> {token} </span>)}</span>
+      )}
+      </span>
+    );
+
+    // return children.map((childNode) => {
+    //   // Shorthand consts for span data
+    //   const hasSpan = childNode.hasOwnProperty("alternateParseInfo") && childNode.alternateParseInfo.hasOwnProperty("charNodeRoot");
+    //   const spanField = hasSpan ? childNode.alternateParseInfo.charNodeRoot : null;
+    //   const spanLo = fragments && hasSpan ? spanField.charLo : 0;
+    //   const spanHi = fragments && hasSpan ? spanField.charHi : textHi;
+    //
+    //   // If the child node span fits inside the bounds of the child fragment that triggered this recursion:
+    //   if (spanLo >= lo && spanHi <= hi) {
+    //     return (
+    //       <PassageSpan
+    //         key={childNode.id}
+    //         selectedNodeId={selectedNodeId}
+    //         hoverNodeId={hoverNodeId}
+    //         hoverNode={hoverNode}
+    //         focusNode={focusNode}
+    //         parentId={data.id}
+    //         data={childNode}
+    //         text={text}
+    //         depth={depth + 1} />
+    //     );
+    //   }
+    // });
+
+    // if (entity !== null) { // If token has entity value:
+    //   // Display entity text wrapped in a <Highlight /> component.
+    //   return (<Highlight label={entity} color={entityLookup[entity].color} tooltip={entityLookup[entity].tooltip}>{token.text}</Highlight>);
+    // } else { // If no entity:
+    //   // Display raw text.
+    //   return (<span> {token.text} </span>);
+    // }
+  }
+}
+
+/*******************************************************************************
   <CorefOutput /> Component
 *******************************************************************************/
 
@@ -221,9 +290,9 @@ class CorefOutput extends React.Component {
         }
       });
 
-      const output = insideClusters[0].contents;
+      const spanTree = insideClusters[0].contents;
 
-      const outputTree = JSON.stringify(output, null, 2).replace(/\"([^(\")"]+)\":/g,"$1:"); // eslint-disable-line no-useless-escape
+      const spanTreeLog = JSON.stringify(spanTree, null, 2).replace(/\"([^(\")"]+)\":/g,"$1:"); // eslint-disable-line no-useless-escape
 
       return (
         <div className="model__content">
@@ -252,7 +321,13 @@ class CorefOutput extends React.Component {
           </div>
 
           <div className="form__field">
-            <pre><code>{outputTree}</code></pre>
+            <div className="passage model__content__summary highlight-container">
+              <SpanWrapper data={spanTree} />
+            </div>
+          </div>
+
+          <div className="form__field">
+            <pre><code>{spanTreeLog}</code></pre>
           </div>
 
           <div className="form__field">
