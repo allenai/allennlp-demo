@@ -107,72 +107,59 @@ class CorefInput extends React.Component {
     }
 }
 
+
+
+// <Highlight
+//   activeIds={this.state.activeIds}
+//   clickable={true}
+//   color="orange"
+//   id="4"
+//   label="4"
+//   labelPosition="left"
+//   onClick={this.handleHighlightClick}
+//   onMouseOver={this.handleHighlightMouseOver}
+//   onMouseOut={this.handleHighlightMouseOut}>their</Highlight>
+
+
+
+
+
 /*******************************************************************************
   <SpanWrapper /> Component
 *******************************************************************************/
 
+// This is the component that calls itself when we recurse over the span tree.
 class SpanWrapper extends React.Component {
   render() {
-    const { data } = this.props;
+    const { data, activeIds, onClick, onMouseOver, onMouseOut } = this.props;
 
-    // const foo = JSON.stringify(data, null, 2).replace(/\"([^(\")"]+)\":/g,"$1:")
-    //
-    // return (
-    //   <span>{foo}</span>
-    // );
-    // return data.map((i) => <span key={i}>test</span>);
-
-    // return (
-    //   <span>
-    //   {data.map((token, idx) =>
-    //     <span key={idx}>{typeof(token) === "object" ? (
-    //       <strong> REF_CLUSTER_{token.cluster} </strong>
-    //     ) : (<span> {token} </span>)}</span>
-    //   )}
-    //   </span>
-    // );
+    const colors = ["blue", "green", "pink", "orange", "purple", "teal"];
+    const getColor = (index) => colors[index <= colors.length ? index : "gray"];
 
     return (
       <span>
-      {data.map((token, idx) =>
-        <span key={idx}>{typeof(token) === "object" ? (
-          <Highlight label={token.cluster} labelPosition="left"><SpanWrapper data={token.contents} /></Highlight>
-        ) : (<span> {token} </span>)}</span>
-      )}
+        {data.map((token, idx) =>
+          <span key={idx}>
+            {typeof(token) === "object" ? (
+              <Highlight
+                activeIds={activeIds}
+                clickable={true}
+                id={token.cluster}
+                label={token.cluster}
+                labelPosition="left"
+                color={getColor(token.cluster)}
+                onClick={onClick}
+                onMouseOver={onMouseOver}
+                onMouseOut={onMouseOut}>
+                <SpanWrapper data={token.contents} />
+              </Highlight>
+            ) : (
+              <span> {token} </span>
+            )}
+          </span>
+        )}
       </span>
     );
-
-    // return children.map((childNode) => {
-    //   // Shorthand consts for span data
-    //   const hasSpan = childNode.hasOwnProperty("alternateParseInfo") && childNode.alternateParseInfo.hasOwnProperty("charNodeRoot");
-    //   const spanField = hasSpan ? childNode.alternateParseInfo.charNodeRoot : null;
-    //   const spanLo = fragments && hasSpan ? spanField.charLo : 0;
-    //   const spanHi = fragments && hasSpan ? spanField.charHi : textHi;
-    //
-    //   // If the child node span fits inside the bounds of the child fragment that triggered this recursion:
-    //   if (spanLo >= lo && spanHi <= hi) {
-    //     return (
-    //       <PassageSpan
-    //         key={childNode.id}
-    //         selectedNodeId={selectedNodeId}
-    //         hoverNodeId={hoverNodeId}
-    //         hoverNode={hoverNode}
-    //         focusNode={focusNode}
-    //         parentId={data.id}
-    //         data={childNode}
-    //         text={text}
-    //         depth={depth + 1} />
-    //     );
-    //   }
-    // });
-
-    // if (entity !== null) { // If token has entity value:
-    //   // Display entity text wrapped in a <Highlight /> component.
-    //   return (<Highlight label={entity} color={entityLookup[entity].color} tooltip={entityLookup[entity].tooltip}>{token.text}</Highlight>);
-    // } else { // If no entity:
-    //   // Display raw text.
-    //   return (<span> {token.text} </span>);
-    // }
   }
 }
 
@@ -292,10 +279,23 @@ class CorefOutput extends React.Component {
 
       const spanTree = insideClusters[0].contents;
 
+      // For dev output
       const spanTreeLog = JSON.stringify(spanTree, null, 2).replace(/\"([^(\")"]+)\":/g,"$1:"); // eslint-disable-line no-useless-escape
 
       return (
         <div className="model__content">
+
+          <div className="form__field">
+            <div className="passage model__content__summary highlight-container">
+              <SpanWrapper
+                data={spanTree}
+                activeIds={this.state.activeIds}
+                onClick={this.handleHighlightClick}
+                onMouseOver={this.handleHighlightMouseOver}
+                onMouseOut={this.handleHighlightMouseOut} />
+            </div>
+          </div>
+
           <div className="form__field">
             <label>Clusters</label>
             <div className="model__content__summary">
@@ -321,210 +321,7 @@ class CorefOutput extends React.Component {
           </div>
 
           <div className="form__field">
-            <div className="passage model__content__summary highlight-container">
-              <SpanWrapper data={spanTree} />
-            </div>
-          </div>
-
-          <div className="form__field">
             <pre><code>{spanTreeLog}</code></pre>
-          </div>
-
-          <div className="form__field">
-            <div className="passage model__content__summary highlight-container">
-              {/* TODO: replace the following simulated output with dynamic content. */}
-              {/* BEGIN simulated output. */}
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="blue"
-                  id="1"
-                  label="1"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>Paul Allen</Highlight>
-                <span> was </span>
-                <span> born </span>
-                <span> on </span>
-                <span> January </span>
-                <span> 21 </span>
-                <span> , </span>
-                <span> 1953 </span>
-                <span> , </span>
-                <span> in </span>
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="green"
-                  id="2"
-                  label="2"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>Seattle</Highlight>
-                <span> , </span>
-                <span> Washington </span>
-                <span> , </span>
-                <span> to </span>
-                <span> Kenneth </span>
-                <span> Sam </span>
-                <span> Allen </span>
-                <span> and </span>
-                <span> Edna </span>
-                <span> Faye </span>
-                <span> Allen </span>
-                <span> . </span>
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="blue"
-                  id="1"
-                  label="1"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>Allen</Highlight>
-                <span> attended </span>
-                <span> Lakeside </span>
-                <span> School </span>
-                <span> , </span>
-                <span> a </span>
-                <span> private </span>
-                <span> school </span>
-                <span> in </span>
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="green"
-                  id="2"
-                  label="2"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>Seattle</Highlight>
-                <span> , </span>
-                <span> where </span>
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="blue"
-                  id="1"
-                  label="1"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>he</Highlight>
-                <span> befriended </span>
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="pink"
-                  id="3"
-                  label="3"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>Bill Gates</Highlight>
-                <span> , </span>
-                <span> two </span>
-                <span> years </span>
-                <span> younger </span>
-                <span> , </span>
-                <span> with </span>
-                <span> whom </span>
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="blue"
-                  id="1"
-                  label="1"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>he</Highlight>
-                <span> shared </span>
-                <span> an </span>
-                <span> enthusiasm </span>
-                <span> for </span>
-                <span> computers </span>
-                <span> . </span>
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="orange"
-                  id="4"
-                  label="4"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>
-                  <Highlight
-                    activeIds={this.state.activeIds}
-                    clickable={true}
-                    color="blue"
-                    id="1"
-                    label="1"
-                    labelPosition="left"
-                    onClick={this.handleHighlightClick}
-                    onMouseOver={this.handleHighlightMouseOver}
-                    onMouseOut={this.handleHighlightMouseOut}>Paul</Highlight>
-                  <span> and </span>
-                  <Highlight
-                    activeIds={this.state.activeIds}
-                    clickable={true}
-                    color="pink"
-                    id="3"
-                    label="3"
-                    labelPosition="left"
-                    onClick={this.handleHighlightClick}
-                    onMouseOver={this.handleHighlightMouseOver}
-                    onMouseOut={this.handleHighlightMouseOut}>Bill</Highlight>
-                </Highlight>
-                <span> used </span>
-                <span> a </span>
-                <span> teletype </span>
-                <span> terminal </span>
-                <span> at </span>
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="orange"
-                  id="4"
-                  label="4"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>their</Highlight>
-                <span> high </span>
-                <span> school </span>
-                <span> , </span>
-                <span> Lakeside </span>
-                <span> , </span>
-                <span> to </span>
-                <span> develop </span>
-                <Highlight
-                  activeIds={this.state.activeIds}
-                  clickable={true}
-                  color="orange"
-                  id="4"
-                  label="4"
-                  labelPosition="left"
-                  onClick={this.handleHighlightClick}
-                  onMouseOver={this.handleHighlightMouseOver}
-                  onMouseOut={this.handleHighlightMouseOut}>their</Highlight>
-                <span> programming </span>
-                <span> skills </span>
-                <span> on </span>
-                <span> several </span>
-                <span> time </span>
-                <span> - </span>
-                <span> sharing </span>
-                <span> computer </span>
-                <span> systems </span>
-                <span> . </span>
-              {/* END simulated output. */}
-            </div>
           </div>
         </div>
       );
@@ -592,28 +389,31 @@ class _CorefComponent extends React.Component {
       const { requestData, responseData } = this.props;
 
       const inputDoc = requestData && requestData.document;
-      const outputDoc = responseData && responseData.document;
+      const tokens = responseData && responseData.document;
       const clusters = responseData && responseData.clusters;
-
-      // if (responseData !== null) {
-      //   console.log("inputDoc:");
-      //   console.log(inputDoc);
-      //   console.log("---------------------");
-      //   console.log("outputDoc:");
-      //   console.log(outputDoc);
-      //   console.log("---------------------");
-      //   console.log("clusters:");
-      //   console.log(JSON.stringify(clusters));
-      //   console.log("---------------------");
-      // }
 
       return (
         <div className="pane model">
           <PaneLeft>
+
+            <div className="model__content">
+              <div className="form__field">
+                <div className="passage model__content__summary highlight-container">
+                  <Highlight color="blue" label="x" labelPosition="left">blue</Highlight>
+                  <Highlight color="green" label="x" labelPosition="left">green</Highlight>
+                  <Highlight color="pink" label="x" labelPosition="left">pink</Highlight>
+                  <Highlight color="orange" label="x" labelPosition="left">orange</Highlight>
+                  <Highlight color="purple" label="x" labelPosition="left">purple</Highlight>
+                  <Highlight color="teal" label="x" labelPosition="left">teal</Highlight>
+                  <Highlight color="gray" label="x" labelPosition="left">gray</Highlight>
+                </div>
+              </div>
+            </div>
+
             <CorefInput runCorefModel={this.runCorefModel} outputState={this.state.outputState} doc={inputDoc}/>
           </PaneLeft>
           <PaneRight outputState={this.state.outputState}>
-            <CorefOutput tokens={outputDoc} clusters={clusters}/>
+            <CorefOutput tokens={tokens} clusters={clusters}/>
           </PaneRight>
         </div>
       );

@@ -1686,7 +1686,8 @@ Highlight Component Styles
 
 .highlight {
   border: 2px solid rgba(160,170,182,1);
-  background: rgba(160,170,182,0.05);
+  color: #232323;
+  background: #f1f4f6;
   margin: 0 2px -5px 2px;
   padding: 0px 5px;
   box-shadow: 2px 4px 20px rgba(0,0,0,0.1);
@@ -1699,6 +1700,15 @@ Highlight Component Styles
               color .2s ease,
               box-shadow .2s ease,
               opacity .2s ease;
+}
+
+.highlight span {
+  transition: color .2s ease;
+}
+
+.highlight .highlight {
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 
 .highlight.bottom {
@@ -1730,7 +1740,15 @@ Highlight Component Styles
 
 .highlight.active {
   background: rgba(160,170,182,1);
+}
+
+.highlight.active,
+.highlight.active span {
   color: #fff;
+}
+
+.highlight.active .highlight:not(.active) span {
+  color: #232323;
 }
 
 .highlight.left:before,
@@ -1779,7 +1797,7 @@ Highlight Component Styles
 /* NER Organization */
 .highlight.blue {
   border-color: rgba(71,176,250,1);
-  background: rgba(71,176,250,0.05);
+  background: #edf4fa;
 }
 
 .highlight.blue:before,
@@ -1797,7 +1815,7 @@ Highlight Component Styles
 /* NER Location */
 .highlight.green {
   border-color: rgba(148,166,85,1);
-  background: rgba(148,166,85,0.05);
+  background: #f1f3f2;
 }
 
 .highlight.green:before,
@@ -1815,7 +1833,7 @@ Highlight Component Styles
 /* NER Location */
 .highlight.pink {
   border-color: rgba(208,99,135,1);
-  background: rgba(208,99,135,0.05);
+  background: #f4f0f4;
 }
 
 .highlight.pink:before,
@@ -1833,7 +1851,7 @@ Highlight Component Styles
 /* NER Location */
 .highlight.purple {
   border-color: rgba(155,91,188,1);
-  background: rgba(155,91,188,0.05);
+  background: #f1f0f6;
 }
 
 .highlight.purple:before,
@@ -1851,7 +1869,7 @@ Highlight Component Styles
 /* NER Location */
 .highlight.orange {
   border-color: rgba(222,159,50,1);
-  background: rgba(222,159,50,0.05);
+  background: #f4f3f0;
 }
 
 .highlight.orange:before,
@@ -1869,7 +1887,7 @@ Highlight Component Styles
 /* NER Location */
 .highlight.teal {
   border-color: rgba(87,177,174,1);
-  background: rgba(87,177,174,0.05);
+  background: #eef4f6;
 }
 
 .highlight.teal:before,
