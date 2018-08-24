@@ -173,43 +173,60 @@ class CorefOutput extends React.Component {
         }
       }
 
-      if (annotatedTokens !== null) {
-        console.log("annotatedTokens:");
-        console.log(JSON.stringify(annotatedTokens));
-        console.log("---------------------");
+      function contains(span, index) {
+        return index >= span[0] && index <= span[1];
       }
+
+      let insideClusters = [
+        {
+          cluster: -1,
+          contents: [],
+          end: -1
+        }
+      ];
+
+      tokens.forEach((token, i) => {
+        // Find all the new clusters we are entering at the current index
+        let newClusters = [];
+        clusters.forEach((cluster, j) => {
+          // Make sure we're not already in this cluster
+          if (!insideClusters.map((c) => c.cluster).includes(j)) {
+            cluster.forEach((span) => {
+              if (contains(span, i)) {
+                  newClusters.push({ end: span[1], cluster: j });
+              }
+            });
+          }
+        });
+
+        // Enter each new cluster, starting with the leftmost
+        newClusters.sort(function(a, b) { return b.end - a.end }).forEach((newCluster) => {
+          // Descend into the new cluster
+          insideClusters.push(
+            {
+              cluster: newCluster.cluster,
+              contents: [],
+              end: newCluster.end
+            }
+          );
+        });
+
+        // Add the current token into the current cluster
+        insideClusters[insideClusters.length-1].contents.push(token);
+
+        // Exit each cluster we're at the end of
+        while (insideClusters.length > 0 && insideClusters[insideClusters.length-1].end === i) {
+          const topCluster = insideClusters.pop();
+          insideClusters[insideClusters.length-1].contents.push(topCluster);
+        }
+      });
+
+      const output = insideClusters[0].contents;
+
+      const outputTree = JSON.stringify(output, null, 2).replace(/\"([^(\")"]+)\":/g,"$1:"); // eslint-disable-line no-useless-escape
 
       return (
         <div className="model__content">
-
-          <div className="form__field">
-            <div className="passage model__content__summary highlight-container">
-              <Highlight label="0" color="blue" labelPosition="left">
-                <span>Björk </span>
-                <span>and </span>
-                <Highlight label="1" color="green" labelPosition="left">
-                  <span>Thom </span>
-                  <span>Yorke</span>
-                </Highlight>
-              </Highlight>
-              <span> are </span>
-              <span> musicians </span>
-              <span> . </span>
-              <Highlight label="0" color="blue" labelPosition="left">They</Highlight>
-              <span> have </span>
-              <span> fans </span>
-              <span> . </span>
-              <Highlight label="1" color="green" labelPosition="left">
-                <span>Thom </span>
-                <span>Yorke</span>
-              </Highlight>
-              <span> is </span>
-              <span> English </span>
-              <span> . </span>
-
-            </div>
-          </div>
-
           <div className="form__field">
             <label>Clusters</label>
             <div className="model__content__summary">
@@ -232,6 +249,10 @@ class CorefOutput extends React.Component {
               <span key={ index } className={ wordStyle(annotatedToken) }> {annotatedToken['word']}</span>
             )}
             </div>
+          </div>
+
+          <div className="form__field">
+            <pre><code>{outputTree}</code></pre>
           </div>
 
           <div className="form__field">
@@ -499,17 +520,17 @@ class _CorefComponent extends React.Component {
       const outputDoc = responseData && responseData.document;
       const clusters = responseData && responseData.clusters;
 
-      if (responseData !== null) {
-        console.log("inputDoc:");
-        console.log(inputDoc);
-        console.log("---------------------");
-        console.log("outputDoc:");
-        console.log(outputDoc);
-        console.log("---------------------");
-        console.log("clusters:");
-        console.log(JSON.stringify(clusters));
-        console.log("---------------------");
-      }
+      // if (responseData !== null) {
+      //   console.log("inputDoc:");
+      //   console.log(inputDoc);
+      //   console.log("---------------------");
+      //   console.log("outputDoc:");
+      //   console.log(outputDoc);
+      //   console.log("---------------------");
+      //   console.log("clusters:");
+      //   console.log(JSON.stringify(clusters));
+      //   console.log("---------------------");
+      // }
 
       return (
         <div className="pane model">
