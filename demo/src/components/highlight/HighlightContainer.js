@@ -3,6 +3,9 @@ import './Highlight.css';
 
 /*******************************************************************************
   <HighlightContainer /> Component
+
+  This is a Wrapper for <Highlight /> that sets
+  container CSS classes that get inherited.
 *******************************************************************************/
 
 export default class HighlightContainer extends React.Component {
