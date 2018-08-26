@@ -1,9 +1,9 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import {PaneLeft, PaneRight} from './Pane';
+import { PaneLeft, PaneRight } from './Pane';
 import Button from './Button';
-import Highlight from './Highlight';
+import { Highlight, getHighlightColor } from './Highlight';
 import ModelIntro from './ModelIntro';
 
 const corefExamples = [
@@ -223,8 +223,6 @@ class CorefOutput extends React.Component {
     const { tokens, clusters } = this.props;
 
     const spanTree = transformToTree(tokens, clusters);
-    const colors = ["blue", "green", "pink", "orange", "purple", "teal"];
-    const getColor = (index) => colors[index <= colors.length ? index : "gray"];
 
     // This is the function that calls itself when we recurse over the span tree.
     const spanWrapper = (data, depth) => {
@@ -234,7 +232,7 @@ class CorefOutput extends React.Component {
             key={idx}
             activeDepths={activeDepths}
             activeIds={activeIds}
-            color={getColor(token.cluster)}
+            color={getHighlightColor(token.cluster)}
             depth={depth}
             id={token.cluster}
             isClickable={true}

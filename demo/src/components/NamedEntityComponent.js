@@ -3,7 +3,7 @@ import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
 import { PaneLeft, PaneRight } from './Pane';
 import Button from './Button';
-import Highlight from './Highlight';
+import { Highlight } from './Highlight';
 import ModelIntro from './ModelIntro';
 
 // LOC, PER, ORG, MISC

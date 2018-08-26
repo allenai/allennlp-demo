@@ -4,13 +4,37 @@ import React from 'react';
   <Highlight /> Component
 *******************************************************************************/
 
-export default class Highlight extends React.Component {
+export const highlightColors = [
+  "blue",
+  "green",
+  "pink",
+  "orange",
+  "purple",
+  "teal",
+  "tan",
+  "red",
+  "cobalt",
+  "brown",
+  "slate",
+  "fuchsia",
+  "gray"
+];
+// Matches an index with a color. If index is greater than number of colors, cycle through colors.
+export const getHighlightColor = (index) => {
+  if (index <= highlightColors.length) {
+    return highlightColors[index];
+  } else {
+    return highlightColors[index - (highlightColors.length * Math.floor(index / highlightColors.length))];
+  }
+}
+
+export class Highlight extends React.Component {
   render() {
     const {
       activeDepths,   // object
       activeIds,      // string[] | number[]
       children,       // object | string
-      color,          // string
+      color,          // string (see highlightColors above for supported values)
       depth,          // number
       id,             // string | number
       isClickable,    // boolean
@@ -29,7 +53,7 @@ export default class Highlight extends React.Component {
     const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
     const conditionalClasses = `highlight
       ${labelPosition ? labelPosition : "bottom"}
-      ${color ? color : ""}
+      ${color ? color : "blue"}
       ${isClickable ? "clickable" : ""}
       ${selectedId && selectedId === id ? "selected" : ""}
       ${isClicking && activeDepths.ids[deepestIndex] === id ? "clicking active" : ""}

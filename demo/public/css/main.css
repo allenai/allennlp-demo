@@ -1685,9 +1685,8 @@ Highlight Component Styles
 }
 
 .highlight {
-  border: 2px solid rgba(160,170,182,1);
+  border: 2px solid;
   color: #232323;
-  background: #f1f4f6;
   margin: 0 2px -5px 2px;
   padding: 0px 5px;
   box-shadow: 2px 4px 20px rgba(0,0,0,0.1);
@@ -1727,7 +1726,6 @@ Highlight Component Styles
   display: block;
   position: absolute;
   height: 15px;
-  background: rgba(160,170,182,1);
   content: attr(data-label);
   text-align: center;
   width: 100%;
@@ -1740,10 +1738,6 @@ Highlight Component Styles
   letter-spacing: 0.1em;
   font-weight: bold;
   -webkit-font-smoothing: subpixel-antialiased;
-}
-
-.highlight.active {
-  background: rgba(160,170,182,1);
 }
 
 .highlight.active,
@@ -1761,8 +1755,6 @@ Highlight Component Styles
   height: 100%;
   padding: 0 8px;
   vertical-align: top;
-  margin: 0 5px 0 -5px;
-  background: rgba(160,170,182,1);
   content: attr(data-label);
   font-size: 11px;
   line-height: 24px;
@@ -1774,7 +1766,7 @@ Highlight Component Styles
 }
 
 .highlight.left:before {
-
+  margin: 0 5px 0 -5px;
 }
 
 .highlight.right:after {
@@ -1795,7 +1787,7 @@ Highlight Component Styles
 }
 
 .highlight.clickable.clicking {
-  opacity: 0.5;
+  opacity: 0.66;
   transition-duration: 0s;
 }
 
@@ -1808,110 +1800,301 @@ Highlight Component Styles
 
 /********************************************/
 
-/* BLUE */
-/* NER Organization */
+/* Gray (Default) */
+
+.highlight.gray {
+  border-color: #a0aab5;
+  background: #f2f4f6;
+}
+
+.highlight.gray:before,
+.highlight.gray:after {
+  background-color: #a0aab5;
+}
+
+.highlight.gray.active {
+  background: #a0aab5;
+}
+
+.highlight.gray.active:before,
+.highlight.gray.active:after {
+  background-color: #aab3bd;
+}
+
+/********************************************/
+
+/* Blue */
+
 .highlight.blue {
-  border-color: rgba(71,176,250,1);
+  border-color: #4db1f7;
   background: #edf4fa;
 }
 
 .highlight.blue:before,
 .highlight.blue:after {
-  background-color: rgba(71,176,250,1);
+  background-color: #4db1f7;
 }
 
 .highlight.blue.active {
-  background: rgba(71,176,250,1);
+  background: #4db1f7;
+}
+
+.highlight.blue.active:before,
+.highlight.blue.active:after {
+  background-color: #5fb9f8;
 }
 
 /********************************************/
 
-/* GREEN */
-/* NER Location */
+/* Green */
+
 .highlight.green {
-  border-color: rgba(148,166,85,1);
-  background: #f1f3f2;
+  border-color: #90ac4e;
+  background: #f1f4f1;
 }
 
 .highlight.green:before,
 .highlight.green:after {
-  background-color: rgba(148,166,85,1);
+  background-color: #90ac4e;
 }
 
 .highlight.green.active {
-  background: rgba(148,166,85,1);
+  background: #90ac4e;
+}
+
+.highlight.green.active:before,
+.highlight.green.active:after {
+  background-color: #9bb460;
 }
 
 /********************************************/
 
-/* PINK */
-/* NER Location */
+/* Pink */
+
 .highlight.pink {
-  border-color: rgba(208,99,135,1);
-  background: #f4f0f4;
+  border-color: #ce6587;
+  background: #f4f1f4;
 }
 
 .highlight.pink:before,
 .highlight.pink:after {
-  background-color: rgba(208,99,135,1);
+  background-color: #ce6587;
 }
 
 .highlight.pink.active {
-  background: rgba(208,99,135,1);
+  background: #ce6587;
+}
+
+.highlight.pink.active:before,
+.highlight.pink.active:after {
+  background-color: #d37593;
 }
 
 /********************************************/
 
-/* PURPLE */
-/* NER Location */
-.highlight.purple {
-  border-color: rgba(155,91,188,1);
-  background: #f1f0f6;
-}
+/* Orange */
 
-.highlight.purple:before,
-.highlight.purple:after {
-  background-color: rgba(155,91,188,1);
-}
-
-.highlight.purple.active {
-  background: rgba(155,91,188,1);
-}
-
-/********************************************/
-
-/* ORANGE */
-/* NER Location */
 .highlight.orange {
-  border-color: rgba(222,159,50,1);
-  background: #f4f3f0;
+  border-color: #dd9e3e;
+  background: #f2f4f4;
 }
 
 .highlight.orange:before,
 .highlight.orange:after {
-  background-color: rgba(222,159,50,1);
+  background-color: #dd9e3e;
 }
 
 .highlight.orange.active {
-  background: rgba(222,159,50,1);
+  background: #dd9e3e;
+}
+
+.highlight.orange.active:before,
+.highlight.orange.active:after {
+  background-color: #e0a852;
 }
 
 /********************************************/
 
-/* TEAL */
-/* NER Location */
+/* Purple */
+
+.highlight.purple {
+  border-color: #9a5eba;
+  background: #f1f0f7;
+}
+
+.highlight.purple:before,
+.highlight.purple:after {
+  background-color: #9a5eba;
+}
+
+.highlight.purple.active {
+  background: #9a5eba;
+}
+
+.highlight.purple.active:before,
+.highlight.purple.active:after {
+  background-color: #a46ec1;
+}
+
+/********************************************/
+
+/* Teal */
+
 .highlight.teal {
-  border-color: rgba(87,177,174,1);
+  border-color: #5bb1ad;
   background: #eef4f6;
 }
 
 .highlight.teal:before,
 .highlight.teal:after {
-  background-color: rgba(87,177,174,1);
+  background-color: #5bb1ad;
 }
 
 .highlight.teal.active {
-  background: rgba(87,177,174,1);
+  background: #5bb1ad;
+}
+
+.highlight.teal.active:before,
+.highlight.teal.active:after {
+  background-color: #6cb9b5;
+}
+
+/********************************************/
+
+/* Tan */
+
+.highlight.tan {
+  border-color: #b0a481;
+  background: #f2f4f4;
+}
+
+.highlight.tan:before,
+.highlight.tan:after {
+  background-color: #b0a481;
+}
+
+.highlight.tan.active {
+  background: #b0a481;
+}
+
+.highlight.tan.active:before,
+.highlight.tan.active:after {
+  background-color: #b8ad8e;
+}
+
+/********************************************/
+
+/* Red */
+
+.highlight.red {
+  border-color: #df3838;
+  background: #f5eef0;
+}
+
+.highlight.red:before,
+.highlight.red:after {
+  background-color: #df3838;
+}
+
+.highlight.red.active {
+  background: #df3838;
+}
+
+.highlight.red.active:before,
+.highlight.red.active:after {
+  background-color: #e24c4c;
+}
+
+/********************************************/
+
+/* Cobalt */
+
+.highlight.cobalt {
+  border-color: #5f5b97;
+  background: #eef0f5;
+}
+
+.highlight.cobalt:before,
+.highlight.cobalt:after {
+  background-color: #5f5b97;
+}
+
+.highlight.cobalt.active {
+  background: #5f5b97;
+}
+
+.highlight.cobalt.active:before,
+.highlight.cobalt.active:after {
+  background-color: #6f6ca2;
+}
+
+/********************************************/
+
+/* Brown */
+
+.highlight.brown {
+  border-color: #6a4e3d;
+  background: #f2f4f6;
+}
+
+.highlight.brown:before,
+.highlight.brown:after {
+  background-color: #6a4e3d;
+}
+
+.highlight.brown.active {
+  background: #6a4e3d;
+}
+
+.highlight.brown.active:before,
+.highlight.brown.active:after {
+  background-color: #796051;
+}
+
+/********************************************/
+
+/* Slate */
+
+.highlight.slate {
+  border-color: #3b4247;
+  background: #eceff1;
+}
+
+.highlight.slate:before,
+.highlight.slate:after {
+  background-color: #3b4247;
+}
+
+.highlight.slate.active {
+  background: #3b4247;
+}
+
+.highlight.slate.active:before,
+.highlight.slate.active:after {
+  background-color: #4f555a;
+}
+
+/********************************************/
+
+/* Fuchsia */
+
+.highlight.fuchsia {
+  border-color: #e875e8;
+  background: #f5f1f9;
+}
+
+.highlight.fuchsia:before,
+.highlight.fuchsia:after {
+  background-color: #e875e8;
+}
+
+.highlight.fuchsia.active {
+  background: #e875e8;
+}
+
+.highlight.fuchsia.active:before,
+.highlight.fuchsia.active:after {
+  background-color: #ea83ea;
 }
 
 /********************************************/
