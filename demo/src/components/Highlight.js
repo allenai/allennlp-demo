@@ -27,18 +27,18 @@ export default class Highlight extends React.Component {
     } = this.props;
 
     const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
+    const conditionalClasses = `highlight
+      ${labelPosition ? labelPosition : "bottom"}
+      ${color ? color : ""}
+      ${isClickable ? "clickable" : ""}
+      ${selectedId && selectedId === id ? "selected" : ""}
+      ${isClicking && activeDepths.ids[deepestIndex] === id ? "clicking active" : ""}
+      ${!isClicking && activeIds && activeIds.includes(id) ? "active" : ""}
+      ${typeof(children) === "string" && children.length < 8 ? "short-text" : ""}`;
 
     return (
       <span
-        className={`highlight
-          ${labelPosition ? labelPosition : "bottom"}
-          ${color ? color : ""}
-          ${selectedId && selectedId === id ? "selected" : ""}
-          ${isClicking && activeDepths.ids[deepestIndex] === id ? "clicking active" : ""}
-          ${isClickable ? "clickable" : ""}
-          ${typeof(children) === "string" && children.length < 8 ? "short-text" : ""}
-          ${!isClicking && activeIds && activeIds.includes(id) ? "active" : ""}`
-        }
+        className={conditionalClasses}
         data-label={label}
         data-id={id}
         data-depth={depth}
