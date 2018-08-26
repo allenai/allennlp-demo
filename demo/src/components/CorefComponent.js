@@ -3,7 +3,8 @@ import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
 import { PaneLeft, PaneRight } from './Pane';
 import Button from './Button';
-import { Highlight, getHighlightColor } from './Highlight';
+import HighlightContainer from './highlight/HighlightContainer';
+import { Highlight, getHighlightColor } from './highlight/Highlight';
 import ModelIntro from './ModelIntro';
 
 const corefExamples = [
@@ -256,9 +257,9 @@ class CorefOutput extends React.Component {
     return (
       <div className="model__content">
         <div className="form__field">
-          <div className={`passage model__content__summary highlight-container${isClicking ? " clicking" : ""}`}>
+          <HighlightContainer isClicking={isClicking}>
             {spanWrapper(spanTree, 0)}
-          </div>
+          </HighlightContainer>
         </div>
       </div>
     );

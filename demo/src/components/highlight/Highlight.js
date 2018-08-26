@@ -30,7 +30,7 @@ export const getHighlightColor = (index) => {
 
 export class Highlight extends React.Component {
   render() {
-    const {
+    const {         // All fields optional:
       activeDepths,   // object
       activeIds,      // string[] | number[]
       children,       // object | string
