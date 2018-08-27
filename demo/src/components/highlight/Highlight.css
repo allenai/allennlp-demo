@@ -2,7 +2,7 @@
 Highlight Component Styles
 ********************************************/
 
-.highlight-container {
+/* .highlight-container {
   line-height: 36px !important;
 }
 
@@ -108,7 +108,99 @@ Highlight Component Styles
 .highlight.left:after,
 .highlight.right:before {
   display: none;
+} */
+
+
+
+
+
+
+.highlight-container {
+  line-height: 42px !important;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  white-space: pre;
 }
+
+/* .highlight-container.highlight-container--bottom-labels {
+  line-height: 52px !important;
+  padding: 10px 1.125em
+} */
+
+.highlight-container,
+.highlight-container--bottom-labels {
+  cursor: default;
+}
+
+.highlight {
+  border: 2px solid;
+  color: #232323;
+  margin: 4px 6px 4px 3px;
+  vertical-align: middle;
+  box-shadow: 2px 4px 20px rgba(0,0,0,0.1);
+  position: relative;
+  cursor: default;
+  min-width: 26px;
+  line-height: 22px;
+  display: flex;
+}
+
+.highlight:last-child {
+  margin-right: 4px;
+}
+
+.highlight:first-child {
+  margin-left: 0;
+}
+
+.highlight,
+.highlight span {
+  transition: background-color .1s ease,
+              color .1s ease,
+              box-shadow .1s ease,
+              opacity .1s ease;
+}
+
+.highlight.short-text {
+  text-align: center;
+}
+
+.highlight__label {
+  align-items: center;
+  display: flex;
+  padding: 0 8px;
+}
+
+.highlight__label strong {
+  display: block;
+  font-size: 11px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.highlight__content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 2px 2px 2px 6px;
+  /* white-space: normal; */
+}
+
+
+.highlight.active,
+.highlight.active span {
+  color: #fff;
+}
+
+.highlight.active .highlight:not(.active) span {
+  color: #232323;
+}
+
+
+
 
 .highlight.clickable {
   cursor: pointer;
@@ -139,8 +231,7 @@ Highlight Component Styles
   background: #f2f4f6;
 }
 
-.highlight.gray:before,
-.highlight.gray:after {
+.highlight.gray .highlight__label {
   background-color: #a0aab5;
 }
 
@@ -148,8 +239,7 @@ Highlight Component Styles
   background: #a0aab5;
 }
 
-.highlight.gray.active:before,
-.highlight.gray.active:after {
+.highlight.gray.active .highlight__label {
   background-color: #aab3bd;
 }
 
@@ -162,8 +252,7 @@ Highlight Component Styles
   background: #edf4fa;
 }
 
-.highlight.blue:before,
-.highlight.blue:after {
+.highlight.blue > .highlight__label {
   background-color: #4db1f7;
 }
 
@@ -171,8 +260,7 @@ Highlight Component Styles
   background: #4db1f7;
 }
 
-.highlight.blue.active:before,
-.highlight.blue.active:after {
+.highlight.blue.active > .highlight__label {
   background-color: #5fb9f8;
 }
 
@@ -185,8 +273,7 @@ Highlight Component Styles
   background: #f1f4f1;
 }
 
-.highlight.green:before,
-.highlight.green:after {
+.highlight.green > .highlight__label {
   background-color: #90ac4e;
 }
 
@@ -194,8 +281,7 @@ Highlight Component Styles
   background: #90ac4e;
 }
 
-.highlight.green.active:before,
-.highlight.green.active:after {
+.highlight.green.active > .highlight__label {
   background-color: #9bb460;
 }
 
@@ -208,8 +294,7 @@ Highlight Component Styles
   background: #f4f1f4;
 }
 
-.highlight.pink:before,
-.highlight.pink:after {
+.highlight.pink > .highlight__label {
   background-color: #ce6587;
 }
 
@@ -217,8 +302,7 @@ Highlight Component Styles
   background: #ce6587;
 }
 
-.highlight.pink.active:before,
-.highlight.pink.active:after {
+.highlight.pink.active > .highlight__label {
   background-color: #d37593;
 }
 
@@ -231,8 +315,7 @@ Highlight Component Styles
   background: #f2f4f4;
 }
 
-.highlight.orange:before,
-.highlight.orange:after {
+.highlight.orange > .highlight__label {
   background-color: #dd9e3e;
 }
 
@@ -240,8 +323,7 @@ Highlight Component Styles
   background: #dd9e3e;
 }
 
-.highlight.orange.active:before,
-.highlight.orange.active:after {
+.highlight.orange.active > .highlight__label {
   background-color: #e0a852;
 }
 
@@ -254,8 +336,7 @@ Highlight Component Styles
   background: #f1f0f7;
 }
 
-.highlight.purple:before,
-.highlight.purple:after {
+.highlight.purple > .highlight__label {
   background-color: #9a5eba;
 }
 
@@ -263,8 +344,7 @@ Highlight Component Styles
   background: #9a5eba;
 }
 
-.highlight.purple.active:before,
-.highlight.purple.active:after {
+.highlight.purple.active > .highlight__label {
   background-color: #a46ec1;
 }
 
@@ -277,8 +357,7 @@ Highlight Component Styles
   background: #eef4f6;
 }
 
-.highlight.teal:before,
-.highlight.teal:after {
+.highlight.teal > .highlight__label {
   background-color: #5bb1ad;
 }
 
@@ -286,8 +365,7 @@ Highlight Component Styles
   background: #5bb1ad;
 }
 
-.highlight.teal.active:before,
-.highlight.teal.active:after {
+.highlight.teal.active > .highlight__label {
   background-color: #6cb9b5;
 }
 
@@ -300,8 +378,7 @@ Highlight Component Styles
   background: #f2f4f4;
 }
 
-.highlight.tan:before,
-.highlight.tan:after {
+.highlight.tan > .highlight__label {
   background-color: #b0a481;
 }
 
@@ -309,8 +386,7 @@ Highlight Component Styles
   background: #b0a481;
 }
 
-.highlight.tan.active:before,
-.highlight.tan.active:after {
+.highlight.tan.active > .highlight__label {
   background-color: #b8ad8e;
 }
 
@@ -323,8 +399,7 @@ Highlight Component Styles
   background: #f5eef0;
 }
 
-.highlight.red:before,
-.highlight.red:after {
+.highlight.red > .highlight__label {
   background-color: #df3838;
 }
 
@@ -332,8 +407,7 @@ Highlight Component Styles
   background: #df3838;
 }
 
-.highlight.red.active:before,
-.highlight.red.active:after {
+.highlight.red.active > .highlight__label {
   background-color: #e24c4c;
 }
 
@@ -346,8 +420,7 @@ Highlight Component Styles
   background: #eef0f5;
 }
 
-.highlight.cobalt:before,
-.highlight.cobalt:after {
+.highlight.cobalt > .highlight__label {
   background-color: #5f5b97;
 }
 
@@ -355,8 +428,7 @@ Highlight Component Styles
   background: #5f5b97;
 }
 
-.highlight.cobalt.active:before,
-.highlight.cobalt.active:after {
+.highlight.cobalt.active > .highlight__label {
   background-color: #6f6ca2;
 }
 
@@ -369,8 +441,7 @@ Highlight Component Styles
   background: #f2f4f6;
 }
 
-.highlight.brown:before,
-.highlight.brown:after {
+.highlight.brown > .highlight__label {
   background-color: #6a4e3d;
 }
 
@@ -378,8 +449,7 @@ Highlight Component Styles
   background: #6a4e3d;
 }
 
-.highlight.brown.active:before,
-.highlight.brown.active:after {
+.highlight.brown.active > .highlight__label {
   background-color: #796051;
 }
 
@@ -392,8 +462,7 @@ Highlight Component Styles
   background: #eceff1;
 }
 
-.highlight.slate:before,
-.highlight.slate:after {
+.highlight.slate > .highlight__label {
   background-color: #3b4247;
 }
 
@@ -401,8 +470,7 @@ Highlight Component Styles
   background: #3b4247;
 }
 
-.highlight.slate.active:before,
-.highlight.slate.active:after {
+.highlight.slate.active > .highlight__label {
   background-color: #4f555a;
 }
 
@@ -415,8 +483,7 @@ Highlight Component Styles
   background: #f5f1f9;
 }
 
-.highlight.fuchsia:before,
-.highlight.fuchsia:after {
+.highlight.fuchsia > .highlight__label {
   background-color: #e875e8;
 }
 
@@ -424,8 +491,7 @@ Highlight Component Styles
   background: #e875e8;
 }
 
-.highlight.fuchsia.active:before,
-.highlight.fuchsia.active:after {
+.highlight.fuchsia.active > .highlight__label {
   background-color: #ea83ea;
 }
 

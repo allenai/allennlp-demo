@@ -71,7 +71,12 @@ export class Highlight extends React.Component {
         onMouseOver={onMouseOver ? () => { onMouseOver(id) } : null}
         onMouseOut={onMouseOut ? () => { onMouseOut(id) } : null}
         onMouseUp={onMouseUp ? () => { onMouseUp(id) } : null}>
-        {children}
+        {label || label !== null ? (
+          <span className="highlight__label"><strong>{label}</strong></span>
+        ) : null}
+        {children ? (
+          <span className="highlight__content">{children}</span>
+        ) : null}
         {tooltip ? (
           <span className="highlight__tooltip">{tooltip}</span>
         ) : null}
