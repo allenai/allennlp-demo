@@ -52,7 +52,7 @@ export class Highlight extends React.Component {
 
     const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
     const conditionalClasses = `highlight
-      ${labelPosition ? labelPosition : "bottom"}
+      ${labelPosition ? labelPosition : label ? "bottom" : ""}
       ${color ? color : "blue"}
       ${isClickable ? "clickable" : ""}
       ${selectedId && selectedId === id ? "selected" : ""}
