@@ -3,7 +3,8 @@ import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
 import { PaneLeft, PaneRight } from './Pane';
 import Button from './Button';
-import Highlight from './Highlight';
+import HighlightContainer from './highlight/HighlightContainer';
+import { Highlight } from './highlight/Highlight';
 import ModelIntro from './ModelIntro';
 
 // LOC, PER, ORG, MISC
@@ -145,10 +146,10 @@ class TokenSpan extends React.Component {
 
     if (entity !== null) { // If token has entity value:
       // Display entity text wrapped in a <Highlight /> component.
-      return (<Highlight label={entity} color={entityLookup[entity].color} tooltip={entityLookup[entity].tooltip}>{token.text}</Highlight>);
+      return (<Highlight label={entity} color={entityLookup[entity].color} tooltip={entityLookup[entity].tooltip}>{token.text} </Highlight>);
     } else { // If no entity:
       // Display raw text.
-      return (<span> {token.text} </span>);
+      return (<span>{token.text} </span>);
     }
   }
 }
@@ -213,9 +214,9 @@ class NerOutput extends React.Component {
     return (
       <div className="model__content model__content--ner-output">
         <div className="form__field">
-          <div className="passage model__content__summary highlight-container--bottom-labels">
+          <HighlightContainer layout="bottom-labels">
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
-          </div>
+          </HighlightContainer>
         </div>
       </div>
     )
