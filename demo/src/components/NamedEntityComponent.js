@@ -63,6 +63,8 @@ class NerInput extends React.Component {
     this.state = {
       nerSentenceValue: sentence || "",
     };
+
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleListChange = this.handleListChange.bind(this);
     this.handleSentenceChange = this.handleSentenceChange.bind(this);
   }
@@ -81,6 +83,14 @@ class NerInput extends React.Component {
     });
   }
 
+  handleKeyDown(e, inputs) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      this.props.runNerModel(e, inputs);
+    }
+  }
+
   render() {
     const { nerSentenceValue } = this.state;
     const { outputState, runNerModel } = this.props;
@@ -89,11 +99,13 @@ class NerInput extends React.Component {
       "sentenceValue": nerSentenceValue,
     };
 
+    const callHandleKeyDown = (e) => { this.handleKeyDown(e, nerInputs)};
+
     return (
       <div className="model__content">
         <ModelIntro title={title} description={description} />
         <div className="form__instructions"><span>Enter text or</span>
-          <select disabled={outputState === "working"} onChange={this.handleListChange}>
+          <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
             <option>Choose an example...</option>
             {nerSentences.map((sentence, index) => {
               return (
@@ -104,7 +116,7 @@ class NerInput extends React.Component {
         </div>
         <div className="form__field">
           <label htmlFor="#input--ner-sentence">Sentence</label>
-          <input onChange={this.handleSentenceChange} value={nerSentenceValue} id="input--ner-sentence" ref="nerSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
+          <input onChange={this.handleSentenceChange} onKeyDown={callHandleKeyDown} value={nerSentenceValue} id="input--ner-sentence" ref="nerSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
         </div>
         <div className="form__field form__field--btn">
           <Button enabled={outputState !== "working"} outputState={outputState} runModel={runNerModel} inputs={nerInputs} />

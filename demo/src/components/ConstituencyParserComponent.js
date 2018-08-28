@@ -41,6 +41,8 @@ class ConstituencyParserInput extends React.Component {
     this.state = {
       constituencyParserSentenceValue: sentence || "",
     };
+
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleListChange = this.handleListChange.bind(this);
     this.handleSentenceChange = this.handleSentenceChange.bind(this);
   }
@@ -59,6 +61,14 @@ class ConstituencyParserInput extends React.Component {
     });
   }
 
+  handleKeyDown(e, inputs) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      this.props.runConstituencyParserModel(e, inputs);
+    }
+  }
+
   render() {
     const { constituencyParserSentenceValue } = this.state;
     const { outputState, runConstituencyParserModel } = this.props;
@@ -67,11 +77,13 @@ class ConstituencyParserInput extends React.Component {
       "sentenceValue": constituencyParserSentenceValue,
     };
 
+    const callHandleKeyDown = (e) => { this.handleKeyDown(e, constituencyParserInputs)};
+
     return (
       <div className="model__content">
         <ModelIntro title={title} description={description} />
         <div className="form__instructions"><span>Enter text or</span>
-          <select disabled={outputState === "working"} onChange={this.handleListChange}>
+          <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
             <option>Choose an example...</option>
             {constituencyParserSentences.map((sentence, index) => {
               return (
@@ -82,7 +94,7 @@ class ConstituencyParserInput extends React.Component {
         </div>
         <div className="form__field">
           <label htmlFor="#input--parser-sentence">Sentence</label>
-          <input onChange={this.handleSentenceChange} value={constituencyParserSentenceValue} id="input--parser-sentence" ref="constituencyParserSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
+          <input onChange={this.handleSentenceChange} onKeyDown={callHandleKeyDown} value={constituencyParserSentenceValue} id="input--parser-sentence" ref="constituencyParserSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
         </div>
         <div className="form__field form__field--btn">
           <Button enabled={outputState !== "working"} outputState={outputState} runModel={runConstituencyParserModel} inputs={constituencyParserInputs} />
