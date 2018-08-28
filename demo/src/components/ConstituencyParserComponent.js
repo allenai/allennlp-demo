@@ -39,7 +39,7 @@ class ConstituencyParserInput extends React.Component {
     const { sentence } = props;
 
     this.state = {
-      sentenceValue: sentence || "",
+      constituencyParserSentenceValue: sentence || "",
     };
     this.handleListChange = this.handleListChange.bind(this);
     this.handleSentenceChange = this.handleSentenceChange.bind(this);
@@ -157,6 +157,8 @@ class _ConstituencyParserComponent extends React.Component {
       this.setState({ outputState: "error" });
       console.error(error);
     });
+
+    console.log(payload);
   }
 
   render() {
