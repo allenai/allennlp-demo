@@ -974,10 +974,6 @@ svg {
   transition: padding .2s ease
 }
 
-.model__content:not(.model__content--srl-output) {
-  max-width: 61.25em
-}
-
 .model__content h2 {
   margin: 0;
   padding: 0;
@@ -1120,6 +1116,22 @@ svg {
   width: .25em;
   background: #e1e5ea;
   left: .5em
+}
+
+.pane__bottom .pane__thumb {
+  min-height: 1.25em;
+  height: 1.25em;
+  position: relative;
+  margin-left: 0;
+  margin-top: -.625em;
+  width: 100%;
+}
+
+.pane__bottom .pane__thumb:after {
+  height: .25em;
+  top: .5em;
+  width: 100%;
+  left: 0;
 }
 
 .passage.model__content__summary {
