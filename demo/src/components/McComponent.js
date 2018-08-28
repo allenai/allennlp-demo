@@ -64,6 +64,8 @@ constructor(props) {
       mcPassageValue: passage || "",
       mcQuestionValue: question || ""
     };
+
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleListChange = this.handleListChange.bind(this);
     this.handleQuestionChange = this.handleQuestionChange.bind(this);
     this.handlePassageChange = this.handlePassageChange.bind(this);
@@ -90,6 +92,14 @@ handleQuestionChange(e) {
     });
 }
 
+  handleKeyDown(e, inputs) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      this.props.runMcModel(e, inputs);
+    }
+  }
+
 render() {
 
     const { mcPassageValue, mcQuestionValue } = this.state;
@@ -100,11 +110,13 @@ render() {
     "questionValue": mcQuestionValue
     };
 
+    const callHandleKeyDown = (e) => { this.handleKeyDown(e, mcInputs)};
+
     return (
         <div className="model__content">
         <ModelIntro title={title} description={description} />
             <div className="form__instructions"><span>Enter text or</span>
-            <select disabled={outputState === "working"} onChange={this.handleListChange}>
+            <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
                 <option value="">Choose an example...</option>
                 {mcExamples.map((example, index) => {
                   return (
@@ -115,11 +127,11 @@ render() {
             </div>
             <div className="form__field">
             <label htmlFor="#input--mc-passage">Passage</label>
-            <textarea onChange={this.handlePassageChange} id="input--mc-passage" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;Saturn is the sixth planet from the Sun and the second-largest in the Solar System, after Jupiter. It is a gas giant with an average radius about nine times that of Earth. Although it has only one-eighth the average density of Earth, with its larger volume Saturn is just over 95 times more massive. Saturn is named after the Roman god of agriculture; its astronomical symbol represents the god&#39;s sickle.&quot;" value={mcPassageValue} disabled={outputState === "working"}></textarea>
+            <textarea onChange={this.handlePassageChange} onKeyDown={callHandleKeyDown} id="input--mc-passage" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;Saturn is the sixth planet from the Sun and the second-largest in the Solar System, after Jupiter. It is a gas giant with an average radius about nine times that of Earth. Although it has only one-eighth the average density of Earth, with its larger volume Saturn is just over 95 times more massive. Saturn is named after the Roman god of agriculture; its astronomical symbol represents the god&#39;s sickle.&quot;" value={mcPassageValue} disabled={outputState === "working"}></textarea>
             </div>
             <div className="form__field">
             <label htmlFor="#input--mc-question">Question</label>
-            <input onChange={this.handleQuestionChange} id="input--mc-question" type="text" required="true" value={mcQuestionValue} placeholder="E.g. &quot;What does Saturn’s astronomical symbol represent?&quot;" disabled={outputState === "working"} />
+            <input onChange={this.handleQuestionChange} onKeyDown={callHandleKeyDown} id="input--mc-question" type="text" required="true" value={mcQuestionValue} placeholder="E.g. &quot;What does Saturn’s astronomical symbol represent?&quot;" disabled={outputState === "working"} />
             </div>
             <div className="form__field form__field--btn">
             <Button enabled={outputState !== "working"} runModel={runMcModel} inputs={mcInputs} />

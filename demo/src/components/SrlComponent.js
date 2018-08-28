@@ -183,6 +183,8 @@ class SrlInput extends React.Component {
     this.state = {
       srlSentenceValue: sentence || "",
     };
+
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleListChange = this.handleListChange.bind(this);
     this.handleSentenceChange = this.handleSentenceChange.bind(this);
   }
@@ -201,6 +203,14 @@ class SrlInput extends React.Component {
     });
   }
 
+  handleKeyDown(e, inputs) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      this.props.runSrlModel(e, inputs);
+    }
+  }
+
   render() {
     const { srlSentenceValue } = this.state;
     const { outputState, runSrlModel } = this.props;
@@ -209,11 +219,13 @@ class SrlInput extends React.Component {
       "sentenceValue": srlSentenceValue,
     };
 
+    const callHandleKeyDown = (e) => { this.handleKeyDown(e, srlInputs)};
+
     return (
       <div className="model__content">
         <ModelIntro title={title} description={description} />
         <div className="form__instructions"><span>Enter text or</span>
-          <select disabled={outputState === "working"} onChange={this.handleListChange}>
+          <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
             <option>Choose an example...</option>
             {srlSentences.map((sentence, index) => {
               return (
@@ -224,7 +236,7 @@ class SrlInput extends React.Component {
         </div>
         <div className="form__field">
           <label htmlFor="#input--srl-sentence">Sentence</label>
-          <input onChange={this.handleSentenceChange} value={srlSentenceValue} id="input--srl-sentence" ref="srlSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
+          <input onChange={this.handleSentenceChange} onKeyDown={callHandleKeyDown} value={srlSentenceValue} id="input--srl-sentence" ref="srlSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
         </div>
         <div className="form__field form__field--btn">
           <Button enabled={outputState !== "working"} outputState={outputState} runModel={runSrlModel} inputs={srlInputs} />

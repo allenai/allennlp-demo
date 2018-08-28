@@ -68,6 +68,8 @@ const teExamples = [
         tePremiseValue: premise || "",
         teHypothesisValue: hypothesis || "",
       };
+
+      this.handleKeyDown = this.handleKeyDown.bind(this);
       this.handleListChange = this.handleListChange.bind(this);
       this.handlePremiseChange = this.handlePremiseChange.bind(this);
       this.handleHypothesisChange = this.handleHypothesisChange.bind(this);
@@ -94,6 +96,14 @@ const teExamples = [
       });
     }
 
+    handleKeyDown(e, inputs) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        this.props.runTeModel(e, inputs);
+      }
+    }
+
     render() {
       const { tePremiseValue, teHypothesisValue } = this.state;
       const { outputState, runTeModel } = this.props;
@@ -103,11 +113,13 @@ const teExamples = [
         "hypothesisValue": teHypothesisValue
       };
 
+      const callHandleKeyDown = (e) => { this.handleKeyDown(e, teInputs)};
+
       return (
         <div className="model__content">
         <ModelIntro title={title} description={description} />
           <div className="form__instructions"><span>Enter text or</span>
-            <select disabled={outputState === "working"} onChange={this.handleListChange}>
+            <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
               <option value="">Choose an example...</option>
               {teExamples.map((example, index) => {
                 return (
@@ -118,11 +130,11 @@ const teExamples = [
           </div>
           <div className="form__field">
             <label htmlFor="input--te-premise">Premise</label>
-            <input onChange={this.handlePremiseChange} id="input--te-premise" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;A large, gray elephant walked beside a herd of zebras.&quot;" value={tePremiseValue} />
+            <input onChange={this.handlePremiseChange} onKeyDown={callHandleKeyDown} id="input--te-premise" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;A large, gray elephant walked beside a herd of zebras.&quot;" value={tePremiseValue} />
           </div>
           <div className="form__field">
             <label htmlFor="input--te-hypothesis">Hypothesis</label>
-            <input onChange={this.handleHypothesisChange} id="input--te-hypothesis" type="text" required="true" value={teHypothesisValue} placeholder="E.g. &quot;The elephant was lost.&quot;" />
+            <input onChange={this.handleHypothesisChange} onKeyDown={callHandleKeyDown} id="input--te-hypothesis" type="text" required="true" value={teHypothesisValue} placeholder="E.g. &quot;The elephant was lost.&quot;" />
           </div>
           <div className="form__field form__field--btn">
             <Button enabled={outputState !== "working"} runModel={runTeModel} inputs={teInputs} />

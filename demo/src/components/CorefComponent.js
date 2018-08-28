@@ -109,6 +109,7 @@ class CorefInput extends React.Component {
       corefDocumentValue: doc || "",
     };
 
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleListChange = this.handleListChange.bind(this);
     this.handleDocumentChange = this.handleDocumentChange.bind(this);
   }
@@ -127,6 +128,14 @@ class CorefInput extends React.Component {
     });
   }
 
+  handleKeyDown(e, inputs) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      this.props.runCorefModel(e, inputs);
+    }
+  }
+
   render() {
     const { corefDocumentValue } = this.state;
     const { outputState, runCorefModel } = this.props;
@@ -135,11 +144,13 @@ class CorefInput extends React.Component {
       "documentValue": corefDocumentValue,
     };
 
+    const callHandleKeyDown = (e) => { this.handleKeyDown(e, corefInputs)};
+
     return (
       <div className="model__content">
         <ModelIntro title={title} description={description} />
         <div className="form__instructions"><span>Enter text or</span>
-          <select disabled={outputState === "working"} onChange={this.handleListChange}>
+          <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
             <option value="">Choose an example...</option>
             {corefExamples.map((example, index) => {
               return (
@@ -150,7 +161,7 @@ class CorefInput extends React.Component {
         </div>
         <div className="form__field">
           <label htmlFor="#input--mc-passage">Document</label>
-          <textarea onChange={this.handleDocumentChange} id="input--mc-passage" type="text"
+          <textarea onChange={this.handleDocumentChange} onKeyDown={callHandleKeyDown} id="input--mc-passage" type="text"
             required="true" autoFocus="true" placeholder="We 're not going to skimp on quality , but we are very focused to make next year . The only problem is that some of the fabrics are wearing out - since I was a newbie I skimped on some of the fabric and the poor quality ones are developing holes . For some , an awareness of this exit strategy permeates the enterprise , allowing them to skimp on the niceties they would more or less have to extend toward a person they were likely to meet again ." value={corefDocumentValue} disabled={outputState === "working"}></textarea>
         </div>
         <div className="form__field form__field--btn">
