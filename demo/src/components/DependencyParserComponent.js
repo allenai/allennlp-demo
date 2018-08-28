@@ -39,7 +39,7 @@ class DependencyParserInput extends React.Component {
     const { sentence } = props;
 
     this.state = {
-      sentenceValue: sentence || "",
+      dependencyParserSentenceValue: sentence || "",
     };
     this.handleListChange = this.handleListChange.bind(this);
     this.handleSentenceChange = this.handleSentenceChange.bind(this);
