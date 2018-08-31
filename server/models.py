@@ -42,6 +42,10 @@ MODELS = {
                 'https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.04.30.tar.gz',  # pylint: disable=line-too-long
                 'sentence-tagger'
         ),
+        'fine-grained-named-entity-recognition': DemoModel(
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.08.31.tar.gz',  # pylint: disable=line-too-long
+                'sentence-tagger'
+        ),
         'constituency-parsing': DemoModel(
                 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz',  # pylint: disable=line-too-long
                 'constituency-parser'
