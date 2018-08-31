@@ -351,7 +351,6 @@ class _NerComponent extends React.Component {
     this.setState({outputState: "working"});
 
     var payload = {sentence: inputs.sentenceValue};
-    console.log(modelEndpoint)
     fetch(`${API_ROOT}/predict/${modelEndpoint}`, {
       method: 'POST',
       headers: {
