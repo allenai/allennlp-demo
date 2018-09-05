@@ -121,7 +121,6 @@ class NerInput extends React.Component {
 
         <div className="form__instructions"><span>Choose Model: </span>
           <select disabled={outputState === "working"} onChange={this.handleModelChange}>
-            <option>default ner model</option>
             {Object.keys(nerModels).map((model, index) => {
               return (
                 <option value={model} key={model}>{model}</option>
