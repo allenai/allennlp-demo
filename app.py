@@ -264,6 +264,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/textual-entailment')
     @app.route('/coreference-resolution')
     @app.route('/named-entity-recognition')
+    @app.route('/fine-grained-named-entity-recognition')
     @app.route('/wikitables-parser')
     @app.route('/semantic-role-labeling/<permalink>')
     @app.route('/constituency-parsing/<permalink>')

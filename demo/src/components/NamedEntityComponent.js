@@ -22,6 +22,12 @@ const nerSentences = [
   "When I told John that I wanted to move to Alaska, he warned me that I'd have trouble finding a Starbucks there."
 ];
 
+const nerModels = {
+  "ner": "named-entity-recognition",
+  "fine-grained-ner": "fine-grained-named-entity-recognition"
+};
+
+
 const title = "Named Entity Recognition";
 const description = (
   <span>
@@ -62,10 +68,12 @@ class NerInput extends React.Component {
 
     this.state = {
       nerSentenceValue: sentence || "",
+      nerModelValue : nerModels["ner"]
     };
 
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleListChange = this.handleListChange.bind(this);
+    this.handleModelChange = this.handleModelChange.bind(this);
     this.handleSentenceChange = this.handleSentenceChange.bind(this);
   }
 
@@ -75,6 +83,12 @@ class NerInput extends React.Component {
         nerSentenceValue: nerSentences[e.target.value],
       });
     }
+  }
+
+  handleModelChange(e) {
+    this.setState({
+      nerModelValue: nerModels[e.target.value],
+    });
   }
 
   handleSentenceChange(e) {
@@ -87,7 +101,7 @@ class NerInput extends React.Component {
     if (e.key === 'Enter') {
       e.preventDefault();
       e.stopPropagation();
-      this.props.runNerModel(e, inputs);
+      this.props.runNerModel(e, inputs , this.state.nerModelValue);
     }
   }
 
@@ -102,8 +116,19 @@ class NerInput extends React.Component {
     const callHandleKeyDown = (e) => { this.handleKeyDown(e, nerInputs)};
 
     return (
-      <div className="model__content">
+      <div className="model__content" >
         <ModelIntro title={title} description={description} />
+
+        <div className="form__instructions"><span>Choose Model: </span>
+          <select disabled={outputState === "working"} onChange={this.handleModelChange}>
+            {Object.keys(nerModels).map((model, index) => {
+              return (
+                <option value={model} key={model}>{model}</option>
+              );
+            })}
+          </select>
+        </div>
+
         <div className="form__instructions"><span>Enter text or</span>
           <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
             <option>Choose an example...</option>
@@ -118,8 +143,9 @@ class NerInput extends React.Component {
           <label htmlFor="#input--ner-sentence">Sentence</label>
           <input onChange={this.handleSentenceChange} onKeyDown={callHandleKeyDown} value={nerSentenceValue} id="input--ner-sentence" ref="nerSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
         </div>
+
         <div className="form__field form__field--btn">
-          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runNerModel} inputs={nerInputs} />
+          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runNerModel} inputs={nerInputs} modelEndpoint={this.state.nerModelValue}/>
         </div>
       </div>
     );
@@ -151,7 +177,73 @@ class TokenSpan extends React.Component {
       "MISC": {
         tooltip: "Miscellaneous",
         color: "gray"
-      }
+      },
+      "PERSON": {
+        tooltip: "Person",
+        color: "pink"
+      },
+      "CARDINAL": {
+        tooltip: "Cardinal Number",
+        color: "orange"
+      },
+      "EVENT": {
+        tooltip: "Event",
+        color: "green"
+      },
+      "DATE": {
+        tooltip: "Date",
+        color: "fuchsia"
+      },
+      "FAC": {
+        tooltip: "Facility",
+        color: "cobalt"
+      },
+      "GPE": {
+        tooltip: "Country/City/State",
+        color: "teal"
+      },
+      "LANGUAGE": {
+        tooltip: "Language",
+        color: "red"
+      },
+      "LAW": {
+        tooltip: "Law",
+        color: "brown"
+      },
+      // LOC - see above
+      "MONEY": {
+        tooltip: "Monetary Value",
+        color: "orange"
+      },
+      "NORP": {
+        tooltip: "Nationalities, Religious/Political Groups",
+        color: "green"
+      },
+      "ORDINAL": {
+        tooltip: "Ordinal Value",
+        color: "orange"
+      },
+      // ORG - see above.
+      "PERCENT": {
+        tooltip: "Percentage",
+        color: "orange"
+      },
+      "PRODUCT": {
+        tooltip: "Product",
+        color: "purple"
+      },
+      "QUANTITY": {
+        tooltip: "Quantity",
+        color: "orange"
+      },
+      "TIME": {
+        tooltip: "Time",
+        color: "fuchsia"
+      },
+      "WORK_OF_ART": {
+        tooltip: "Work of Art/Media",
+        color: "tan"
+      },
     }
 
     const entity = token.entity;
@@ -243,7 +335,7 @@ class _NerComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    const { requestData, responseData } = props;
+    const {requestData, responseData } = props;
 
     this.state = {
       requestData: requestData,
@@ -254,12 +346,11 @@ class _NerComponent extends React.Component {
     this.runNerModel = this.runNerModel.bind(this);
   }
 
-  runNerModel(event, inputs) {
+  runNerModel(event, inputs, modelEndpoint) {
     this.setState({outputState: "working"});
 
     var payload = {sentence: inputs.sentenceValue};
-
-    fetch(`${API_ROOT}/predict/named-entity-recognition`, {
+    fetch(`${API_ROOT}/predict/${modelEndpoint}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
