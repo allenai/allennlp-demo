@@ -66,4 +66,8 @@ MODELS = {
             'https://s3-us-west-2.amazonaws.com/allennlp/models/event2mind-2018.09.17.tar.gz',  # pylint: disable=line-too-long
                 'event2mind'
         ),
+        'atis-parser': DemoModel(
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/atis-parser-2019.09.04.tar.gz',  # pylint: disable=line-too-long
+                'atis-parser'
+        ),
 }

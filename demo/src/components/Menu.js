@@ -44,6 +44,8 @@ class Menu extends React.Component {
                 {buildLink("dependency-parsing", "Dependency Parsing")}
                 {buildLink("open-information-extraction", "Open Information Extraction")}
                 {buildLink("event2mind", "Event2Mind")}
+                {buildLink("wikitables-parser", "WikiTableQuestions Semantic Parser")}
+                {buildLink("atis-parser", "ATIS Semantic Parser")}
                 {buildLink("user-models", "Your model here!")}
               </ul>
             </nav>
