@@ -1,12 +1,13 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import { PaneLeft, PaneRight } from './Pane'
-import Button from './Button'
-import ModelIntro from './ModelIntro'
+import { PaneLeft, PaneRight } from './Pane';
+import Button from './Button';
+import HighlightContainer from './highlight/HighlightContainer';
+import { Highlight } from './highlight/Highlight';
+import ModelIntro from './ModelIntro';
 
 // LOC, PER, ORG, MISC
-
 
 /*******************************************************************************
   <NamedEntityInput/> Component
@@ -20,6 +21,12 @@ const nerSentences = [
   "If you like Paul McCartney you should listen to the first Wings album.",
   "When I told John that I wanted to move to Alaska, he warned me that I'd have trouble finding a Starbucks there."
 ];
+
+const nerModels = {
+  "ner": "named-entity-recognition",
+  "fine-grained-ner": "fine-grained-named-entity-recognition"
+};
+
 
 const title = "Named Entity Recognition";
 const description = (
@@ -42,7 +49,7 @@ const description = (
     </span>
     <a href = "https://www.clips.uantwerpen.be/conll2003/ner/" target="_blank" rel="noopener noreferrer">{' '} CoNLL-2003 {' '}</a>
     <span>
-      NER dataset. It is not state of the art on that task, but it's not terrible either.
+      NER dataset. It is not state of the art on that task, but it&#39;s not terrible either.
       (This is also the model constructed in our
     </span>
     <a href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/creating_a_model.md" target="_blank" rel="noopener noreferrer">{' '}Creating a Model{' '}</a>
@@ -61,8 +68,12 @@ class NerInput extends React.Component {
 
     this.state = {
       nerSentenceValue: sentence || "",
+      nerModelValue : nerModels["ner"]
     };
+
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleListChange = this.handleListChange.bind(this);
+    this.handleModelChange = this.handleModelChange.bind(this);
     this.handleSentenceChange = this.handleSentenceChange.bind(this);
   }
 
@@ -74,10 +85,24 @@ class NerInput extends React.Component {
     }
   }
 
+  handleModelChange(e) {
+    this.setState({
+      nerModelValue: nerModels[e.target.value],
+    });
+  }
+
   handleSentenceChange(e) {
     this.setState({
       nerSentenceValue: e.target.value,
     });
+  }
+
+  handleKeyDown(e, inputs) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      this.props.runNerModel(e, inputs , this.state.nerModelValue);
+    }
   }
 
   render() {
@@ -88,11 +113,24 @@ class NerInput extends React.Component {
       "sentenceValue": nerSentenceValue,
     };
 
+    const callHandleKeyDown = (e) => { this.handleKeyDown(e, nerInputs)};
+
     return (
-      <div className="model__content">
+      <div className="model__content" >
         <ModelIntro title={title} description={description} />
+
+        <div className="form__instructions"><span>Choose Model: </span>
+          <select disabled={outputState === "working"} onChange={this.handleModelChange}>
+            {Object.keys(nerModels).map((model, index) => {
+              return (
+                <option value={model} key={model}>{model}</option>
+              );
+            })}
+          </select>
+        </div>
+
         <div className="form__instructions"><span>Enter text or</span>
-          <select disabled={outputState === "working"} onChange={this.handleListChange}>
+          <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
             <option>Choose an example...</option>
             {nerSentences.map((sentence, index) => {
               return (
@@ -103,127 +141,186 @@ class NerInput extends React.Component {
         </div>
         <div className="form__field">
           <label htmlFor="#input--ner-sentence">Sentence</label>
-          <input onChange={this.handleSentenceChange} value={nerSentenceValue} id="input--ner-sentence" ref="nerSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
+          <input onChange={this.handleSentenceChange} onKeyDown={callHandleKeyDown} value={nerSentenceValue} id="input--ner-sentence" ref="nerSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
         </div>
+
         <div className="form__field form__field--btn">
-          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runNerModel} inputs={nerInputs} />
+          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runNerModel} inputs={nerInputs} modelEndpoint={this.state.nerModelValue}/>
         </div>
       </div>
     );
   }
 }
 
+/*******************************************************************************
+  <TokenSpan /> Component
+*******************************************************************************/
+
+class TokenSpan extends React.Component {
+  render() {
+    const { token } = this.props;
+
+    // Lookup table for entity style values:
+    const entityLookup = {
+      "PER": {
+        tooltip: "Person",
+        color: "pink"
+      },
+      "LOC": {
+        tooltip: "Location",
+        color: "green"
+      },
+      "ORG": {
+        tooltip: "Organization",
+        color: "blue"
+      },
+      "MISC": {
+        tooltip: "Miscellaneous",
+        color: "gray"
+      },
+      "PERSON": {
+        tooltip: "Person",
+        color: "pink"
+      },
+      "CARDINAL": {
+        tooltip: "Cardinal Number",
+        color: "orange"
+      },
+      "EVENT": {
+        tooltip: "Event",
+        color: "green"
+      },
+      "DATE": {
+        tooltip: "Date",
+        color: "fuchsia"
+      },
+      "FAC": {
+        tooltip: "Facility",
+        color: "cobalt"
+      },
+      "GPE": {
+        tooltip: "Country/City/State",
+        color: "teal"
+      },
+      "LANGUAGE": {
+        tooltip: "Language",
+        color: "red"
+      },
+      "LAW": {
+        tooltip: "Law",
+        color: "brown"
+      },
+      // LOC - see above
+      "MONEY": {
+        tooltip: "Monetary Value",
+        color: "orange"
+      },
+      "NORP": {
+        tooltip: "Nationalities, Religious/Political Groups",
+        color: "green"
+      },
+      "ORDINAL": {
+        tooltip: "Ordinal Value",
+        color: "orange"
+      },
+      // ORG - see above.
+      "PERCENT": {
+        tooltip: "Percentage",
+        color: "orange"
+      },
+      "PRODUCT": {
+        tooltip: "Product",
+        color: "purple"
+      },
+      "QUANTITY": {
+        tooltip: "Quantity",
+        color: "orange"
+      },
+      "TIME": {
+        tooltip: "Time",
+        color: "fuchsia"
+      },
+      "WORK_OF_ART": {
+        tooltip: "Work of Art/Media",
+        color: "tan"
+      },
+    }
+
+    const entity = token.entity;
+
+    if (entity !== null) { // If token has entity value:
+      // Display entity text wrapped in a <Highlight /> component.
+      return (<Highlight label={entity} color={entityLookup[entity].color} tooltip={entityLookup[entity].tooltip}>{token.text} </Highlight>);
+    } else { // If no entity:
+      // Display raw text.
+      return (<span>{token.text} </span>);
+    }
+  }
+}
 
 /*******************************************************************************
   <NerOutput /> Component
 *******************************************************************************/
 
-const tagDescriptions = {
-  'PER': 'person',
-  'LOC': 'location',
-  'ORG': 'organization',
-  'MISC': 'other'
-}
-
-// Render the NER tag for a single word as a table cell
-class NerTagCell extends React.Component {
-
-  render() {
-    const { tag, colorClass, colSpan } = this.props;
-
-    // Don't show "O" tags, and slice off all the "B-" and "I-" prefixes.
-    const tagText = tag === "O" ? "" : tag.slice(2);
-
-    // Use the tag description as the tooltip.
-    const description = tagDescriptions[tagText] || null;
-
-    return (
-      <td data-tooltip={description} colSpan={colSpan} className={colorClass + ' ner-tag ner-tag-' + tagText.toLowerCase()}>
-        {tagText}
-      </td>
-    )
-  }
-}
-
-// Render a NER-tagged word as a table cell
-class NerWordCell extends React.Component {
-  render() {
-    const { word, colorClass } = this.props;
-
-    return (<td className={colorClass + ' ner-word'}>{word}</td>)
-  }
-}
-
 class NerOutput extends React.Component {
   render() {
     const { words, tags } = this.props;
 
-    // Create an array indicating what color to highlight each tag cell.
-    // For "O" tags this should be -1, indicating no color.
-    // Otherwise it should toggle between 0 and 1 every time a "B-" tag occurs.
-    var colorClasses = [];
-    var currentColor = 1;
+    // "B" = "Beginning" (first token in a sequence of tokens comprising an entity)
+    // "I" = "Inside" (token in a sequence of tokens (that isn't first or last in its sequence) comprising an entity)
+    // "L" = "Last" (last token in a sequence of tokens comprising an entity)
+    // "O" = "Outside" (token that isn't associated with any entities)
+    // "U" = "Unit" (A single token representing a single entity)
 
-    // We want to merge consecutive identical tags and use `colspan=n`.
-    // In order to do that, we create a dictionary from starting indexes to span lengths.
-    let spanLengths = {};
-    let lastSpanStart;
-
+    // Defining an empty array for building a list of formatted token objects.
+    let formattedTokens = [];
+    // Defining an empty string to store temporary span text (this field is used to build up the entire text in a single BIL span).
+    let spanStr = "";
+    // Iterate through array of tags from response data.
     tags.forEach(function (tag, i) {
-      if (tag === "O") {
-        // "O" tag, so append "" for "no color"
-        colorClasses.push("");
-
-        // Add a span with length 1 and close it.
-        spanLengths[i] = 1;
-        lastSpanStart = undefined;
-      } else if (tag[0] === "B") {
-        // "B-" tag, so toggle the current color and then append
-        currentColor = (currentColor + 1) % 2;
-        colorClasses.push("color" + currentColor);
-
-        // Add a span with length 1, but don't "close it"
-        lastSpanStart = i;
-        spanLengths[i] = 1;
-      } else if (tag[0] === "U") {
-        // Single length span
-        currentColor = (currentColor + 1) % 2;
-        colorClasses.push("color" + currentColor);
-
-        // Add a span with length 1 and close it.
-        spanLengths[i] = 1;
-        lastSpanStart = undefined;
-      } else /* (tag[0] == "L") */ {
-        // "L-" tag, so append the current color
-        colorClasses.push("color" + currentColor);
-
-        // Extend the length of the currently open span.
-        spanLengths[lastSpanStart] = spanLengths[lastSpanStart] + 1;
+      // Defining an empty object to store temporary token data.
+      let tokenObj = {};
+      if (tag === "O") { // If this tag is not part of an entity:
+        // Build token object using this token's word and set entity to null.
+        tokenObj = {
+          text: words[i],
+          entity: null
+        }
+        // Append array of formatted token objects with this token object.
+        formattedTokens.push(tokenObj);
+      } else if (tag[0] === "U") { // If this tag is a unit token:
+        // Build token object using this token's word and entity.
+        tokenObj = {
+          text: words[i],
+          entity: tag.slice(2) // tag value with "U-" stripped from the beginning
+        }
+        // Append array of formatted token objects with this token object.
+        formattedTokens.push(tokenObj);
+      } else if (tag[0] === "B") { // If this tag is beginning of a span:
+        // Reset span string to current token's word.
+        spanStr = `${words[i]}`;
+      } else if (tag[0] === "I") { // If this tag is inside a span:
+        // Append current word to span string w/ space at beginning.
+        spanStr += ` ${words[i]} `;
+      } else if (tag[0] === "L") { // If this tag is last in a span:
+        // Append current word to span string w/ space at beginning.
+        spanStr += ` ${words[i]}`;
+        // Build token object using final span string and entity tag for this token.
+        tokenObj = {
+          text: spanStr,
+          entity: tag.slice(2) // tag value with "L-" stripped from the beginning
+        }
+        // Append array of formatted token objects with this token object.
+        formattedTokens.push(tokenObj);
       }
-    })
+    });
 
     return (
       <div className="model__content model__content--ner-output">
         <div className="form__field">
-          <table className="ner-table">
-            <tbody>
-              <tr>
-                {
-                  tags.map((tag, i) => {
-                    const colSpan = spanLengths[i];
-                    if (colSpan) {
-                      return <NerTagCell tag={tag} key={i} colSpan={colSpan} colorClass={colorClasses[i]} />
-                    } else {
-                      return null;
-                    }
-                  })
-                }
-              </tr>
-              <tr>
-                {words.map((word, i) => <NerWordCell word={word} key={i} colorClass={colorClasses[i]} />)}
-              </tr>
-            </tbody>
-          </table>
+          <HighlightContainer layout="bottom-labels">
+            {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
+          </HighlightContainer>
         </div>
       </div>
     )
@@ -238,7 +335,7 @@ class _NerComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    const { requestData, responseData } = props;
+    const {requestData, responseData } = props;
 
     this.state = {
       requestData: requestData,
@@ -249,12 +346,11 @@ class _NerComponent extends React.Component {
     this.runNerModel = this.runNerModel.bind(this);
   }
 
-  runNerModel(event, inputs) {
+  runNerModel(event, inputs, modelEndpoint) {
     this.setState({outputState: "working"});
 
     var payload = {sentence: inputs.sentenceValue};
-
-    fetch(`${API_ROOT}/predict/named-entity-recognition`, {
+    fetch(`${API_ROOT}/predict/${modelEndpoint}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -284,7 +380,6 @@ class _NerComponent extends React.Component {
 
   render() {
     const { requestData, responseData } = this.props;
-
     const sentence = requestData && requestData.sentence;
     const words = responseData && responseData.words;
     const tags = responseData && responseData.tags;
@@ -304,6 +399,6 @@ class _NerComponent extends React.Component {
   }
 }
 
-const NerComponent = withRouter(_NerComponent)
+const NerComponent = withRouter(_NerComponent);
 
 export default NerComponent;
