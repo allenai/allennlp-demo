@@ -402,7 +402,7 @@ class _OpenIeComponent extends React.Component {
               const vizType = VisualizationType[tpe];
               const className = (
                 visualizationType === vizType
-                  ? 'srl__vizualization-types__active-type'
+                  ? 'oie__vizualization-types__active-type'
                   : null
               );
               return (
