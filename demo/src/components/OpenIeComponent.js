@@ -245,7 +245,7 @@ class OpenIeOutput extends React.Component {
     const { verbs } = this.props;
 
     return (
-      <div className="model__content model__content--srl-output">
+      <div className="model__content model__content--oie-output">
         <div>
           {verbs.map((verb, i) => {
               return (
