@@ -10,7 +10,7 @@ import { Tree } from 'hierplane';
   <OpenIeInput /> Component
 *******************************************************************************/
 
-const srlSentences = [
+const openieSentences = [
   "In December, John decided to join the party.",
   // "The keys, which were needed to access the building, were locked in the car.",
   "However, voters decided that if the stadium was such a good idea someone would build it himself, and rejected it 59% to 41%.",
@@ -182,7 +182,7 @@ class OpenIeInput extends React.Component {
     const { sentence } = props;
 
     this.state = {
-      srlSentenceValue: sentence || "",
+      openieSentenceValue: sentence || "",
     };
     this.handleListChange = this.handleListChange.bind(this);
     this.handleSentenceChange = this.handleSentenceChange.bind(this);
@@ -191,23 +191,23 @@ class OpenIeInput extends React.Component {
   handleListChange(e) {
     if (e.target.value !== "") {
       this.setState({
-        srlSentenceValue: srlSentences[e.target.value],
+        openieSentenceValue: openieSentences[e.target.value],
       });
     }
   }
 
   handleSentenceChange(e) {
     this.setState({
-      srlSentenceValue: e.target.value,
+      openieSentenceValue: e.target.value,
     });
   }
 
   render() {
-    const { srlSentenceValue } = this.state;
+    const { openieSentenceValue } = this.state;
     const { outputState, runOpenIeModel } = this.props;
 
-    const srlInputs = {
-      "sentenceValue": srlSentenceValue,
+    const openieInputs = {
+      "sentenceValue": openieSentenceValue,
     };
 
     return (
@@ -216,7 +216,7 @@ class OpenIeInput extends React.Component {
         <div className="form__instructions"><span>Enter text or</span>
           <select disabled={outputState === "working"} onChange={this.handleListChange}>
             <option>Choose an example...</option>
-            {srlSentences.map((sentence, index) => {
+            {openieSentences.map((sentence, index) => {
               return (
                 <option value={index} key={index}>{sentence}</option>
               );
@@ -225,10 +225,10 @@ class OpenIeInput extends React.Component {
         </div>
         <div className="form__field">
           <label htmlFor="#input--srl-sentence">Sentence</label>
-          <input onChange={this.handleSentenceChange} value={srlSentenceValue} id="input--srl-sentence" ref="srlSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
+          <input onChange={this.handleSentenceChange} value={openieSentenceValue} id="input--srl-sentence" ref="openieSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
         </div>
         <div className="form__field form__field--btn">
-          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runOpenIeModel} inputs={srlInputs} />
+          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runOpenIeModel} inputs={openieInputs} />
         </div>
       </div>
     );
