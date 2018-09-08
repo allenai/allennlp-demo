@@ -224,8 +224,8 @@ class OpenIeInput extends React.Component {
           </select>
         </div>
         <div className="form__field">
-          <label htmlFor="#input--srl-sentence">Sentence</label>
-          <input onChange={this.handleSentenceChange} value={openieSentenceValue} id="input--srl-sentence" ref="openieSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
+          <label htmlFor="#input--oie-sentence">Sentence</label>
+          <input onChange={this.handleSentenceChange} value={openieSentenceValue} id="input--oie-sentence" ref="openieSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
         </div>
         <div className="form__field form__field--btn">
           <Button enabled={outputState !== "working"} outputState={outputState} runModel={runOpenIeModel} inputs={openieInputs} />
