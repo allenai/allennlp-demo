@@ -7,7 +7,7 @@ import ModelIntro from './ModelIntro'
 import { Tree } from 'hierplane';
 
 /*******************************************************************************
-  <SrlInput /> Component
+  <OpenIeInput /> Component
 *******************************************************************************/
 
 const srlSentences = [
@@ -174,7 +174,7 @@ function toHierplaneTrees(response) {
   return trees.filter(t => t.root.children.length > 0);
 }
 
-class SrlInput extends React.Component {
+class OpenIeInput extends React.Component {
   constructor(props) {
     super(props);
 
@@ -204,7 +204,7 @@ class SrlInput extends React.Component {
 
   render() {
     const { srlSentenceValue } = this.state;
-    const { outputState, runSrlModel } = this.props;
+    const { outputState, runOpenIeModel } = this.props;
 
     const srlInputs = {
       "sentenceValue": srlSentenceValue,
@@ -228,7 +228,7 @@ class SrlInput extends React.Component {
           <input onChange={this.handleSentenceChange} value={srlSentenceValue} id="input--srl-sentence" ref="srlSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
         </div>
         <div className="form__field form__field--btn">
-          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runSrlModel} inputs={srlInputs} />
+          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runOpenIeModel} inputs={srlInputs} />
         </div>
       </div>
     );
@@ -237,10 +237,10 @@ class SrlInput extends React.Component {
 
 
 /*******************************************************************************
-  <SrlOutput /> Component
+  <OpenIeOutput /> Component
 *******************************************************************************/
 
-class SrlOutput extends React.Component {
+class OpenIeOutput extends React.Component {
   render() {
     const { verbs } = this.props;
 
@@ -312,7 +312,7 @@ class HierplaneVisualization extends React.Component {
 }
 
 /*******************************************************************************
-  <SrlComponent /> Component
+  <OpenIeComponent /> Component
 *******************************************************************************/
 
 const VisualizationType = {
@@ -321,7 +321,7 @@ const VisualizationType = {
 };
 Object.freeze(VisualizationType);
 
-class _SrlComponent extends React.Component {
+class _OpenIeComponent extends React.Component {
   constructor(props) {
     super(props);
 
@@ -335,10 +335,10 @@ class _SrlComponent extends React.Component {
       visualizationType: VisualizationType.TREE
     };
 
-    this.runSrlModel = this.runSrlModel.bind(this);
+    this.runOpenIeModel = this.runOpenIeModel.bind(this);
   }
 
-  runSrlModel(event, inputs) {
+  runOpenIeModel(event, inputs) {
     this.setState({outputState: "working"});
 
     var payload = {sentence: inputs.sentenceValue};
@@ -381,7 +381,7 @@ class _SrlComponent extends React.Component {
     let viz = null;
     switch(visualizationType) {
       case VisualizationType.TEXT:
-        viz = <SrlOutput verbs={verbs} />;
+        viz = <OpenIeOutput verbs={verbs} />;
         break;
       case VisualizationType.TREE:
       default:
@@ -392,7 +392,7 @@ class _SrlComponent extends React.Component {
     return (
       <div className="pane model">
         <PaneLeft>
-          <SrlInput runSrlModel={this.runSrlModel}
+          <OpenIeInput runOpenIeModel={this.runOpenIeModel}
             outputState={this.state.outputState}
             sentence={sentence} />
         </PaneLeft>
@@ -421,6 +421,6 @@ class _SrlComponent extends React.Component {
   }
 }
 
-const SrlComponent = withRouter(_SrlComponent)
+const OpenIeComponent = withRouter(_OpenIeComponent)
 
-export default SrlComponent;
+export default OpenIeComponent;
