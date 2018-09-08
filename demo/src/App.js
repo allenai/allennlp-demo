@@ -135,8 +135,6 @@ class Demo extends React.Component {
         return (<OpenIeComponent requestData={requestData} responseData={responseData}/>)
       }
 
-
-
       else if (selectedModel === "user-models") {
         const modelRequest = "User Contributed Models"
         const modelDescription = (
