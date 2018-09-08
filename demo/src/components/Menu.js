@@ -41,6 +41,7 @@ class Menu extends React.Component {
                 {buildLink("named-entity-recognition", "Named Entity Recognition")}
                 {buildLink("constituency-parsing", "Constituency Parsing")}
                 {buildLink("dependency-parsing", "Dependency Parsing")}
+                {buildLink("open-information-extraction", "Open Information Extraction")}
                 {buildLink("user-models", "Your model here!")}
               </ul>
             </nav>

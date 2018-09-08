@@ -30,6 +30,10 @@ MODELS = {
                 'https://s3-us-west-2.amazonaws.com/allennlp/models/srl-model-2018.05.25.tar.gz', # pylint: disable=line-too-long
                 'semantic-role-labeling'
         ),
+        'open-information-extraction': DemoModel(
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz', # pylint: disable=line-too-long
+                'open-information-extraction'
+        ),
         'textual-entailment': DemoModel(
                 'https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz',  # pylint: disable=line-too-long
                 'textual-entailment'
