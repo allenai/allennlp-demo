@@ -28,10 +28,10 @@ We will follow the implementation of the SRL demo as an example.
    ```
    * In the instantiation of `ModelComponent`, add an `else if` clause returning an instance of your new component:
      ```python
-        else if (selectedModel === "open-information-extraction") {
-        return (<OpenIeComponent requestData={requestData} responseData={responseData}/>)
+        else if (selectedModel === "semantic-role-labeling") {
+            return (<SrlComponent requestData={requestData} responseData={responseData}/>)
         }
-     ```
+      ```
 7. `app.py`:
    * Add a `app.route` to the html page, using the same name provided in step (2):
    ```python
