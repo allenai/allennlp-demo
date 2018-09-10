@@ -22,16 +22,18 @@ In all these steps, we will follow the implementation of the SRL demo as an exam
    * Add a `<your-model-name>Component.js` file. 
    * this is where most of the model-specific js logic is implemented. See `demo/src/components/SrlComponent.js` for example.
 6. `demo/src/app.js`:
-   * Import the model component implemented in the previous step, e.g., `import SrlComponent from './components/SrlComponent';`
-   * In the instantiation of `ModelComponent`, add an `else if` clause returning an instance of your new component, e.g.:
-     ```
+   * Import the model component implemented in the previous step:
+   ```python 
+   import SrlComponent from './components/SrlComponent';
+   ```
+   * In the instantiation of `ModelComponent`, add an `else if` clause returning an instance of your new component:
+     ```python
         else if (selectedModel === "open-information-extraction") {
         return (<OpenIeComponent requestData={requestData} responseData={responseData}/>)
         }
      ```
 7. `app.py`:
-   * Add a `app.route` to the html page, using the same name provided in step (2), e.g.,
-   ```
+   * Add a `app.route` to the html page, using the same name provided in step (2):
+   ```python
    @app.route('/semantic-role-labeling/<permalink>')
    ```
-
