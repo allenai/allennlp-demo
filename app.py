@@ -257,6 +257,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
                 "githubUrl": "http://github.com/allenai/allennlp/commit/" + git_version})
 
     # As a SPA, we need to return index.html for /model-name and /model-name/permalink
+    @app.route('/open-information-extraction')
     @app.route('/semantic-role-labeling')
     @app.route('/constituency-parsing')
     @app.route('/dependency-parsing')
@@ -266,6 +267,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/named-entity-recognition')
     @app.route('/fine-grained-named-entity-recognition')
     @app.route('/wikitables-parser')
+    @app.route('/open-information-extraction/<permalink>')
     @app.route('/semantic-role-labeling/<permalink>')
     @app.route('/constituency-parsing/<permalink>')
     @app.route('/dependency-parsing/<permalink>')
