@@ -2,6 +2,7 @@ import React from 'react';
 import { API_ROOT } from './api-config';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import SrlComponent from './components/SrlComponent';
+import OpenIeComponent from './components/OpenIeComponent';
 import TeComponent from './components/TeComponent';
 import McComponent from './components/McComponent';
 import CorefComponent from './components/CorefComponent'
@@ -130,6 +131,10 @@ class Demo extends React.Component {
       else if (selectedModel === "wikitables-parser") {
         return (<WikiTablesComponent requestData={requestData} responseData={responseData}/>)
       }
+      else if (selectedModel === "open-information-extraction") {
+        return (<OpenIeComponent requestData={requestData} responseData={responseData}/>)
+      }
+
       else if (selectedModel === "user-models") {
         const modelRequest = "User Contributed Models"
         const modelDescription = (
