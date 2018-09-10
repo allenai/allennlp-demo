@@ -12,22 +12,24 @@ import { Tree } from 'hierplane';
 
 const openieSentences = [
   "In December, John decided to join the party.",
-  // "The keys, which were needed to access the building, were locked in the car.",
-  "However, voters decided that if the stadium was such a good idea someone would build it himself, and rejected it 59% to 41%.",
-  "Did Uriah honestly think he could beat the game in under three hours?",
-  "If you liked the music we were playing last night, you will absolutely love what we're playing tomorrow!",
-  "More than a few CEOs say the red-carpet treatment tempts them to return to a heartland city for future meetings.",
+  "Bob agreed to take out the trash",
+  "Alex Honnold climbed up a New Jersey skyscraper.",
+  "Albert Einstein, a German theoretical physicist, published the theory of relativity in 1915.",
+  "Chair umpire Ramos managed to rob two players in the U.S. Open final.",
+  "The CEO of a multi-million dollar company doesn't have much free time."
 ];
 
 const title = "Open Information Extraction";
 const description = (
   <span>
     <span>
-    Open Information Extraction (Open IE) systems extract tuples of natural language expressions that represent the basic propositions asserted by a sentence.
+    Given an input sentence, Open Information Extraction (Open IE) extracts a list of
+  propositions, each composed of a single predicate and an arbitrary number of arguments.
+    These often simplify syntactically complex sentences, and make their predicate-argument structure easily accessible for various downstream tasks.
     The AllenNLP toolkit provides the following Open IE visualization, which can be used for any Open IE model in AllenNLP.
       This page demonstrates a reimplementation of
     </span>
-    <a href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al, 2018)</a>
+    <a href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</a>.
   </span>
 );
 

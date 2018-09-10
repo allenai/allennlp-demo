@@ -20,7 +20,8 @@ from server.db import InMemoryDemoDatabase
 TEST_ARCHIVE_FILES = {
         'machine-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
         'semantic-role-labeling': 'tests/fixtures/srl/model.tar.gz',
-        'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz'
+        'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz',
+        'open-information-extraction': 'tests/fixtures/openie/model.tar.gz'
 }
 
 PREDICTORS = {
@@ -105,6 +106,13 @@ class TestFlask(AllenNlpTestCase):
 
     def test_semantic_role_labeling(self):
         response = self.post_json("/predict/semantic-role-labeling",
+                                  data={"sentence": "the super bowl was played in seattle"})
+        assert response.status_code == 200
+        results = json.loads(response.get_data())
+        assert "verbs" in results
+
+    def test_open_information_extraction(self):
+        response = self.post_json("/predict/open-information-extraction",
                                   data={"sentence": "the super bowl was played in seattle"})
         assert response.status_code == 200
         results = json.loads(response.get_data())
