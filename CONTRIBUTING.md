@@ -15,7 +15,7 @@ In all these steps, we will follow the implementation of the SRL demo as an exam
    * Provide a url to the trained model (e.g., `https://s3-us-west-2.amazonaws.com/allennlp/models/srl-model-2018.05.25.tar.gz`).
 4. `demo/src/components/menu.js`:
    * Add a `buildLink` clause:
-   ```python
+   ```js
    {buildLink("semantic-role-labeling", "Semantic Role Labeling")}
    ```
 5. `demo/src/components/`:
