@@ -3,8 +3,8 @@
 The following describes the steps necessary to add a
 model implemented in [allennlp](https://github.com/allenai/allennlp) to the online demo.
 
-These assume that the model to be added to the demo is already available in the main fork of allennlp.
-In all these steps, we will follow the implementation of the SRL demo as an example.
+These assume that the model to be added to the demo is already available in the main fork of allennlp.<br>
+We will follow the implementation of the SRL demo as an example.
 
 ## Instructions
 
