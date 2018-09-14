@@ -1,5 +1,5 @@
 import React from 'react';
-import './Highlight.css';
+import '../../css/Highlight.css';
 
 /*******************************************************************************
   <Highlight /> Component

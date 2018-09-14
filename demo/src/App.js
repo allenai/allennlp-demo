@@ -15,7 +15,13 @@ import ModelIntro from './components/ModelIntro';
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
 
-import './App.css';
+import './css/App.css';
+import './css/fonts.css';
+import './css/icons.css';
+import './css/form.css';
+import './css/Collapsible.css';
+import './css/hierplane-overrides.css';
+import './css/visualization-types.css';
 
 /*******************************************************************************
   <App /> Container

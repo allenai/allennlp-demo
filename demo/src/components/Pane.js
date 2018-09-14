@@ -1,5 +1,7 @@
 import React from 'react';
-
+import '../css/Pane.css';
+import '../css/model.css';
+import '../css/passage.css';
 
 /*******************************************************************************
   <ResultDisplay /> Component

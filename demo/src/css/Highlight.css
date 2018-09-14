@@ -1,12 +1,3 @@
-.highlight-container {
-  line-height: 42px !important;
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  white-space: pre;
-  cursor: default;
-}
-
 .highlight {
   border: 2px solid;
   color: #232323;
@@ -65,11 +56,6 @@
 }
 
 /* Bottom Label Layout */
-
-.highlight-container.highlight-container--bottom-labels {
-  padding: 10px 1.125em;;
-  align-items: flex-start;
-}
 
 .highlight-container.highlight-container--bottom-labels .highlight.bottom {
   margin-top: 6px;
