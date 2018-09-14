@@ -288,6 +288,10 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     def static_js_proxy(path: str) -> Response: # pylint: disable=unused-variable
         return send_from_directory(os.path.join(build_dir, 'static/js'), path)
 
+    @app.route('/static/css/<path:path>')
+    def static_css_proxy(path: str) -> Response: # pylint: disable=unused-variable
+        return send_from_directory(os.path.join(build_dir, 'static/css'), path)
+
     return app
 
 if __name__ == "__main__":
