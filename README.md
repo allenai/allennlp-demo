@@ -10,6 +10,8 @@ $ docker build -t allennlp/demo:$GIT_HASH .
 $ docker run -p 8000:8000 allennlp/demo:$GIT_HASH
 ```
 
+Note that the `run` process may get killed prematurely if there is insufficient memory allocated to Docker. As of September 14, 2018, setting a memory limit of 10GB was sufficient to run the demo. See [Docker Docs](https://docs.docker.com/docker-for-mac/#advanced) for more on setting memory allocation preferences.
+
 ## Development
 
 To run the demo for development, you will need to:
