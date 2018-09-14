@@ -190,6 +190,9 @@ class WikiTablesOutput extends React.Component {
 class ActionInfo extends React.Component {
   render() {
     const { action, question_tokens } = this.props;
+    if (action['question_attention'] == "None") {
+      action['question_attention'] = []
+    }
     const question_attention = action['question_attention'].map(x => [x]);
     const considered_actions = action['considered_actions'];
     const action_probs = action['action_probabilities'].map(x => [x]);
