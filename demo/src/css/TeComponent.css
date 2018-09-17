@@ -1,0 +1,54 @@
+.te-output {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  margin-top: 5em;
+}
+
+.te-table {
+  width: 100%;
+  margin-top: -1.5625em;
+  padding-left: 2vw;
+}
+
+.te-graph-labels {
+  width: 290px;
+  min-width: 290px;
+  height: 260px;
+  min-height: 260px;
+  background: url(/assets/te-container.svg) center center/100% no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+
+.te-graph {
+  margin-top: 30px;
+  width: 224px;
+  height: 194px;
+  background: url(/assets/te-graph.svg) center center/100% no-repeat;
+  position: relative;
+}
+
+.te-graph__point {
+  position: absolute;
+  margin: -7px 0 0 -7px;
+  width: 14px;
+  height: 14px;
+  background: url(/assets/te-plot.svg) center center/100% no-repeat;
+}
+
+@media screen and (max-width:1366px) {
+  .te-output {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2.5em;
+  }
+  .te-graph-labels {
+    margin: auto auto 2.5em;
+  }
+  .te-table {
+    padding-left: 0;
+  }
+}

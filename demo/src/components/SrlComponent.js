@@ -408,12 +408,12 @@ class _SrlComponent extends React.Component {
             sentence={sentence} />
         </PaneLeft>
         <PaneRight outputState={this.state.outputState}>
-          <ul className="srl__vizualization-types">
+          <ul className="visualization-types">
             {Object.keys(VisualizationType).map(tpe => {
               const vizType = VisualizationType[tpe];
               const className = (
                 visualizationType === vizType
-                  ? 'srl__vizualization-types__active-type'
+                  ? 'visualization-types__active-type'
                   : null
               );
               return (

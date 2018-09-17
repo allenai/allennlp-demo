@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../css/HighlightContainer.css';
 
 /*******************************************************************************
   <HighlightContainer /> Component

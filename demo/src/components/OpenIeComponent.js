@@ -399,12 +399,12 @@ class _OpenIeComponent extends React.Component {
             sentence={sentence} />
         </PaneLeft>
         <PaneRight outputState={this.state.outputState}>
-          <ul className="srl__vizualization-types">
+          <ul className="visualization-types">
             {Object.keys(VisualizationType).map(tpe => {
               const vizType = VisualizationType[tpe];
               const className = (
                 visualizationType === vizType
-                  ? 'oie__vizualization-types__active-type'
+                  ? 'oie__visualization-types__active-type'
                   : null
               );
               return (
