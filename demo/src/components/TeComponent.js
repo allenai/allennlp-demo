@@ -6,7 +6,7 @@ import HeatMap from './heatmap/HeatMap'
 import Collapsible from 'react-collapsible'
 import Button from './Button'
 import ModelIntro from './ModelIntro'
-
+import '../css/TeComponent.css';
 
 /*******************************************************************************
   <TeInput /> Component

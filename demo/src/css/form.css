@@ -1,0 +1,116 @@
+/* Form styles */
+
+form {
+  display: block;
+}
+
+.form__instructions {
+  margin: 4.25em 0 2.0625em;
+  -webkit-transition: margin .2s ease;
+  transition: margin .2s ease;
+}
+
+.form__instructions span {
+  font-size: 1em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-right: .5em;
+  max-width: 9.375em;
+  color: #7c7c7c;
+}
+
+.form__instructions select {
+  font-size: .8125em;
+  max-width: 11.25em;
+}
+
+.form__field {
+  -webkit-transition: margin .2s ease;
+  transition: margin .2s ease;
+}
+
+.form__field+.form__field {
+  margin-top: 2.5em;
+}
+
+.form__field label {
+  display: block;
+  font-weight: 600;
+  font-size: 1.125em;
+}
+
+.form__field label+* {
+  margin-top: 1.25em;
+}
+
+.form__field input[type=text],
+.form__field textarea {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  font-size: 1em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: .8125em 1.125em;
+  color: #232323;
+  border: .125em solid #d4dce2;
+  display: block;
+  box-sizing: border-box;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, opacity .2s ease;
+}
+
+.form__field input[type=text]::-webkit-input-placeholder,
+.form__field textarea::-webkit-input-placeholder {
+  color: #b4b4b4;
+}
+
+.form__field input[type=text]:-moz-placeholder,
+.form__field textarea:-moz-placeholder {
+  color: #b4b4b4;
+}
+
+.form__field input[type=text]::-moz-placeholder,
+.form__field textarea::-moz-placeholder {
+  color: #b4b4b4;
+}
+
+.form__field input[type=text]:-ms-input-placeholder,
+.form__field textarea:-ms-input-placeholder {
+  color: #b4b4b4;
+}
+
+.form__field input[type=text]:focus,
+.form__field textarea:focus {
+  outline: 0;
+  border-color: #63a7d4;
+  box-shadow: 0 0 1.25em rgba(50, 50, 150, .05);
+}
+
+.form__field textarea {
+  resize: vertical;
+  min-height: 8.25em;
+}
+
+.form__field .btn {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none
+}
+
+.form__field--btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+@media screen and (max-height:760px) {
+  .form__instructions {
+    margin: 1.875em 0 1.125em;
+  }
+
+  .form__field:not(.form__field--btn)+.form__field:not(.form__field--btn) {
+    margin-top: 1.25em;
+  }
+}

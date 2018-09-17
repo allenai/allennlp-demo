@@ -5,15 +5,23 @@ import SrlComponent from './components/SrlComponent';
 import OpenIeComponent from './components/OpenIeComponent';
 import TeComponent from './components/TeComponent';
 import McComponent from './components/McComponent';
-import CorefComponent from './components/CorefComponent'
-import NamedEntityComponent from './components/NamedEntityComponent'
-import ConstituencyParserComponent from './components/ConstituencyParserComponent'
-import DependencyParserComponent from './components/DependencyParserComponent'
-import WikiTablesComponent from './components/WikiTablesComponent'
+import CorefComponent from './components/CorefComponent';
+import NamedEntityComponent from './components/NamedEntityComponent';
+import ConstituencyParserComponent from './components/ConstituencyParserComponent';
+import DependencyParserComponent from './components/DependencyParserComponent';
+import WikiTablesComponent from './components/WikiTablesComponent';
 import Menu from './components/Menu';
-import ModelIntro from './components/ModelIntro'
-import { PaneTop } from './components/Pane'
-import WaitingForPermalink from './components/WaitingForPermalink'
+import ModelIntro from './components/ModelIntro';
+import { PaneTop } from './components/Pane';
+import WaitingForPermalink from './components/WaitingForPermalink';
+
+import './css/App.css';
+import './css/fonts.css';
+import './css/icons.css';
+import './css/form.css';
+import './css/Collapsible.css';
+import './css/hierplane-overrides.css';
+import './css/visualization-types.css';
 
 /*******************************************************************************
   <App /> Container

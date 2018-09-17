@@ -1,0 +1,12 @@
+.passage.model__content__summary {
+  line-height: 1.875em;
+  font-size: 1.125em;
+}
+
+.passage__answer {
+  font-weight: 700;
+  background: #40affd;
+  color: #fff;
+  padding: .1875em;
+  margin: 0 .125em;
+}
