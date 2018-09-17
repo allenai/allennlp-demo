@@ -18,6 +18,11 @@ const parserExamples = [
     {
       question: "all northwest and united airlines flights with stopovers in denver",
     },
+    {
+      question: "what is the cheapest flight on american airlines from cleveland to miami",
+    },
+
+    
 ];
 
 const title = "Atis Semantic Parsing";
@@ -108,7 +113,7 @@ class AtisOutput extends React.Component {
 
           <div className="form__field">
             <label>logical_form</label>
-            <div className="model__content__summary">{ logical_form}</div>
+            <div className="model__content__summary" style={{whiteSpace: 'pre'}}>{ logical_form}</div>
           </div>
           
           { <div className="form__field">
@@ -120,16 +125,9 @@ class AtisOutput extends React.Component {
                   </Collapsible>
                 ))}
               </Collapsible>
-
-              {/*
               <Collapsible trigger="Entity linking scores">
                   <HeatMap xLabels={question_tokens} yLabels={entities} data={linking_scores} xLabelWidth={250} />
               </Collapsible>
-              {feature_scores &&
-                <Collapsible trigger="Entity linking scores (features only)">
-                    <HeatMap xLabels={question_tokens} yLabels={entities} data={feature_scores} xLabelWidth={250} />
-                </Collapsible>
-              }*/}
               </Collapsible>
           </div>}
           
