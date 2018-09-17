@@ -62,4 +62,8 @@ MODELS = {
             'https://s3-us-west-2.amazonaws.com/allennlp/models/wikitables-model-2018.09.14.tar.gz',  # pylint: disable=line-too-long
                 'wikitables-parser'
         ),
+        'event2mind': DemoModel(
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/event2mind-2018.09.17.tar.gz',  # pylint: disable=line-too-long
+                'event2mind'
+        ),
 }

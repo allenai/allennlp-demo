@@ -19,21 +19,24 @@ We will follow the implementation of the SRL demo as an example.
    {buildLink("semantic-role-labeling", "Semantic Role Labeling")}
    ```
 5. `demo/src/components/`:
-   * Add a `<your-model-name>Component.js` file. 
+   * Add a `<your-model-name>Component.js` file.
    * this is where most of the model-specific js logic is implemented. See `demo/src/components/SrlComponent.js` for example.
-6. `demo/src/app.js`:
+6. `demo/src/App.js`:
    * Import the model component implemented in the previous step:
-   ```python 
+   ```js
    import SrlComponent from './components/SrlComponent';
    ```
    * In the instantiation of `ModelComponent`, add an `else if` clause returning an instance of your new component:
-   ```python
+   ```js
       else if (selectedModel === "semantic-role-labeling") {
           return (<SrlComponent requestData={requestData} responseData={responseData}/>)
       }
     ```
 7. `app.py`:
-   * Add a `app.route` to the html page, using the same name provided in step (2).  This allows users to link directly to your model.
+   * Add a `app.route` to the html page, using the same name provided in step (4).  This allows users to link directly to your model.
    ```python
    @app.route('/semantic-role-labeling/<permalink>')
    ```
+   * Consider also adding logging of your model's outputs. Search for `log_blob` in the `predict` function.
+8. Add a test for your model to `tests/server_test.py`.
+   * For instance, see `test_semantic_role_labeling`.

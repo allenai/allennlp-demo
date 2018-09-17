@@ -21,7 +21,8 @@ TEST_ARCHIVE_FILES = {
         'machine-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
         'semantic-role-labeling': 'tests/fixtures/srl/model.tar.gz',
         'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz',
-        'open-information-extraction': 'tests/fixtures/openie/model.tar.gz'
+        'open-information-extraction': 'tests/fixtures/openie/model.tar.gz',
+        'event2mind': 'tests/fixtures/event2mind/model.tar.gz'
 }
 
 PREDICTORS = {
@@ -117,6 +118,15 @@ class TestFlask(AllenNlpTestCase):
         assert response.status_code == 200
         results = json.loads(response.get_data())
         assert "verbs" in results
+
+    def test_event2mind(self):
+        response = self.post_json("/predict/event2mind",
+                                  data={"source": "PersonX starts to yell at PersonY"})
+        assert response.status_code == 200
+        results = json.loads(response.get_data())
+        assert "xintent_top_k_predicted_tokens" in results
+        assert "xreact_top_k_predicted_tokens" in results
+        assert "oreact_top_k_predicted_tokens" in results
 
     def test_caching(self):
         predictor = CountingPredictor()

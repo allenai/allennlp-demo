@@ -3,6 +3,7 @@ import { API_ROOT } from './api-config';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import SrlComponent from './components/SrlComponent';
 import OpenIeComponent from './components/OpenIeComponent';
+import Event2MindComponent from './components/Event2MindComponent';
 import TeComponent from './components/TeComponent';
 import McComponent from './components/McComponent';
 import CorefComponent from './components/CorefComponent';
@@ -142,6 +143,10 @@ class Demo extends React.Component {
       else if (selectedModel === "open-information-extraction") {
         return (<OpenIeComponent requestData={requestData} responseData={responseData}/>)
       }
+      else if (selectedModel === "event2mind") {
+        return (<Event2MindComponent requestData={requestData} responseData={responseData}/>)
+      }
+
 
       else if (selectedModel === "user-models") {
         const modelRequest = "User Contributed Models"
