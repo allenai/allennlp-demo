@@ -255,7 +255,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
                 "uptime": uptime,
                 "git_version": git_version,
                 "peak_memory_mb": peak_memory_mb(),
-                "githubUrl": "http://github.com/allenai/allennlp/commit/" + git_version})
+                "githubUrl": "http://github.com/allenai/allennlp-demo/commit/" + git_version})
 
     # As an SPA, we need to return index.html for /model-name and /model-name/permalink.
     @app.route('/open-information-extraction')
