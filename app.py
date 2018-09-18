@@ -232,6 +232,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
         elif model_name == "wikitables-parser":
              log_blob['outputs']['logical_form'] = prediction['logical_form']
              log_blob['outputs']['answer'] = prediction['answer']
+        # TODO(brendanr): Add event2mind log_blob here?
 
         logger.info("prediction: %s", json.dumps(log_blob))
 
@@ -256,7 +257,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
                 "peak_memory_mb": peak_memory_mb(),
                 "githubUrl": "http://github.com/allenai/allennlp/commit/" + git_version})
 
-    # As a SPA, we need to return index.html for /model-name and /model-name/permalink
+    # As an SPA, we need to return index.html for /model-name and /model-name/permalink.
     @app.route('/open-information-extraction')
     @app.route('/semantic-role-labeling')
     @app.route('/constituency-parsing')
@@ -267,6 +268,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/named-entity-recognition')
     @app.route('/fine-grained-named-entity-recognition')
     @app.route('/wikitables-parser')
+    @app.route('/event2mind')
     @app.route('/open-information-extraction/<permalink>')
     @app.route('/semantic-role-labeling/<permalink>')
     @app.route('/constituency-parsing/<permalink>')
@@ -275,7 +277,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/textual-entailment/<permalink>')
     @app.route('/coreference-resolution/<permalink>')
     @app.route('/named-entity-recognition/<permalink>')
-    @app.route('/wikitables-parser/<permalink>')
+    @app.route('/event2mind/<permalink>')
     def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
         """return the page"""
         return send_file(os.path.join(build_dir, 'index.html'))
