@@ -224,23 +224,28 @@ class _Event2MindComponent extends React.Component {
             sentence={sentence} />
         </PaneLeft>
         <PaneRight outputState={this.state.outputState}>
-          <ul className="visualization-types">
-            {Object.keys(VisualizationType).map(tpe => {
-              const vizType = VisualizationType[tpe];
-              const className = (
-                visualizationType === vizType
-                  ? 'visualization-types__active-type'
-                  : null
-              );
-              return (
-                <li key={vizType} className={className}>
-                  <a onClick={() => this.setState({ visualizationType: vizType })}>
-                    {vizType}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+          {/*
+            // TODO(aarons): Hiding this navigation UI behind a comment since
+            // we will need to add it back in the next iteration.
+
+            <ul className="visualization-types">
+              {Object.keys(VisualizationType).map(tpe => {
+                const vizType = VisualizationType[tpe];
+                const className = (
+                  visualizationType === vizType
+                    ? 'visualization-types__active-type'
+                    : null
+                );
+                return (
+                  <li key={vizType} className={className}>
+                    <a onClick={() => this.setState({ visualizationType: vizType })}>
+                      {vizType}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          */}
           {viz}
         </PaneRight>
       </div>
