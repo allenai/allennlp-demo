@@ -147,7 +147,7 @@ class Event2MindOutput extends React.Component {
 *******************************************************************************/
 
 const VisualizationType = {
-  TREE: 'Tree',
+  DIAGRAM: 'Diagram',
   TEXT: 'Text'
 };
 Object.freeze(VisualizationType);
@@ -206,7 +206,7 @@ class _Event2MindComponent extends React.Component {
     const { requestData, responseData } = this.props;
     const { visualizationType } = this.state;
 
-    const sentence = requestData && requestData.sentence;
+    const sentence = requestData && requestData.source;
 
     let viz = null;
     switch(visualizationType) {
@@ -224,23 +224,28 @@ class _Event2MindComponent extends React.Component {
             sentence={sentence} />
         </PaneLeft>
         <PaneRight outputState={this.state.outputState}>
-          <ul className="visualization-types">
-            {Object.keys(VisualizationType).map(tpe => {
-              const vizType = VisualizationType[tpe];
-              const className = (
-                visualizationType === vizType
-                  ? 'visualization-types__active-type'
-                  : null
-              );
-              return (
-                <li key={vizType} className={className}>
-                  <a onClick={() => this.setState({ visualizationType: vizType })}>
-                    {vizType}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+          {/*
+            // TODO(aarons): Temporarily hiding this navigation UI behind a comment
+            // since we will need to add it back in the next iteration.
+
+            <ul className="visualization-types">
+              {Object.keys(VisualizationType).map(tpe => {
+                const vizType = VisualizationType[tpe];
+                const className = (
+                  visualizationType === vizType
+                    ? 'visualization-types__active-type'
+                    : null
+                );
+                return (
+                  <li key={vizType} className={className}>
+                    <a onClick={() => this.setState({ visualizationType: vizType })}>
+                      {vizType}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          */}
           {viz}
         </PaneRight>
       </div>
