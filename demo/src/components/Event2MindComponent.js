@@ -147,7 +147,7 @@ class Event2MindOutput extends React.Component {
 *******************************************************************************/
 
 const VisualizationType = {
-  TREE: 'Tree',
+  DIAGRAM: 'Diagram',
   TEXT: 'Text'
 };
 Object.freeze(VisualizationType);
@@ -206,7 +206,7 @@ class _Event2MindComponent extends React.Component {
     const { requestData, responseData } = this.props;
     const { visualizationType } = this.state;
 
-    const sentence = requestData && requestData.sentence;
+    const sentence = requestData && requestData.source;
 
     let viz = null;
     switch(visualizationType) {
@@ -225,8 +225,8 @@ class _Event2MindComponent extends React.Component {
         </PaneLeft>
         <PaneRight outputState={this.state.outputState}>
           {/*
-            // TODO(aarons): Hiding this navigation UI behind a comment since
-            // we will need to add it back in the next iteration.
+            // TODO(aarons): Temporarily hiding this navigation UI behind a comment
+            // since we will need to add it back in the next iteration.
 
             <ul className="visualization-types">
               {Object.keys(VisualizationType).map(tpe => {
