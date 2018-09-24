@@ -25,11 +25,12 @@ const parserExamples = [
     
 ];
 
-const title = "Atis Semantic Parsing";
+const title = "Text to SQL";
 const description = (
   <span>
     <span>
-    This is a demo for natural language to SQL with the ATIS dataset.
+    Natural language to SQL interfaces allow users to query data in relational databases without writing
+    SQL queries. This demo is an implementation of an encoder-decoder architecture with LSTMs and <a href="https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a"> constrained type decoding </a> trained on the <a href="https://www.semanticscholar.org/paper/The-ATIS-Spoken-Language-Systems-Pilot-Corpus-Hemphill-Godfrey/1d19708290ef3cc3f43c2c95b07acdd4f52f5cda"> ATIS </a> dataset.
     </span>
   </span>
 );
