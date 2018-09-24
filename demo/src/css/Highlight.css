@@ -76,6 +76,17 @@
   padding-top: 1px;
 }
 
+/* Top Label Layout */
+
+.highlight.top {
+  flex-direction: column;
+  white-space: normal;
+}
+
+.highlight.top .highlight__label {
+  min-height: 22px;
+}
+
 /* Interactions */
 
 .highlight.active,
@@ -114,11 +125,16 @@ Colors
 /* Gray (Default) */
 
 .highlight.gray {
-  border-color: #a0aab5;
   background: #f2f4f6;
 }
 
-.highlight.gray .highlight__label {
+.highlight.gray,
+.highlight-arrow--gray .highlight-arrow__triangle {
+  border-color: #a0aab5;
+}
+
+.highlight.gray .highlight__label,
+.highlight-arrow--gray .highlight-arrow__stalk {
   background-color: #a0aab5;
 }
 
@@ -135,11 +151,16 @@ Colors
 /* Blue */
 
 .highlight.blue {
-  border-color: #4db1f7;
   background: #edf4fa;
 }
 
-.highlight.blue > .highlight__label {
+.highlight.blue,
+.highlight-arrow--blue .highlight-arrow__triangle {
+  border-color: #4db1f7;
+}
+
+.highlight.blue > .highlight__label,
+.highlight-arrow--blue .highlight-arrow__stalk {
   background-color: #4db1f7;
 }
 
@@ -156,11 +177,16 @@ Colors
 /* Green */
 
 .highlight.green {
-  border-color: #90ac4e;
   background: #f1f4f1;
 }
 
-.highlight.green > .highlight__label {
+.highlight.green,
+.highlight-arrow--green .highlight-arrow__triangle {
+  border-color: #90ac4e;
+}
+
+.highlight.green > .highlight__label,
+.highlight-arrow--green .highlight-arrow__stalk {
   background-color: #90ac4e;
 }
 
@@ -177,11 +203,16 @@ Colors
 /* Pink */
 
 .highlight.pink {
-  border-color: #ce6587;
   background: #f4f1f4;
 }
 
-.highlight.pink > .highlight__label {
+.highlight.pink,
+.highlight-arrow--pink .highlight-arrow__triangle {
+  border-color: #ce6587;
+}
+
+.highlight.pink > .highlight__label,
+.highlight-arrow--pink .highlight-arrow__stalk {
   background-color: #ce6587;
 }
 
@@ -198,11 +229,16 @@ Colors
 /* Orange */
 
 .highlight.orange {
-  border-color: #dd9e3e;
   background: #f2f4f4;
 }
 
-.highlight.orange > .highlight__label {
+.highlight.orange,
+.highlight-arrow--orange .highlight-arrow__triangle {
+  border-color: #dd9e3e;
+}
+
+.highlight.orange > .highlight__label,
+.highlight-arrow--orange .highlight-arrow__stalk {
   background-color: #dd9e3e;
 }
 
@@ -219,11 +255,16 @@ Colors
 /* Purple */
 
 .highlight.purple {
-  border-color: #9a5eba;
   background: #f1f0f7;
 }
 
-.highlight.purple > .highlight__label {
+.highlight.purple,
+.highlight-arrow--purple .highlight-arrow__triangle {
+  border-color: #9a5eba;
+}
+
+.highlight.purple > .highlight__label,
+.highlight-arrow--purple .highlight-arrow__stalk {
   background-color: #9a5eba;
 }
 
@@ -240,11 +281,16 @@ Colors
 /* Teal */
 
 .highlight.teal {
-  border-color: #5bb1ad;
   background: #eef4f6;
 }
 
-.highlight.teal > .highlight__label {
+.highlight.teal,
+.highlight-arrow--teal .highlight-arrow__triangle {
+  border-color: #5bb1ad;
+}
+
+.highlight.teal > .highlight__label,
+.highlight-arrow--teal .highlight-arrow__stalk {
   background-color: #5bb1ad;
 }
 
@@ -261,11 +307,16 @@ Colors
 /* Tan */
 
 .highlight.tan {
-  border-color: #b0a481;
   background: #f2f4f4;
 }
 
-.highlight.tan > .highlight__label {
+.highlight.tan,
+.highlight-arrow--tan .highlight-arrow__triangle {
+  border-color: #b0a481;
+}
+
+.highlight.tan > .highlight__label,
+.highlight-arrow--tan .highlight-arrow__stalk {
   background-color: #b0a481;
 }
 
@@ -282,11 +333,16 @@ Colors
 /* Red */
 
 .highlight.red {
-  border-color: #df3838;
   background: #f5eef0;
 }
 
-.highlight.red > .highlight__label {
+.highlight.red,
+.highlight-arrow--red .highlight-arrow__triangle {
+  border-color: #df3838;
+}
+
+.highlight.red > .highlight__label,
+.highlight-arrow--red .highlight-arrow__stalk {
   background-color: #df3838;
 }
 
@@ -303,11 +359,16 @@ Colors
 /* Cobalt */
 
 .highlight.cobalt {
-  border-color: #5f5b97;
   background: #eef0f5;
 }
 
-.highlight.cobalt > .highlight__label {
+.highlight.cobalt,
+.highlight-arrow--cobalt .highlight-arrow__triangle {
+  border-color: #5f5b97;
+}
+
+.highlight.cobalt > .highlight__label,
+.highlight-arrow--cobalt .highlight-arrow__stalk {
   background-color: #5f5b97;
 }
 
@@ -324,11 +385,16 @@ Colors
 /* Brown */
 
 .highlight.brown {
-  border-color: #6a4e3d;
   background: #f2f4f6;
 }
 
-.highlight.brown > .highlight__label {
+.highlight.brown,
+.highlight-arrow--brown .highlight-arrow__triangle {
+  border-color: #6a4e3d;
+}
+
+.highlight.brown > .highlight__label,
+.highlight-arrow--brown .highlight-arrow__stalk {
   background-color: #6a4e3d;
 }
 
@@ -345,11 +411,16 @@ Colors
 /* Slate */
 
 .highlight.slate {
-  border-color: #3b4247;
   background: #eceff1;
 }
 
-.highlight.slate > .highlight__label {
+.highlight.slate,
+.highlight-arrow--slate .highlight-arrow__triangle {
+  border-color: #3b4247;
+}
+
+.highlight.slate > .highlight__label,
+.highlight-arrow--slate .highlight-arrow__stalk {
   background-color: #3b4247;
 }
 
@@ -366,11 +437,16 @@ Colors
 /* Fuchsia */
 
 .highlight.fuchsia {
-  border-color: #e875e8;
   background: #f5f1f9;
 }
 
-.highlight.fuchsia > .highlight__label {
+.highlight.fuchsia,
+.highlight-arrow--fuchsia .highlight-arrow__triangle {
+  border-color: #e875e8;
+}
+
+.highlight.fuchsia > .highlight__label,
+.highlight-arrow--fuchsia .highlight-arrow__stalk {
   background-color: #e875e8;
 }
 
@@ -434,4 +510,44 @@ Tooltip
 
 .highlight__tooltip:hover {
   z-index: -9 !important;
+}
+
+/********************************************
+Arrow
+********************************************/
+
+.highlight-arrow {
+  display: flex;
+  height: 12px;
+  align-items: center;
+}
+
+.highlight-arrow__stalk {
+  width: 100%;
+  height: 4px;
+  padding-right: 10.4px;
+  box-sizing: border-box;
+}
+
+.highlight-arrow__triangle {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 0 6px 10.4px;
+  border-color: transparent;
+  margin-right: -1px;
+}
+
+.highlight-arrow.highlight-arrow--right .highlight-arrow__triangle,
+.highlight-arrow.highlight-arrow--left .highlight-arrow__triangle {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.highlight-arrow.highlight-arrow--left .highlight-arrow__triangle {
+  border-left-color: transparent;
+}
+
+.highlight-arrow.highlight-arrow--right .highlight-arrow__triangle {
+  border-right-color: transparent;
 }

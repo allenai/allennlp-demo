@@ -3,6 +3,8 @@ import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
 import { PaneLeft, PaneRight } from './Pane';
 import Button from './Button';
+import HighlightContainer from './highlight/HighlightContainer';
+import { Highlight } from './highlight/Highlight';
 import ModelIntro from './ModelIntro';
 import '../css/Event2MindDiagram.css';
 
@@ -155,7 +157,34 @@ class Event2MindDiagram extends React.Component {
 
     return (
       <div className="model__content">
-        Hello world.
+        <HighlightContainer layout="diagram">
+          <div className="e2m-event-container">
+            <Highlight label="Event" color="gray" labelPosition="top">PersonX starts to yell at PersonY</Highlight>
+          </div>
+          <div className="e2m-mind-container">
+            <div className="e2m-mind-container__item">
+              <div className="highlight-arrow highlight-arrow--right highlight-arrow--blue">
+                <div className="highlight-arrow__stalk"></div>
+                <div className="highlight-arrow__triangle"></div>
+              </div>
+              <Highlight label="X's Intent" color="blue" labelPosition="top">none</Highlight>
+            </div>
+            <div className="e2m-mind-container__item">
+              <div className="highlight-arrow highlight-arrow--right highlight-arrow--orange">
+                <div className="highlight-arrow__stalk"></div>
+                <div className="highlight-arrow__triangle"></div>
+              </div>
+              <Highlight label="X's Reaction" color="orange" labelPosition="top">angry</Highlight>
+            </div>
+            <div className="e2m-mind-container__item">
+              <div className="highlight-arrow highlight-arrow--right highlight-arrow--orange">
+                <div className="highlight-arrow__stalk"></div>
+                <div className="highlight-arrow__triangle"></div>
+              </div>
+              <Highlight label="Other's Reaction" color="orange" labelPosition="top">none</Highlight>
+            </div>
+          </div>
+        </HighlightContainer>
       </div>
     );
   }
