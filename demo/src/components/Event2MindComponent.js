@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { PaneLeft, PaneRight } from './Pane';
 import Button from './Button';
 import HighlightArrow from './highlight/HighlightArrow';
+import HighlightButton from './highlight/HighlightButton';
 import HighlightContainer from './highlight/HighlightContainer';
 import { Highlight } from './highlight/Highlight';
 import ModelIntro from './ModelIntro';
@@ -162,18 +163,33 @@ class Event2MindDiagram extends React.Component {
           <div className="e2m-event-container">
             <Highlight label="Event" color="gray" labelPosition="top">PersonX starts to yell at PersonY</Highlight>
           </div>
+
           <div className="e2m-mind-container">
             <div className="e2m-mind-container__item">
               <HighlightArrow color="blue" direction="right" />
-              <Highlight label="X's Intent" secondaryLabel="1 of 8" color="blue" labelPosition="top">none</Highlight>
+              <Highlight label="X's Intent" secondaryLabel="1 of 8" color="blue" labelPosition="top">
+                <HighlightButton direction="prev" color="blue" disabled={true} />
+                <span>none</span>
+                <HighlightButton direction="next" color="blue" disabled={false} />
+              </Highlight>
             </div>
+
             <div className="e2m-mind-container__item">
               <HighlightArrow color="orange" direction="right" />
-              <Highlight label="X's Reaction" secondaryLabel="1 of 8" color="orange" labelPosition="top">angry</Highlight>
+              <Highlight label="X's Reaction" secondaryLabel="1 of 8" color="orange" labelPosition="top">
+                <HighlightButton direction="prev" color="orange" disabled={true} />
+                <span>angry</span>
+                <HighlightButton direction="next" color="orange" disabled={false} />
+              </Highlight>
             </div>
+
             <div className="e2m-mind-container__item">
-              <HighlightArrow color="tan" direction="bottom" />
-              <Highlight label="Other's Reaction" secondaryLabel="1 of 8" color="orange" labelPosition="top">none</Highlight>
+              <HighlightArrow color="orange" direction="right" />
+              <Highlight label="Other's Reaction" secondaryLabel="1 of 8" color="orange" labelPosition="top">
+                <HighlightButton direction="prev" color="orange" disabled={true} />
+                <span>none</span>
+                <HighlightButton direction="next" color="orange" disabled={false} />
+              </Highlight>
             </div>
           </div>
         </HighlightContainer>

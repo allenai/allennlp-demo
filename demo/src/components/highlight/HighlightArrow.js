@@ -1,10 +1,11 @@
 import React from 'react';
+import '../../css/HighlightArrow.css';
 
 /*******************************************************************************
   <HighlightArrow /> Component
 *******************************************************************************/
 
-export default class Highlight extends React.Component {
+export default class HighlightArrow extends React.Component {
   render() {
     const {         // All fields optional:
       color,        // string (see highlightColors for supported values)

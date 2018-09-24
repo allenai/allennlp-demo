@@ -1,0 +1,72 @@
+/********************************************
+Highlight Button
+********************************************/
+
+.highlight__button {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  width: 32px;
+  min-width: 32px;
+  height: 100%;
+  position: relative;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  align-items: center;
+  justify-content: center;
+}
+
+.highlight__button:focus {
+  outline: none;
+}
+
+.highlight__button__body {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transition: opacity .2s ease;
+  opacity: 0.08;
+}
+
+.highlight__button svg {
+  width: 7px;
+  height: 12px;
+}
+
+.highlight__button:not([disabled]) {
+  cursor: pointer;
+}
+
+/* Previous */
+
+.highlight__button.highlight__button--prev svg {
+  transform: rotate(180deg);
+}
+
+/* Hover */
+
+.highlight__button:not([disabled]):hover .highlight__button__body {
+  opacity: 0.25;
+}
+
+/* Active */
+
+.highlight__button:not([disabled]):active .highlight__button__body {
+  opacity: 0.1;
+  transition-duration: 0s;
+}
+
+/* Disabled */
+
+.highlight__button[disabled] .highlight__button__body {
+  opacity: 0.03;
+}
+
+.highlight__button[disabled] svg {
+  opacity: 0.25;
+}

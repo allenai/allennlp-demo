@@ -143,7 +143,8 @@ Colors
 }
 
 .highlight.gray .highlight__label,
-.highlight-arrow--gray .highlight-arrow__stalk {
+.highlight-arrow--gray .highlight-arrow__stalk,
+.highlight.gray .highlight__button .highlight__button__body {
   background-color: #a0aab5;
 }
 
@@ -153,6 +154,10 @@ Colors
 
 .highlight.gray.active .highlight__label {
   background-color: #aab3bd;
+}
+
+.highlight.gray .highlight__button svg {
+  fill: #a0aab5;
 }
 
 /********************************************/
@@ -169,7 +174,8 @@ Colors
 }
 
 .highlight.blue > .highlight__label,
-.highlight-arrow--blue .highlight-arrow__stalk {
+.highlight-arrow--blue .highlight-arrow__stalk,
+.highlight.blue .highlight__button .highlight__button__body {
   background-color: #4db1f7;
 }
 
@@ -179,6 +185,10 @@ Colors
 
 .highlight.blue.active > .highlight__label {
   background-color: #5fb9f8;
+}
+
+.highlight.blue .highlight__button svg {
+  fill: #4db1f7;
 }
 
 /********************************************/
@@ -195,7 +205,8 @@ Colors
 }
 
 .highlight.green > .highlight__label,
-.highlight-arrow--green .highlight-arrow__stalk {
+.highlight-arrow--green .highlight-arrow__stalk,
+.highlight.green .highlight__button .highlight__button__body {
   background-color: #90ac4e;
 }
 
@@ -205,6 +216,10 @@ Colors
 
 .highlight.green.active > .highlight__label {
   background-color: #9bb460;
+}
+
+.highlight.green .highlight__button svg {
+  fill: #90ac4e;
 }
 
 /********************************************/
@@ -221,7 +236,8 @@ Colors
 }
 
 .highlight.pink > .highlight__label,
-.highlight-arrow--pink .highlight-arrow__stalk {
+.highlight-arrow--pink .highlight-arrow__stalk,
+.highlight.pink .highlight__button .highlight__button__body {
   background-color: #ce6587;
 }
 
@@ -231,6 +247,10 @@ Colors
 
 .highlight.pink.active > .highlight__label {
   background-color: #d37593;
+}
+
+.highlight.pink .highlight__button svg {
+  fill: #ce6587;
 }
 
 /********************************************/
@@ -247,7 +267,8 @@ Colors
 }
 
 .highlight.orange > .highlight__label,
-.highlight-arrow--orange .highlight-arrow__stalk {
+.highlight-arrow--orange .highlight-arrow__stalk,
+.highlight.orange .highlight__button .highlight__button__body {
   background-color: #dd9e3e;
 }
 
@@ -257,6 +278,10 @@ Colors
 
 .highlight.orange.active > .highlight__label {
   background-color: #e0a852;
+}
+
+.highlight.orange .highlight__button svg {
+  fill: #dd9e3e;
 }
 
 /********************************************/
@@ -273,7 +298,8 @@ Colors
 }
 
 .highlight.purple > .highlight__label,
-.highlight-arrow--purple .highlight-arrow__stalk {
+.highlight-arrow--purple .highlight-arrow__stalk,
+.highlight.purple .highlight__button .highlight__button__body {
   background-color: #9a5eba;
 }
 
@@ -283,6 +309,10 @@ Colors
 
 .highlight.purple.active > .highlight__label {
   background-color: #a46ec1;
+}
+
+.highlight.purple .highlight__button svg {
+  fill: #9a5eba;
 }
 
 /********************************************/
@@ -299,7 +329,8 @@ Colors
 }
 
 .highlight.teal > .highlight__label,
-.highlight-arrow--teal .highlight-arrow__stalk {
+.highlight-arrow--teal .highlight-arrow__stalk,
+.highlight.teal .highlight__button .highlight__button__body {
   background-color: #5bb1ad;
 }
 
@@ -309,6 +340,10 @@ Colors
 
 .highlight.teal.active > .highlight__label {
   background-color: #6cb9b5;
+}
+
+.highlight.teal .highlight__button svg {
+  fill: #5bb1ad;
 }
 
 /********************************************/
@@ -325,7 +360,8 @@ Colors
 }
 
 .highlight.tan > .highlight__label,
-.highlight-arrow--tan .highlight-arrow__stalk {
+.highlight-arrow--tan .highlight-arrow__stalk,
+.highlight.tan .highlight__button .highlight__button__body {
   background-color: #b0a481;
 }
 
@@ -335,6 +371,10 @@ Colors
 
 .highlight.tan.active > .highlight__label {
   background-color: #b8ad8e;
+}
+
+.highlight.tan .highlight__button svg {
+  fill: #b0a481;
 }
 
 /********************************************/
@@ -351,7 +391,8 @@ Colors
 }
 
 .highlight.red > .highlight__label,
-.highlight-arrow--red .highlight-arrow__stalk {
+.highlight-arrow--red .highlight-arrow__stalk,
+.highlight.red .highlight__button .highlight__button__body {
   background-color: #df3838;
 }
 
@@ -361,6 +402,10 @@ Colors
 
 .highlight.red.active > .highlight__label {
   background-color: #e24c4c;
+}
+
+.highlight.red .highlight__button svg {
+  fill: #df3838;
 }
 
 /********************************************/
@@ -377,7 +422,8 @@ Colors
 }
 
 .highlight.cobalt > .highlight__label,
-.highlight-arrow--cobalt .highlight-arrow__stalk {
+.highlight-arrow--cobalt .highlight-arrow__stalk,
+.highlight.cobalt .highlight__button .highlight__button__body {
   background-color: #5f5b97;
 }
 
@@ -387,6 +433,10 @@ Colors
 
 .highlight.cobalt.active > .highlight__label {
   background-color: #6f6ca2;
+}
+
+.highlight.cobalt .highlight__button svg {
+  fill: #5f5b97;
 }
 
 /********************************************/
@@ -403,7 +453,8 @@ Colors
 }
 
 .highlight.brown > .highlight__label,
-.highlight-arrow--brown .highlight-arrow__stalk {
+.highlight-arrow--brown .highlight-arrow__stalk,
+.highlight.brown .highlight__button .highlight__button__body {
   background-color: #6a4e3d;
 }
 
@@ -413,6 +464,10 @@ Colors
 
 .highlight.brown.active > .highlight__label {
   background-color: #796051;
+}
+
+.highlight.brown .highlight__button svg {
+  fill: #6a4e3d;
 }
 
 /********************************************/
@@ -429,7 +484,8 @@ Colors
 }
 
 .highlight.slate > .highlight__label,
-.highlight-arrow--slate .highlight-arrow__stalk {
+.highlight-arrow--slate .highlight-arrow__stalk,
+.highlight.slate .highlight__button .highlight__button__body {
   background-color: #3b4247;
 }
 
@@ -439,6 +495,10 @@ Colors
 
 .highlight.slate.active > .highlight__label {
   background-color: #4f555a;
+}
+
+.highlight.slate .highlight__button svg {
+  fill: #3b4247;
 }
 
 /********************************************/
@@ -455,7 +515,8 @@ Colors
 }
 
 .highlight.fuchsia > .highlight__label,
-.highlight-arrow--fuchsia .highlight-arrow__stalk {
+.highlight-arrow--fuchsia .highlight-arrow__stalk,
+.highlight.fuchsia .highlight__button .highlight__button__body {
   background-color: #e875e8;
 }
 
@@ -465,6 +526,10 @@ Colors
 
 .highlight.fuchsia.active > .highlight__label {
   background-color: #ea83ea;
+}
+
+.highlight.fuchsia .highlight__button svg {
+  fill: #e875e8;
 }
 
 /********************************************
@@ -519,94 +584,4 @@ Tooltip
 
 .highlight__tooltip:hover {
   z-index: -9 !important;
-}
-
-/********************************************
-Arrow
-********************************************/
-
-.highlight-arrow {
-  display: flex;
-  height: 12px;
-  align-items: center;
-}
-
-.highlight-arrow__stalk {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.highlight-arrow__triangle {
-  width: 0;
-  height: 0;
-  border-style: solid;
-}
-
-.highlight-arrow.highlight-arrow--right .highlight-arrow__triangle,
-.highlight-arrow.highlight-arrow--left .highlight-arrow__triangle {
-  border-top-color: transparent;
-  border-bottom-color: transparent;
-}
-
-.highlight-arrow.highlight-arrow--left .highlight-arrow__stalk {
-  height: 4px;
-  padding-left: 10.4px;
-}
-
-.highlight-arrow.highlight-arrow--right .highlight-arrow__stalk {
-  height: 4px;
-  padding-right: 10.4px;
-}
-
-.highlight-arrow.highlight-arrow--left .highlight-arrow__triangle {
-  border-left-color: transparent;
-  border-width: 6px 10.4px 6px 0;
-  margin-left: -1px;
-}
-
-.highlight-arrow.highlight-arrow--right .highlight-arrow__triangle {
-  border-right-color: transparent;
-  border-width: 6px 0 6px 10.4px;
-  margin-right: -1px;
-}
-
-/* Vertical Arrows */
-
-.highlight-arrow.highlight-arrow--top,
-.highlight-arrow.highlight-arrow--bottom {
-  flex-direction: column;
-  width: 12px;
-  /* align-items: center; */
-}
-
-.highlight-arrow__stalk {
-  height: 100%;
-}
-
-.highlight-arrow.highlight-arrow--top .highlight-arrow__stalk {
-  width: 4px;
-  padding-top: 10.4px;
-}
-
-.highlight-arrow.highlight-arrow--bottom .highlight-arrow__stalk {
-  width: 4px;
-  padding-bottom: 10.4px;
-}
-
-.highlight-arrow.highlight-arrow--top .highlight-arrow__triangle,
-.highlight-arrow.highlight-arrow--bottom .highlight-arrow__triangle {
-  border-left-color: transparent;
-  border-right-color: transparent;
-}
-
-.highlight-arrow.highlight-arrow--top .highlight-arrow__triangle {
-  border-top-color: transparent;
-  border-width: 0 6px 10.4px 6px;
-  margin-top: -1px;
-}
-
-.highlight-arrow.highlight-arrow--bottom .highlight-arrow__triangle {
-  border-bottom-color: transparent;
-  border-width: 10.4px 6px 0 6px;
-  margin-bottom: -1px;
 }

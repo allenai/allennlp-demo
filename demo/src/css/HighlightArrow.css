@@ -1,0 +1,88 @@
+/********************************************
+Highlight Arrow
+********************************************/
+
+.highlight-arrow {
+  display: flex;
+  height: 12px;
+  align-items: center;
+}
+
+.highlight-arrow__stalk {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.highlight-arrow__triangle {
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.highlight-arrow.highlight-arrow--right .highlight-arrow__triangle,
+.highlight-arrow.highlight-arrow--left .highlight-arrow__triangle {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.highlight-arrow.highlight-arrow--left .highlight-arrow__stalk {
+  height: 4px;
+  padding-left: 10.4px;
+}
+
+.highlight-arrow.highlight-arrow--right .highlight-arrow__stalk {
+  height: 4px;
+  padding-right: 10.4px;
+}
+
+.highlight-arrow.highlight-arrow--left .highlight-arrow__triangle {
+  border-left-color: transparent;
+  border-width: 6px 10.4px 6px 0;
+  margin-left: -1px;
+}
+
+.highlight-arrow.highlight-arrow--right .highlight-arrow__triangle {
+  border-right-color: transparent;
+  border-width: 6px 0 6px 10.4px;
+  margin-right: -1px;
+}
+
+/* Vertical Arrows */
+
+.highlight-arrow.highlight-arrow--top,
+.highlight-arrow.highlight-arrow--bottom {
+  flex-direction: column;
+  width: 12px;
+}
+
+.highlight-arrow__stalk {
+  height: 100%;
+}
+
+.highlight-arrow.highlight-arrow--top .highlight-arrow__stalk {
+  width: 4px;
+  padding-top: 10.4px;
+}
+
+.highlight-arrow.highlight-arrow--bottom .highlight-arrow__stalk {
+  width: 4px;
+  padding-bottom: 10.4px;
+}
+
+.highlight-arrow.highlight-arrow--top .highlight-arrow__triangle,
+.highlight-arrow.highlight-arrow--bottom .highlight-arrow__triangle {
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.highlight-arrow.highlight-arrow--top .highlight-arrow__triangle {
+  border-top-color: transparent;
+  border-width: 0 6px 10.4px 6px;
+  margin-top: -1px;
+}
+
+.highlight-arrow.highlight-arrow--bottom .highlight-arrow__triangle {
+  border-bottom-color: transparent;
+  border-width: 10.4px 6px 0 6px;
+  margin-bottom: -1px;
+}
