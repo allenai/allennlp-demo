@@ -1,10 +1,11 @@
 .e2m-event-container {
   /* flex-grow: 1; */
   /* background: red; */
+  flex: 1;
 }
 
 .e2m-mind-container {
-  width: 50%;
+  width: 55%;
   /* background: blue; */
 }
 
@@ -12,13 +13,16 @@
 .e2m-mind-container {
   align-items: stretch;
   justify-content: stretch;
-  flex: 1;
 }
 
 .e2m-event-container .highlight,
 .e2m-event-container .highlight .highlight__content {
   height: 100%;
   box-sizing: border-box;
+}
+
+.e2m-mind-container .highlight .highlight__content {
+  padding: 10px 40px;
 }
 
 .e2m-event-container .highlight,

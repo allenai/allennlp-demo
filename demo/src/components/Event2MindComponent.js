@@ -3,6 +3,7 @@ import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
 import { PaneLeft, PaneRight } from './Pane';
 import Button from './Button';
+import HighlightArrow from './highlight/HighlightArrow';
 import HighlightContainer from './highlight/HighlightContainer';
 import { Highlight } from './highlight/Highlight';
 import ModelIntro from './ModelIntro';
@@ -163,25 +164,16 @@ class Event2MindDiagram extends React.Component {
           </div>
           <div className="e2m-mind-container">
             <div className="e2m-mind-container__item">
-              <div className="highlight-arrow highlight-arrow--right highlight-arrow--blue">
-                <div className="highlight-arrow__stalk"></div>
-                <div className="highlight-arrow__triangle"></div>
-              </div>
-              <Highlight label="X's Intent" color="blue" labelPosition="top">none</Highlight>
+              <HighlightArrow color="blue" direction="right" />
+              <Highlight label="X's Intent" secondaryLabel="1 of 8" color="blue" labelPosition="top">none</Highlight>
             </div>
             <div className="e2m-mind-container__item">
-              <div className="highlight-arrow highlight-arrow--right highlight-arrow--orange">
-                <div className="highlight-arrow__stalk"></div>
-                <div className="highlight-arrow__triangle"></div>
-              </div>
-              <Highlight label="X's Reaction" color="orange" labelPosition="top">angry</Highlight>
+              <HighlightArrow color="orange" direction="right" />
+              <Highlight label="X's Reaction" secondaryLabel="1 of 8" color="orange" labelPosition="top">angry</Highlight>
             </div>
             <div className="e2m-mind-container__item">
-              <div className="highlight-arrow highlight-arrow--right highlight-arrow--orange">
-                <div className="highlight-arrow__stalk"></div>
-                <div className="highlight-arrow__triangle"></div>
-              </div>
-              <Highlight label="Other's Reaction" color="orange" labelPosition="top">none</Highlight>
+              <HighlightArrow color="tan" direction="bottom" />
+              <Highlight label="Other's Reaction" secondaryLabel="1 of 8" color="orange" labelPosition="top">none</Highlight>
             </div>
           </div>
         </HighlightContainer>
