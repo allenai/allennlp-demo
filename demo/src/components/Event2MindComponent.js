@@ -1,9 +1,10 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import { PaneLeft, PaneRight } from './Pane'
-import Button from './Button'
-import ModelIntro from './ModelIntro'
+import { PaneLeft, PaneRight } from './Pane';
+import Button from './Button';
+import ModelIntro from './ModelIntro';
+import '../css/Event2MindDiagram.css';
 
 /*******************************************************************************
   <Event2MindInput /> Component
@@ -121,22 +122,40 @@ class Event2MindOutput extends React.Component {
 
     return (
       <div className="model__content model__content--event2Mind-output">
-        <ul>
           {Object.keys(target_types).map((target_desc, i) => {
             return (
               <div key={i}>
-                <p>{target_desc}</p>
-                <li>
-                  {responseData[target_types[target_desc]].map((target, j) => {
-                      return (
-                          <p key={j}><b>{j}:</b> {target.join(" ")}</p>
-                      )
-                  })}
-                </li>
+                {i !== 0 ? (
+                  <div>
+                    <hr />
+                    <h3>{target_desc}</h3>
+                  </div>
+                ) : (
+                  <h3 className="no-top-margin">{target_desc}</h3>
+                )}
+                {responseData[target_types[target_desc]].map((target, j) => {
+                  return (
+                    <p key={j}>&nbsp;<strong>{j}:</strong> {target.join(" ")}</p>
+                  )
+                })}
               </div>
             )
           })}
-        </ul>
+      </div>
+    );
+  }
+}
+
+/*******************************************************************************
+  <Event2MindDiagram /> Component
+*******************************************************************************/
+
+class Event2MindDiagram extends React.Component {
+  render() {
+
+    return (
+      <div className="model__content">
+        Hello world.
       </div>
     );
   }
@@ -162,8 +181,10 @@ class _Event2MindComponent extends React.Component {
       requestData: requestData,
       responseData: responseData,
       // valid values: "working", "empty", "received", "error",
-      outputState: responseData ? "received" : "empty",
-      visualizationType: VisualizationType.TEXT
+      // outputState: responseData ? "received" : "empty",
+      // TODO(aarons): un-hard-code outputstate
+      outputState: "received",
+      visualizationType: VisualizationType.DIAGRAM
     };
 
     this.runEvent2MindModel = this.runEvent2MindModel.bind(this);
@@ -211,8 +232,10 @@ class _Event2MindComponent extends React.Component {
     let viz = null;
     switch(visualizationType) {
       case VisualizationType.TEXT:
-      default:
         viz = <Event2MindOutput responseData={responseData} />;
+        break;
+      default: // VisualizationType.DIAGRAM
+        viz = <Event2MindDiagram responseData={responseData} />;
         break;
     }
 
@@ -224,28 +247,23 @@ class _Event2MindComponent extends React.Component {
             sentence={sentence} />
         </PaneLeft>
         <PaneRight outputState={this.state.outputState}>
-          {/*
-            // TODO(aarons): Temporarily hiding this navigation UI behind a comment
-            // since we will need to add it back in the next iteration.
-
-            <ul className="visualization-types">
-              {Object.keys(VisualizationType).map(tpe => {
-                const vizType = VisualizationType[tpe];
-                const className = (
-                  visualizationType === vizType
-                    ? 'visualization-types__active-type'
-                    : null
-                );
-                return (
-                  <li key={vizType} className={className}>
-                    <a onClick={() => this.setState({ visualizationType: vizType })}>
-                      {vizType}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          */}
+          <ul className="visualization-types">
+            {Object.keys(VisualizationType).map(tpe => {
+              const vizType = VisualizationType[tpe];
+              const className = (
+                visualizationType === vizType
+                  ? 'visualization-types__active-type'
+                  : null
+              );
+              return (
+                <li key={vizType} className={className}>
+                  <a onClick={() => this.setState({ visualizationType: vizType })}>
+                    {vizType}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
           {viz}
         </PaneRight>
       </div>
