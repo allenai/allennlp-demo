@@ -13,13 +13,13 @@ import ModelIntro from './ModelIntro'
 
 const parserExamples = [
     {
-      question: "show me the flights from detroit to westchester county",
+      utterance: "show me the flights from detroit to westchester county",
     },
     {
-      question: "all northwest and united airlines flights with stopovers in denver",
+      utterance: "all northwest and united airlines flights with stopovers in denver",
     },
     {
-      question: "what is the cheapest flight on american airlines from cleveland to miami",
+      utterance: "what is the cheapest flight on american airlines from cleveland to miami",
     },
 
     
@@ -39,39 +39,37 @@ class AtisInput extends React.Component {
 constructor(props) {
     super(props);
 
-    // If we're showing a permalinked result,
-    // we'll get passed in a table and question.
-    const { question } = props;
+    const { utterance } = props;
 
     this.state = {
-      questionValue: question || ""
+      utteranceValue: utterance || ""
     };
     this.handleListChange = this.handleListChange.bind(this);
-    this.handleQuestionChange = this.handleQuestionChange.bind(this);
+    this.handleUtteranceChange = this.handleUtteranceChange.bind(this);
 }
 
 handleListChange(e) {
     if (e.target.value !== "") {
       this.setState({
-          questionValue: parserExamples[e.target.value].question,
+          utteranceValue: parserExamples[e.target.value].utterance,
       });
     }
 }
 
 
-handleQuestionChange(e) {
+handleUtteranceChange(e) {
     this.setState({
-    questionValue: e.target.value,
+    utteranceValue: e.target.value,
     });
 }
 
 render() {
 
-    const { questionValue } = this.state;
+    const { utteranceValue } = this.state;
     const { outputState, runParser } = this.props;
 
     const parserInputs = {
-    "questionValue": questionValue
+    "utteranceValue": utteranceValue
     };
 
     return (
@@ -82,14 +80,14 @@ render() {
                 <option value="">Choose an example...</option>
                 {parserExamples.map((example, index) => {
                   return (
-                      <option value={index} key={index}>{example.question.substring(0,60) + "..."}</option>
+                      <option value={index} key={index}>{example.utterance.substring(0,60) + "..."}</option>
                   );
                 })}
             </select>
             </div>
             <div className="form__field">
             <label htmlFor="#input--mc-question">Utterance</label>
-            <input onChange={this.handleQuestionChange} id="input--mc-question" type="text" required="true" value={questionValue} placeholder="show me the flights from detroit to westchester county" disabled={outputState === "working"} />
+            <input onChange={this.handleUtteranceChange} id="input--mc-question" type="text" required="true" value={utteranceValue} placeholder="show me the flights from detroit to westchester county" disabled={outputState === "working"} />
             </div>
             <div className="form__field form__field--btn">
             <Button enabled={outputState !== "working"} runModel={runParser} inputs={parserInputs} />
@@ -106,14 +104,14 @@ render() {
 
 class AtisOutput extends React.Component {
     render() {
-      const { actions, answer, entities, feature_scores, linking_scores, logical_form, question_tokens, similarity_scores } = this.props;
+      const { actions, entities, linking_scores, predicted_sql_query, tokenized_utterance} = this.props;
 
       return (
         <div className="model__content">
 
           <div className="form__field">
-            <label>logical_form</label>
-            <div className="model__content__summary" style={{whiteSpace: 'pre'}}>{ logical_form}</div>
+            <label>predicted_sql_query</label>
+            <div className="model__content__summary" style={{whiteSpace: 'pre'}}>{ predicted_sql_query}</div>
           </div>
           
           { <div className="form__field">
@@ -121,12 +119,12 @@ class AtisOutput extends React.Component {
               <Collapsible trigger="Predicted actions">
                 {actions.map((action, action_index) => (
                   <Collapsible key={"action_" + action_index} trigger={action['predicted_action']}>
-                    <ActionInfo action={action} question_tokens={question_tokens}/>
+                    <ActionInfo action={action} tokenized_utterance={tokenized_utterance}/>
                   </Collapsible>
                 ))}
               </Collapsible>
               <Collapsible trigger="Entity linking scores">
-                  <HeatMap xLabels={question_tokens} yLabels={entities} data={linking_scores} xLabelWidth={250} />
+                  <HeatMap xLabels={tokenized_utterance} yLabels={entities} data={linking_scores} xLabelWidth={250} />
               </Collapsible>
               </Collapsible>
           </div>}
@@ -139,7 +137,7 @@ class AtisOutput extends React.Component {
 
 class ActionInfo extends React.Component {
   render() {
-    const { action, question_tokens } = this.props;
+    const { action, tokenized_utterance } = this.props;
     const utterance_attention = action['utterance_attention'].map(x => [x]);
     const considered_actions = action['considered_actions'];
     const action_probs = action['action_probabilities'].map(x => [x]);
@@ -152,7 +150,7 @@ class ActionInfo extends React.Component {
     
     const utterance_attention_heatmap = utterance_attention.length > 0 ? (
       <div className="heatmap">
-         <HeatMap xLabels={['Prob']} yLabels={question_tokens} data={utterance_attention} xLabelWidth={70} />
+         <HeatMap xLabels={['Prob']} yLabels={tokenized_utterance} data={utterance_attention} xLabelWidth={70} />
       </div>
     ) : (
       ""
@@ -191,7 +189,7 @@ class _AtisComponent extends React.Component {
     runParser(event, inputs) {
       this.setState({outputState: "working"});
       var payload = {
-        utterance: inputs.questionValue,
+        utterance: inputs.utteranceValue,
       };
       fetch(`${API_ROOT}/predict/atis-parser`, {
         method: 'POST',
@@ -227,16 +225,12 @@ class _AtisComponent extends React.Component {
       console.log("responseData")
       console.log(responseData)
 
-      const table = requestData && requestData.table;
-      const question = requestData && requestData.question;
-      const answer = responseData && responseData.answer;
-      const logical_form = responseData && responseData.logical_form;
+      const utterance = requestData && requestData.utterance;
+      const predicted_sql_query = responseData && responseData.predicted_sql_query;
       const actions = responseData && responseData.predicted_actions;
       const linking_scores = responseData && responseData.linking_scores;
-      const feature_scores = responseData && responseData.feature_scores;
-      const similarity_scores = responseData && responseData.similarity_scores;
       const entities = responseData && responseData.entities;
-      const question_tokens = responseData && responseData.tokenized_utterance;
+      const tokenized_utterance = responseData && responseData.tokenized_utterance;
 
 
       return (
@@ -244,17 +238,14 @@ class _AtisComponent extends React.Component {
           <PaneLeft>
             <AtisInput runParser={this.runParser}
                              outputState={this.state.outputState}
-                             question={question}/>
+                             utterance={utterance}/>
           </PaneLeft>
           <PaneRight outputState={this.state.outputState}>
-            <AtisOutput answer={answer}
-                        logical_form={logical_form}
+            <AtisOutput predicted_sql_query={predicted_sql_query}
                         actions={actions}
                         linking_scores={linking_scores}
-                        feature_scores={feature_scores}
-                        similarity_scores={similarity_scores}
                         entities={entities}
-                        question_tokens={question_tokens}
+                        tokenized_utterance={tokenized_utterance}
             />
           </PaneRight>
         </div>
