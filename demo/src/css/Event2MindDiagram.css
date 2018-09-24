@@ -1,12 +1,9 @@
 .e2m-event-container {
-  /* flex-grow: 1; */
-  /* background: red; */
   flex: 1;
 }
 
 .e2m-mind-container {
   width: 55%;
-  /* background: blue; */
 }
 
 .e2m-event-container,
