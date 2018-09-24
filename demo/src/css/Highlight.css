@@ -37,6 +37,7 @@
   display: flex;
   padding: 0 8px;
   text-align: center;
+  user-select: none;
 }
 
 .highlight__label strong,
