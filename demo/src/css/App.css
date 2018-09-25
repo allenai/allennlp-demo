@@ -166,3 +166,8 @@ th {
 .u-hidden {
   display: none;
 }
+
+.no-top-margin {
+  margin-top: 0;
+  padding-top: 0;
+}

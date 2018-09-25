@@ -13,3 +13,15 @@
   padding: 10px 1.125em;
   align-items: flex-start;
 }
+
+/* Diagram Layout */
+
+.highlight-container.highlight-container--diagram {
+  align-items: flex-start;
+}
+
+.highlight-container.highlight-container--diagram.passage.model__content__summary {
+  background: transparent;
+  align-items: stretch;
+  padding: 0;
+}

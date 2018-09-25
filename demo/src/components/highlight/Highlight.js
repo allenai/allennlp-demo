@@ -41,13 +41,14 @@ export class Highlight extends React.Component {
       isClickable,    // boolean
       isClicking,     // boolean
       label,          // string
-      labelPosition,  // string
+      labelPosition,  // string (supported values: "top", "left", "right", "bottom")
       onClick,        // function
       onMouseDown,    // function
       onMouseOver,    // function
       onMouseOut,     // function
       onMouseUp,      // function
       selectedId,     // string | number
+      secondaryLabel, // string
       tooltip         // string
     } = this.props;
 
@@ -61,6 +62,15 @@ export class Highlight extends React.Component {
       ${!isClicking && activeIds && activeIds.includes(id) ? "active" : ""}
       ${typeof(children) === "string" && children.length < 8 ? "short-text" : ""}`;
 
+    const labelTemplate = (
+      <span className="highlight__label">
+        <strong>{label}</strong>
+        {secondaryLabel ? (
+          <span className="highlight__label__secondary-label">{secondaryLabel}</span>
+        ) : null}
+      </span>
+    );
+
     return (
       <span
         className={conditionalClasses}
@@ -72,15 +82,11 @@ export class Highlight extends React.Component {
         onMouseOver={onMouseOver ? () => { onMouseOver(id) } : null}
         onMouseOut={onMouseOut ? () => { onMouseOut(id) } : null}
         onMouseUp={onMouseUp ? () => { onMouseUp(id) } : null}>
-        {(label || label !== null) && labelPosition === "left" ? (
-          <span className="highlight__label"><strong>{label}</strong></span>
-        ) : null}
+        {(labelPosition === "left" || labelPosition === "top") ? labelTemplate : null}
         {children ? (
           <span className="highlight__content">{children}</span>
         ) : null}
-        {(label || label !== null) && labelPosition !== "left" ? (
-          <span className="highlight__label"><strong>{label}</strong></span>
-        ) : null}
+        {(label || label !== null) && (labelPosition !== "left" && labelPosition !== "top") ? labelTemplate : null}
         {tooltip ? (
           <span className="highlight__tooltip">{tooltip}</span>
         ) : null}

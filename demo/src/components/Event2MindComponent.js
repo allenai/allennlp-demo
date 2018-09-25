@@ -1,9 +1,14 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import { PaneLeft, PaneRight } from './Pane'
-import Button from './Button'
-import ModelIntro from './ModelIntro'
+import { PaneLeft, PaneRight } from './Pane';
+import Button from './Button';
+import HighlightArrow from './highlight/HighlightArrow';
+import HighlightButton from './highlight/HighlightButton';
+import HighlightContainer from './highlight/HighlightContainer';
+import { Highlight } from './highlight/Highlight';
+import ModelIntro from './ModelIntro';
+import '../css/Event2MindDiagram.css';
 
 /*******************************************************************************
   <Event2MindInput /> Component
@@ -18,16 +23,34 @@ const event2MindSentences = [
   "It starts snowing",
 ];
 
+const supportedTargetTypes = [
+  {
+    responseDataKey: "xintent_top_k_predicted_tokens",
+    prettyLabel: "Person X's Intent",
+    color: "blue"
+  },
+  {
+    responseDataKey: "xreact_top_k_predicted_tokens",
+    prettyLabel: "Person X's Reaction",
+    color: "orange"
+  },
+  {
+    responseDataKey: "oreact_top_k_predicted_tokens",
+    prettyLabel: "Other's Reaction",
+    color: "orange"
+  }
+];
+
 const title = "Event2Mind";
 const description = (
   <span>
     <span>
-      The Event2Mind dataset proposes a commonsense inference task between events and mental states. In particular, it takes events as lightly preprocessed text and produces likely intents and reactions for individuals in the event.
+      The Event2Mind dataset proposes a commonsense inference task between events and mental states. In particular, it takes events as lightly preprocessed text and produces likely intents and reactions for participants of the event.
       This page demonstrates a reimplementation of
     </span>
     <a href="https://www.semanticscholar.org/paper/b89f8a9b2192a8f2018eead6b135ed30a1f2144d" target="_blank" rel="noopener noreferrer">{' '} the original Event2Mind system (Rashkin et al, 2018)</a>
     <span>
-      . An event with people entities should be typed as "PersonX" or "PersonY". Optionally, "___" can be used for uncommon objects.
+      . An event with people entities should be typed as "PersonX" or "PersonY". Optionally, "___" can be used as a placeholder for objects or phrases.
     </span>
   </span>
 );
@@ -105,38 +128,110 @@ class Event2MindInput extends React.Component {
   }
 }
 
-
 /*******************************************************************************
-  <Event2MindOutput /> Component
+  <TokenCarousel /> Component
+
+  This component is an Event2Mind-specific container for a carousel of tokens
+  that are navigated via `HighlightButton`s. Both the token text and navigation
+  buttons are contained inside a `Highlight`. The container also includes
+  a `HighlightArrow` as part of its structure.
+
 *******************************************************************************/
 
-class Event2MindOutput extends React.Component {
-  render() {
-    const { responseData } = this.props;
-    const target_types = {
-      "Person X's Intent": "xintent_top_k_predicted_tokens",
-      "Person X's Reaction": "xreact_top_k_predicted_tokens",
-      "Other's Reaction": "oreact_top_k_predicted_tokens"
+class TokenCarousel extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      tokenIndex: 0,
+    };
+
+    this.updateTokenIndex = this.updateTokenIndex.bind(this);
+  }
+
+  updateTokenIndex(direction) {
+    if (direction === "prev") {
+      this.setState({tokenIndex: this.state.tokenIndex - 1});
+    } else if (direction === "next") {
+      this.setState({tokenIndex: this.state.tokenIndex + 1});
     }
+  }
+
+  render() {
+
+    const { targetType, tokens } = this.props;
+    const { tokenIndex } = this.state;
 
     return (
+      <div className="e2m-mind-container__target-type">
+        <HighlightArrow color={targetType.color} direction="right" />
+        <Highlight label={targetType.prettyLabel} secondaryLabel={`${tokenIndex + 1} of ${tokens.length}`} color={targetType.color} labelPosition="top">
+          <HighlightButton direction="prev" color={targetType.color} disabled={tokenIndex === 0} onClick={this.updateTokenIndex} />
+          <span>{tokens[tokenIndex].join(" ")}</span>
+          <HighlightButton direction="next" color={targetType.color} disabled={tokenIndex === tokens.length - 1} onClick={this.updateTokenIndex} />
+        </Highlight>
+      </div>
+    );
+  }
+}
+
+/*******************************************************************************
+  <Event2MindDiagramOutput /> Component
+*******************************************************************************/
+
+class Event2MindDiagramOutput extends React.Component {
+  render() {
+    const { responseData, sentence } = this.props;
+
+    return (
+      <div className="model__content">
+        <HighlightContainer layout="diagram">
+          <div className="e2m-event-container">
+            <Highlight label="Event" color="gray" labelPosition="top">{sentence}</Highlight>
+          </div>
+
+          <div className="e2m-mind-container">
+            {supportedTargetTypes.map((targetType, i) => {
+              const tokens = responseData[targetType.responseDataKey];
+              return (
+                <TokenCarousel targetType={targetType} tokens={tokens} key={i} />
+              )
+            })}
+          </div>
+        </HighlightContainer>
+      </div>
+    );
+  }
+}
+
+/*******************************************************************************
+  <Event2MindTextOutput /> Component
+*******************************************************************************/
+
+class Event2MindTextOutput extends React.Component {
+  render() {
+    const { responseData } = this.props;
+    return (
       <div className="model__content model__content--event2Mind-output">
-        <ul>
-          {Object.keys(target_types).map((target_desc, i) => {
-            return (
-              <div key={i}>
-                <p>{target_desc}</p>
-                <li>
-                  {responseData[target_types[target_desc]].map((target, j) => {
-                      return (
-                          <p key={j}><b>{j}:</b> {target.join(" ")}</p>
-                      )
-                  })}
-                </li>
-              </div>
-            )
-          })}
-        </ul>
+        {supportedTargetTypes.map((targetType, i) => {
+          return (
+            <div key={i}>
+              {i !== 0 ? (
+                <div>
+                  <hr />
+                  <h3>{targetType.prettyLabel}</h3>
+                </div>
+              ) : (
+                <h3 className="no-top-margin">{targetType.prettyLabel}</h3>
+              )}
+              {responseData[targetType.responseDataKey].map((target, j) => {
+                return (
+                  <p key={j}>&nbsp;<strong>{j}:</strong> {target.join(" ")}</p>
+                )
+              })}
+            </div>
+          )
+        })}
       </div>
     );
   }
@@ -163,7 +258,7 @@ class _Event2MindComponent extends React.Component {
       responseData: responseData,
       // valid values: "working", "empty", "received", "error",
       outputState: responseData ? "received" : "empty",
-      visualizationType: VisualizationType.TEXT
+      visualizationType: VisualizationType.DIAGRAM
     };
 
     this.runEvent2MindModel = this.runEvent2MindModel.bind(this);
@@ -211,8 +306,10 @@ class _Event2MindComponent extends React.Component {
     let viz = null;
     switch(visualizationType) {
       case VisualizationType.TEXT:
-      default:
-        viz = <Event2MindOutput responseData={responseData} />;
+        viz = <Event2MindTextOutput responseData={responseData} />;
+        break;
+      default: // VisualizationType.DIAGRAM
+        viz = <Event2MindDiagramOutput responseData={responseData} sentence={sentence} />;
         break;
     }
 
@@ -224,28 +321,23 @@ class _Event2MindComponent extends React.Component {
             sentence={sentence} />
         </PaneLeft>
         <PaneRight outputState={this.state.outputState}>
-          {/*
-            // TODO(aarons): Temporarily hiding this navigation UI behind a comment
-            // since we will need to add it back in the next iteration.
-
-            <ul className="visualization-types">
-              {Object.keys(VisualizationType).map(tpe => {
-                const vizType = VisualizationType[tpe];
-                const className = (
-                  visualizationType === vizType
-                    ? 'visualization-types__active-type'
-                    : null
-                );
-                return (
-                  <li key={vizType} className={className}>
-                    <a onClick={() => this.setState({ visualizationType: vizType })}>
-                      {vizType}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          */}
+          <ul className="visualization-types">
+            {Object.keys(VisualizationType).map(tpe => {
+              const vizType = VisualizationType[tpe];
+              const className = (
+                visualizationType === vizType
+                  ? 'visualization-types__active-type'
+                  : null
+              );
+              return (
+                <li key={vizType} className={className}>
+                  <a onClick={() => this.setState({ visualizationType: vizType })}>
+                    {vizType}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
           {viz}
         </PaneRight>
       </div>
