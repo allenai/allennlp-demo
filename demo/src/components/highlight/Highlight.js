@@ -82,7 +82,7 @@ export class Highlight extends React.Component {
         onMouseOver={onMouseOver ? () => { onMouseOver(id) } : null}
         onMouseOut={onMouseOut ? () => { onMouseOut(id) } : null}
         onMouseUp={onMouseUp ? () => { onMouseUp(id) } : null}>
-        {(label || label !== null) && (labelPosition === "left" || labelPosition === "top") ? labelTemplate : null}
+        {(labelPosition === "left" || labelPosition === "top") ? labelTemplate : null}
         {children ? (
           <span className="highlight__content">{children}</span>
         ) : null}
