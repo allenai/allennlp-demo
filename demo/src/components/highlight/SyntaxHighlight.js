@@ -26,7 +26,10 @@ import { atomOneLight } from 'react-syntax-highlighter/styles/hljs';
 
 export default class SyntaxHighlight extends React.Component {
   render() {
-    const { language, children } = this.props;
+    const {
+      language, // string (optional, will auto-detct if not set explicitly)
+      children  // string | object
+    } = this.props;
 
     // Overriding the unwanted inline styles that `react-syntax-highlighter` adds by default:
     const customStyle = {

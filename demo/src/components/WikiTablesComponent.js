@@ -156,7 +156,7 @@ class WikiTablesOutput extends React.Component {
 
           <div className="form__field">
             <label>Logical Form</label>
-            <SyntaxHighlight language="lisp">{logicalForm}</SyntaxHighlight>
+            <SyntaxHighlight>{logicalForm}</SyntaxHighlight>
           </div>
 
           <div className="form__field">
