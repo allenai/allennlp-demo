@@ -23,6 +23,24 @@ const event2MindSentences = [
   "It starts snowing",
 ];
 
+const prettyTargetTypes = [
+  {
+    targetType: "xintent_top_k_predicted_tokens",
+    prettyLabel: "Person X's Intent",
+    color: "blue"
+  },
+  {
+    targetType: "xreact_top_k_predicted_tokens",
+    prettyLabel: "Person X's Reaction",
+    color: "orange"
+  },
+  {
+    targetType: "oreact_top_k_predicted_tokens",
+    prettyLabel: "Other's Reaction",
+    color: "orange"
+  }
+];
+
 const title = "Event2Mind";
 const description = (
   <span>
@@ -112,85 +130,91 @@ class Event2MindInput extends React.Component {
 
 
 /*******************************************************************************
-  <Event2MindOutput /> Component
+  <Event2MindTextOutput /> Component
 *******************************************************************************/
 
-class Event2MindOutput extends React.Component {
+class Event2MindTextOutput extends React.Component {
   render() {
     const { responseData } = this.props;
-    const target_types = {
-      "Person X's Intent": "xintent_top_k_predicted_tokens",
-      "Person X's Reaction": "xreact_top_k_predicted_tokens",
-      "Other's Reaction": "oreact_top_k_predicted_tokens"
-    }
-
     return (
       <div className="model__content model__content--event2Mind-output">
-          {Object.keys(target_types).map((target_desc, i) => {
-            return (
-              <div key={i}>
-                {i !== 0 ? (
-                  <div>
-                    <hr />
-                    <h3>{target_desc}</h3>
-                  </div>
-                ) : (
-                  <h3 className="no-top-margin">{target_desc}</h3>
-                )}
-                {responseData[target_types[target_desc]].map((target, j) => {
-                  return (
-                    <p key={j}>&nbsp;<strong>{j}:</strong> {target.join(" ")}</p>
-                  )
-                })}
-              </div>
-            )
-          })}
+        {prettyTargetTypes.map((item, i) => {
+          return (
+            <div key={i}>
+              {i !== 0 ? (
+                <div>
+                  <hr />
+                  <h3>{item.prettyLabel}</h3>
+                </div>
+              ) : (
+                <h3 className="no-top-margin">{item.prettyLabel}</h3>
+              )}
+              {responseData[item.targetType].map((target, j) => {
+                return (
+                  <p key={j}>&nbsp;<strong>{j}:</strong> {target.join(" ")}</p>
+                )
+              })}
+            </div>
+          )
+        })}
       </div>
     );
   }
 }
 
 /*******************************************************************************
-  <Event2MindDiagram /> Component
+  <Event2MindDiagramOutput /> Component
 *******************************************************************************/
 
-class Event2MindDiagram extends React.Component {
+class Event2MindDiagramOutput extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      tokenIndex: 0,
+    };
+
+    this.updateTokenIndex = this.updateTokenIndex.bind(this);
+  }
+
+  updateTokenIndex(direction) {
+    if (direction === "prev") {
+      this.setState({tokenIndex: this.state.tokenIndex - 1});
+    } else if (direction === "next") {
+      this.setState({tokenIndex: this.state.tokenIndex + 1});
+    }
+  }
+
   render() {
+
+    const responseData = {"oreact_top_k_predicted_tokens":[["none"],["angry"],["annoyed"],["scared"],["hurt"],["sad"],["upset"],["frustrated"],["worried"],["mad"]],"xintent_top_k_predicted_tokens":[["none"],["annoying"],["mean"],["angry"],["show","affection"],["express","anger"],["hurt","person"],["express","affection"],["get","attention"],["get","to","know","persony"]],"xreact_top_k_predicted_tokens":[["angry"],["mad"],["sad"],["scared"],["upset"],["nervous"],["happy"],["guilty"],["annoyed"],["powerful"]]};
+
+    const sentence = "PersonX starts to yell at PersonY";
+
+    // const { responseData, sentence } = this.props;
+    const { tokenIndex } = this.state;
 
     return (
       <div className="model__content">
         <HighlightContainer layout="diagram">
           <div className="e2m-event-container">
-            <Highlight label="Event" color="gray" labelPosition="top">PersonX starts to yell at PersonY</Highlight>
+            <Highlight label="Event" color="gray" labelPosition="top">{sentence}</Highlight>
           </div>
 
           <div className="e2m-mind-container">
-            <div className="e2m-mind-container__item">
-              <HighlightArrow color="blue" direction="right" />
-              <Highlight label="X's Intent" secondaryLabel="1 of 8" color="blue" labelPosition="top">
-                <HighlightButton direction="prev" color="blue" disabled={true} />
-                <span>none</span>
-                <HighlightButton direction="next" color="blue" disabled={false} />
-              </Highlight>
-            </div>
-
-            <div className="e2m-mind-container__item">
-              <HighlightArrow color="orange" direction="right" />
-              <Highlight label="X's Reaction" secondaryLabel="1 of 8" color="orange" labelPosition="top">
-                <HighlightButton direction="prev" color="orange" disabled={true} />
-                <span>angry</span>
-                <HighlightButton direction="next" color="orange" disabled={false} />
-              </Highlight>
-            </div>
-
-            <div className="e2m-mind-container__item">
-              <HighlightArrow color="orange" direction="right" />
-              <Highlight label="Other's Reaction" secondaryLabel="1 of 8" color="orange" labelPosition="top">
-                <HighlightButton direction="prev" color="orange" disabled={true} />
-                <span>none</span>
-                <HighlightButton direction="next" color="orange" disabled={false} />
-              </Highlight>
-            </div>
+            {prettyTargetTypes.map((item, i) => {
+              const tokens = responseData[item.targetType];
+              return (
+                <div className="e2m-mind-container__item" key={i}>
+                  <HighlightArrow color={item.color} direction="right" />
+                  <Highlight label={item.prettyLabel} secondaryLabel={`${tokenIndex + 1} of ${tokens.length}`} color={item.color} labelPosition="top">
+                    <HighlightButton direction="prev" color={item.color} disabled={tokenIndex === 0} onClick={this.updateTokenIndex} />
+                    <span>{tokens[tokenIndex].join(" ")}</span>
+                    <HighlightButton direction="next" color={item.color} disabled={tokenIndex === tokens.length - 1} onClick={this.updateTokenIndex} />
+                  </Highlight>
+                </div>
+              )
+            })}
           </div>
         </HighlightContainer>
       </div>
@@ -218,8 +242,8 @@ class _Event2MindComponent extends React.Component {
       requestData: requestData,
       responseData: responseData,
       // valid values: "working", "empty", "received", "error",
-      // outputState: responseData ? "received" : "empty",
       // TODO(aarons): un-hard-code outputstate
+      // outputState: responseData ? "received" : "empty",
       outputState: "received",
       visualizationType: VisualizationType.DIAGRAM
     };
@@ -269,10 +293,10 @@ class _Event2MindComponent extends React.Component {
     let viz = null;
     switch(visualizationType) {
       case VisualizationType.TEXT:
-        viz = <Event2MindOutput responseData={responseData} />;
+        viz = <Event2MindTextOutput responseData={responseData} />;
         break;
       default: // VisualizationType.DIAGRAM
-        viz = <Event2MindDiagram responseData={responseData} />;
+        viz = <Event2MindDiagramOutput responseData={responseData} sentence={sentence} />;
         break;
     }
 

@@ -8,13 +8,16 @@ import '../../css/HighlightButton.css';
 export default class HighlightButton extends React.Component {
   render() {
     const {         // All fields optional:
-      color,        // string (see highlightColors for supported values)
       direction,    // string (supported values: "top", left", "right", "bottom")
       disabled,     // boolean
+      onClick,      // function
     } = this.props;
 
     return (
-      <button className={`highlight__button ${direction === "prev" ? "highlight__button--prev" : "highlight__button--next"}`} disabled={disabled}
+      <button
+        className={`highlight__button ${direction === "prev" ? "highlight__button--prev" : "highlight__button--next"}`}
+        disabled={disabled}
+        onClick={onClick ? () => { onClick(direction) } : null}
         title={`${!disabled ? `Show ${direction === "prev" ? "previous" : "next"} item` : ""}`}>
         <span className="highlight__button__body"></span>
         <svg>
