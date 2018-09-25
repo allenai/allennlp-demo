@@ -3,6 +3,10 @@ import '../../css/HighlightButton.css';
 
 /*******************************************************************************
   <HighlightButton /> Component
+
+  This component adds a carousl navigation button to a highlight structure.
+  For example, see Event2Mind diagram visualization.
+
 *******************************************************************************/
 
 export default class HighlightButton extends React.Component {

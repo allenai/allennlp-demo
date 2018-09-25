@@ -130,6 +130,12 @@ class Event2MindInput extends React.Component {
 
 /*******************************************************************************
   <TokenCarousel /> Component
+
+  This component is an Event2Mind-specific container for a carousel of tokens
+  that are navigated via `HighlightButton`s. Both the token text and navigation
+  buttons are contained inside a `Highlight`. The container also includes
+  a `HighlightArrow` as part of its structure.
+
 *******************************************************************************/
 
 class TokenCarousel extends React.Component {

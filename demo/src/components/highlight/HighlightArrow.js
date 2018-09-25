@@ -3,6 +3,10 @@ import '../../css/HighlightArrow.css';
 
 /*******************************************************************************
   <HighlightArrow /> Component
+
+  This component creates a directional arrow as a visual element of a diagram.
+  For example, see Event2Mind diagram visualization.
+
 *******************************************************************************/
 
 export default class HighlightArrow extends React.Component {
