@@ -86,7 +86,7 @@ export class Highlight extends React.Component {
         {children ? (
           <span className="highlight__content">{children}</span>
         ) : null}
-        {(label || label !== null) && (labelPosition === "bottom" || labelPosition === "right") ? labelTemplate : null}
+        {(label || label !== null) && (labelPosition !== "left" && labelPosition !== "top") ? labelTemplate : null}
         {tooltip ? (
           <span className="highlight__tooltip">{tooltip}</span>
         ) : null}
