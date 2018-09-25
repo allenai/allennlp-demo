@@ -8,7 +8,7 @@ import '../../css/HighlightButton.css';
 export default class HighlightButton extends React.Component {
   render() {
     const {         // All fields optional:
-      direction,    // string (supported values: "top", left", "right", "bottom")
+      direction,    // string (supported values: "prev", "next")
       disabled,     // boolean
       onClick,      // function
     } = this.props;
