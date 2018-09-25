@@ -3,10 +3,10 @@ import HeatMap from './heatmap/HeatMap'
 import Collapsible from 'react-collapsible'
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import {PaneLeft, PaneRight} from './Pane'
-import Button from './Button'
-import ModelIntro from './ModelIntro'
-
+import {PaneLeft, PaneRight} from './Pane';
+import Button from './Button';
+import ModelIntro from './ModelIntro';
+import SyntaxHighlight from './highlight/SyntaxHighlight.js';
 
 /*******************************************************************************
   <McInput /> Component
@@ -156,7 +156,7 @@ class WikiTablesOutput extends React.Component {
 
           <div className="form__field">
             <label>Logical Form</label>
-            <div className="model__content__summary">{ logicalForm }</div>
+            <SyntaxHighlight language="lisp">{logicalForm}</SyntaxHighlight>
           </div>
 
           <div className="form__field">
