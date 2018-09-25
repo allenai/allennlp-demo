@@ -43,12 +43,12 @@
   padding: 10px 0;
 }
 
-.e2m-mind-container__item {
+.e2m-mind-container__target-type {
   padding: 10px 0;
   display: flex;
 }
 
-.e2m-mind-container__item .highlight-arrow {
+.e2m-mind-container__target-type .highlight-arrow {
   width: 36px;
   padding-top: 9px;
 }

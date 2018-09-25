@@ -23,19 +23,19 @@ const event2MindSentences = [
   "It starts snowing",
 ];
 
-const prettyTargetTypes = [
+const supportedTargetTypes = [
   {
-    targetType: "xintent_top_k_predicted_tokens",
+    responseDataKey: "xintent_top_k_predicted_tokens",
     prettyLabel: "Person X's Intent",
     color: "blue"
   },
   {
-    targetType: "xreact_top_k_predicted_tokens",
+    responseDataKey: "xreact_top_k_predicted_tokens",
     prettyLabel: "Person X's Reaction",
     color: "orange"
   },
   {
-    targetType: "oreact_top_k_predicted_tokens",
+    responseDataKey: "oreact_top_k_predicted_tokens",
     prettyLabel: "Other's Reaction",
     color: "orange"
   }
@@ -128,45 +128,11 @@ class Event2MindInput extends React.Component {
   }
 }
 
-
 /*******************************************************************************
-  <Event2MindTextOutput /> Component
+  <TokenCarousel /> Component
 *******************************************************************************/
 
-class Event2MindTextOutput extends React.Component {
-  render() {
-    const { responseData } = this.props;
-    return (
-      <div className="model__content model__content--event2Mind-output">
-        {prettyTargetTypes.map((item, i) => {
-          return (
-            <div key={i}>
-              {i !== 0 ? (
-                <div>
-                  <hr />
-                  <h3>{item.prettyLabel}</h3>
-                </div>
-              ) : (
-                <h3 className="no-top-margin">{item.prettyLabel}</h3>
-              )}
-              {responseData[item.targetType].map((target, j) => {
-                return (
-                  <p key={j}>&nbsp;<strong>{j}:</strong> {target.join(" ")}</p>
-                )
-              })}
-            </div>
-          )
-        })}
-      </div>
-    );
-  }
-}
-
-/*******************************************************************************
-  <Event2MindDiagramOutput /> Component
-*******************************************************************************/
-
-class Event2MindDiagramOutput extends React.Component {
+class TokenCarousel extends React.Component {
   constructor(props) {
     super(props);
 
@@ -187,12 +153,29 @@ class Event2MindDiagramOutput extends React.Component {
 
   render() {
 
-    const responseData = {"oreact_top_k_predicted_tokens":[["none"],["angry"],["annoyed"],["scared"],["hurt"],["sad"],["upset"],["frustrated"],["worried"],["mad"]],"xintent_top_k_predicted_tokens":[["none"],["annoying"],["mean"],["angry"],["show","affection"],["express","anger"],["hurt","person"],["express","affection"],["get","attention"],["get","to","know","persony"]],"xreact_top_k_predicted_tokens":[["angry"],["mad"],["sad"],["scared"],["upset"],["nervous"],["happy"],["guilty"],["annoyed"],["powerful"]]};
-
-    const sentence = "PersonX starts to yell at PersonY";
-
-    // const { responseData, sentence } = this.props;
+    const { targetType, tokens } = this.props;
     const { tokenIndex } = this.state;
+
+    return (
+      <div className="e2m-mind-container__target-type">
+        <HighlightArrow color={targetType.color} direction="right" />
+        <Highlight label={targetType.prettyLabel} secondaryLabel={`${tokenIndex + 1} of ${tokens.length}`} color={targetType.color} labelPosition="top">
+          <HighlightButton direction="prev" color={targetType.color} disabled={tokenIndex === 0} onClick={this.updateTokenIndex} />
+          <span>{tokens[tokenIndex].join(" ")}</span>
+          <HighlightButton direction="next" color={targetType.color} disabled={tokenIndex === tokens.length - 1} onClick={this.updateTokenIndex} />
+        </Highlight>
+      </div>
+    );
+  }
+}
+
+/*******************************************************************************
+  <Event2MindDiagramOutput /> Component
+*******************************************************************************/
+
+class Event2MindDiagramOutput extends React.Component {
+  render() {
+    const { responseData, sentence } = this.props;
 
     return (
       <div className="model__content">
@@ -202,21 +185,47 @@ class Event2MindDiagramOutput extends React.Component {
           </div>
 
           <div className="e2m-mind-container">
-            {prettyTargetTypes.map((item, i) => {
-              const tokens = responseData[item.targetType];
+            {supportedTargetTypes.map((targetType, i) => {
+              const tokens = responseData[targetType.responseDataKey];
               return (
-                <div className="e2m-mind-container__item" key={i}>
-                  <HighlightArrow color={item.color} direction="right" />
-                  <Highlight label={item.prettyLabel} secondaryLabel={`${tokenIndex + 1} of ${tokens.length}`} color={item.color} labelPosition="top">
-                    <HighlightButton direction="prev" color={item.color} disabled={tokenIndex === 0} onClick={this.updateTokenIndex} />
-                    <span>{tokens[tokenIndex].join(" ")}</span>
-                    <HighlightButton direction="next" color={item.color} disabled={tokenIndex === tokens.length - 1} onClick={this.updateTokenIndex} />
-                  </Highlight>
-                </div>
+                <TokenCarousel targetType={targetType} tokens={tokens} key={i} />
               )
             })}
           </div>
         </HighlightContainer>
+      </div>
+    );
+  }
+}
+
+/*******************************************************************************
+  <Event2MindTextOutput /> Component
+*******************************************************************************/
+
+class Event2MindTextOutput extends React.Component {
+  render() {
+    const { responseData } = this.props;
+    return (
+      <div className="model__content model__content--event2Mind-output">
+        {supportedTargetTypes.map((targetType, i) => {
+          return (
+            <div key={i}>
+              {i !== 0 ? (
+                <div>
+                  <hr />
+                  <h3>{targetType.prettyLabel}</h3>
+                </div>
+              ) : (
+                <h3 className="no-top-margin">{targetType.prettyLabel}</h3>
+              )}
+              {responseData[targetType.responseDataKey].map((target, j) => {
+                return (
+                  <p key={j}>&nbsp;<strong>{j}:</strong> {target.join(" ")}</p>
+                )
+              })}
+            </div>
+          )
+        })}
       </div>
     );
   }
@@ -242,9 +251,7 @@ class _Event2MindComponent extends React.Component {
       requestData: requestData,
       responseData: responseData,
       // valid values: "working", "empty", "received", "error",
-      // TODO(aarons): un-hard-code outputstate
-      // outputState: responseData ? "received" : "empty",
-      outputState: "received",
+      outputState: responseData ? "received" : "empty",
       visualizationType: VisualizationType.DIAGRAM
     };
 
