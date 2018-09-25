@@ -45,12 +45,12 @@ const title = "Event2Mind";
 const description = (
   <span>
     <span>
-      The Event2Mind dataset proposes a commonsense inference task between events and mental states. In particular, it takes events as lightly preprocessed text and produces likely intents and reactions for individuals in the event.
+      The Event2Mind dataset proposes a commonsense inference task between events and mental states. In particular, it takes events as lightly preprocessed text and produces likely intents and reactions for participants of the event.
       This page demonstrates a reimplementation of
     </span>
     <a href="https://www.semanticscholar.org/paper/b89f8a9b2192a8f2018eead6b135ed30a1f2144d" target="_blank" rel="noopener noreferrer">{' '} the original Event2Mind system (Rashkin et al, 2018)</a>
     <span>
-      . An event with people entities should be typed as "PersonX" or "PersonY". Optionally, "___" can be used for uncommon objects.
+      . An event with people entities should be typed as "PersonX" or "PersonY". Optionally, "___" can be used as a placeholder for objects or phrases.
     </span>
   </span>
 );
