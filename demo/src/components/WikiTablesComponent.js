@@ -155,10 +155,7 @@ class WikiTablesOutput extends React.Component {
           </div>
 
           <div className="form__field">
-            <label>Logical Form (Raw Data)</label>
-            <pre><code>{logicalForm}</code></pre>
-
-            <label>Logical Form (Formatted)</label>
+            <label>Logical Form</label>
             <SyntaxHighlight language="lisp">{logicalForm.split('fb:').join('').split('.').join('-')}</SyntaxHighlight>
           </div>
 
