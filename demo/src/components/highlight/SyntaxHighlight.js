@@ -1,6 +1,6 @@
 import React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { atomOneLight } from 'react-syntax-highlighter/styles/hljs';
+import { vs } from 'react-syntax-highlighter/styles/hljs';
 
 /*******************************************************************************
   <SyntaxHighlight /> Component
@@ -40,7 +40,7 @@ export default class SyntaxHighlight extends React.Component {
     return (
       <SyntaxHighlighter
         language={language}
-        style={atomOneLight}
+        style={vs}
         customStyle={customStyle}>
         {children}
       </SyntaxHighlighter>
