@@ -23,15 +23,7 @@
 }
 
 .e2m-mind-container .highlight .highlight__content {
-  padding: 0;
-  flex-wrap: nowrap;
-  flex: 1;
-}
-
-.e2m-mind-container .highlight .highlight__content > span {
   padding: 10px;
-  display: flex;
-  flex-grow: 1;
 }
 
 .e2m-event-container .highlight,
