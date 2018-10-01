@@ -24,9 +24,6 @@
 
 .e2m-mind-container .highlight .highlight__content {
   padding: 10px;
-  flex: 1;
-  display: block;
-  box-sizing: border-box;
 }
 
 .e2m-event-container .highlight,
