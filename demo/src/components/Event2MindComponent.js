@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 import { PaneLeft, PaneRight } from './Pane';
 import Button from './Button';
 import HighlightArrow from './highlight/HighlightArrow';
-import HighlightButton from './highlight/HighlightButton';
 import HighlightContainer from './highlight/HighlightContainer';
 import { Highlight } from './highlight/Highlight';
 import ModelIntro from './ModelIntro';
@@ -129,53 +128,6 @@ class Event2MindInput extends React.Component {
 }
 
 /*******************************************************************************
-  <TokenCarousel /> Component
-
-  This component is an Event2Mind-specific container for a carousel of tokens
-  that are navigated via `HighlightButton`s. Both the token text and navigation
-  buttons are contained inside a `Highlight`. The container also includes
-  a `HighlightArrow` as part of its structure.
-
-*******************************************************************************/
-
-class TokenCarousel extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      tokenIndex: 0,
-    };
-
-    this.updateTokenIndex = this.updateTokenIndex.bind(this);
-  }
-
-  updateTokenIndex(direction) {
-    if (direction === "prev") {
-      this.setState({tokenIndex: this.state.tokenIndex - 1});
-    } else if (direction === "next") {
-      this.setState({tokenIndex: this.state.tokenIndex + 1});
-    }
-  }
-
-  render() {
-
-    const { targetType, tokens } = this.props;
-    const { tokenIndex } = this.state;
-
-    return (
-      <div className="e2m-mind-container__target-type">
-        <HighlightArrow color={targetType.color} direction="right" />
-        <Highlight label={targetType.prettyLabel} secondaryLabel={`${tokenIndex + 1} of ${tokens.length}`} color={targetType.color} labelPosition="top">
-          <HighlightButton direction="prev" color={targetType.color} disabled={tokenIndex === 0} onClick={this.updateTokenIndex} />
-          <span>{tokens[tokenIndex].join(" ")}</span>
-          <HighlightButton direction="next" color={targetType.color} disabled={tokenIndex === tokens.length - 1} onClick={this.updateTokenIndex} />
-        </Highlight>
-      </div>
-    );
-  }
-}
-
-/*******************************************************************************
   <Event2MindDiagramOutput /> Component
 *******************************************************************************/
 
@@ -194,7 +146,18 @@ class Event2MindDiagramOutput extends React.Component {
             {supportedTargetTypes.map((targetType, i) => {
               const tokens = responseData[targetType.responseDataKey];
               return (
-                <TokenCarousel targetType={targetType} tokens={tokens} key={i} />
+                <div className="e2m-mind-container__target-type" key={i}>
+                  <HighlightArrow color={targetType.color} direction="right" />
+                  <Highlight label={targetType.prettyLabel} color={targetType.color} labelPosition="top">
+                    <span>
+                      {tokens.map((target, j) => {
+                        return (
+                          <span key={j}>{target.join(" ")}{j !== tokens.length - 1 ? ", " : ""}</span>
+                        )
+                      })}
+                    </span>
+                  </Highlight>
+                </div>
               )
             })}
           </div>
