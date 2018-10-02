@@ -9,12 +9,12 @@ import PropTypes from 'prop-types';
 import XLabels from './XLabels';
 import DataGrid from './DataGrid';
 
-function HeatMap({xLabels, yLabels, data, background, height, xLabelWidth, boxSize}) {
+function HeatMap({xLabels, yLabels, data, background, height, xLabelWidth, boxSize, normalization}) {
   return (
-    <div style={{height: height, overflow: "scroll", "overflow-x": "scroll", "white-space": "nowrap"}}>
+    <div style={{height: height, overflow: "scroll", overflowX: "scroll", whiteSpace: "nowrap"}}>
       <XLabels labels={xLabels} width={xLabelWidth} boxSize={boxSize} />
       <DataGrid
-        {...{xLabels, yLabels, data, background, height, xLabelWidth, boxSize}}
+        {...{xLabels, yLabels, data, background, height, xLabelWidth, boxSize, normalization}}
       />
     </div>
   );
@@ -31,6 +31,7 @@ HeatMap.propTypes = {
   background: PropTypes.string,
   height: PropTypes.number,
   xLabelWidth: PropTypes.number,
+  normalization: PropTypes.string,
 };
 
 HeatMap.defaultProps = {

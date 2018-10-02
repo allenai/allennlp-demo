@@ -14,12 +14,22 @@ const DataGrid = ({
   boxSize,
   background,
   height,
+  normalization,
 }) => {
   const flatArray = data.reduce((i, o) => [...o, ...i], []);
   const max = Math.max(...flatArray);
   const min = Math.min(...flatArray);
+
+  // TODO(matt-gardner): Add conditional logic that handles normalization type.
+
+  // Handle "log" case
+  // Handle "linear" case
+  // Handle "no normalization" case
+  // Handle case where table is 1x1 so there's no NaN
+  // Make one of these cases default if no normalization type is passed
+
   return (
-    <div style={{"white-space": "nowrap"}}>
+    <div style={{whiteSpace: "nowrap"}}>
       {yLabels.map((y, yi) => (
         <div key={`${y}_${yi}`} style={{clear: "both"}}>
           <div style={{display: "inline-block", width: xLabelWidth, textAlign: 'right', paddingRight: '5px', paddingTop:`${boxSize/3.7}px`}}>{y}</div>
@@ -56,6 +66,7 @@ DataGrid.propTypes = {
   background: PropTypes.string.isRequired,
   height: PropTypes.number.isRequired,
   xLabelWidth: PropTypes.number.isRequired,
+  normalization: PropTypes.string,
 };
 
 export default DataGrid;

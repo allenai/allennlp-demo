@@ -169,15 +169,15 @@ class WikiTablesOutput extends React.Component {
                 ))}
               </Collapsible>
               <Collapsible trigger="Entity linking scores">
-                  <HeatMap xLabels={question_tokens} yLabels={entities} data={linking_scores} xLabelWidth={250} />
+                  <HeatMap xLabels={question_tokens} yLabels={entities} data={linking_scores} xLabelWidth={250} normalization="TODO(matt-gardner)" />
               </Collapsible>
               {feature_scores &&
                 <Collapsible trigger="Entity linking scores (features only)">
-                    <HeatMap xLabels={question_tokens} yLabels={entities} data={feature_scores} xLabelWidth={250} />
+                    <HeatMap xLabels={question_tokens} yLabels={entities} data={feature_scores} xLabelWidth={250} normalization="TODO(matt-gardner)" />
                 </Collapsible>
               }
               <Collapsible trigger="Entity linking scores (similarity only)">
-                  <HeatMap xLabels={question_tokens} yLabels={entities} data={similarity_scores} xLabelWidth={250} />
+                  <HeatMap xLabels={question_tokens} yLabels={entities} data={similarity_scores} xLabelWidth={250} normalization="TODO(matt-gardner)" />
               </Collapsible>
             </Collapsible>
           </div>
@@ -199,12 +199,12 @@ class ActionInfo extends React.Component {
 
     const probability_heatmap = (
       <div className="heatmap">
-        <HeatMap xLabels={['Prob']} yLabels={considered_actions} data={action_probs} xLabelWidth={250} />
+        <HeatMap xLabels={['Prob']} yLabels={considered_actions} data={action_probs} xLabelWidth={250} normalization="TODO(matt-gardner)" />
       </div>
     );
     const question_attention_heatmap = question_attention.length > 0 ? (
       <div className="heatmap">
-        <HeatMap xLabels={['Prob']} yLabels={question_tokens} data={question_attention} xLabelWidth={70} />
+        <HeatMap xLabels={['Prob']} yLabels={question_tokens} data={question_attention} xLabelWidth={70} normalization="TODO(matt-gardner)" />
       </div>
     ) : (
       ""
