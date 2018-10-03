@@ -5,11 +5,11 @@
  * each cell, where the colors are determined by the data values (the `DataGrid` component).
  *
  * Supported normalization types:
- *    "none" (default),
- *    "log-global",
- *    "log-per-row",
- *    "log-per-row-with-zero",
- *    "linear"
+ *    "none" (default, use this if you already have normalized probability distributions),
+ *    "log-global" (does a global softmax over the whole matrix to get a probability distribution),
+ *    "log-per-row" (does a softmax per row to get a probability distribution),
+ *    "log-per-row-with-zero" (does a softmax per row, with the addition of a 0 logit),
+ *    "linear" (finds the max and min values in the matrix, does a linear interpolation between them)
  */
 
 import React from 'react';
