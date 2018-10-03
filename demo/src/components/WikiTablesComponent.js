@@ -169,15 +169,15 @@ class WikiTablesOutput extends React.Component {
                 ))}
               </Collapsible>
               <Collapsible trigger="Entity linking scores">
-                  <HeatMap xLabels={question_tokens} yLabels={entities} data={linking_scores} xLabelWidth={250} />
+                  <HeatMap xLabels={question_tokens} yLabels={entities} data={linking_scores} xLabelWidth={250} normalization="log-per-row-with-zero" />
               </Collapsible>
               {feature_scores &&
                 <Collapsible trigger="Entity linking scores (features only)">
-                    <HeatMap xLabels={question_tokens} yLabels={entities} data={feature_scores} xLabelWidth={250} />
+                    <HeatMap xLabels={question_tokens} yLabels={entities} data={feature_scores} xLabelWidth={250} normalization="log-per-row-with-zero" />
                 </Collapsible>
               }
               <Collapsible trigger="Entity linking scores (similarity only)">
-                  <HeatMap xLabels={question_tokens} yLabels={entities} data={similarity_scores} xLabelWidth={250} />
+                  <HeatMap xLabels={question_tokens} yLabels={entities} data={similarity_scores} xLabelWidth={250} normalization="log-per-row-with-zero" />
               </Collapsible>
             </Collapsible>
           </div>

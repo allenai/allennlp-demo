@@ -3,18 +3,26 @@
  * columns.  This is done with a series of divs, where the first div has the column labels (the
  * `XLabels` component) and the rest of the divs each have a row label and then colored boxes for
  * each cell, where the colors are determined by the data values (the `DataGrid` component).
+ *
+ * Supported normalization types:
+ *    "none" (default, use this if you already have normalized probability distributions),
+ *    "log-global" (does a global softmax over the whole matrix to get a probability distribution),
+ *    "log-per-row" (does a softmax per row to get a probability distribution),
+ *    "log-per-row-with-zero" (does a softmax per row, with the addition of a 0 logit),
+ *    "linear" (finds the max and min values in the matrix, does a linear interpolation between them)
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import XLabels from './XLabels';
 import DataGrid from './DataGrid';
 
-function HeatMap({xLabels, yLabels, data, background, height, xLabelWidth, boxSize}) {
+function HeatMap({xLabels, yLabels, data, background, height, xLabelWidth, boxSize, normalization}) {
   return (
-    <div style={{height: height, overflow: "scroll", "overflow-x": "scroll", "white-space": "nowrap"}}>
+    <div style={{height: height, overflow: "scroll", overflowX: "scroll", whiteSpace: "nowrap"}}>
       <XLabels labels={xLabels} width={xLabelWidth} boxSize={boxSize} />
       <DataGrid
-        {...{xLabels, yLabels, data, background, height, xLabelWidth, boxSize}}
+        {...{xLabels, yLabels, data, background, height, xLabelWidth, boxSize, normalization}}
       />
     </div>
   );
@@ -31,6 +39,7 @@ HeatMap.propTypes = {
   background: PropTypes.string,
   height: PropTypes.number,
   xLabelWidth: PropTypes.number,
+  normalization: PropTypes.string,
 };
 
 HeatMap.defaultProps = {

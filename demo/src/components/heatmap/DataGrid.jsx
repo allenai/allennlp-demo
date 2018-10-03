@@ -14,12 +14,43 @@ const DataGrid = ({
   boxSize,
   background,
   height,
+  normalization = "none",
 }) => {
-  const flatArray = data.reduce((i, o) => [...o, ...i], []);
-  const max = Math.max(...flatArray);
-  const min = Math.min(...flatArray);
+
+  let opacity;
+
+  if (normalization === "log-global") {
+    const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
+    const flatArray = exped.reduce((i, o) => [...o, ...i], []);
+    const sum = flatArray.reduce((a, b) => a + b, 0);
+    opacity = exped.map((x_list) => x_list.map((x) => x / sum));
+  } else if (normalization === "log-per-row") {
+    const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
+    opacity = exped.map((x_list) => {
+      const sum = x_list.reduce((a, b) => a + b, 0);
+      return x_list.map((x) => x / sum);
+    });
+  } else if (normalization === "log-per-row-with-zero") {
+    const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
+    opacity = exped.map((x_list) => {
+      const sum = x_list.reduce((a, b) => a + b, 0) + Math.exp(0);
+      return x_list.map((x) => x / sum);
+    });
+  } else if (normalization === "linear") {
+    const flatArray = data.reduce((i, o) => [...o, ...i], []);
+    const max = Math.max(...flatArray);
+    const min = Math.min(...flatArray);
+    if (max === min) {
+      opacity = data;
+    } else {
+      opacity = data.map((x_list) => x_list.map((x) => ((x - min) / (max - min))));
+    }
+  } else if (normalization === "none") {
+    opacity = data;
+  }
+
   return (
-    <div style={{"white-space": "nowrap"}}>
+    <div style={{whiteSpace: "nowrap"}}>
       {yLabels.map((y, yi) => (
         <div key={`${y}_${yi}`} style={{clear: "both"}}>
           <div style={{display: "inline-block", width: xLabelWidth, textAlign: 'right', paddingRight: '5px', paddingTop:`${boxSize/3.7}px`}}>{y}</div>
@@ -33,7 +64,7 @@ const DataGrid = ({
                 margin: '1px 1px 0 0',
                 width: boxSize,
                 height: boxSize,
-                opacity: (data[yi][xi] - min) / (max - min),
+                opacity: opacity[yi][xi],
               }}
             >
               &nbsp;
@@ -56,6 +87,7 @@ DataGrid.propTypes = {
   background: PropTypes.string.isRequired,
   height: PropTypes.number.isRequired,
   xLabelWidth: PropTypes.number.isRequired,
+  normalization: PropTypes.string,
 };
 
 export default DataGrid;
