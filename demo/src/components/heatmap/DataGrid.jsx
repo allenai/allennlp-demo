@@ -19,45 +19,34 @@ const DataGrid = ({
 
   let opacity;
 
-  switch(normalization) {
-    case "log-global": {
-      const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
-      const flatArray = exped.reduce((i, o) => [...o, ...i], []);
-      const sum = flatArray.reduce((a, b) => a + b, 0);
-      opacity = exped.map((x_list) => x_list.map((x) => x / sum));
-      break;
-    }
-    case "log-per-row": {
-      const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
-      opacity = exped.map((x_list) => {
-        const sum = x_list.reduce((a, b) => a + b, 0);
-        return x_list.map((x) => x / sum);
-      });
-      break;
-    }
-    case "log-per-row-with-zero": {
-      const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
-      opacity = exped.map((x_list) => {
-        const sum = x_list.reduce((a, b) => a + b, 0) + Math.exp(0);
-        return x_list.map((x) => x / sum);
-      });
-      break;
-    }
-    case "linear": {
-      const flatArray = data.reduce((i, o) => [...o, ...i], []);
-      const max = Math.max(...flatArray);
-      const min = Math.min(...flatArray);
-      if (max === min) {
-        opacity = data;
-      } else {
-        opacity = data.map((x_list) => x_list.map((x) => ((x - min) / (max - min))));
-      }
-      break;
-    }
-    case "none": {
+  if (normalization === "log-global") {
+    const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
+    const flatArray = exped.reduce((i, o) => [...o, ...i], []);
+    const sum = flatArray.reduce((a, b) => a + b, 0);
+    opacity = exped.map((x_list) => x_list.map((x) => x / sum));
+  } else if (normalization === "log-per-row") {
+    const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
+    opacity = exped.map((x_list) => {
+      const sum = x_list.reduce((a, b) => a + b, 0);
+      return x_list.map((x) => x / sum);
+    });
+  } else if (normalization === "log-per-row-with-zero") {
+    const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
+    opacity = exped.map((x_list) => {
+      const sum = x_list.reduce((a, b) => a + b, 0) + Math.exp(0);
+      return x_list.map((x) => x / sum);
+    });
+  } else if (normalization === "linear") {
+    const flatArray = data.reduce((i, o) => [...o, ...i], []);
+    const max = Math.max(...flatArray);
+    const min = Math.min(...flatArray);
+    if (max === min) {
       opacity = data;
-      break;
+    } else {
+      opacity = data.map((x_list) => x_list.map((x) => ((x - min) / (max - min))));
     }
+  } else if (normalization === "none") {
+    opacity = data;
   }
 
   return (
