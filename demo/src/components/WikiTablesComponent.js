@@ -199,12 +199,12 @@ class ActionInfo extends React.Component {
 
     const probability_heatmap = (
       <div className="heatmap">
-        <HeatMap xLabels={['Prob']} yLabels={considered_actions} data={action_probs} xLabelWidth={250} normalization="none" />
+        <HeatMap xLabels={['Prob']} yLabels={considered_actions} data={action_probs} xLabelWidth={250} />
       </div>
     );
     const question_attention_heatmap = question_attention.length > 0 ? (
       <div className="heatmap">
-        <HeatMap xLabels={['Prob']} yLabels={question_tokens} data={question_attention} xLabelWidth={70} normalization="none" />
+        <HeatMap xLabels={['Prob']} yLabels={question_tokens} data={question_attention} xLabelWidth={70} />
       </div>
     ) : (
       ""

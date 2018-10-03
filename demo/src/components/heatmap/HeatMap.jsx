@@ -5,11 +5,11 @@
  * each cell, where the colors are determined by the data values (the `DataGrid` component).
  *
  * Supported normalization types:
- *    "none",
+ *    "none" (default),
  *    "log-global",
  *    "log-per-row",
  *    "log-per-row-with-zero",
- *    "linear" (default)
+ *    "linear"
  */
 
 import React from 'react';

@@ -14,27 +14,12 @@ const DataGrid = ({
   boxSize,
   background,
   height,
-  normalization,
+  normalization = "none",
 }) => {
 
   let opacity;
 
-  function normalizeLinear() {
-    const flatArray = data.reduce((i, o) => [...o, ...i], []);
-    const max = Math.max(...flatArray);
-    const min = Math.min(...flatArray);
-    if (max === min) {
-      opacity = data;
-    } else {
-      opacity = data.map((x_list) => x_list.map((x) => ((x - min) / (max - min))));
-    }
-  }
-
   switch(normalization) {
-    case "none": {
-      opacity = data;
-      break;
-    }
     case "log-global": {
       const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
       const flatArray = exped.reduce((i, o) => [...o, ...i], []);
@@ -59,11 +44,19 @@ const DataGrid = ({
       break;
     }
     case "linear": {
-      normalizeLinear();
+      const flatArray = data.reduce((i, o) => [...o, ...i], []);
+      const max = Math.max(...flatArray);
+      const min = Math.min(...flatArray);
+      if (max === min) {
+        opacity = data;
+      } else {
+        opacity = data.map((x_list) => x_list.map((x) => ((x - min) / (max - min))));
+      }
       break;
     }
-    default: {
-      normalizeLinear();
+    case "none": {
+      opacity = data;
+      break;
     }
   }
 
