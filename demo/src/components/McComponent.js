@@ -178,7 +178,7 @@ class McOutput extends React.Component {
                   This heatmap shows that attention, which is normalized for every row in the matrix.
                 </span>
                 <div className="heatmap">
-                  <HeatMap xLabels={question_tokens} yLabels={passage_tokens} data={attention} />
+                  <HeatMap xLabels={question_tokens} yLabels={passage_tokens} data={attention} normalization="linear" />
                 </div>
               </Collapsible>
             </Collapsible>
