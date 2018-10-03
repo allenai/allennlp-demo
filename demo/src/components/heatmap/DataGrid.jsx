@@ -16,44 +16,56 @@ const DataGrid = ({
   height,
   normalization,
 }) => {
-  var opacity;
-  if (normalization === "none") {
-    opacity = data;
-  } else if (normalization === "linear") {
+  
+  let opacity;
+
+  function normalizeLinear() {
     const flatArray = data.reduce((i, o) => [...o, ...i], []);
     const max = Math.max(...flatArray);
     const min = Math.min(...flatArray);
-    if (max == min) {
+    if (max === min) {
       opacity = data;
     } else {
       opacity = data.map((x_list) => x_list.map((x) => ((x - min) / (max - min))));
     }
-  } else if (normalization === "log-global") {
-    const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
-    const flatArray = exped.reduce((i, o) => [...o, ...i], []);
-    const sum = flatArray.reduce((a, b) => a + b, 0)
-    opacity = exped.map((x_list) => x_list.map((x) => x / sum));
-  } else if (normalization === "log-per-row") {
-    const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
-    opacity = exped.map((x_list) => {
-      const sum = x_list.reduce((a, b) => a + b, 0)
-      return x_list.map((x) => x / sum)
-    });
-  } else if (normalization === "log-per-row-with-zero") {
-    const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
-    opacity = exped.map((x_list) => {
-      const sum = x_list.reduce((a, b) => a + b, 0) + Math.exp(0)
-      return x_list.map((x) => x / sum)
-    });
   }
 
-  // TODO(matt-gardner): Add conditional logic that handles normalization type.
-
-  // Handle "log" case
-  // Handle "linear" case
-  // Handle "no normalization" case
-  // Handle case where table is 1x1 so there's no NaN
-  // Make one of these cases default if no normalization type is passed
+  switch(normalization) {
+    case "none": {
+      opacity = data;
+      break;
+    }
+    case "log-global": {
+      const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
+      const flatArray = exped.reduce((i, o) => [...o, ...i], []);
+      const sum = flatArray.reduce((a, b) => a + b, 0)
+      opacity = exped.map((x_list) => x_list.map((x) => x / sum));
+      break;
+    }
+    case "log-per-row": {
+      const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
+      opacity = exped.map((x_list) => {
+        const sum = x_list.reduce((a, b) => a + b, 0)
+        return x_list.map((x) => x / sum)
+      });
+      break;
+    }
+    case "log-per-row-with-zero": {
+      const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
+      opacity = exped.map((x_list) => {
+        const sum = x_list.reduce((a, b) => a + b, 0) + Math.exp(0)
+        return x_list.map((x) => x / sum)
+      });
+      break;
+    }
+    case "linear": {
+      normalizeLinear();
+      break;
+    }
+    default: {
+      normalizeLinear();
+    }
+  }
 
   return (
     <div style={{whiteSpace: "nowrap"}}>

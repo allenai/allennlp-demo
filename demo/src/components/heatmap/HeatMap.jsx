@@ -3,7 +3,15 @@
  * columns.  This is done with a series of divs, where the first div has the column labels (the
  * `XLabels` component) and the rest of the divs each have a row label and then colored boxes for
  * each cell, where the colors are determined by the data values (the `DataGrid` component).
+ *
+ * Supported normalization types:
+ *    "none",
+ *    "log-global",
+ *    "log-per-row",
+ *    "log-per-row-with-zero",
+ *    "linear" (default)
  */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import XLabels from './XLabels';
