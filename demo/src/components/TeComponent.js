@@ -296,7 +296,7 @@ class TeOutput extends React.Component {
                   This heatmap shows that attention, which is normalized for every row in the matrix.
                 </span>
                 <div className="heatmap">
-                  <HeatMap xLabels={premise_tokens} yLabels={hypothesis_tokens} data={h2p_attention} normalization="linear" />
+                  <HeatMap xLabels={premise_tokens} yLabels={hypothesis_tokens} data={h2p_attention} />
                 </div>
               </Collapsible>
               <Collapsible trigger="hypothesis to premise attention">
@@ -305,7 +305,7 @@ class TeOutput extends React.Component {
                   This heatmap shows that attention, which is normalized for every row in the matrix.
                 </span>
                 <div className="heatmap">
-                  <HeatMap xLabels={hypothesis_tokens} yLabels={premise_tokens} data={p2h_attention} normalization="linear" />
+                  <HeatMap xLabels={hypothesis_tokens} yLabels={premise_tokens} data={p2h_attention} />
                 </div>
               </Collapsible>
             </Collapsible>
