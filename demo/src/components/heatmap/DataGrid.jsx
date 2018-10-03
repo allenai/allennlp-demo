@@ -16,7 +16,7 @@ const DataGrid = ({
   height,
   normalization,
 }) => {
-  
+
   let opacity;
 
   function normalizeLinear() {
@@ -38,23 +38,23 @@ const DataGrid = ({
     case "log-global": {
       const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
       const flatArray = exped.reduce((i, o) => [...o, ...i], []);
-      const sum = flatArray.reduce((a, b) => a + b, 0)
+      const sum = flatArray.reduce((a, b) => a + b, 0);
       opacity = exped.map((x_list) => x_list.map((x) => x / sum));
       break;
     }
     case "log-per-row": {
       const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
       opacity = exped.map((x_list) => {
-        const sum = x_list.reduce((a, b) => a + b, 0)
-        return x_list.map((x) => x / sum)
+        const sum = x_list.reduce((a, b) => a + b, 0);
+        return x_list.map((x) => x / sum);
       });
       break;
     }
     case "log-per-row-with-zero": {
       const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
       opacity = exped.map((x_list) => {
-        const sum = x_list.reduce((a, b) => a + b, 0) + Math.exp(0)
-        return x_list.map((x) => x / sum)
+        const sum = x_list.reduce((a, b) => a + b, 0) + Math.exp(0);
+        return x_list.map((x) => x / sum);
       });
       break;
     }
