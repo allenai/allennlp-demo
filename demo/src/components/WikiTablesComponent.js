@@ -169,15 +169,15 @@ class WikiTablesOutput extends React.Component {
                 ))}
               </Collapsible>
               <Collapsible trigger="Entity linking scores">
-                  <HeatMap colLabels={question_tokens} rowLabels={entities} data={linking_scores} normalization="log-per-row-with-zero" />
+                <HeatMap colLabels={question_tokens} rowLabels={entities} data={linking_scores} normalization="log-per-row-with-zero" />
               </Collapsible>
               {feature_scores &&
                 <Collapsible trigger="Entity linking scores (features only)">
-                    <HeatMap colLabels={question_tokens} rowLabels={entities} data={feature_scores} normalization="log-per-row-with-zero" />
+                  <HeatMap colLabels={question_tokens} rowLabels={entities} data={feature_scores} normalization="log-per-row-with-zero" />
                 </Collapsible>
               }
               <Collapsible trigger="Entity linking scores (similarity only)">
-                  <HeatMap colLabels={question_tokens} rowLabels={entities} data={similarity_scores} normalization="log-per-row-with-zero" />
+                <HeatMap colLabels={question_tokens} rowLabels={entities} data={similarity_scores} normalization="log-per-row-with-zero" />
               </Collapsible>
             </Collapsible>
           </div>
@@ -198,14 +198,10 @@ class ActionInfo extends React.Component {
     const action_probs = action['action_probabilities'].map(x => [x]);
 
     const probability_heatmap = (
-      <div className="heatmap-container">
-        <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
-      </div>
+      <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
     );
     const question_attention_heatmap = question_attention.length > 0 ? (
-      <div className="heatmap-container">
-        <HeatMap colLabels={['Prob']} rowLabels={question_tokens} data={question_attention} />
-      </div>
+      <HeatMap colLabels={['Prob']} rowLabels={question_tokens} data={question_attention} />
     ) : (
       ""
     )

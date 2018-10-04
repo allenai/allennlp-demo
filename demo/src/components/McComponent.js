@@ -177,9 +177,7 @@ class McOutput extends React.Component {
                   For every passage word, the model computes an attention over the question words.
                   This heatmap shows that attention, which is normalized for every row in the matrix.
                 </span>
-                <div className="heatmap-container">
-                  <HeatMap colLabels={question_tokens} rowLabels={passage_tokens} data={attention} />
-                </div>
+                <HeatMap colLabels={question_tokens} rowLabels={passage_tokens} data={attention} />
               </Collapsible>
             </Collapsible>
           </div>

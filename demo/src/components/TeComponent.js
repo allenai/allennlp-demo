@@ -295,18 +295,14 @@ class TeOutput extends React.Component {
                   For every premise word, the model computes an attention over the hypothesis words.
                   This heatmap shows that attention, which is normalized for every row in the matrix.
                 </span>
-                <div className="heatmap-container">
-                  <HeatMap colLabels={premise_tokens} rowLabels={hypothesis_tokens} data={h2p_attention} />
-                </div>
+                <HeatMap colLabels={premise_tokens} rowLabels={hypothesis_tokens} data={h2p_attention} />
               </Collapsible>
               <Collapsible trigger="hypothesis to premise attention">
                 <span>
                   For every hypothesis word, the model computes an attention over the premise words.
                   This heatmap shows that attention, which is normalized for every row in the matrix.
                 </span>
-                <div className="heatmap-container">
-                  <HeatMap colLabels={hypothesis_tokens} rowLabels={premise_tokens} data={p2h_attention} />
-                </div>
+                <HeatMap colLabels={hypothesis_tokens} rowLabels={premise_tokens} data={p2h_attention} />
               </Collapsible>
             </Collapsible>
           </div>

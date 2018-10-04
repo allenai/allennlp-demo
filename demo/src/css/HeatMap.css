@@ -1,47 +1,116 @@
-.heatmap {
-  height: 600px;
+.heatmap-container {
+  background: #fbfcfd;
   overflow: scroll;
-  white-space: nowrap;
-}
-
-.heatmap__col-labels {
-
-}
-
-.heatmap__col-labels__placeholder {
-  display: inline-block;
-  width: 60px;
-  height: 4em;
-}
-
-.heatmap__col-labels .heatmap__label {
-  display: inline-block;
-  transform: rotate(-90deg);
-  margin: 1px 1px 0px 0px;
-  width: 28px;
   text-align: center;
 }
 
-.heatmap__datagrid {
+.heatmap-container + .heatmap-container {
+  border-top: 1px solid #e1e5ea;
+}
+
+span + .heatmap-container {
+  margin-top: 20px;
+}
+
+.heatmap {
+  display: inline-block;
+}
+
+table.heatmap__datagrid {
+  margin: 40px;
+  width: auto;
+  filter: drop-shadow(0 0 40px rgba(0,0,0,.1));
+}
+
+table.heatmap__datagrid tr {
+  background: transparent;
+}
+
+table.heatmap__datagrid th {
+  padding: 0;
+  margin: 0;
+  border: none;
+  font-weight: normal;
+}
+
+table.heatmap__datagrid th span {
+  font-size: 16px;
+  line-height: 20px;
+  color: #606060;
   white-space: nowrap;
+  display: block;
 }
 
-.heatmap__datagrid__row {
-  clear: both;
+th.heatmap__col-labels__placeholder {
+  padding: 0;
+  background: #f4f5f6;
+  background: transparent;
 }
 
-.heatmap__datagrid__row .heatmap__label {
-  display: inline-block;
-  width: 60px;
+tr.heatmap__col-labels th.heatmap__label {
+  padding: 8px 0 0 0;
+  background: #fff;
+  border-right: 1px solid #e9e9e9;
+  vertical-align: bottom;
+  text-align: left;
+  width: 35px;
+  max-width: 35px;
+}
+
+.heatmap__label__outer {
+  display: table;
+  text-align: left;
+}
+
+.heatmap__label__inner {
+  padding: 50% 0;
+  height: 0;
+  min-height: 16px;
+  text-align: left;
+}
+
+tr.heatmap__col-labels th.heatmap__label span {
+  transform-origin: 7px -2px;
+  transform: rotate(-90deg) translate(-100%);
+  margin-top: -50%;
+  white-space: nowrap;
+  text-align: left;
+  height: 16px;
+  line-height: 16px;
+}
+
+tr.heatmap__datagrid__row th.heatmap__label {
   text-align: right;
-  padding-right: 5px;
-  padding-top: 8px;
+  padding: 4px 8px 4px 10px;
+  border-bottom: 1px solid #e9e9e9;
+  background: #fff;
 }
 
-.heatmap__cell {
+tr.heatmap__datagrid__row th.heatmap__label span {
+  margin-bottom: 1px;
+}
+
+td.heatmap__cell {
+  padding: 0;
+  border: 1px solid #fff;
+  border-left-width: 0;
+  border-top-width: 0;
+  background: #fff;
+}
+
+tr.heatmap__datagrid__row:last-child th.heatmap__label,
+tr.heatmap__datagrid__row:last-child td.heatmap__cell {
+  border-bottom-width: 0;
+}
+
+tr.heatmap__col-labels th.heatmap__label:last-child,
+tr.heatmap__datagrid__row td.heatmap__cell:last-child {
+  border-right-width: 0;
+}
+
+.heatmap__color-box {
+  /* width: 41px; TODO(aarons): change cell width when UI is moved to drawer */
+  width: 35px;
+  height: 35px;
   background: #329fff;
-  display: inline-block;
-  margin: 1px 1px 0px 0px;
-  width: 28px;
-  height: 28px;
 }
