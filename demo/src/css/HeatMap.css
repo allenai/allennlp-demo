@@ -1,16 +1,40 @@
 .heatmap-container {
-  background: #fbfcfd;
-  overflow: scroll;
-  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e1e5ea;
 }
 
 .heatmap-container + .heatmap-container {
-  border-top: 1px solid #e1e5ea;
+  border-top-width: 0;
 }
 
 /* Collapsible description */
 span + .heatmap-container {
-  margin-top: 20px;
+  margin-top: 15px;
+}
+
+.heatmap-container:before,
+.heatmap-container:after {
+  position: absolute;
+  content: "";
+  z-index: 99;
+  width: 90px;
+  height: 100%;
+  top: 0;
+  right: -90px;
+  box-shadow: 0 0 30px 10px #f9fafb;
+}
+
+.heatmap-container:before {
+  right: auto;
+  left: -90px;
+}
+
+.heatmap-scroll {
+  background: #fbfcfd;
+  overflow: scroll;
+  text-align: center;
+  position: relative;
 }
 
 .heatmap {
@@ -20,7 +44,7 @@ span + .heatmap-container {
 
 .heatmap__ft {
   display: table;
-  margin: 40px;
+  margin: 30px;
 }
 
 .heatmap__tr {
