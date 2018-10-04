@@ -4,12 +4,19 @@ import '../css/HeatMap.css';
 /*******************************************************************************
   <HeatMap /> Component
 
-  Supported normalization types:
-    "none" (default, use this if you already have normalized probability distributions),
-    "log-global" (does a global softmax over the whole matrix to get a probability distribution),
-    "log-per-row" (does a softmax per row to get a probability distribution),
-    "log-per-row-with-zero" (does a softmax per row, with the addition of a 0 logit),
-    "linear" (finds the max and min values in the matrix, does a linear interpolation between them)
+  Properties:
+
+    data: Array[number[]]   * Array of arrays (rows) of numbers (cols) where each number
+                              corresponds to a table cell / heatmap intensity value
+    colLabels: string[]     * List of table header labels describing each column
+    rowLabels: string[]     * List of table header labels describing each row
+    normalization: string   * Sets normalization type (optional). Supported types:
+
+      "none" (default, use this if you already have normalized probability distributions),
+      "log-global" (does a global softmax over the whole matrix to get a probability distribution),
+      "log-per-row" (does a softmax per row to get a probability distribution),
+      "log-per-row-with-zero" (does a softmax per row, with the addition of a 0 logit),
+      "linear" (finds the max and min values in the matrix, does a linear interpolation between them)
 
 *******************************************************************************/
 
