@@ -18,40 +18,31 @@ span + .heatmap-container {
   filter: drop-shadow(0 0 40px rgba(0,0,0,.1));
 }
 
-table.heatmap__layout {
+.heatmap__ft {
+  display: table;
   margin: 40px;
 }
 
-table.heatmap__layout,
-table.heatmap__layout > tbody > tr,
-table.heatmap__layout > tbody > tr > td {
-  background: transparent;
-  margin: 0;
-  padding: 0;
-  border: none;
-  width: auto;
-  vertical-align: top;
+.heatmap__tr {
+  display: table-row;
 }
 
-
-table.heatmap__datagrid {
-  width: auto;
+.heatmap__td {
+  display: table-cell;
 }
 
-/* td.real-datagrid {
-  filter: drop-shadow(inset 0 0 30px rgba(0,0,0,1));
-} */
+/* Datagrid */
 
-.real-datagrid {
+.heatmap__datagrid-container {
   overflow: hidden;
 }
 
-.real-datagrid table {
+.heatmap__datagrid-container table {
   position: relative;
 }
 
-.real-datagrid table:after,
-.real-datagrid table:before {
+.heatmap__datagrid-container table:after,
+.heatmap__datagrid-container table:before {
   display: block;
   content: "";
   top: -30px;
@@ -63,11 +54,15 @@ table.heatmap__datagrid {
   position: absolute;
 }
 
-.real-datagrid table:after {
+.heatmap__datagrid-container table:after {
   width: 30px;
   height: 100%;
   top: 0;
   left: -30px;
+}
+
+table.heatmap__datagrid {
+  width: auto;
 }
 
 table.heatmap__datagrid tr {

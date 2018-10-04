@@ -57,13 +57,10 @@ export default class HeatMap extends React.Component {
         <div className="heatmap">
 
 
-          <table className="heatmap__layout">
-            <tbody>
-              <tr>
-                <td>
-
-                </td>
-                <td>
+          <div className="heatmap__ft">
+            <div className="heatmap__tr">
+              <div className="heatmap__td heatmap__td--placeholder"></div>
+              <div className="heatmap__td">
 
                   <table className="heatmap__datagrid">
                     <tbody>
@@ -81,10 +78,10 @@ export default class HeatMap extends React.Component {
                     </tbody>
                   </table>
 
-                </td>
-              </tr>
-              <tr>
-                <td>
+              </div>
+            </div>
+            <div className="heatmap__tr">
+              <div className="heatmap__td">
 
                   <table className="heatmap__datagrid">
                     <tbody>
@@ -98,9 +95,8 @@ export default class HeatMap extends React.Component {
                     </tbody>
                   </table>
 
-                </td>
-
-                <td className="real-datagrid">
+              </div>
+              <div className="heatmap__td heatmap__datagrid-container">
 
                   <table className="heatmap__datagrid">
                     <tbody>
@@ -120,12 +116,9 @@ export default class HeatMap extends React.Component {
                     </tbody>
                   </table>
 
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-
+              </div>
+            </div>
+          </div>
 
 
         </div>
