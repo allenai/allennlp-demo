@@ -55,38 +55,79 @@ export default class HeatMap extends React.Component {
     return (
       <div className="heatmap-container">
         <div className="heatmap">
-          <table className="heatmap__datagrid">
+
+
+          <table className="heatmap__layout">
             <tbody>
-              <tr className="heatmap__col-labels" data-row="header">
-                <th className="heatmap__col-labels__placeholder"></th>
-                {colLabels.map((colLabel, colIndex) => (
-                  <th className="heatmap__label" key={`${colLabel}_${colIndex}`} data-col={colIndex} data-row="header">
-                    <div className="heatmap__label__outer">
-                      <div className="heatmap__label__inner">
-                        <span>{colLabel}</span>
-                      </div>
-                    </div>
-                  </th>
-                ))}
+              <tr>
+                <td>
+
+                </td>
+                <td>
+
+                  <table className="heatmap__datagrid">
+                    <tbody>
+                      <tr className="heatmap__col-labels" data-row="header">
+                        {colLabels.map((colLabel, colIndex) => (
+                          <th className="heatmap__label" key={`${colLabel}_${colIndex}`} data-col={colIndex} data-row="header">
+                            <div className="heatmap__label__outer">
+                              <div className="heatmap__label__inner">
+                                <span>{colLabel}</span>
+                              </div>
+                            </div>
+                          </th>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </td>
               </tr>
-              {rowLabels.map((rowLabel, rowIndex) => (
-                <tr className="heatmap__datagrid__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
-                  <th className="heatmap__label" data-col="header" data-row={rowIndex}>
-                    <span>{rowLabel}</span>
-                  </th>
-                  {colLabels.map((colLabel, colIndex) => (
-                    <td key={`${colLabel}_${colIndex}_${rowLabel}_${rowIndex}`}
-                      data-col={colIndex}
-                      data-row={rowIndex}
-                      className="heatmap__cell"
-                      title={`${data[rowIndex][colIndex]}`}>
-                      <div className="heatmap__color-box" style={{opacity: opacity[rowIndex][colIndex]}}></div>
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              <tr>
+                <td>
+
+                  <table className="heatmap__datagrid">
+                    <tbody>
+                      {rowLabels.map((rowLabel, rowIndex) => (
+                        <tr className="heatmap__datagrid__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
+                          <th className="heatmap__label" data-col="header" data-row={rowIndex}>
+                            <span>{rowLabel}</span>
+                          </th>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                </td>
+
+                <td className="real-datagrid">
+
+                  <table className="heatmap__datagrid">
+                    <tbody>
+                      {rowLabels.map((rowLabel, rowIndex) => (
+                        <tr className="heatmap__datagrid__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
+                          {colLabels.map((colLabel, colIndex) => (
+                            <td key={`${colLabel}_${colIndex}_${rowLabel}_${rowIndex}`}
+                              data-col={colIndex}
+                              data-row={rowIndex}
+                              className="heatmap__cell"
+                              title={`${data[rowIndex][colIndex]}`}>
+                              <div className="heatmap__color-box" style={{opacity: opacity[rowIndex][colIndex]}}></div>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                </td>
+              </tr>
             </tbody>
           </table>
+
+
+
+
         </div>
       </div>
     );
