@@ -1,5 +1,5 @@
 import React from 'react';
-import HeatMap from './heatmap/HeatMap'
+import HeatMap from './HeatMap'
 import Collapsible from 'react-collapsible'
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
@@ -177,8 +177,8 @@ class McOutput extends React.Component {
                   For every passage word, the model computes an attention over the question words.
                   This heatmap shows that attention, which is normalized for every row in the matrix.
                 </span>
-                <div className="heatmap">
-                  <HeatMap xLabels={question_tokens} yLabels={passage_tokens} data={attention} />
+                <div className="heatmap-container">
+                  <HeatMap colLabels={question_tokens} rowLabels={passage_tokens} data={attention} />
                 </div>
               </Collapsible>
             </Collapsible>

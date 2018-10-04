@@ -1,0 +1,47 @@
+.heatmap {
+  height: 600px;
+  overflow: scroll;
+  white-space: nowrap;
+}
+
+.heatmap__col-labels {
+
+}
+
+.heatmap__col-labels__placeholder {
+  display: inline-block;
+  width: 60px;
+  height: 4em;
+}
+
+.heatmap__col-labels .heatmap__label {
+  display: inline-block;
+  transform: rotate(-90deg);
+  margin: 1px 1px 0px 0px;
+  width: 28px;
+  text-align: center;
+}
+
+.heatmap__datagrid {
+  white-space: nowrap;
+}
+
+.heatmap__datagrid__row {
+  clear: both;
+}
+
+.heatmap__datagrid__row .heatmap__label {
+  display: inline-block;
+  width: 60px;
+  text-align: right;
+  padding-right: 5px;
+  padding-top: 8px;
+}
+
+.heatmap__cell {
+  background: #329fff;
+  display: inline-block;
+  margin: 1px 1px 0px 0px;
+  width: 28px;
+  height: 28px;
+}
