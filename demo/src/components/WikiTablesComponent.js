@@ -1,5 +1,5 @@
 import React from 'react';
-import HeatMap from './heatmap/HeatMap'
+import HeatMap from './HeatMap'
 import Collapsible from 'react-collapsible'
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
@@ -169,15 +169,15 @@ class WikiTablesOutput extends React.Component {
                 ))}
               </Collapsible>
               <Collapsible trigger="Entity linking scores">
-                  <HeatMap xLabels={question_tokens} yLabels={entities} data={linking_scores} xLabelWidth={250} normalization="log-per-row-with-zero" />
+                <HeatMap colLabels={question_tokens} rowLabels={entities} data={linking_scores} normalization="log-per-row-with-zero" />
               </Collapsible>
               {feature_scores &&
                 <Collapsible trigger="Entity linking scores (features only)">
-                    <HeatMap xLabels={question_tokens} yLabels={entities} data={feature_scores} xLabelWidth={250} normalization="log-per-row-with-zero" />
+                  <HeatMap colLabels={question_tokens} rowLabels={entities} data={feature_scores} normalization="log-per-row-with-zero" />
                 </Collapsible>
               }
               <Collapsible trigger="Entity linking scores (similarity only)">
-                  <HeatMap xLabels={question_tokens} yLabels={entities} data={similarity_scores} xLabelWidth={250} normalization="log-per-row-with-zero" />
+                <HeatMap colLabels={question_tokens} rowLabels={entities} data={similarity_scores} normalization="log-per-row-with-zero" />
               </Collapsible>
             </Collapsible>
           </div>
@@ -198,14 +198,10 @@ class ActionInfo extends React.Component {
     const action_probs = action['action_probabilities'].map(x => [x]);
 
     const probability_heatmap = (
-      <div className="heatmap">
-        <HeatMap xLabels={['Prob']} yLabels={considered_actions} data={action_probs} xLabelWidth={250} />
-      </div>
+      <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
     );
     const question_attention_heatmap = question_attention.length > 0 ? (
-      <div className="heatmap">
-        <HeatMap xLabels={['Prob']} yLabels={question_tokens} data={question_attention} xLabelWidth={70} />
-      </div>
+      <HeatMap colLabels={['Prob']} rowLabels={question_tokens} data={question_attention} />
     ) : (
       ""
     )
