@@ -1,5 +1,5 @@
 import React from 'react';
-import HeatMap from './heatmap/HeatMap'
+import HeatMap from './HeatMap'
 import Collapsible from 'react-collapsible'
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
