@@ -44,11 +44,8 @@ class Menu extends React.Component {
                 {buildLink("dependency-parsing", "Dependency Parsing")}
                 {buildLink("open-information-extraction", "Open Information Extraction")}
                 {buildLink("wikitables-parser", "WikiTableQuestions Semantic Parser")}
+                {buildLink("event2mind", "Event2Mind")}
                 {buildLink("atis-parser", "Text to SQL (ATIS)")}
-                {
-                  // TODO(brendanr): Re-enable this once we're ready to have it be visible in prod.
-                  //buildLink("event2mind", "Event2Mind")
-                }
                 {buildLink("user-models", "Your model here!")}
               </ul>
             </nav>
