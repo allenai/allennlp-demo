@@ -56,7 +56,7 @@ const description = (
       <a href="https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a">
       {' '}EMNLP 2017 paper by Krishnamurthy, Dasigi and Gardner</a>, which achieved state-of-the-art results
       on this dataset at the time.  This model is still a proof-of-concept of what you can do with
-      semantic parsing in AllenNLP and doesn't have super great performance yet.
+      semantic parsing in AllenNLP and its performance is not state-of-the-art (this model gets somewhere around 37-40% accuracy).
     </span>
   </span>
 );
