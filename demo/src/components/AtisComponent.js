@@ -134,7 +134,7 @@ class AtisOutput extends React.Component {
                   ))}
                 </Collapsible>
                 <Collapsible trigger="Entity linking scores">
-                    <HeatMap xLabels={tokenized_utterance} yLabels={entities} data={linking_scores} xLabelWidth={250} />
+                    <HeatMap colLabels={tokenized_utterance} rowLabels={entities} data={linking_scores} />
                 </Collapsible>
               </Collapsible>
             </div>
@@ -157,13 +157,13 @@ class ActionInfo extends React.Component {
 
     const probability_heatmap = (
       <div className="heatmap">
-         <HeatMap xLabels={['Prob']} yLabels={considered_actions} data={action_probs} xLabelWidth={250} /> 
+         <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
       </div>
     );
-    
+
     const utterance_attention_heatmap = utterance_attention.length > 0 ? (
       <div className="heatmap">
-         <HeatMap xLabels={['Prob']} yLabels={tokenized_utterance} data={utterance_attention} xLabelWidth={70} />
+         <HeatMap colLabels={['Prob']} rowLabels={tokenized_utterance} data={utterance_attention} />
       </div>
     ) : (
       ""
