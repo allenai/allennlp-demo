@@ -66,7 +66,7 @@ def main():
 
     app = make_app(demo_db=demo_db)
     CORS(app)
-
+    
     for name, demo_model in MODELS.items():
         logger.info(f"loading {name} model")
         predictor = demo_model.predictor()
@@ -163,7 +163,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
 
         # Do use the cache if no argument is specified
         use_cache = request.args.get("cache", "true").lower() != "false"
-
+        
         model = app.predictors.get(model_name.lower())
         if model is None:
             raise ServerError("unknown model: {}".format(model_name), status_code=400)
@@ -232,11 +232,11 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
         elif model_name == "wikitables-parser":
              log_blob['outputs']['logical_form'] = prediction['logical_form']
              log_blob['outputs']['answer'] = prediction['answer']
+        elif model_name == "atis-parser":
+            log_blob['outputs']['predicted_sql_query'] = prediction['predicted_sql_query']
         # TODO(brendanr): Add event2mind log_blob here?
 
         logger.info("prediction: %s", json.dumps(log_blob))
-
-        print(log_blob)
 
         return jsonify(prediction)
 
@@ -270,6 +270,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/wikitables-parser')
     @app.route('/event2mind')
     @app.route('/open-information-extraction/<permalink>')
+    @app.route('/atis-parser')
     @app.route('/semantic-role-labeling/<permalink>')
     @app.route('/constituency-parsing/<permalink>')
     @app.route('/dependency-parsing/<permalink>')
@@ -278,6 +279,8 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/coreference-resolution/<permalink>')
     @app.route('/named-entity-recognition/<permalink>')
     @app.route('/event2mind/<permalink>')
+    @app.route('/wikitables-parser/<permalink>')
+    @app.route('/atis-parser/<permalink>')
     def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
         """return the page"""
         return send_file(os.path.join(build_dir, 'index.html'))
