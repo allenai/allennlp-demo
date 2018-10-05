@@ -67,7 +67,7 @@ MODELS = {
                 'event2mind'
         ),
         'atis-parser': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/atis-parser-test-2018.10.04.tar.gz',  # pylint: disable=line-too-long
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/atis-parser-2018.10.04.tar.gz',  # pylint: disable=line-too-long
                  'atis-parser'
         ),
 }
