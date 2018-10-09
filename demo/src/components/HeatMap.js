@@ -102,7 +102,7 @@ export default class HeatMap extends React.Component {
                 </div>{/* END .heatmap__td */}
                 <div className="heatmap__td heatmap__datagrid-container">
                   {/* BEGIN Data Grid */}
-                  <table className="heatmap__datagrid">
+                  <table>
                     <tbody>
                       {rowLabels.map((rowLabel, rowIndex) => (
                         <tr className="heatmap__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
@@ -112,6 +112,9 @@ export default class HeatMap extends React.Component {
                               data-row={rowIndex}
                               className="heatmap__cell"
                               title={`${data[rowIndex][colIndex]}`}>
+                              <div className="heatmap__cursor"></div>
+                              <div className="heatmap__col-cursor"></div>
+                              <div className="heatmap__row-cursor"></div>
                               <div className="heatmap__color-box" style={{opacity: opacity[rowIndex][colIndex]}}></div>
                             </td>
                           ))}

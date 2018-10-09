@@ -63,6 +63,7 @@ span + .heatmap-container {
 
 .heatmap__datagrid-container table {
   position: relative;
+  height: 100%;
 }
 
 .heatmap__datagrid-container table:after,
@@ -180,4 +181,53 @@ tr.heatmap__row td.heatmap__cell:last-child {
   width: 35px;
   height: 35px;
   background: #329fff;
+}
+
+/* Crosshairs and tooltips */
+.heatmap__cursor {
+  opacity: 0;
+  width: 35px;
+  height: 35px;
+  position: absolute;
+  box-shadow: 0 0 43px 4px rgba(44,93,136,0.19);
+  z-index: 999;
+  outline: 1px solid #fff;
+}
+
+.heatmap__col-cursor,
+.heatmap__row-cursor {
+  position: absolute;
+  opacity: 0;
+  box-shadow: 0 0 13px 4px rgba(44,93,136,0.15);
+}
+
+.heatmap__col-cursor {
+  width: 37px;
+  height: 100%;
+  top: 0;
+  margin-left: -1px;
+}
+
+.heatmap__row-cursor {
+  height: 37px;
+  width: 100%;
+  left: 0;
+  margin-top: -1px;
+}
+
+td.heatmap__cell:hover .heatmap__cursor,
+td.heatmap__cell:hover .heatmap__col-cursor,
+td.heatmap__cell:hover .heatmap__row-cursor {
+  opacity: 1;
+}
+
+.heatmap__col-label-cursor,
+.heatmap__row-label-cursor {
+  opacity: 0.34;
+  box-shadow: 0 0 13px 4px rgba(0,0,0,0.42);
+}
+
+.heatmap table th.heatmap__col-label-cursor span,
+.heatmap table th.heatmap__row-label-cursor span {
+  color: #000;
 }
