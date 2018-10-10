@@ -21,11 +21,39 @@ import '../css/HeatMap.css';
 *******************************************************************************/
 
 export default class HeatMap extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      activeRow: null,
+      activeCol: null
+    };
+    this.handleMouseOver = this.handleMouseOver.bind(this);
+    this.handleMouseOut = this.handleMouseOut.bind(this);
+  }
+
+  handleMouseOver(rowIndex, colIndex) {
+    this.setState({
+      activeRow: rowIndex,
+      activeCol: colIndex
+    });
+  }
+
+  handleMouseOut() {
+    this.setState({
+      activeRow: null,
+      activeCol: null
+    });
+  }
+
   render() {
     const { data,
             colLabels,
             rowLabels,
             normalization = "none" } = this.props;
+
+    const { activeRow,
+            activeCol } = this.state;
 
     let opacity;
 
@@ -72,7 +100,12 @@ export default class HeatMap extends React.Component {
                     <tbody>
                       <tr data-row="header">
                         {colLabels.map((colLabel, colIndex) => (
-                          <th className="heatmap__label" key={`${colLabel}_${colIndex}`} data-col={colIndex} data-row="header">
+                          <th className={`heatmap__label${colIndex === activeCol ? " heatmap__col-label-cursor" : ""}`}
+                            key={`${colLabel}_${colIndex}`}
+                            data-col={colIndex}
+                            data-row="header"
+                            onMouseOver={() => {this.handleMouseOver(null, colIndex)}}
+                            onMouseOut={() => {this.handleMouseOut()}}>
                             <div className="heatmap__label__outer">
                               <div className="heatmap__label__inner">
                                 <span>{colLabel}</span>
@@ -92,7 +125,12 @@ export default class HeatMap extends React.Component {
                     <tbody>
                       {rowLabels.map((rowLabel, rowIndex) => (
                         <tr className="heatmap__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
-                          <th className="heatmap__label" data-col="header" data-row={rowIndex}>
+                          <th
+                            className={`heatmap__label${rowIndex === activeRow ? " heatmap__row-label-cursor" : ""}`}
+                            data-col="header"
+                            data-row={rowIndex}
+                            onMouseOver={() => {this.handleMouseOver(rowIndex, null)}}
+                            onMouseOut={() => {this.handleMouseOut()}}>
                             <span>{rowLabel}</span>
                           </th>
                         </tr>
@@ -108,14 +146,18 @@ export default class HeatMap extends React.Component {
                         <tr className="heatmap__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
                           {colLabels.map((colLabel, colIndex) => (
                             <td key={`${colLabel}_${colIndex}_${rowLabel}_${rowIndex}`}
-                              data-col={colIndex}
-                              data-row={rowIndex}
                               className="heatmap__cell"
-                              title={`${data[rowIndex][colIndex]}`}>
-                              <div className="heatmap__cursor"></div>
-                              <div className="heatmap__col-cursor"></div>
-                              <div className="heatmap__row-cursor"></div>
+                              data-col={colIndex}
+                              data-row={rowIndex}>
+                              <div className={`heatmap__cursor${rowIndex === activeRow && colIndex === activeCol ? " heatmap__data--active" : ""}`}></div>
+                              <div className={`heatmap__col-cursor${((rowIndex === activeRow && colIndex === activeCol) || (colIndex === activeCol && rowIndex === 0 && activeRow === null)) ? " heatmap__data--active" : ""}`}></div>
+                              <div className={`heatmap__row-cursor${((rowIndex === activeRow && colIndex === activeCol) || (rowIndex === activeRow && colIndex === 0 && activeCol === null)) ? " heatmap__data--active" : ""}`}></div>
                               <div className="heatmap__color-box" style={{opacity: opacity[rowIndex][colIndex]}}></div>
+                              <div
+                                className="heatmap__trigger"
+                                onMouseOver={() => {this.handleMouseOver(rowIndex, colIndex)}}
+                                onMouseOut={() => {this.handleMouseOut()}}></div>
+                              <div className="heatmap__tooltip">{`${data[rowIndex][colIndex]}`}</div>
                             </td>
                           ))}
                         </tr>
