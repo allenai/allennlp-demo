@@ -1,3 +1,7 @@
+/********************************************
+HeatMap
+********************************************/
+
 .heatmap-container {
   position: relative;
   overflow: hidden;
@@ -39,7 +43,7 @@ span + .heatmap-container {
 
 .heatmap {
   display: inline-block;
-  filter: drop-shadow(0 0 40px rgba(0,0,0,.1));
+  filter: drop-shadow(0 0 40px rgba(0,0,0,0.1)) drop-shadow(0 0 1px rgba(0,0,0,0.1));
   cursor: default;
 }
 
@@ -56,7 +60,9 @@ span + .heatmap-container {
   display: table-cell;
 }
 
-/* Datagrid */
+/********************************************
+Data Grid
+********************************************/
 
 .heatmap__datagrid-container {
   overflow: hidden;
@@ -65,17 +71,22 @@ span + .heatmap-container {
 .heatmap__datagrid-container table {
   position: relative;
   height: 100%;
+  background: #fff;
 }
 
-.heatmap__datagrid-container table:after,
-.heatmap__datagrid-container table:before {
+.heatmap__datagrid-container table td {
+  width: 34px;
+  height: 34px;
+}
+
+.heatmap__datagrid-container table:before,
+.heatmap__datagrid-container table:after {
   display: block;
   content: "";
   top: -30px;
   left: 0;
   width: 100%;
   height: 30px;
-  box-shadow: 0 0 9px rgba(35,64,90,.21);
   z-index: 99;
   position: absolute;
 }
@@ -167,31 +178,21 @@ td.heatmap__cell {
   background: #fff;
 }
 
-.heatmap__color-box {
-  /* width: 41px; TODO(aarons): change cell width when UI is moved to drawer */
-  width: 34px;
-  height: 34px;
-  background: #329fff;
-}
-
 .heatmap__trigger {
   position: absolute;
   width: 34px;
   height: 34px;
-  margin-top: -34px;
+  margin-top: -17px;
   z-index: 999;
 }
 
-.heatmap__trigger.heatmap__cursor {
-  box-shadow: 0 0 43px 2px rgba(44,93,136,0.2);
-}
-
-/* Crosshairs */
+/********************************************
+Crosshairs
+********************************************/
 
 .heatmap__col-cursor,
 .heatmap__row-cursor {
   position: absolute;
-  box-shadow: 0 0 13px 2px rgba(44,93,136,0.14);
   outline: 1px solid rgba(0,0,0,0.033);
 }
 
@@ -205,6 +206,7 @@ td.heatmap__cell {
   height: 34px;
   width: 100%;
   left: 0;
+  margin-top: -17px;
 }
 
 table.heatmap__col-labels tr th.heatmap__label.heatmap__col-label-cursor,
@@ -228,41 +230,56 @@ table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
   -moz-osx-font-smoothing: auto;
 }
 
-/* Tooltip */
-.heatmap__tooltip {
-  margin-top: -30px;
-  margin-left: 46px;
-  z-index: 9;
-  position: absolute;
-  box-shadow: 0 0 30px rgba(0,0,0,.2);
-  border-radius: 6px;
-  background: rgba(70,70,70,.9);
-  padding: 4px 12px 5px 12px;
-  font-size: 14px;
+/********************************************
+Tooltip
+********************************************/
+
+.heatmap-tooltip,
+.heatmap-tooltip * {
+  transition: none !important;
+}
+
+.heatmap-tooltip {
+  box-shadow: 0 0 30px rgba(0,0,0,.2) !important;
+  border-radius: 6px !important;
+  background: rgba(70,70,70,.9) !important;
+  padding: 8px 12px 5px 12px !important;
+  font-size: 14px !important;
+  opacity: 1 !important;
   color: #fff;
   font-weight: bold;
   white-space: nowrap;
   user-select: none;
   cursor: default;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.heatmap__tooltip:before {
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  margin-top: 12px;
-  margin-left: -6px;
-  content: "";
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 6px 6px 6px 0;
-  border-color: transparent rgba(70,70,70,.9) transparent transparent;
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-top:after {
+  border-top-color: rgba(70,70,70,.9);
 }
 
-.heatmap__tooltip__meta {
-  font-size: 12px;
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-bottom:after {
+  border-bottom-color: rgba(70,70,70,.9);
+}
+
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-left:after {
+  border-left-color: rgba(70,70,70,.9);
+}
+
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-right {
+  margin-top: 25px;
+  margin-left: 12px;
+}
+
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-right:after {
+  border-right-color: rgba(70,70,70,.9);
+  top: 12px;
+  margin-top: 0;
+}
+
+.heatmap-tooltip__meta {
+  font-size: 12px !important;
   display: block;
   font-weight: normal;
   color: rgba(255,255,255,0.4);
@@ -273,7 +290,11 @@ table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
   -moz-osx-font-smoothing: auto;
 }
 
-.heatmap__tooltip__meta strong {
+.heatmap-tooltip__meta:first-child {
+  margin-top: 5px;
+}
+
+.heatmap-tooltip__meta strong {
   color: rgba(255,255,255,0.66);
   padding: 0;
   margin: 0;
@@ -283,6 +304,58 @@ table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.heatmap__tooltip__meta + .heatmap__tooltip__meta {
+.heatmap-tooltip__meta + .heatmap-tooltip__meta {
   padding-bottom: 5px;
+}
+
+/********************************************
+Colors
+********************************************/
+
+/* Red */
+
+.heatmap__datagrid-container.heatmap__datagrid-container--red table:before,
+.heatmap__datagrid-container.heatmap__datagrid-container--red table:after {
+  box-shadow: 0 0 9px rgba(150,20,20,.21);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--red .heatmap__trigger.heatmap__cursor {
+  box-shadow: 0 0 43px 2px rgba(180,42,42,0.2);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--red .heatmap__col-cursor,
+.heatmap__datagrid-container.heatmap__datagrid-container--red .heatmap__row-cursor {
+  box-shadow: 0 0 13px 2px rgba(180,42,42,0.14);
+}
+
+/* Green */
+
+.heatmap__datagrid-container.heatmap__datagrid-container--green table:before,
+.heatmap__datagrid-container.heatmap__datagrid-container--green table:after {
+  box-shadow: 0 0 9px rgba(37,76,20,.21);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--green .heatmap__trigger.heatmap__cursor {
+  box-shadow: 0 0 43px 2px rgba(53,108,28,0.2);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--green .heatmap__col-cursor,
+.heatmap__datagrid-container.heatmap__datagrid-container--green .heatmap__row-cursor {
+  box-shadow: 0 0 13px 2px rgba(53,108,28,0.14);
+}
+
+/* Blue */
+
+.heatmap__datagrid-container.heatmap__datagrid-container--blue table:before,
+.heatmap__datagrid-container.heatmap__datagrid-container--blue table:after {
+  box-shadow: 0 0 9px rgba(35,64,90,.21);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--blue .heatmap__trigger.heatmap__cursor {
+  box-shadow: 0 0 43px 2px rgba(44,93,136,0.2);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--blue .heatmap__col-cursor,
+.heatmap__datagrid-container.heatmap__datagrid-container--blue .heatmap__row-cursor {
+  box-shadow: 0 0 13px 2px rgba(44,93,136,0.14);
 }
