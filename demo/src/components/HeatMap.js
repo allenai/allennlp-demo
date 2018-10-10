@@ -149,9 +149,6 @@ export default class HeatMap extends React.Component {
                               className="heatmap__cell"
                               data-col={colIndex}
                               data-row={rowIndex}>
-                              {rowIndex === activeRow && colIndex === activeCol ? (
-                                <div className="heatmap__cursor"></div>
-                              ) : null}
                               {((rowIndex === activeRow && colIndex === activeCol) || (colIndex === activeCol && rowIndex === 0 && activeRow === null)) ? (
                                 <div className="heatmap__col-cursor"></div>
                               ) : null}
@@ -159,12 +156,15 @@ export default class HeatMap extends React.Component {
                                 <div className="heatmap__row-cursor"></div>
                               ) : null}
                               <div className="heatmap__color-box" style={{opacity: opacity[rowIndex][colIndex]}}></div>
-                              <div
-                                className="heatmap__trigger"
+                              <div className={`heatmap__trigger${rowIndex === activeRow && colIndex === activeCol ? " heatmap__cursor" : ""}`}
                                 onMouseOver={() => {this.handleMouseOver(rowIndex, colIndex)}}
                                 onMouseOut={() => {this.handleMouseOut()}}></div>
                               {rowIndex === activeRow && colIndex === activeCol ? (
-                                <div className="heatmap__tooltip">{`${data[rowIndex][colIndex]}`}</div>
+                                <div className="heatmap__tooltip">
+                                  {`${data[rowIndex][colIndex]}`}
+                                  <span className="heatmap__tooltip__meta"><strong>Row:</strong> {rowLabels[rowIndex]}</span>
+                                  <span className="heatmap__tooltip__meta"><strong>Column:</strong> {colLabels[colIndex]}</span>
+                                </div>
                               ) : null}
                             </td>
                           ))}

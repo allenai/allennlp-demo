@@ -197,18 +197,15 @@ table.heatmap__col-labels tr th.heatmap__label:last-child {
   width: 36px;
   height: 36px;
   margin-top: -36px;
-  z-index: 9999;
+  z-index: 999;
 }
 
-/* Crosshairs and tooltips */
-.heatmap__cursor {
-  width: 35px;
-  height: 35px;
-  position: absolute;
-  box-shadow: 0 0 43px 2px rgba(44,93,136,0.2);
-  z-index: 999;
-  outline: 1px solid rgba(255,255,255,.7);
+.heatmap__trigger.heatmap__cursor {
+  box-shadow: -0.5px 0.5px 0 0.5px #fff,
+              0 0 43px 2px rgba(44,93,136,0.2);
 }
+
+/* Crosshairs */
 
 .heatmap__col-cursor,
 .heatmap__row-cursor {
@@ -255,5 +252,59 @@ table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
 
 /* Tooltip */
 .heatmap__tooltip {
-  display: none;
+  margin-top: -30px;
+  margin-left: 46px;
+  z-index: 9;
+  position: absolute;
+  box-shadow: 0 0 30px rgba(0,0,0,.2);
+  border-radius: 6px;
+  background: rgba(70,70,70,.9);
+  padding: 4px 12px 5px 12px;
+  font-size: 14px;
+  color: #fff;
+  font-weight: bold;
+  white-space: nowrap;
+  user-select: none;
+  cursor: default;
+}
+
+.heatmap__tooltip:before {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin-top: 12px;
+  margin-left: -6px;
+  content: "";
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 6px 6px 0;
+  border-color: transparent rgba(70,70,70,.9) transparent transparent;
+}
+
+.heatmap__tooltip__meta {
+  font-size: 12px;
+  display: block;
+  font-weight: normal;
+  color: rgba(255,255,255,0.4);
+  padding: 0;
+  margin: 0;
+  line-height: 16px;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+}
+
+.heatmap__tooltip__meta strong {
+  color: rgba(255,255,255,0.66);
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  min-width: 50px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.heatmap__tooltip__meta + .heatmap__tooltip__meta {
+  padding-bottom: 5px;
 }
