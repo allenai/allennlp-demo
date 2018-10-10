@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactTooltip from 'react-tooltip';
 import '../css/HeatMap.css';
 
 /*******************************************************************************
@@ -147,6 +148,8 @@ export default class HeatMap extends React.Component {
                           {colLabels.map((colLabel, colIndex) => (
                             <td key={`${colLabel}_${colIndex}_${rowLabel}_${rowIndex}`}
                               className="heatmap__cell"
+                              data-tip=""
+                              data-for="heatmap-tooltip"
                               data-col={colIndex}
                               data-row={rowIndex}>
                               {((rowIndex === activeRow && colIndex === activeCol) || (colIndex === activeCol && rowIndex === 0 && activeRow === null)) ? (
@@ -158,14 +161,8 @@ export default class HeatMap extends React.Component {
                               <div className="heatmap__color-box" style={{opacity: opacity[rowIndex][colIndex]}}></div>
                               <div className={`heatmap__trigger${rowIndex === activeRow && colIndex === activeCol ? " heatmap__cursor" : ""}`}
                                 onMouseOver={() => {this.handleMouseOver(rowIndex, colIndex)}}
-                                onMouseOut={() => {this.handleMouseOut()}}></div>
-                              {rowIndex === activeRow && colIndex === activeCol ? (
-                                <div className="heatmap__tooltip">
-                                  {`${data[rowIndex][colIndex]}`}
-                                  <span className="heatmap__tooltip__meta"><strong>Row:</strong> {rowLabels[rowIndex]}</span>
-                                  <span className="heatmap__tooltip__meta"><strong>Column:</strong> {colLabels[colIndex]}</span>
-                                </div>
-                              ) : null}
+                                onMouseOut={() => {this.handleMouseOut()}}>
+                              </div>
                             </td>
                           ))}
                         </tr>
@@ -178,6 +175,13 @@ export default class HeatMap extends React.Component {
           </div>{/* END .heatmap */}
         </div>{/* END .heatmap-scroll */}
         {/* END .heatmap-container */}
+        {activeRow !== null && activeCol !== null ? (
+          <ReactTooltip id="heatmap-tooltip" place="right">
+            {`${data[activeRow][activeCol]}`}
+            <span className="heatmap__tooltip__meta"><strong>Row:</strong> {rowLabels[activeRow]}</span>
+            <span className="heatmap__tooltip__meta"><strong>Column:</strong> {colLabels[activeCol]}</span>
+          </ReactTooltip>
+        ) : null}
       </div>
     );
   }
