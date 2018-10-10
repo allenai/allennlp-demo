@@ -157,38 +157,28 @@ tr.heatmap__row th.heatmap__label {
   position: relative;
 }
 
-
-
 tr.heatmap__row th.heatmap__label span {
   margin-bottom: 1px;
   padding: 4px 0;
 }
 
 td.heatmap__cell {
-  padding: 0 1px 1px 0;
+  padding: 0;
   background: #fff;
 }
 
-tr.heatmap__row:last-child td.heatmap__cell {
-  padding-bottom: 0;
-}
-
 tr.heatmap__row:last-child th.heatmap__label {
-  border-bottom-width: 0;
-}
-
-tr.heatmap__row td.heatmap__cell:last-child {
-  padding-right: 0;
+  border-bottom-color: #fff;
 }
 
 table.heatmap__col-labels tr th.heatmap__label:last-child {
-  border-right-width: 0;
+  border-right-color: #fff;
 }
 
 .heatmap__color-box {
   /* width: 41px; TODO(aarons): change cell width when UI is moved to drawer */
-  width: 35px;
-  height: 35px;
+  width: 36px;
+  height: 36px;
   background: #329fff;
 }
 
@@ -201,8 +191,8 @@ table.heatmap__col-labels tr th.heatmap__label:last-child {
 }
 
 .heatmap__trigger.heatmap__cursor {
-  box-shadow: -0.5px 0.5px 0 0.5px #fff,
-              0 0 43px 2px rgba(44,93,136,0.2);
+  box-shadow: 0 0 43px 2px rgba(44,93,136,0.2);
+  outline: 1px solid rgba(0,0,0,0.1);
 }
 
 /* Crosshairs */
@@ -211,20 +201,19 @@ table.heatmap__col-labels tr th.heatmap__label:last-child {
 .heatmap__row-cursor {
   position: absolute;
   box-shadow: 0 0 13px 2px rgba(44,93,136,0.14);
+  outline: 1px solid rgba(0,0,0,0.033);
 }
 
 .heatmap__col-cursor {
-  width: 37px;
+  width: 36px;
   height: 100%;
   top: 0;
-  margin-left: -1px;
 }
 
 .heatmap__row-cursor {
-  height: 37px;
+  height: 36px;
   width: 100%;
   left: 0;
-  margin-top: -1px;
 }
 
 table.heatmap__col-labels tr th.heatmap__label.heatmap__col-label-cursor,
@@ -234,12 +223,12 @@ table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
 }
 
 table.heatmap__col-labels tr th.heatmap__label.heatmap__col-label-cursor {
-  box-shadow: 0.5px 0 0 0.5px #fff,
+  box-shadow: 0.5px 0 0 0.5px #eee,
               0 0 13px 4px rgba(0,0,0,0.08);
 }
 
 table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
-  box-shadow: 0 0.5px 0 0.5px #fff,
+  box-shadow: 0 0.5px 0 0.5px #eee,
               0 0 13px 4px rgba(0,0,0,0.08);
 }
 
