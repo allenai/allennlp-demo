@@ -118,11 +118,11 @@ table.heatmap__row-labels {
 table.heatmap__col-labels tr th.heatmap__label {
   padding: 8px 0 0 0;
   background: #fff;
-  border-right: 1px solid #e9e9e9;
+  outline: 1px solid #e9e9e9;
   vertical-align: bottom;
   text-align: left;
-  width: 35px;
-  max-width: 35px;
+  width: 34px;
+  max-width: 34px;
   position: relative;
 }
 
@@ -139,7 +139,7 @@ table.heatmap__col-labels tr th.heatmap__label {
 }
 
 table.heatmap__col-labels tr th.heatmap__label span {
-  transform-origin: 7px -2px;
+  transform-origin: 7px -1px;
   transform: rotate(-90deg) translate(-100%);
   margin-top: -50%;
   white-space: nowrap;
@@ -151,9 +151,9 @@ table.heatmap__col-labels tr th.heatmap__label span {
 tr.heatmap__row th.heatmap__label {
   text-align: right;
   padding: 0 8px 0 10px;
-  border-bottom: 1px solid #e9e9e9;
+  outline: 1px solid #e9e9e9;
   background: #fff;
-  height: 35px;
+  height: 34px;
   position: relative;
 }
 
@@ -167,32 +167,23 @@ td.heatmap__cell {
   background: #fff;
 }
 
-tr.heatmap__row:last-child th.heatmap__label {
-  border-bottom-color: #fff;
-}
-
-table.heatmap__col-labels tr th.heatmap__label:last-child {
-  border-right-color: #fff;
-}
-
 .heatmap__color-box {
   /* width: 41px; TODO(aarons): change cell width when UI is moved to drawer */
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   background: #329fff;
 }
 
 .heatmap__trigger {
   position: absolute;
-  width: 36px;
-  height: 36px;
-  margin-top: -36px;
+  width: 34px;
+  height: 34px;
+  margin-top: -34px;
   z-index: 999;
 }
 
 .heatmap__trigger.heatmap__cursor {
   box-shadow: 0 0 43px 2px rgba(44,93,136,0.2);
-  outline: 1px solid rgba(0,0,0,0.1);
 }
 
 /* Crosshairs */
@@ -205,13 +196,13 @@ table.heatmap__col-labels tr th.heatmap__label:last-child {
 }
 
 .heatmap__col-cursor {
-  width: 36px;
+  width: 34px;
   height: 100%;
   top: 0;
 }
 
 .heatmap__row-cursor {
-  height: 36px;
+  height: 34px;
   width: 100%;
   left: 0;
 }
@@ -223,13 +214,11 @@ table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
 }
 
 table.heatmap__col-labels tr th.heatmap__label.heatmap__col-label-cursor {
-  box-shadow: 0.5px 0 0 0.5px #eee,
-              0 0 13px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 0 13px 4px rgba(0,0,0,0.08);
 }
 
 table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
-  box-shadow: 0 0.5px 0 0.5px #eee,
-              0 0 13px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 0 13px 4px rgba(0,0,0,0.08);
 }
 
 .heatmap table th.heatmap__col-label-cursor span,
