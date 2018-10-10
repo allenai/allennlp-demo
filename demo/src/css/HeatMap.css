@@ -77,6 +77,8 @@ Data Grid
 .heatmap__datagrid-container table td {
   width: 34px;
   height: 34px;
+  min-width: 34px;
+  min-height: 34px;
 }
 
 .heatmap__datagrid-container table:before,
