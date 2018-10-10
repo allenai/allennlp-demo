@@ -156,15 +156,11 @@ class ActionInfo extends React.Component {
     const action_probs = action['action_probabilities'].map(x => [x]);
 
     const probability_heatmap = (
-      <div className="heatmap">
-         <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
-      </div>
+      <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
     );
 
     const utterance_attention_heatmap = utterance_attention.length > 0 ? (
-      <div className="heatmap">
-         <HeatMap colLabels={['Prob']} rowLabels={tokenized_utterance} data={utterance_attention} />
-      </div>
+      <HeatMap colLabels={['Prob']} rowLabels={tokenized_utterance} data={utterance_attention} />
     ) : (
       ""
     )

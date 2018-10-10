@@ -1,3 +1,7 @@
+/********************************************
+HeatMap
+********************************************/
+
 .heatmap-container {
   position: relative;
   overflow: hidden;
@@ -39,7 +43,8 @@ span + .heatmap-container {
 
 .heatmap {
   display: inline-block;
-  filter: drop-shadow(0 0 40px rgba(0,0,0,.1));
+  filter: drop-shadow(0 0 40px rgba(0,0,0,0.1)) drop-shadow(0 0 1px rgba(0,0,0,0.1));
+  cursor: default;
 }
 
 .heatmap__ft {
@@ -55,7 +60,9 @@ span + .heatmap-container {
   display: table-cell;
 }
 
-/* Datagrid */
+/********************************************
+Data Grid
+********************************************/
 
 .heatmap__datagrid-container {
   overflow: hidden;
@@ -63,17 +70,25 @@ span + .heatmap-container {
 
 .heatmap__datagrid-container table {
   position: relative;
+  height: 100%;
+  background: #fff;
 }
 
-.heatmap__datagrid-container table:after,
-.heatmap__datagrid-container table:before {
+.heatmap__datagrid-container table td {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+}
+
+.heatmap__datagrid-container table:before,
+.heatmap__datagrid-container table:after {
   display: block;
   content: "";
   top: -30px;
   left: 0;
   width: 100%;
   height: 30px;
-  box-shadow: 0 0 9px rgba(35,64,90,.21);
   z-index: 99;
   position: absolute;
 }
@@ -103,23 +118,25 @@ span + .heatmap-container {
 .heatmap table th span {
   font-size: 16px;
   line-height: 20px;
-  color: #606060;
+  color: #777;
   white-space: nowrap;
   display: block;
 }
 
-table.heatmap__col-labels tr {
-
+table.heatmap__col-labels,
+table.heatmap__row-labels {
+  overflow: hidden;
 }
 
 table.heatmap__col-labels tr th.heatmap__label {
   padding: 8px 0 0 0;
   background: #fff;
-  border-right: 1px solid #e9e9e9;
+  outline: 1px solid #e9e9e9;
   vertical-align: bottom;
   text-align: left;
-  width: 35px;
-  max-width: 35px;
+  width: 34px;
+  max-width: 34px;
+  position: relative;
 }
 
 .heatmap__label__outer {
@@ -135,7 +152,7 @@ table.heatmap__col-labels tr th.heatmap__label {
 }
 
 table.heatmap__col-labels tr th.heatmap__label span {
-  transform-origin: 7px -2px;
+  transform-origin: 7px -1px;
   transform: rotate(-90deg) translate(-100%);
   margin-top: -50%;
   white-space: nowrap;
@@ -147,9 +164,10 @@ table.heatmap__col-labels tr th.heatmap__label span {
 tr.heatmap__row th.heatmap__label {
   text-align: right;
   padding: 0 8px 0 10px;
-  border-bottom: 1px solid #e9e9e9;
+  outline: 1px solid #e9e9e9;
   background: #fff;
-  height: 35px;
+  height: 34px;
+  position: relative;
 }
 
 tr.heatmap__row th.heatmap__label span {
@@ -159,25 +177,187 @@ tr.heatmap__row th.heatmap__label span {
 
 td.heatmap__cell {
   padding: 0;
-  border: 1px solid #fff;
-  border-left-width: 0;
-  border-top-width: 0;
   background: #fff;
 }
 
-tr.heatmap__row:last-child th.heatmap__label,
-tr.heatmap__row:last-child td.heatmap__cell {
-  border-bottom-width: 0;
+.heatmap__trigger {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  margin-top: -17px;
+  z-index: 999;
 }
 
-table.heatmap__col-labels tr th.heatmap__label:last-child,
-tr.heatmap__row td.heatmap__cell:last-child {
-  border-right-width: 0;
+/********************************************
+Crosshairs
+********************************************/
+
+.heatmap__col-cursor,
+.heatmap__row-cursor {
+  position: absolute;
+  outline: 1px solid rgba(0,0,0,0.033);
 }
 
-.heatmap__color-box {
-  /* width: 41px; TODO(aarons): change cell width when UI is moved to drawer */
-  width: 35px;
-  height: 35px;
-  background: #329fff;
+.heatmap__col-cursor {
+  width: 34px;
+  height: 100%;
+  top: 0;
+}
+
+.heatmap__row-cursor {
+  height: 34px;
+  width: 100%;
+  left: 0;
+  margin-top: -17px;
+}
+
+table.heatmap__col-labels tr th.heatmap__label.heatmap__col-label-cursor,
+table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
+  z-index: 999;
+  border-color: #fff;
+}
+
+table.heatmap__col-labels tr th.heatmap__label.heatmap__col-label-cursor {
+  box-shadow: 0 0 13px 4px rgba(0,0,0,0.08);
+}
+
+table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
+  box-shadow: 0 0 13px 4px rgba(0,0,0,0.08);
+}
+
+.heatmap table th.heatmap__col-label-cursor span,
+.heatmap table th.heatmap__row-label-cursor span {
+  color: #000;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+}
+
+/********************************************
+Tooltip
+********************************************/
+
+.heatmap-tooltip,
+.heatmap-tooltip * {
+  transition: none !important;
+}
+
+.heatmap-tooltip {
+  box-shadow: 0 0 30px rgba(0,0,0,.2) !important;
+  border-radius: 6px !important;
+  background: rgba(70,70,70,.9) !important;
+  padding: 8px 12px 5px 12px !important;
+  font-size: 14px !important;
+  opacity: 1 !important;
+  color: #fff;
+  font-weight: bold;
+  white-space: nowrap;
+  user-select: none;
+  cursor: default;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-top:after {
+  border-top-color: rgba(70,70,70,.9);
+}
+
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-bottom:after {
+  border-bottom-color: rgba(70,70,70,.9);
+}
+
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-left:after {
+  border-left-color: rgba(70,70,70,.9);
+}
+
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-right {
+  margin-top: 25px;
+  margin-left: 12px;
+}
+
+.heatmap-tooltip.__react_component_tooltip.type-dark.place-right:after {
+  border-right-color: rgba(70,70,70,.9);
+  top: 12px;
+  margin-top: 0;
+}
+
+.heatmap-tooltip__meta {
+  font-size: 12px !important;
+  display: block;
+  font-weight: normal;
+  color: rgba(255,255,255,0.4);
+  padding: 0;
+  margin: 0;
+  line-height: 16px;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+}
+
+.heatmap-tooltip__meta:first-child {
+  margin-top: 5px;
+}
+
+.heatmap-tooltip__meta strong {
+  color: rgba(255,255,255,0.66);
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  min-width: 50px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.heatmap-tooltip__meta + .heatmap-tooltip__meta {
+  padding-bottom: 5px;
+}
+
+/********************************************
+Colors
+********************************************/
+
+/* Red */
+
+.heatmap__datagrid-container.heatmap__datagrid-container--red table:before,
+.heatmap__datagrid-container.heatmap__datagrid-container--red table:after {
+  box-shadow: 0 0 9px rgba(150,20,20,.21);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--red .heatmap__trigger.heatmap__cursor {
+  box-shadow: 0 0 43px 2px rgba(180,42,42,0.2);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--red .heatmap__col-cursor,
+.heatmap__datagrid-container.heatmap__datagrid-container--red .heatmap__row-cursor {
+  box-shadow: 0 0 13px 2px rgba(180,42,42,0.14);
+}
+
+/* Green */
+
+.heatmap__datagrid-container.heatmap__datagrid-container--green table:before,
+.heatmap__datagrid-container.heatmap__datagrid-container--green table:after {
+  box-shadow: 0 0 9px rgba(37,76,20,.21);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--green .heatmap__trigger.heatmap__cursor {
+  box-shadow: 0 0 43px 2px rgba(53,108,28,0.2);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--green .heatmap__col-cursor,
+.heatmap__datagrid-container.heatmap__datagrid-container--green .heatmap__row-cursor {
+  box-shadow: 0 0 13px 2px rgba(53,108,28,0.14);
+}
+
+/* Blue */
+
+.heatmap__datagrid-container.heatmap__datagrid-container--blue table:before,
+.heatmap__datagrid-container.heatmap__datagrid-container--blue table:after {
+  box-shadow: 0 0 9px rgba(35,64,90,.21);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--blue .heatmap__trigger.heatmap__cursor {
+  box-shadow: 0 0 43px 2px rgba(44,93,136,0.2);
+}
+
+.heatmap__datagrid-container.heatmap__datagrid-container--blue .heatmap__col-cursor,
+.heatmap__datagrid-container.heatmap__datagrid-container--blue .heatmap__row-cursor {
+  box-shadow: 0 0 13px 2px rgba(44,93,136,0.14);
 }

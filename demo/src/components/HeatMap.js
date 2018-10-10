@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactTooltip from 'react-tooltip';
 import '../css/HeatMap.css';
 
 /*******************************************************************************
@@ -10,6 +11,7 @@ import '../css/HeatMap.css';
                               corresponds to a table cell / heatmap intensity value
     colLabels: string[]     * List of table header labels describing each column
     rowLabels: string[]     * List of table header labels describing each row
+    color: string           * Heatmap color (optional, default = "blue", see supportedColors below)
     normalization: string   * Sets normalization type (optional). Supported types:
 
       "none" (default, use this if you already have normalized probability distributions),
@@ -21,14 +23,47 @@ import '../css/HeatMap.css';
 *******************************************************************************/
 
 export default class HeatMap extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeRow: null,
+      activeCol: null
+    };
+  }
+
+  handleMouseOver(rowIndex, colIndex) {
+    this.setState({
+      activeRow: rowIndex,
+      activeCol: colIndex
+    });
+  }
+
+  handleMouseOut() {
+    this.setState({
+      activeRow: null,
+      activeCol: null
+    });
+  }
+
   render() {
     const { data,
             colLabels,
             rowLabels,
+            color = "blue",
             normalization = "none" } = this.props;
 
-    let opacity;
+    const { activeRow,
+            activeCol } = this.state;
 
+    const supportedColors = {
+      // color values are [R,G,B]
+      "red": [255,50,50],
+      "green": [63, 201, 1],
+      "blue": [50,159,255] // Default
+    }
+
+    // HeatMap opacity via normalization conditional logic
+    let opacity;
     if (normalization === "log-global") {
       const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
       const flatArray = exped.reduce((i, o) => [...o, ...i], []);
@@ -72,7 +107,10 @@ export default class HeatMap extends React.Component {
                     <tbody>
                       <tr data-row="header">
                         {colLabels.map((colLabel, colIndex) => (
-                          <th className="heatmap__label" key={`${colLabel}_${colIndex}`} data-col={colIndex} data-row="header">
+                          <th className={`heatmap__label${colIndex === activeCol ? " heatmap__col-label-cursor" : ""}`}
+                            key={`${colLabel}_${colIndex}`}
+                            onMouseOver={() => this.handleMouseOver(null, colIndex)}
+                            onMouseOut={() => this.handleMouseOut()}>
                             <div className="heatmap__label__outer">
                               <div className="heatmap__label__inner">
                                 <span>{colLabel}</span>
@@ -92,7 +130,10 @@ export default class HeatMap extends React.Component {
                     <tbody>
                       {rowLabels.map((rowLabel, rowIndex) => (
                         <tr className="heatmap__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
-                          <th className="heatmap__label" data-col="header" data-row={rowIndex}>
+                          <th
+                            className={`heatmap__label${rowIndex === activeRow ? " heatmap__row-label-cursor" : ""}`}
+                            onMouseOver={() => this.handleMouseOver(rowIndex, null)}
+                            onMouseOut={() => this.handleMouseOut()}>
                             <span>{rowLabel}</span>
                           </th>
                         </tr>
@@ -100,19 +141,28 @@ export default class HeatMap extends React.Component {
                     </tbody>
                   </table>{/* END Row Labels */}
                 </div>{/* END .heatmap__td */}
-                <div className="heatmap__td heatmap__datagrid-container">
+                <div className={`heatmap__td heatmap__datagrid-container heatmap__datagrid-container--${color}`}>
                   {/* BEGIN Data Grid */}
-                  <table className="heatmap__datagrid">
+                  <table>
                     <tbody>
                       {rowLabels.map((rowLabel, rowIndex) => (
                         <tr className="heatmap__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
                           {colLabels.map((colLabel, colIndex) => (
                             <td key={`${colLabel}_${colIndex}_${rowLabel}_${rowIndex}`}
-                              data-col={colIndex}
-                              data-row={rowIndex}
                               className="heatmap__cell"
-                              title={`${data[rowIndex][colIndex]}`}>
-                              <div className="heatmap__color-box" style={{opacity: opacity[rowIndex][colIndex]}}></div>
+                              style={{backgroundColor: `rgba(${supportedColors[color].join(",")},${opacity[rowIndex][colIndex]})`}}
+                              data-tip=""
+                              data-for="heatmap-tooltip">
+                              {((rowIndex === activeRow && colIndex === activeCol) || (colIndex === activeCol && rowIndex === 0 && activeRow === null)) ? (
+                                <div className="heatmap__col-cursor"></div>
+                              ) : null}
+                              {((rowIndex === activeRow && colIndex === activeCol) || (rowIndex === activeRow && colIndex === 0 && activeCol === null)) ? (
+                                <div className="heatmap__row-cursor"></div>
+                              ) : null}
+                              <div className={`heatmap__trigger${rowIndex === activeRow && colIndex === activeCol ? " heatmap__cursor" : ""}`}
+                                onMouseOver={() => this.handleMouseOver(rowIndex, colIndex)}
+                                onMouseOut={() => this.handleMouseOut()}>
+                              </div>
                             </td>
                           ))}
                         </tr>
@@ -124,6 +174,21 @@ export default class HeatMap extends React.Component {
             </div>{/* END .heatmap__ft */}
           </div>{/* END .heatmap */}
         </div>{/* END .heatmap-scroll */}
+        {/* BEGIN Tooltip */}
+        {activeRow !== null && activeCol !== null ? (
+          <ReactTooltip
+            id="heatmap-tooltip"
+            className="heatmap-tooltip"
+            place="right"
+            effect="solid"
+            delayHide={0}
+            delayShow={0}
+            delayUpdate={0}>
+            {`${data[activeRow][activeCol]}`}
+            <span className="heatmap-tooltip__meta"><strong>Row:</strong> {rowLabels[activeRow]}</span>
+            <span className="heatmap-tooltip__meta"><strong>Column:</strong> {colLabels[activeCol]}</span>
+          </ReactTooltip>
+        ) : null /* END Tooltip */}
         {/* END .heatmap-container */}
       </div>
     );
