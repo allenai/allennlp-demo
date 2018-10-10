@@ -196,14 +196,12 @@ table.heatmap__col-labels tr th.heatmap__label:last-child {
   position: absolute;
   width: 36px;
   height: 36px;
-  /* background: blue; */
   margin-top: -36px;
   z-index: 9999;
 }
 
 /* Crosshairs and tooltips */
 .heatmap__cursor {
-  opacity: 0;
   width: 35px;
   height: 35px;
   position: absolute;
@@ -215,7 +213,6 @@ table.heatmap__col-labels tr th.heatmap__label:last-child {
 .heatmap__col-cursor,
 .heatmap__row-cursor {
   position: absolute;
-  opacity: 0;
   box-shadow: 0 0 13px 2px rgba(44,93,136,0.14);
 }
 
@@ -232,22 +229,6 @@ table.heatmap__col-labels tr th.heatmap__label:last-child {
   left: 0;
   margin-top: -1px;
 }
-
-.heatmap__cursor.heatmap__data--active,
-.heatmap__col-cursor.heatmap__data--active,
-.heatmap__row-cursor.heatmap__data--active {
-  opacity: 1;
-}
-
-/* .heatmap__cursor,
-.heatmap__col-cursor,
-.heatmap__row-cursor {
-  display: none;
-} */
-
-/* td {
-  background: black !important;
-} */
 
 table.heatmap__col-labels tr th.heatmap__label.heatmap__col-label-cursor,
 table.heatmap__row-labels tr th.heatmap__label.heatmap__row-label-cursor {
