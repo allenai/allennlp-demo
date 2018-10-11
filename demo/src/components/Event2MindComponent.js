@@ -133,7 +133,7 @@ class Event2MindInput extends React.Component {
 // Remove the special "@@UNKNOWN@@" token from model output, replace "none", join tokens.
 function processTokens(tokens, noneReplacement) {
   return tokens.filter(target => {
-    return target.length !== 1 || target[0] !== "@@UNKNOWN@@";
+    return !(target.length === 1 && target[0] === "@@UNKNOWN@@");
   }).map(target => {
     if (target.length === 1 && target[0] === "none") {
       return <em> {noneReplacement} </em>;
