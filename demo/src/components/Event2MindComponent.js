@@ -26,17 +26,20 @@ const supportedTargetTypes = [
   {
     responseDataKey: "xintent_top_k_predicted_tokens",
     prettyLabel: "Person X's Intent",
-    color: "blue"
+    color: "blue",
+    noneDescription: "no intent"
   },
   {
     responseDataKey: "xreact_top_k_predicted_tokens",
     prettyLabel: "Person X's Reaction",
-    color: "orange"
+    color: "orange",
+    noneDescription: "no reaction"
   },
   {
     responseDataKey: "oreact_top_k_predicted_tokens",
     prettyLabel: "Other's Reaction",
-    color: "orange"
+    color: "orange",
+    noneDescription: "no others involved"
   }
 ];
 
@@ -127,6 +130,19 @@ class Event2MindInput extends React.Component {
   }
 }
 
+// Remove the special "@@UNKNOWN@@" token from model output, replace "none", join tokens.
+function processTokens(tokens, noneReplacement) {
+  return tokens.filter(target => {
+    return target.length !== 1 || target[0] !== "@@UNKNOWN@@";
+  }).map(target => {
+    if (target.length === 1 && target[0] === "none") {
+      return <em> {noneReplacement} </em>;
+    } else {
+      return target.join(" ");
+    }
+  })
+}
+
 /*******************************************************************************
   <Event2MindDiagramOutput /> Component
 *******************************************************************************/
@@ -144,7 +160,9 @@ class Event2MindDiagramOutput extends React.Component {
 
           <div className="e2m-mind-container">
             {supportedTargetTypes.map((targetType, i) => {
-              const tokens = responseData[targetType.responseDataKey];
+              const tokens = processTokens(
+                  responseData[targetType.responseDataKey], targetType.noneDescription
+              )
               return (
                 <div className="e2m-mind-container__target-type" key={i}>
                   <HighlightArrow color={targetType.color} direction="right" />
@@ -152,7 +170,7 @@ class Event2MindDiagramOutput extends React.Component {
                     <span>
                       {tokens.map((target, j) => {
                         return (
-                          <span key={j}>{target.join(" ")}{j !== tokens.length - 1 ? ", " : ""}</span>
+                          <span key={j}>{target}{j !== tokens.length - 1 ? ", " : ""}</span>
                         )
                       })}
                     </span>
@@ -177,6 +195,9 @@ class Event2MindTextOutput extends React.Component {
     return (
       <div className="model__content model__content--event2Mind-output">
         {supportedTargetTypes.map((targetType, i) => {
+          const tokens = processTokens(
+              responseData[targetType.responseDataKey], targetType.noneDescription
+          )
           return (
             <div key={i}>
               {i !== 0 ? (
@@ -187,9 +208,9 @@ class Event2MindTextOutput extends React.Component {
               ) : (
                 <h3 className="no-top-margin">{targetType.prettyLabel}</h3>
               )}
-              {responseData[targetType.responseDataKey].map((target, j) => {
+              {tokens.map((target, j) => {
                 return (
-                  <p key={j}>&nbsp;<strong>{j}:</strong> {target.join(" ")}</p>
+                  <p key={j}>&nbsp;<strong>{j}:</strong> {target}</p>
                 )
               })}
             </div>
