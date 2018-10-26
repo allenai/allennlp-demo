@@ -63,7 +63,7 @@ MODELS = {
                 'wikitables-parser'
         ),
         'event2mind': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/event2mind-2018.10.05.tar.gz',  # pylint: disable=line-too-long
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/event2mind-2018.10.26.tar.gz',  # pylint: disable=line-too-long
                 'event2mind'
         ),
         'atis-parser': DemoModel(
