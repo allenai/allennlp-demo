@@ -164,7 +164,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
 
         # Do use the cache if no argument is specified
         use_cache = request.args.get("cache", "true").lower() != "false"
-        
+
         model = app.predictors.get(model_name.lower())
         if model is None:
             raise ServerError("unknown model: {}".format(model_name), status_code=400)

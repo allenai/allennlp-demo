@@ -52,8 +52,8 @@ class DemoDatabase:
 # SQL for inserting predictions into the database.
 INSERT_SQL = (
         """
-        INSERT INTO queries (model_name, headers, request_data, response_data, timestamp)
-        VALUES (%(model_name)s, %(headers)s, %(request_data)s, %(response_data)s, %(timestamp)s)
+        INSERT INTO queries (model_name, requester, headers, request_data, response_data, timestamp)
+        VALUES (%(model_name)s, %(requester)s, %(headers)s, %(request_data)s, %(response_data)s, %(timestamp)s)
         RETURNING id
         """
 )
@@ -147,8 +147,8 @@ class PostgresDemoDatabase(DemoDatabase):
 
                 curs.execute(INSERT_SQL,
                              {'model_name'   : model_name,
+                              'requester'    : requester,
                               'headers'      : json.dumps(headers),
-                              'requester'    : json.dumps(requester),
                               'request_data' : json.dumps(inputs),
                               'response_data': json.dumps(outputs),
                               'timestamp'    : datetime.datetime.now()})
