@@ -14,7 +14,6 @@ from allennlp.common.util import JsonDict
 from server.permalinks import Permadata
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-logger.setLevel(logging.INFO)
 
 class DemoDatabase:
     """
