@@ -14,7 +14,7 @@ from allennlp.common.util import JsonDict
 from server.permalinks import Permadata
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-
+logger.setLevel(logging.INFO)
 
 class DemoDatabase:
     """
@@ -24,6 +24,7 @@ class DemoDatabase:
     """
     def add_result(self,
                    headers: JsonDict,
+                   requester: str,
                    model_name: str,
                    inputs: JsonDict,
                    outputs: JsonDict) -> Optional[int]:
@@ -135,6 +136,7 @@ class PostgresDemoDatabase(DemoDatabase):
 
     def add_result(self,
                    headers: JsonDict,
+                   requester: str,
                    model_name: str,
                    inputs: JsonDict,
                    outputs: JsonDict) -> Optional[int]:
@@ -146,6 +148,7 @@ class PostgresDemoDatabase(DemoDatabase):
                 curs.execute(INSERT_SQL,
                              {'model_name'   : model_name,
                               'headers'      : json.dumps(headers),
+                              'requester'    : json.dumps(requester),
                               'request_data' : json.dumps(inputs),
                               'response_data': json.dumps(outputs),
                               'timestamp'    : datetime.datetime.now()})
