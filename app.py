@@ -32,8 +32,9 @@ CACHE_SIZE = os.environ.get("FLASK_CACHE_SIZE") or 128
 PORT = os.environ.get("ALLENNLP_DEMO_PORT") or 8000
 DEMO_DIR = os.environ.get("ALLENNLP_DEMO_DIRECTORY") or 'demo/'
 
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-logger.setLevel(logging.INFO)
 
 class ServerError(Exception):
     status_code = 400
