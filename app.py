@@ -270,6 +270,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/named-entity-recognition')
     @app.route('/fine-grained-named-entity-recognition')
     @app.route('/wikitables-parser')
+    @app.route('/event2mind')
     @app.route('/open-information-extraction/<permalink>')
     @app.route('/atis-parser')
     @app.route('/semantic-role-labeling/<permalink>')
@@ -279,6 +280,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/textual-entailment/<permalink>')
     @app.route('/coreference-resolution/<permalink>')
     @app.route('/named-entity-recognition/<permalink>')
+    @app.route('/event2mind/<permalink>')
     @app.route('/wikitables-parser/<permalink>')
     @app.route('/atis-parser/<permalink>')
     def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
