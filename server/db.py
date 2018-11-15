@@ -188,6 +188,7 @@ class InMemoryDemoDatabase(DemoDatabase):
 
     def add_result(self,
                    headers: JsonDict,
+                   requester: str,
                    model_name: str,
                    inputs: JsonDict,
                    outputs: JsonDict) -> Optional[int]:
