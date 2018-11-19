@@ -15,6 +15,7 @@ from functools import lru_cache
 from flask import Flask, request, Response, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 from gevent.pywsgi import WSGIServer
+from werkzeug.contrib.fixers import ProxyFix
 
 import psycopg2
 
@@ -90,6 +91,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S %Z")
 
     app.predictors = {}
+    app.wsgi_app = ProxyFix(app.wsgi_app)
 
     try:
         cache_size = int(CACHE_SIZE)  # type: ignore
