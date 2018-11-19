@@ -91,7 +91,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S %Z")
 
     app.predictors = {}
-    app.wsgi_app = ProxyFix(app.wsgi_app)
+    app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
 
     try:
         cache_size = int(CACHE_SIZE)  # type: ignore
