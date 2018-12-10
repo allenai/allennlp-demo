@@ -33,9 +33,9 @@ const description = (
 
 const fields = [
     {name: "premise", label: "Premise", type: "TEXT_INPUT",
-     placeholder: "E.g. &quot;A large, gray elephant walked beside a herd of zebras.&quot;"},
+     placeholder: 'E.g. "A large, gray elephant walked beside a herd of zebras."'},
     {name: "hypothesis", label: "Hypothesis", type: "TEXT_INPUT",
-     placeholder: "E.g. &quot;The elephant was lost.&quot;"}
+     placeholder: 'E.g. &quot;The elephant was lost."'}
 ]
 
 const TeGraph = ({x, y}) => {
@@ -66,118 +66,114 @@ const judgments = {
 }
 
 const outputComponent = ({ requestData, responseData }) => {
-    if (!requestData || !responseData) {
-        return null
-    } else {
-        const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
-        const [entailment, contradiction, neutral] = label_probs
+    const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
+    const [entailment, contradiction, neutral] = label_probs
 
-        // Find judgment and confidence.
-        let judgment
-        let confidence
+    // Find judgment and confidence.
+    let judgment
+    let confidence
 
-        if (entailment > contradiction && entailment > neutral) {
-            judgment = judgments.ENTAILMENT
-            confidence = entailment
-        }
-        else if (contradiction > entailment && contradiction > neutral) {
-            judgment = judgments.CONTRADICTION
-            confidence = contradiction
-        }
-        else if (neutral > entailment && neutral > contradiction) {
-            judgment = judgments.NEUTRAL
-            confidence = neutral
-        } else {
-            throw new Error("cannot form judgment")
-        }
-
-        // Create summary text.
-        const veryConfident = 0.75;
-        const somewhatConfident = 0.50;
-        let summaryText
-
-        if (confidence >= veryConfident) {
-            summaryText = (
-                <div className="model__content__summary">
-                    It is <strong>very likely</strong> that {judgment}.
-                </div>
-            )
-        } else if (confidence >= somewhatConfident) {
-            summaryText = (
-                <div className="model__content__summary">
-                    It is <strong>somewhat likely</strong> that {judgment}.
-                </div>
-            )
-        } else {
-            summaryText = (
-                <div className="model__content__summary">The model is not confident in its judgment.</div>
-              )
-        }
-
-      function formatProb(n) {
-        return parseFloat((n * 100).toFixed(1)) + "%";
-      }
-
-      // https://en.wikipedia.org/wiki/Ternary_plot#Plotting_a_ternary_plot
-      const a = contradiction;
-      const b = neutral;
-      const c = entailment;
-      const x = 0.5 * (2 * b + c) / (a + b + c)
-      const y = (c / (a + b + c))
-
-      return (
-        <div className="model__content">
-          <OutputField label="Summary">
-            {summaryText}
-          </OutputField>
-          <div className="te-output">
-            <TeGraph x={x} y={y}/>
-            <div className="te-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Judgment</th>
-                    <th>Probability</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Entailment</td>
-                    <td>{formatProb(entailment)}</td>
-                  </tr>
-                  <tr>
-                    <td>Contradiction</td>
-                    <td>{formatProb(contradiction)}</td>
-                  </tr>
-                  <tr>
-                    <td>Neutral</td>
-                    <td>{formatProb(neutral)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="form__field">
-            <Collapsible trigger="Model internals (beta)">
-              <Collapsible trigger="premise to hypothesis attention">
-                <span>
-                  For every premise word, the model computes an attention over the hypothesis words.
-                  This heatmap shows that attention, which is normalized for every row in the matrix.
-                </span>
-                <HeatMap colLabels={premise_tokens} rowLabels={hypothesis_tokens} data={h2p_attention} />
-              </Collapsible>
-              <Collapsible trigger="hypothesis to premise attention">
-                <span>
-                  For every hypothesis word, the model computes an attention over the premise words.
-                  This heatmap shows that attention, which is normalized for every row in the matrix.
-                </span>
-                <HeatMap colLabels={hypothesis_tokens} rowLabels={premise_tokens} data={p2h_attention} />
-              </Collapsible>
-            </Collapsible>
-          </div>
-        </div>
-      );
+    if (entailment > contradiction && entailment > neutral) {
+        judgment = judgments.ENTAILMENT
+        confidence = entailment
     }
+    else if (contradiction > entailment && contradiction > neutral) {
+        judgment = judgments.CONTRADICTION
+        confidence = contradiction
+    }
+    else if (neutral > entailment && neutral > contradiction) {
+        judgment = judgments.NEUTRAL
+        confidence = neutral
+    } else {
+        throw new Error("cannot form judgment")
+    }
+
+    // Create summary text.
+    const veryConfident = 0.75;
+    const somewhatConfident = 0.50;
+    let summaryText
+
+    if (confidence >= veryConfident) {
+        summaryText = (
+            <div className="model__content__summary">
+                It is <strong>very likely</strong> that {judgment}.
+            </div>
+        )
+    } else if (confidence >= somewhatConfident) {
+        summaryText = (
+            <div className="model__content__summary">
+                It is <strong>somewhat likely</strong> that {judgment}.
+            </div>
+        )
+    } else {
+        summaryText = (
+            <div className="model__content__summary">The model is not confident in its judgment.</div>
+            )
+    }
+
+    function formatProb(n) {
+    return parseFloat((n * 100).toFixed(1)) + "%";
+    }
+
+    // https://en.wikipedia.org/wiki/Ternary_plot#Plotting_a_ternary_plot
+    const a = contradiction;
+    const b = neutral;
+    const c = entailment;
+    const x = 0.5 * (2 * b + c) / (a + b + c)
+    const y = (c / (a + b + c))
+
+    return (
+    <div className="model__content">
+        <OutputField label="Summary">
+        {summaryText}
+        </OutputField>
+        <div className="te-output">
+        <TeGraph x={x} y={y}/>
+        <div className="te-table">
+            <table>
+            <thead>
+                <tr>
+                <th>Judgment</th>
+                <th>Probability</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <td>Entailment</td>
+                <td>{formatProb(entailment)}</td>
+                </tr>
+                <tr>
+                <td>Contradiction</td>
+                <td>{formatProb(contradiction)}</td>
+                </tr>
+                <tr>
+                <td>Neutral</td>
+                <td>{formatProb(neutral)}</td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        </div>
+        <div className="form__field">
+        <Collapsible trigger="Model internals (beta)">
+            <Collapsible trigger="premise to hypothesis attention">
+            <span>
+                For every premise word, the model computes an attention over the hypothesis words.
+                This heatmap shows that attention, which is normalized for every row in the matrix.
+            </span>
+            <HeatMap colLabels={premise_tokens} rowLabels={hypothesis_tokens} data={h2p_attention} />
+            </Collapsible>
+            <Collapsible trigger="hypothesis to premise attention">
+            <span>
+                For every hypothesis word, the model computes an attention over the premise words.
+                This heatmap shows that attention, which is normalized for every row in the matrix.
+            </span>
+            <HeatMap colLabels={hypothesis_tokens} rowLabels={premise_tokens} data={p2h_attention} />
+            </Collapsible>
+        </Collapsible>
+        </div>
+    </div>
+    );
 }
 
 const examples = [

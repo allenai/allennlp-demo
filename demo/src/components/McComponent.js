@@ -36,42 +36,37 @@ const fields = [
 
 
 const outputComponent = ({ requestData, responseData }) => {
-    if (!requestData || !responseData) {
-        return null
-    } else {
-        const { passage } = requestData
-        const { best_span_str, passage_question_attention, question_tokens, passage_tokens } = responseData
-        const start = passage.indexOf(best_span_str);
-        const head = passage.slice(0, start);
-        const tail = passage.slice(start + best_span_str.length);
+    const { passage } = requestData
+    const { best_span_str, passage_question_attention, question_tokens, passage_tokens } = responseData
+    const start = passage.indexOf(best_span_str);
+    const head = passage.slice(0, start);
+    const tail = passage.slice(start + best_span_str.length);
 
-        return (
-            <div className="model__content">
-              <OutputField label="Answer">
-                {best_span_str}
-              </OutputField>
+    return (
+        <div className="model__content">
+            <OutputField label="Answer">
+            {best_span_str}
+            </OutputField>
 
-              <OutputField label="Passage Context" classes="passage">
-                  <span>{head}</span>
-                  <span className="passage__answer">{best_span_str}</span>
-                  <span>{tail}</span>
-              </OutputField>
+            <OutputField label="Passage Context" classes="passage">
+                <span>{head}</span>
+                <span className="passage__answer">{best_span_str}</span>
+                <span>{tail}</span>
+            </OutputField>
 
-              <OutputField>
-                <Collapsible trigger="Model internals (beta)">
-                    <Collapsible trigger="Passage to Question attention">
-                        <span>
-                        For every passage word, the model computes an attention over the question words.
-                        This heatmap shows that attention, which is normalized for every row in the matrix.
-                        </span>
-                        <HeatMap colLabels={question_tokens} rowLabels={passage_tokens} data={passage_question_attention} />
-                    </Collapsible>
+            <OutputField>
+            <Collapsible trigger="Model internals (beta)">
+                <Collapsible trigger="Passage to Question attention">
+                    <span>
+                    For every passage word, the model computes an attention over the question words.
+                    This heatmap shows that attention, which is normalized for every row in the matrix.
+                    </span>
+                    <HeatMap colLabels={question_tokens} rowLabels={passage_tokens} data={passage_question_attention} />
                 </Collapsible>
-              </OutputField>
-            </div>
-        )
-
-    }
+            </Collapsible>
+            </OutputField>
+        </div>
+    )
 }
 
 

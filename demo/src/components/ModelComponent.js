@@ -63,7 +63,7 @@ class ModelComponent extends React.Component {
                                      outputState={this.state.outputState}
                                      runModel={this.runModel} />
 
-        const demoOutput = this.props.outputComponent({requestData, responseData})
+        const demoOutput = requestData && responseData ? this.props.outputComponent({requestData, responseData}) : null
 
         if (horizontal) {
             return (
