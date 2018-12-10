@@ -28,8 +28,10 @@ const description = (
   )
 
 const fields = [
-    {name: "passage", label: "Passage", type: "TEXT_AREA"},
-    {name: "question", label: "Question", type: "TEXT_INPUT"}
+    {name: "passage", label: "Passage", type: "TEXT_AREA",
+     placeholder: `E.g. "Saturn is the sixth planet from the Sun and the second-largest in the Solar System, after Jupiter. It is a gas giant with an average radius about nine times that of Earth. Although it has only one-eighth the average density of Earth, with its larger volume Saturn is just over 95 times more massive. Saturn is named after the Roman god of agriculture; its astronomical symbol represents the god's sickle"`},
+    {name: "question", label: "Question", type: "TEXT_INPUT",
+     placeholder: `E.g. "What does Saturn’s astronomical symbol represent"`}
 ]
 
 
