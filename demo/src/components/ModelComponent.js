@@ -1,5 +1,5 @@
 import React from 'react'
-import { PaneLeft, PaneRight } from './Pane'
+import { PaneLeft, PaneRight, PaneTop, PaneBottom } from './Pane'
 import DemoInput from './DemoInput'
 
 class ModelComponent extends React.Component {
@@ -51,27 +51,43 @@ class ModelComponent extends React.Component {
     }
 
     render() {
-      const { title, description, examples, fields, selectedModel } = this.props;
-      const { requestData, responseData } = this.state;
+        const { title, description, examples, fields, selectedModel, horizontal } = this.props;
+        const { requestData, responseData } = this.state;
 
-      return (
-        <div className="pane model">
-          <PaneLeft>
-            <DemoInput selectedModel={selectedModel}
-                       title={title}
-                       description={description}
-                       examples={examples}
-                       fields={fields}
-                       inputState={requestData}
-                       outputState={this.state.outputState}
-                       runModel={this.runModel} />
-          </PaneLeft>
-          <PaneRight outputState={this.state.outputState}>
-            {this.props.outputComponent({requestData, responseData})}
-          </PaneRight>
-        </div>
-      );
+        const demoInput = <DemoInput selectedModel={selectedModel}
+                                     title={title}
+                                     description={description}
+                                     examples={examples}
+                                     fields={fields}
+                                     inputState={requestData}
+                                     outputState={this.state.outputState}
+                                     runModel={this.runModel} />
 
+        const demoOutput = this.props.outputComponent({requestData, responseData})
+
+        if (horizontal) {
+            return (
+                <div className="pane__horizontal model">
+                    <PaneTop>
+                        {demoInput}
+                    </PaneTop>
+                    <PaneBottom outputState={this.state.outputState}>
+                        {demoOutput}
+                    </PaneBottom>
+                </div>
+            )
+        } else {
+            return (
+                <div className="pane model">
+                    <PaneLeft>
+                        {demoInput}
+                    </PaneLeft>
+                    <PaneRight outputState={this.state.outputState}>
+                        {demoOutput}
+                    </PaneRight>
+                </div>
+            )
+        }
     }
 }
 
