@@ -1,25 +1,14 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import { PaneLeft, PaneRight } from './Pane';
-import Button from './Button';
+import ModelComponent from './ModelComponent'
 import HighlightContainer from './highlight/HighlightContainer';
 import { Highlight, getHighlightColor } from './highlight/Highlight';
-import ModelIntro from './ModelIntro';
 
-const corefExamples = [
-  {
-    document: "Paul Allen was born on January 21, 1953, in Seattle, Washington, to Kenneth Sam Allen and Edna Faye Allen. Allen attended Lakeside School, a private school in Seattle, where he befriended Bill Gates, two years younger, with whom he shared an enthusiasm for computers. Paul and Bill used a teletype terminal at their high school, Lakeside, to develop their programming skills on several time-sharing computer systems."
-  },
-  {
-    document: "The legal pressures facing Michael Cohen are growing in a wide-ranging investigation of his personal business affairs and his work on behalf of his former client, President Trump.  In addition to his work for Mr. Trump, he pursued his own business interests, including ventures in real estate, personal loans and investments in taxi medallions."
-  },
-  {
-    document: "We are looking for a region of central Italy bordering the Adriatic Sea. The area is mostly mountainous and includes Mt. Corno, the highest peak of the mountain range. It also includes many sheep and an Italian entrepreneur has an idea about how to make a little money of them."
-  }
-];
+const apiUrl = `${API_ROOT}/predict/coreference-resolution`
 
 const title = "Co-reference Resolution";
+
 const description = (
   <span>
     <span>
@@ -39,6 +28,11 @@ const description = (
     </span>
   </span>
 );
+
+const fields = [
+    {name: "document", label: "Document", type: "TEXT_AREA",
+     placeholder: "We 're not going to skimp on quality , but we are very focused to make next year . The only problem is that some of the fabrics are wearing out - since I was a newbie I skimped on some of the fabric and the poor quality ones are developing holes . For some , an awareness of this exit strategy permeates the enterprise , allowing them to skimp on the niceties they would more or less have to extend toward a person they were likely to meet again ." }
+]
 
 // Helper function for transforming response data into a tree object
 const transformToTree = (tokens, clusters) => {
@@ -94,87 +88,6 @@ const transformToTree = (tokens, clusters) => {
   return insideClusters[0].contents;
 }
 
-/*******************************************************************************
-  <CorefInput /> Component
-*******************************************************************************/
-
-class CorefInput extends React.Component {
-  constructor(props) {
-    super(props);
-
-    // If we're showing a permalinked result, we'll get passed in a document.
-    const { doc } = props;
-
-    this.state = {
-      corefDocumentValue: doc || "",
-    };
-
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleListChange = this.handleListChange.bind(this);
-    this.handleDocumentChange = this.handleDocumentChange.bind(this);
-  }
-
-  handleListChange(e) {
-    if (e.target.value !== "") {
-      this.setState({
-        corefDocumentValue: corefExamples[e.target.value].document,
-      });
-    }
-  }
-
-  handleDocumentChange(e) {
-    this.setState({
-      corefDocumentValue: e.target.value,
-    });
-  }
-
-  handleKeyDown(e, inputs) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      e.stopPropagation();
-      this.props.runCorefModel(e, inputs);
-    }
-  }
-
-  render() {
-    const { corefDocumentValue } = this.state;
-    const { outputState, runCorefModel } = this.props;
-
-    const corefInputs = {
-      "documentValue": corefDocumentValue,
-    };
-
-    const callHandleKeyDown = (e) => { this.handleKeyDown(e, corefInputs)};
-
-    return (
-      <div className="model__content">
-        <ModelIntro title={title} description={description} />
-        <div className="form__instructions"><span>Enter text or</span>
-          <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
-            <option value="">Choose an example...</option>
-            {corefExamples.map((example, index) => {
-              return (
-                <option value={index} key={index}>{example.document.substring(0,60) + ".. ."}</option>
-              );
-            })}
-          </select>
-        </div>
-        <div className="form__field">
-          <label htmlFor="#input--mc-passage">Document</label>
-          <textarea onChange={this.handleDocumentChange} onKeyDown={callHandleKeyDown} id="input--mc-passage" type="text"
-            required="true" autoFocus="true" placeholder="We 're not going to skimp on quality , but we are very focused to make next year . The only problem is that some of the fabrics are wearing out - since I was a newbie I skimped on some of the fabric and the poor quality ones are developing holes . For some , an awareness of this exit strategy permeates the enterprise , allowing them to skimp on the niceties they would more or less have to extend toward a person they were likely to meet again ." value={corefDocumentValue} disabled={outputState === "working"}></textarea>
-        </div>
-        <div className="form__field form__field--btn">
-          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runCorefModel} inputs={corefInputs} />
-        </div>
-      </div>
-    );
-  }
-}
-
-/*******************************************************************************
-  <CorefOutput /> Component
-*******************************************************************************/
 
 class CorefOutput extends React.Component {
   constructor() {
@@ -232,9 +145,11 @@ class CorefOutput extends React.Component {
 
   render() {
     const { activeIds, activeDepths, isClicking, selectedId } = this.state;
-    const { tokens, clusters } = this.props;
 
-    const spanTree = transformToTree(tokens, clusters);
+    const { responseData } = this.props
+    const { document, clusters } = responseData
+
+    const spanTree = transformToTree(document, clusters);
 
     // This is the function that calls itself when we recurse over the span tree.
     const spanWrapper = (data, depth) => {
@@ -277,82 +192,24 @@ class CorefOutput extends React.Component {
   }
 }
 
-/*******************************************************************************
-  <CorefComponent /> Component
-*******************************************************************************/
+const outputComponent = ({ requestData, responseData }) => (
+    <CorefOutput requestData={requestData} responseData={responseData} />
+)
 
-class _CorefComponent extends React.Component {
-  constructor(props) {
-    super(props);
+const examples = [
+    {
+      document: "Paul Allen was born on January 21, 1953, in Seattle, Washington, to Kenneth Sam Allen and Edna Faye Allen. Allen attended Lakeside School, a private school in Seattle, where he befriended Bill Gates, two years younger, with whom he shared an enthusiasm for computers. Paul and Bill used a teletype terminal at their high school, Lakeside, to develop their programming skills on several time-sharing computer systems."
+    },
+    {
+      document: "The legal pressures facing Michael Cohen are growing in a wide-ranging investigation of his personal business affairs and his work on behalf of his former client, President Trump.  In addition to his work for Mr. Trump, he pursued his own business interests, including ventures in real estate, personal loans and investments in taxi medallions."
+    },
+    {
+      document: "We are looking for a region of central Italy bordering the Adriatic Sea. The area is mostly mountainous and includes Mt. Corno, the highest peak of the mountain range. It also includes many sheep and an Italian entrepreneur has an idea about how to make a little money of them."
+    }
+  ]
 
-    const { requestData, responseData } = props;
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
 
-    this.state = {
-      requestData: requestData,
-      responseData: responseData,
-      outputState: responseData ? "received" : "empty" // valid values: "working", "empty", "received", "error"
-    };
-
-    this.runCorefModel = this.runCorefModel.bind(this);
-  }
-
-  runCorefModel(event, inputs) {
-    this.setState({
-      outputState: "working",
-    });
-
-    var payload = {
-      document: inputs.documentValue,
-    };
-
-    fetch(`${API_ROOT}/predict/coreference-resolution`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    }).then((response) => {
-      return response.json();
-    }).then((json) => {
-      // If the response contains a `slug` for a permalink, we want to redirect
-      // to the corresponding path using `history.push`.
-      const { slug } = json;
-      const newPath = slug ? '/coreference-resolution/' + slug : '/coreference-resolution';
-
-      // We'll pass the request and response data along as part of the location object
-      // so that the `Demo` component can use them to re-render.
-      const location = {
-        pathname: newPath,
-        state: { requestData: payload, responseData: json }
-      }
-      this.props.history.push(location);
-    }).catch((error) => {
-      this.setState({outputState: "error"});
-      console.error(error);
-    });
-  }
-
-  render() {
-    const { requestData, responseData } = this.props;
-
-    const inputDoc = requestData && requestData.document;
-    const tokens = responseData && responseData.document;
-    const clusters = responseData && responseData.clusters;
-
-    return (
-      <div className="pane model">
-        <PaneLeft>
-          <CorefInput runCorefModel={this.runCorefModel} outputState={this.state.outputState} doc={inputDoc}/>
-        </PaneLeft>
-        <PaneRight outputState={this.state.outputState}>
-          <CorefOutput tokens={tokens} clusters={clusters}/>
-        </PaneRight>
-      </div>
-    );
-  }
-}
-
-const CorefComponent = withRouter(_CorefComponent)
+const CorefComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 
 export default CorefComponent;
