@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import ModelComponent from './ModelComponent'
 import { Tree } from 'hierplane';
 
-const apiUrl = `${API_ROOT}/predict/semantic-role-labeling`
+const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
 
 const title = "Semantic Role Labeling"
 

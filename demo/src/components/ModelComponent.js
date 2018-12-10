@@ -1,8 +1,36 @@
 import React from 'react'
 import { PaneLeft, PaneRight, PaneTop, PaneBottom } from './Pane'
 import DemoInput from './DemoInput'
+import PropTypes from 'prop-types';
+
 
 class ModelComponent extends React.Component {
+    static propTypes = {
+        // The JSON sent to the predictor API
+        requestData: PropTypes.object,
+        // The JSON response from the predictor API
+        responseData: PropTypes.object,
+        // A function that takes the model inputs and returns a URL
+        // for the API.  Most frequently this would be a constant function,
+        // but if you wanted to use a different model depending on the inputs
+        // that logic would be contained in this function.
+        apiUrl: PropTypes.func.isRequired,
+        // The title and description
+        title: PropTypes.string.isRequired,
+        description: PropTypes.element.isRequired,
+        // The input fields
+        fields: PropTypes.arrayOf(PropTypes.shape({
+            name: PropTypes.string,
+            label: PropTypes.string,
+            type: PropTypes.string,
+            placeholder: PropTypes.string
+        })).isRequired,
+        // The examples to use in the demo
+        examples: PropTypes.arrayOf(PropTypes.object).isRequired,
+        // A function from {requestData, responseData} => OutputComponent
+        outputComponent: PropTypes.func.isRequired
+    }
+
     constructor(props) {
       super(props);
 
@@ -22,7 +50,7 @@ class ModelComponent extends React.Component {
 
       this.setState({outputState: "working"});
 
-      fetch(apiUrl, {
+      fetch(apiUrl(inputs), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

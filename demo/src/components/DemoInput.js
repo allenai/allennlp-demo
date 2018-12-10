@@ -60,6 +60,15 @@ class DemoInput extends React.Component {
             this.setState(stateUpdate)
         }
 
+        // What happens when you change a Select input.
+        // Notice that this is a double function. It should be called
+        // with the field name and the values.
+        this.handleSelectChange = (name, values) => e => {
+            let stateUpdate = {}
+            stateUpdate[name] = values[e.target.value]
+            this.setState(stateUpdate)
+        }
+
         // This just checks for Enter, and runs the model in that case.
         this.handleKeyDown = e => {
             if (e.key === 'Enter') {
@@ -111,6 +120,20 @@ class DemoInput extends React.Component {
                     break
 
                 // TODO(joelgrus): add more widgets
+
+                case "SELECT":
+                    input = (
+                        <select value={this.state[field.name] || field.values[0]}
+                                onChange={this.handleSelectChange(field.name, field.values)}
+                                disabled={this.props.outputState === "working"}>
+                            {
+                                field.values.map((value, idx) => (
+                                    <option key={idx} value={value}>{value}</option>
+                                ))
+                            }
+                        </select>
+                    )
+                    break
 
                 default:
                     console.error("unknown field type: " + field.type)

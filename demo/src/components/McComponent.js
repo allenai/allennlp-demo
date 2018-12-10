@@ -6,8 +6,6 @@ import ModelComponent from './ModelComponent'
 import OutputField from './OutputField'
 import { API_ROOT } from '../api-config';
 
-const apiUrl = `${API_ROOT}/predict/machine-comprehension`
-
 const title = "Machine Comprehension"
 
 const description = (
@@ -88,6 +86,8 @@ const examples = [
       question: "What does the physics engine allow for?",
     }
 ];
+
+const apiUrl = () => `${API_ROOT}/predict/machine-comprehension`
 
 const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
 

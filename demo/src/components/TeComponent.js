@@ -7,7 +7,7 @@ import OutputField from './OutputField'
 import Collapsible from 'react-collapsible'
 import '../css/TeComponent.css';
 
-const apiUrl = `${API_ROOT}/predict/textual-entailment`
+const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
 
 const title = "Textual Entailment"
 
