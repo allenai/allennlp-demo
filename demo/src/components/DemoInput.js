@@ -1,6 +1,14 @@
 import React from 'react';
 import ModelIntro from './ModelIntro'
 
+const truncate = (text, maxLen = 60) => {
+    if (text.length <= maxLen) {
+        return text
+    } else {
+        return text.substring(0, maxLen) + "..."
+    }
+}
+
 const makeSnippet = (example, fields, maxLen = 60) => {
     if (example.snippet) {
         // If the example has a field called "snippet", use that;
@@ -9,12 +17,7 @@ const makeSnippet = (example, fields, maxLen = 60) => {
         // Otherwise, take the first field and truncate if necessary.
         const fieldName = fields[0].name
         const snippet = example[fieldName]
-
-        if (snippet.length <= maxLen) {
-            return snippet
-        } else {
-            return snippet.substring(0, maxLen) + "..."
-        }
+        return truncate(snippet, maxLen)
     }
 }
 
@@ -62,10 +65,10 @@ class DemoInput extends React.Component {
 
         // What happens when you change a Select input.
         // Notice that this is a double function. It should be called
-        // with the field name and the values.
-        this.handleSelectChange = (name, values) => e => {
+        // with the field name.
+        this.handleSelectChange = name => e => {
             let stateUpdate = {}
-            stateUpdate[name] = values[e.target.value]
+            stateUpdate[name] = e.target.value
             this.setState(stateUpdate)
         }
 
@@ -124,7 +127,7 @@ class DemoInput extends React.Component {
                 case "SELECT":
                     input = (
                         <select value={this.state[field.name] || field.values[0]}
-                                onChange={this.handleSelectChange(field.name, field.values)}
+                                onChange={this.handleSelectChange(field.name)}
                                 disabled={this.props.outputState === "working"}>
                             {
                                 field.values.map((value, idx) => (
@@ -133,6 +136,7 @@ class DemoInput extends React.Component {
                             }
                         </select>
                     )
+
                     break
 
                 default:
@@ -184,4 +188,4 @@ class DemoInput extends React.Component {
     }
 }
 
-export default DemoInput
+export { DemoInput as default, truncate }

@@ -1,34 +1,15 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import { PaneLeft, PaneRight } from './Pane';
-import Button from './Button';
 import HighlightContainer from './highlight/HighlightContainer';
 import { Highlight } from './highlight/Highlight';
-import ModelIntro from './ModelIntro';
+import ModelComponent from './ModelComponent'
+import { truncate } from './DemoInput'
 
 // LOC, PER, ORG, MISC
 
-/*******************************************************************************
-  <NamedEntityInput/> Component
-*******************************************************************************/
-
-const nerSentences = [
-  "AllenNLP is a PyTorch-based natural language processing library developed at the Allen Institute for Artificial Intelligence in Seattle.",
-  "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?",
-  "Michael Jordan is a professor at Berkeley.",
-  "My preferred candidate is Cary Moon, but she won't be the next mayor of Seattle.",
-  "If you like Paul McCartney you should listen to the first Wings album.",
-  "When I told John that I wanted to move to Alaska, he warned me that I'd have trouble finding a Starbucks there."
-];
-
-const nerModels = {
-  "ner": "named-entity-recognition",
-  "fine-grained-ner": "fine-grained-named-entity-recognition"
-};
-
-
 const title = "Named Entity Recognition";
+
 const description = (
   <span>
     <span>
@@ -57,109 +38,21 @@ const description = (
       tutorial.)
     </span>
   </span>
-);
+)
 
-class NerInput extends React.Component {
-  constructor(props) {
-    super(props);
+const nerModels = ["ner", "fine-grained-ner"]
+const nerEndpoints = {
+    "ner": "named-entity-recognition",
+    "fine-grained-ner": "fine-grained-named-entity-recognition"
+  };
 
-    // If we're showing a permalinked result, we'll get passed in a sentence.
-    const { sentence } = props;
+const fields = [
+    {name: "model", label: "Model", type: "SELECT", values: nerModels},
+    {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
+     placeholder: `E.g. "John likes and Bill hates ice cream."`}
+]
 
-    this.state = {
-      nerSentenceValue: sentence || "",
-      nerModelValue : nerModels["ner"]
-    };
-
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleListChange = this.handleListChange.bind(this);
-    this.handleModelChange = this.handleModelChange.bind(this);
-    this.handleSentenceChange = this.handleSentenceChange.bind(this);
-  }
-
-  handleListChange(e) {
-    if (e.target.value !== "") {
-      this.setState({
-        nerSentenceValue: nerSentences[e.target.value],
-      });
-    }
-  }
-
-  handleModelChange(e) {
-    this.setState({
-      nerModelValue: nerModels[e.target.value],
-    });
-  }
-
-  handleSentenceChange(e) {
-    this.setState({
-      nerSentenceValue: e.target.value,
-    });
-  }
-
-  handleKeyDown(e, inputs) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      e.stopPropagation();
-      this.props.runNerModel(e, inputs , this.state.nerModelValue);
-    }
-  }
-
-  render() {
-    const { nerSentenceValue } = this.state;
-    const { outputState, runNerModel } = this.props;
-
-    const nerInputs = {
-      "sentenceValue": nerSentenceValue,
-    };
-
-    const callHandleKeyDown = (e) => { this.handleKeyDown(e, nerInputs)};
-
-    return (
-      <div className="model__content" >
-        <ModelIntro title={title} description={description} />
-
-        <div className="form__instructions"><span>Choose Model: </span>
-          <select disabled={outputState === "working"} onChange={this.handleModelChange}>
-            {Object.keys(nerModels).map((model, index) => {
-              return (
-                <option value={model} key={model}>{model}</option>
-              );
-            })}
-          </select>
-        </div>
-
-        <div className="form__instructions"><span>Enter text or</span>
-          <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
-            <option>Choose an example...</option>
-            {nerSentences.map((sentence, index) => {
-              return (
-                <option value={index} key={index}>{sentence}</option>
-              );
-            })}
-          </select>
-        </div>
-        <div className="form__field">
-          <label htmlFor="#input--ner-sentence">Sentence</label>
-          <input onChange={this.handleSentenceChange} onKeyDown={callHandleKeyDown} value={nerSentenceValue} id="input--ner-sentence" ref="nerSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
-        </div>
-
-        <div className="form__field form__field--btn">
-          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runNerModel} inputs={nerInputs} modelEndpoint={this.state.nerModelValue}/>
-        </div>
-      </div>
-    );
-  }
-}
-
-/*******************************************************************************
-  <TokenSpan /> Component
-*******************************************************************************/
-
-class TokenSpan extends React.Component {
-  render() {
-    const { token } = this.props;
-
+const TokenSpan = ({ token }) => {
     // Lookup table for entity style values:
     const entityLookup = {
       "PER": {
@@ -255,16 +148,10 @@ class TokenSpan extends React.Component {
       // Display raw text.
       return (<span>{token.text} </span>);
     }
-  }
 }
 
-/*******************************************************************************
-  <NerOutput /> Component
-*******************************************************************************/
-
-class NerOutput extends React.Component {
-  render() {
-    const { words, tags } = this.props;
+const outputComponent = ({ responseData }) => {
+    const { words, tags } = responseData
 
     // "B" = "Beginning" (first token in a sequence of tokens comprising an entity)
     // "I" = "Inside" (token in a sequence of tokens (that isn't first or last in its sequence) comprising an entity)
@@ -324,81 +211,25 @@ class NerOutput extends React.Component {
         </div>
       </div>
     )
-  }
 }
 
-/*******************************************************************************
-  <NerComponent /> Component
-*******************************************************************************/
+const examples = [
+    "AllenNLP is a PyTorch-based natural language processing library developed at the Allen Institute for Artificial Intelligence in Seattle.",
+    "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?",
+    "Michael Jordan is a professor at Berkeley.",
+    "My preferred candidate is Cary Moon, but she won't be the next mayor of Seattle.",
+    "If you like Paul McCartney you should listen to the first Wings album.",
+    "When I told John that I wanted to move to Alaska, he warned me that I'd have trouble finding a Starbucks there."
+  ].map(sentence => ({sentence, snippet: truncate(sentence)}))
 
-class _NerComponent extends React.Component {
-  constructor(props) {
-    super(props);
-
-    const {requestData, responseData } = props;
-
-    this.state = {
-      requestData: requestData,
-      responseData: responseData,
-      outputState: responseData ? "received" : "empty" // valid values: "working", "empty", "received", "error"
-    };
-
-    this.runNerModel = this.runNerModel.bind(this);
-  }
-
-  runNerModel(event, inputs, modelEndpoint) {
-    this.setState({outputState: "working"});
-
-    var payload = {sentence: inputs.sentenceValue};
-    fetch(`${API_ROOT}/predict/${modelEndpoint}`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    }).then(function (response) {
-      return response.json();
-    }).then((json) => {
-      // If the response contains a `slug` for a permalink, we want to redirect
-      // to the corresponding path using `history.push`.
-      const { slug } = json;
-      const newPath = slug ? '/named-entity-recognition/' + slug : '/named-entity-recognition';
-
-      // We'll pass the request and response data along as part of the location object
-      // so that the `Demo` component can use them to re-render.
-      const location = {
-        pathname: newPath,
-        state: { requestData: payload, responseData: json }
-      }
-      this.props.history.push(location);
-    }).catch((error) => {
-      this.setState({ outputState: "error" });
-      console.error(error);
-    });
-  }
-
-  render() {
-    const { requestData, responseData } = this.props;
-    const sentence = requestData && requestData.sentence;
-    const words = responseData && responseData.words;
-    const tags = responseData && responseData.tags;
-
-    return (
-      <div className="pane model">
-        <PaneLeft>
-          <NerInput runNerModel={this.runNerModel}
-            outputState={this.state.outputState}
-            sentence={sentence} />
-        </PaneLeft>
-        <PaneRight outputState={this.state.outputState}>
-          <NerOutput words={words} tags={tags} />
-        </PaneRight>
-      </div>
-    );
-  }
+const apiUrl = ({model}) => {
+    const selectedModel = model || nerModels[0]
+    const endpoint = nerEndpoints[selectedModel]
+    return `${API_ROOT}/predict/${endpoint}`
 }
 
-const NerComponent = withRouter(_NerComponent);
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
+
+const NerComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 
 export default NerComponent;
