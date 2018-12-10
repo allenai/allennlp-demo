@@ -117,7 +117,7 @@ class DemoInput extends React.Component {
             }
 
             return (
-                <div className="form__field">
+                <div className="form__field" key={idx}>
                 {label}
                 {input}
                 </div>

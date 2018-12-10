@@ -13,7 +13,7 @@ class Menu extends React.Component {
 
       const buildLink = (thisModel, label) => {
         return (
-          <li>
+          <li key={thisModel}>
             <span className={`nav__link ${selectedModel === thisModel ? "nav__link--selected" : ""}`}>
               <Link to={"/" + thisModel} onClick={clearData}>
                 <span>{label}</span>

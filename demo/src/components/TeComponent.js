@@ -1,42 +1,17 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import {PaneLeft, PaneRight} from './Pane'
 import HeatMap from './HeatMap'
+import ModelComponent from './ModelComponent'
+import OutputField from './OutputField'
 import Collapsible from 'react-collapsible'
-import Button from './Button'
-import ModelIntro from './ModelIntro'
 import '../css/TeComponent.css';
 
-/*******************************************************************************
-  <TeInput /> Component
-*******************************************************************************/
+const apiUrl = `${API_ROOT}/predict/textual-entailment`
 
-const teExamples = [
-    {
-      premise: "If you help the needy, God will reward you.",
-      hypothesis: "Giving money to the poor has good consequences.",
-    },
-    {
-      premise: "Two women are wandering along the shore drinking iced tea.",
-      hypothesis: "Two women are sitting on a blanket near some rocks talking about politics.",
-    },
-    {
-      premise: "An interplanetary spacecraft is in orbit around a gas giant's icy moon.",
-      hypothesis: "The spacecraft has the ability to travel between planets.",
-    },
-    {
-      premise: "A large, gray elephant walked beside a herd of zebras.",
-      hypothesis: "The elephant was lost.",
-    },
-    {
-      premise: "A handmade djembe was on display at the Smithsonian.",
-      hypothesis: "Visitors could see the djembe.",
-    },
-  ];
+const title = "Textual Entailment"
 
-  const title = "Textual Entailment";
-  const description = (
+const description = (
     <span>
       <span>
         Textual Entailment (TE) takes a pair of sentences and predicts whether the facts in the first
@@ -56,193 +31,88 @@ const teExamples = [
     </span>
   );
 
-  class TeInput extends React.Component {
-    constructor(props) {
-      super(props);
+const fields = [
+    {name: "premise", label: "Premise", type: "TEXT_INPUT",
+     placeholder: "E.g. &quot;A large, gray elephant walked beside a herd of zebras.&quot;"},
+    {name: "hypothesis", label: "Hypothesis", type: "TEXT_INPUT",
+     placeholder: "E.g. &quot;The elephant was lost.&quot;"}
+]
 
-    // If we're showing a permalinked result,
-    // we'll get passed in a premise and hypothesis.
-    const { premise, hypothesis } = props;
+const TeGraph = ({x, y}) => {
+    const width = 224;
+    const height = 194;
 
-      this.state = {
-        tePremiseValue: premise || "",
-        teHypothesisValue: hypothesis || "",
-      };
+    const absoluteX = Math.round(x * width);
+    const absoluteY = Math.round((1.0 - y) * height);
 
-      this.handleKeyDown = this.handleKeyDown.bind(this);
-      this.handleListChange = this.handleListChange.bind(this);
-      this.handlePremiseChange = this.handlePremiseChange.bind(this);
-      this.handleHypothesisChange = this.handleHypothesisChange.bind(this);
-    }
+    const plotCoords = {
+      left: `${absoluteX}px`,
+      top: `${absoluteY}px`,
+    };
 
-    handleListChange(e) {
-      if (e.target.value !== "") {
-        this.setState({
-          tePremiseValue: teExamples[e.target.value].premise,
-          teHypothesisValue: teExamples[e.target.value].hypothesis,
-        });
-      }
-    }
-
-    handlePremiseChange(e) {
-      this.setState({
-        tePremiseValue: e.target.value,
-      });
-    }
-
-    handleHypothesisChange(e) {
-      this.setState({
-        teHypothesisValue: e.target.value,
-      });
-    }
-
-    handleKeyDown(e, inputs) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        e.stopPropagation();
-        this.props.runTeModel(e, inputs);
-      }
-    }
-
-    render() {
-      const { tePremiseValue, teHypothesisValue } = this.state;
-      const { outputState, runTeModel } = this.props;
-
-      const teInputs = {
-        "premiseValue": tePremiseValue,
-        "hypothesisValue": teHypothesisValue
-      };
-
-      const callHandleKeyDown = (e) => { this.handleKeyDown(e, teInputs)};
-
-      return (
-        <div className="model__content">
-        <ModelIntro title={title} description={description} />
-          <div className="form__instructions"><span>Enter text or</span>
-            <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
-              <option value="">Choose an example...</option>
-              {teExamples.map((example, index) => {
-                return (
-                  <option value={index} key={index}>{example.premise}</option>
-                );
-              })}
-            </select>
-          </div>
-          <div className="form__field">
-            <label htmlFor="input--te-premise">Premise</label>
-            <input onChange={this.handlePremiseChange} onKeyDown={callHandleKeyDown} id="input--te-premise" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;A large, gray elephant walked beside a herd of zebras.&quot;" value={tePremiseValue} />
-          </div>
-          <div className="form__field">
-            <label htmlFor="input--te-hypothesis">Hypothesis</label>
-            <input onChange={this.handleHypothesisChange} onKeyDown={callHandleKeyDown} id="input--te-hypothesis" type="text" required="true" value={teHypothesisValue} placeholder="E.g. &quot;The elephant was lost.&quot;" />
-          </div>
-          <div className="form__field form__field--btn">
-            <Button enabled={outputState !== "working"} runModel={runTeModel} inputs={teInputs} />
-          </div>
+    return (
+      <div className="te-graph-labels">
+        <div className="te-graph">
+          <div className="te-graph__point" style={plotCoords}></div>
         </div>
-      );
-    }
-  }
-
-
-/*******************************************************************************
-  <TeGraph /> Component
-*******************************************************************************/
-
-class TeGraph extends React.Component {
-    render() {
-      const { x, y } = this.props
-
-      const width = 224;
-      const height = 194;
-
-      const absoluteX = Math.round(x * width);
-      const absoluteY = Math.round((1.0 - y) * height);
-
-      const plotCoords = {
-        left: `${absoluteX}px`,
-        top: `${absoluteY}px`,
-      };
-
-      return (
-        <div className="te-graph-labels">
-          <div className="te-graph">
-            <div className="te-graph__point" style={plotCoords}></div>
-          </div>
-        </div>
-      );
-    }
+      </div>
+    )
 }
 
-  /*******************************************************************************
-  <TeOutput /> Component
-*******************************************************************************/
+const judgments = {
+    CONTRADICTION: <span>the premise <strong>contradicts</strong> the hypothesis</span>,
+    ENTAILMENT: <span>the premise <strong>entails</strong> the hypothesis</span>,
+    NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
+}
 
-class TeOutput extends React.Component {
-    render() {
-      const { labelProbs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = this.props;
-      const [entailment, contradiction, neutral] = labelProbs;
+const outputComponent = ({ requestData, responseData }) => {
+    if (!requestData || !responseData) {
+        return null
+    } else {
+        const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
+        const [entailment, contradiction, neutral] = label_probs
 
-      let judgment; // Valid values: "e", "c", "n"
-      let degree; // Valid values: "somewhat", "very"
+        // Find judgment and confidence.
+        let judgment
+        let confidence
 
-      if (entailment > contradiction && entailment > neutral) {
-        judgment = "e"
-      }
-      else if (contradiction > entailment && contradiction > neutral) {
-        judgment = "c"
-      }
-      else if (neutral > entailment && neutral > contradiction) {
-        judgment = "n"
-      }
-
-      const veryConfident = 0.75;
-      const somewhatConfident = 0.50;
-      const summaryText = () => {
-        if (entailment >= veryConfident || contradiction >= veryConfident || neutral >= veryConfident) {
-          let judgmentStr;
-          switch(judgment) {
-            case "c":
-              judgmentStr = (<span>the premise <strong>contradicts</strong> the hypothesis</span>);
-              break;
-            case "e":
-              judgmentStr = (<span>the premise <strong>entails</strong> the hypothesis</span>);
-              break;
-            case "n":
-              judgmentStr = (<span>there is <strong>no correlation</strong> between the premise and hypothesis</span>);
-              break;
-            default:
-              throw new Error("Unhandled case for judgement confidence.")
-          }
-          return (
-            <div className="model__content__summary">It is <strong>{degree} likely</strong> that {judgmentStr}.</div>
-          );
+        if (entailment > contradiction && entailment > neutral) {
+            judgment = judgments.ENTAILMENT
+            confidence = entailment
         }
-        else if (entailment >= somewhatConfident || contradiction >= somewhatConfident || neutral >= somewhatConfident) {
-          let judgmentStr;
-          switch(judgment) {
-            case "c":
-              judgmentStr = (<span>the premise <strong>contradicts</strong> the hypothesis</span>);
-              break;
-            case "e":
-              judgmentStr = (<span>the premise <strong>entails</strong> the hypothesis</span>);
-              break;
-            case "n":
-              judgmentStr = (<span>there is <strong>no correlation</strong> between the premise and hypothesis</span>);
-              break;
-            default:
-              throw new Error("Unhandled case for judgement correlation.")
-          }
-          return (
-            <div className="model__content__summary">It is <strong>somewhat likely</strong> that {judgmentStr}.</div>
-          );
+        else if (contradiction > entailment && contradiction > neutral) {
+            judgment = judgments.CONTRADICTION
+            confidence = contradiction
         }
-        else {
-          return (
-            <div className="model__content__summary">The model is not confident in its judgment.</div>
-          );
+        else if (neutral > entailment && neutral > contradiction) {
+            judgment = judgments.NEUTRAL
+            confidence = neutral
+        } else {
+            throw new Error("cannot form judgment")
         }
-      }
+
+        // Create summary text.
+        const veryConfident = 0.75;
+        const somewhatConfident = 0.50;
+        let summaryText
+
+        if (confidence >= veryConfident) {
+            summaryText = (
+                <div className="model__content__summary">
+                    It is <strong>very likely</strong> that {judgment}.
+                </div>
+            )
+        } else if (confidence >= somewhatConfident) {
+            summaryText = (
+                <div className="model__content__summary">
+                    It is <strong>somewhat likely</strong> that {judgment}.
+                </div>
+            )
+        } else {
+            summaryText = (
+                <div className="model__content__summary">The model is not confident in its judgment.</div>
+              )
+        }
 
       function formatProb(n) {
         return parseFloat((n * 100).toFixed(1)) + "%";
@@ -257,17 +127,16 @@ class TeOutput extends React.Component {
 
       return (
         <div className="model__content">
-          <div className="form__field">
-            <label>Summary</label>
-            {summaryText()}
-          </div>
+          <OutputField label="Summary">
+            {summaryText}
+          </OutputField>
           <div className="te-output">
             <TeGraph x={x} y={y}/>
             <div className="te-table">
               <table>
                 <thead>
                   <tr>
-                    <th>Judgement</th>
+                    <th>Judgment</th>
                     <th>Probability</th>
                   </tr>
                 </thead>
@@ -311,92 +180,31 @@ class TeOutput extends React.Component {
     }
 }
 
-/*******************************************************************************
-  <TeComponent /> Component
-*******************************************************************************/
+const examples = [
+    {
+        premise: "If you help the needy, God will reward you.",
+        hypothesis: "Giving money to the poor has good consequences.",
+    },
+    {
+        premise: "Two women are wandering along the shore drinking iced tea.",
+        hypothesis: "Two women are sitting on a blanket near some rocks talking about politics.",
+    },
+    {
+        premise: "An interplanetary spacecraft is in orbit around a gas giant's icy moon.",
+        hypothesis: "The spacecraft has the ability to travel between planets.",
+    },
+    {
+        premise: "A large, gray elephant walked beside a herd of zebras.",
+        hypothesis: "The elephant was lost.",
+    },
+    {
+        premise: "A handmade djembe was on display at the Smithsonian.",
+        hypothesis: "Visitors could see the djembe.",
+    },
+]
 
-class _TeComponent extends React.Component {
-    constructor(props) {
-      super(props);
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
 
-      const { requestData, responseData } = props;
+const TeComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 
-      this.state = {
-        outputState: responseData ? "received" : "empty", // valid values: "working", "empty", "received", "error"
-        requestData: requestData,
-        responseData: responseData
-      };
-
-      this.runTeModel = this.runTeModel.bind(this);
-    }
-
-    runTeModel(event, inputs) {
-      this.setState({outputState: "working"});
-
-      var payload = {
-        premise: inputs.premiseValue,
-        hypothesis: inputs.hypothesisValue,
-      };
-      fetch(`${API_ROOT}/predict/textual-entailment`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      }).then((response) => {
-        return response.json();
-      }).then((json) => {
-        // If the response contains a `slug` for a permalink, we want to redirect
-        // to the corresponding path using `history.push`.
-        const { slug } = json;
-        const newPath = slug ? '/textual-entailment/' + slug : '/textual-entailment';
-
-        // We'll pass the request and response data along as part of the location object
-        // so that the `Demo` component can use them to re-render.
-        const location = {
-          pathname: newPath,
-          state: {requestData: payload, responseData: json}
-        }
-        this.props.history.push(location);
-      }).catch((error) => {
-        this.setState({outputState: "error"});
-        console.error(error);
-      });
-    }
-
-    render() {
-      const { requestData, responseData } = this.props;
-
-      // Get inputs and outputs, which may be null.
-      const premise = requestData && requestData.premise;
-      const hypothesis = requestData && requestData.hypothesis;
-      const labelProbs = responseData && responseData.label_probs;
-      const h2p_attention = responseData && responseData.h2p_attention;
-      const p2h_attention = responseData && responseData.p2h_attention;
-      const premise_tokens = responseData && responseData.premise_tokens;
-      const hypothesis_tokens = responseData && responseData.hypothesis_tokens;
-
-      return (
-        <div className="pane model">
-          <PaneLeft>
-            <TeInput runTeModel={this.runTeModel}
-                     outputState={this.state.outputState}
-                     premise={premise}
-                     hypothesis={hypothesis}/>
-          </PaneLeft>
-          <PaneRight outputState={this.state.outputState}>
-            <TeOutput labelProbs={labelProbs}
-                      h2p_attention={h2p_attention}
-                      p2h_attention={p2h_attention}
-                      premise_tokens={premise_tokens}
-                      hypothesis_tokens={hypothesis_tokens}/>
-          </PaneRight>
-        </div>
-      );
-    }
-}
-
-const TeComponent = withRouter(_TeComponent);
-
-export default TeComponent;
+export default TeComponent
