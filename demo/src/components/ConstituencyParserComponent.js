@@ -51,6 +51,6 @@ const apiUrl = () => `${API_ROOT}/predict/constituency-parsing`
 
 const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
 
-const ConstituencyParserComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
+const ConstituencyParserComponent = withRouter(props => <ModelComponent {...props} {...modelProps} horizontal="true"/>)
 
 export default ConstituencyParserComponent;

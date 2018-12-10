@@ -6,20 +6,8 @@ import Button from './Button'
 import ModelIntro from './ModelIntro'
 import { Tree } from 'hierplane';
 
-/*******************************************************************************
-  <OpenIeInput /> Component
-*******************************************************************************/
-
-const openieSentences = [
-  "In December, John decided to join the party.",
-  "Bob agreed to take out the trash",
-  "Alex Honnold climbed up a New Jersey skyscraper.",
-  "Albert Einstein, a German theoretical physicist, published the theory of relativity in 1915.",
-  "Chair umpire Ramos managed to rob two players in the U.S. Open final.",
-  "The CEO of a multi-million dollar company doesn't have much free time."
-];
-
 const title = "Open Information Extraction";
+
 const description = (
   <span>
     <span>
@@ -31,7 +19,12 @@ const description = (
     </span>
     <a href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</a>.
   </span>
-);
+)
+
+const fields = [
+    {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
+     placeholder: `E.g. "John likes and Bill hates ice cream."`}
+]
 
 const attributeToDisplayLabel = {
   "PRP": "Purpose",
@@ -422,6 +415,16 @@ class _OpenIeComponent extends React.Component {
     );
   }
 }
+
+const examples = [
+    "In December, John decided to join the party.",
+    "Bob agreed to take out the trash",
+    "Alex Honnold climbed up a New Jersey skyscraper.",
+    "Albert Einstein, a German theoretical physicist, published the theory of relativity in 1915.",
+    "Chair umpire Ramos managed to rob two players in the U.S. Open final.",
+    "The CEO of a multi-million dollar company doesn't have much free time."
+  ].map(sentence => ({sentence}))
+
 
 const OpenIeComponent = withRouter(_OpenIeComponent)
 

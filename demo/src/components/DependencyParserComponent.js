@@ -1,23 +1,11 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import { PaneTop, PaneBottom } from './Pane'
-import Button from './Button'
-import ModelIntro from './ModelIntro'
+import ModelComponent from './ModelComponent'
 import { Tree } from 'hierplane';
 
-/*******************************************************************************
-  <DependencyParserInput /> Component
-*******************************************************************************/
-
-const dependencyParserSentences = [
-  "James ate some cheese whilst thinking about the play.",
-  "She decided not to take the house she'd viewed yesterday.",
-  "The proportion of PepsiCo’s revenue coming from healthier food and beverages has risen from 38% in 2006 to 50%.",
-  "CRISPR-Cas9 is a versatile genome editing technology for studying the functions of genetic elements."
-];
-
 const title = "Dependency Parsing";
+
 const description = (
   <span>
     <span>
@@ -29,167 +17,40 @@ const description = (
   The parser is trained on the PTB 3.0 dataset using Stanford dependencies, achieving 95.57% and 94.44% unlabeled and labeled attachement score using gold POS tags. For predicted POS tags, the model achieves 94.81% UAS and 92.86% LAS respectively.
   </span>
   </span>
-);
+)
 
-class DependencyParserInput extends React.Component {
-  constructor(props) {
-    super(props);
+const fields = [
+    {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
+     placeholder: `E.g. "John likes and Bill hates ice cream."`}
+]
 
-    // If we're showing a permalinked result, we'll get passed in a sentence.
-    const { sentence } = props;
-
-    this.state = {
-      dependencyParserSentenceValue: sentence || "",
-    };
-
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleListChange = this.handleListChange.bind(this);
-    this.handleSentenceChange = this.handleSentenceChange.bind(this);
-  }
-
-  handleListChange(e) {
-    if (e.target.value !== "") {
-      this.setState({
-        dependencyParserSentenceValue: dependencyParserSentences[e.target.value],
-      });
-    }
-  }
-
-  handleSentenceChange(e) {
-    this.setState({
-      dependencyParserSentenceValue: e.target.value,
-    });
-  }
-
-  handleKeyDown(e, inputs) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      e.stopPropagation();
-      this.props.runDependencyParserModel(e, inputs);
-    }
-  }
-
-  render() {
-    const { dependencyParserSentenceValue } = this.state;
-    const { outputState, runDependencyParserModel } = this.props;
-
-    const dependencyParserInputs = {
-      "sentenceValue": dependencyParserSentenceValue,
-    };
-
-    const callHandleKeyDown = (e) => { this.handleKeyDown(e, dependencyParserInputs)};
-
-    return (
-      <div className="model__content">
-        <ModelIntro title={title} description={description} />
-        <div className="form__instructions"><span>Enter text or</span>
-          <select disabled={outputState === "working"} onChange={this.handleListChange} onKeyDown={callHandleKeyDown}>
-            <option>Choose an example...</option>
-            {dependencyParserSentences.map((sentence, index) => {
-              return (
-                <option value={index} key={index}>{sentence}</option>
-              );
-            })}
-          </select>
-        </div>
-        <div className="form__field">
-          <label htmlFor="#input--parser-sentence">Sentence</label>
-          <input onChange={this.handleSentenceChange} onKeyDown={callHandleKeyDown} value={dependencyParserSentenceValue} id="input--parser-sentence" ref="dependencyParserSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
-        </div>
-        <div className="form__field form__field--btn">
-          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runDependencyParserModel} inputs={dependencyParserInputs} />
-        </div>
-      </div>
-    );
-  }
-}
-
-class HierplaneVisualization extends React.Component {
-  render() {
-    if (this.props.tree) {
-      return (
-        <div className="hierplane__visualization">
-          <Tree tree={this.props.tree} theme="light" />
-        </div>
-      )
+const HierplaneVisualization = ({tree}) => {
+    if (tree) {
+        return (
+            <div className="hierplane__visualization">
+                <Tree tree={tree} theme="light" />
+            </div>
+        )
     } else {
-      return null;
+        return null;
     }
-  }
 }
 
-/*******************************************************************************
-  <dependencyParserComponent /> Component
-*******************************************************************************/
+const outputComponent = ({ responseData }) => (
+    <HierplaneVisualization tree={responseData.hierplane_tree} />
+)
 
+const examples = [
+    "James ate some cheese whilst thinking about the play.",
+    "She decided not to take the house she'd viewed yesterday.",
+    "The proportion of PepsiCo’s revenue coming from healthier food and beverages has risen from 38% in 2006 to 50%.",
+    "CRISPR-Cas9 is a versatile genome editing technology for studying the functions of genetic elements."
+  ].map(sentence => ({sentence}))
 
-class _DependencyParserComponent extends React.Component {
-  constructor(props) {
-    super(props);
+const apiUrl = () => `${API_ROOT}/predict/dependency-parsing`
 
-    const { requestData, responseData } = props;
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
 
-    this.state = {
-      requestData: requestData,
-      responseData: responseData,
-      // valid values: "working", "empty", "received", "error",
-      outputState: responseData ? "received" : "empty",
-    };
-    this.runDependencyParserModel = this.runDependencyParserModel.bind(this);
-  }
-
-  runDependencyParserModel(event, inputs) {
-    this.setState({outputState: "working"});
-
-    var payload = {sentence: inputs.sentenceValue};
-
-    fetch(`${API_ROOT}/predict/dependency-parsing`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    }).then(function (response) {
-      return response.json();
-    }).then((json) => {
-      // If the response contains a `slug` for a permalink, we want to redirect
-      // to the corresponding path using `history.push`.
-      const { slug } = json;
-      const newPath = slug ? '/dependency-parsing/' + slug : '/dependency-parsing';
-
-      // We'll pass the request and response data along as part of the location object
-      // so that the `Demo` component can use them to re-render.
-      const location = {
-        pathname: newPath,
-        state: { requestData: payload, responseData: json }
-      }
-      this.props.history.push(location);
-    }).catch((error) => {
-      this.setState({ outputState: "error" });
-      console.error(error);
-    });
-  }
-
-  render() {
-    const { requestData, responseData } = this.props;
-    const sentence = requestData && requestData.sentence;
-
-    return (
-      <div className="pane__horizontal model">
-        <PaneTop>
-          <DependencyParserInput runDependencyParserModel={this.runDependencyParserModel}
-            outputState={this.state.outputState}
-            sentence={sentence} />
-        </PaneTop>
-        <PaneBottom outputState={this.state.outputState}>
-          <HierplaneVisualization tree={responseData ? responseData.hierplane_tree : null} />
-        </PaneBottom>
-      </div>
-    );
-  }
-}
-
-const DependencyParserComponent = withRouter(_DependencyParserComponent)
+const DependencyParserComponent = withRouter(props => <ModelComponent {...props} {...modelProps} horizontal="true"/>)
 
 export default DependencyParserComponent;
