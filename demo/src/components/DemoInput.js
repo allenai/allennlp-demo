@@ -151,6 +151,9 @@ class DemoInput extends React.Component {
             )
         })
 
+        // Only enable the run button if every required field has a value.
+        const canRun = this.props.fields.every(field => field.optional || this.state[field.name])
+
         return (
             <div className="model__content">
                 <ModelIntro title={this.props.title} description={this.props.description} />
@@ -175,7 +178,7 @@ class DemoInput extends React.Component {
                     <button
                      id="input--mc-submit"
                      type="button"
-                     disabled={this.props.outputState === "working"}
+                     disabled={!canRun || this.props.outputState === "working"}
                      className="btn btn--icon-disclosure"
                      onClick={ () => this.props.runModel(this.state) }>Run
                         <svg>

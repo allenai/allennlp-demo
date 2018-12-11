@@ -35,7 +35,7 @@ const fields = [
     {name: "premise", label: "Premise", type: "TEXT_INPUT",
      placeholder: 'E.g. "A large, gray elephant walked beside a herd of zebras."'},
     {name: "hypothesis", label: "Hypothesis", type: "TEXT_INPUT",
-     placeholder: 'E.g. &quot;The elephant was lost."'}
+     placeholder: 'E.g. "The elephant was lost."'}
 ]
 
 const TeGraph = ({x, y}) => {
