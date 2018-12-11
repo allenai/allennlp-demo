@@ -65,7 +65,7 @@ const judgments = {
     NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
-const outputComponent = ({ requestData, responseData }) => {
+const TeOutput = ({ responseData }) => {
     const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
     const [entailment, contradiction, neutral] = label_probs
 
@@ -199,7 +199,7 @@ const examples = [
     },
 ]
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent: TeOutput}
 
 const TeComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 

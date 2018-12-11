@@ -36,7 +36,7 @@ const HierplaneVisualization = ({tree}) => {
     }
 }
 
-const outputComponent = ({ responseData }) => (
+const DependencyParserOutput = ({ responseData }) => (
     <HierplaneVisualization tree={responseData.hierplane_tree} />
 )
 
@@ -49,7 +49,7 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/dependency-parsing`
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent: DependencyParserOutput}
 
 const DependencyParserComponent = withRouter(props => <ModelComponent {...props} {...modelProps} horizontal="true"/>)
 

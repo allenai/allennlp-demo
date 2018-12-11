@@ -36,7 +36,7 @@ const HierplaneVisualization = ({ tree }) => {
     }
 }
 
-const outputComponent = ({ responseData }) => {
+const ConstituencyParserOutput = ({ responseData }) => {
     return <HierplaneVisualization tree={responseData.hierplane_tree} />
 }
 
@@ -49,7 +49,7 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/constituency-parsing`
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent: ConstituencyParserOutput}
 
 const ConstituencyParserComponent = withRouter(props => <ModelComponent {...props} {...modelProps} horizontal="true"/>)
 

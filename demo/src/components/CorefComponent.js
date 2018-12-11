@@ -192,10 +192,6 @@ class CorefOutput extends React.Component {
   }
 }
 
-const outputComponent = ({ requestData, responseData }) => (
-    <CorefOutput requestData={requestData} responseData={responseData} />
-)
-
 const examples = [
     {
       document: "Paul Allen was born on January 21, 1953, in Seattle, Washington, to Kenneth Sam Allen and Edna Faye Allen. Allen attended Lakeside School, a private school in Seattle, where he befriended Bill Gates, two years younger, with whom he shared an enthusiasm for computers. Paul and Bill used a teletype terminal at their high school, Lakeside, to develop their programming skills on several time-sharing computer systems."
@@ -208,7 +204,7 @@ const examples = [
     }
   ]
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent: CorefOutput}
 
 const CorefComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 

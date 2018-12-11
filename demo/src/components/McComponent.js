@@ -35,7 +35,7 @@ const fields = [
 ]
 
 
-const outputComponent = ({ requestData, responseData }) => {
+const McOutput = ({ requestData, responseData }) => {
     const { passage } = requestData
     const { best_span_str, passage_question_attention, question_tokens, passage_tokens } = responseData
     const start = passage.indexOf(best_span_str);
@@ -91,7 +91,7 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/machine-comprehension`
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent: McOutput}
 
 const McComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 

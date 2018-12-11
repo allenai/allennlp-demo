@@ -2,9 +2,8 @@ import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
 import ModelComponent from './ModelComponent'
-import { Tree } from 'hierplane';
-
-const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
+import HierplaneVisualization from './HierplaneVisualization'
+import TextVisualization from './TextVisualization'
 
 const title = "Semantic Role Labeling"
 
@@ -169,72 +168,6 @@ function toHierplaneTrees(response) {
   return trees.filter(t => t.root.children.length > 0);
 }
 
-const TextVisualization = ({ verbs }) => (
-    <div className="model__content model__content--srl-output">
-        <div>
-            {verbs.map((verb, i) => {
-                return (
-                    <p key={i}><b>{verb.verb}:</b> {verb.description}</p>
-                )
-            })}
-        </div>
-  </div>
-)
-
-class HierplaneVisualization extends React.Component {
-  constructor(...args) {
-    super(...args);
-    this.state = { selectedIdx: 0 };
-
-    this.selectPrevVerb = this.selectPrevVerb.bind(this);
-    this.selectNextVerb = this.selectNextVerb.bind(this);
-  }
-  selectPrevVerb() {
-    const nextIdx =
-        this.state.selectedIdx === 0 ? this.props.trees.length - 1 : this.state.selectedIdx - 1;
-    this.setState({ selectedIdx: nextIdx });
-  }
-  selectNextVerb() {
-    const nextIdx =
-        this.state.selectedIdx === this.props.trees.length - 1 ? 0 : this.state.selectedIdx + 1;
-    this.setState({ selectedIdx: nextIdx });
-  }
-
-  render() {
-    if (this.props.trees) {
-      const verbs = this.props.trees.map(({ root: { word } }) => word);
-
-      const totalVerbCount = verbs.length;
-      const selectedVerbIdxLabel = this.state.selectedIdx + 1;
-      const selectedVerb = verbs[this.state.selectedIdx];
-
-      return (
-        <div className="hierplane__visualization">
-          <div className="hierplane__visualization-verbs">
-            <a className="hierplane__visualization-verbs__prev" onClick={this.selectPrevVerb}>
-              <svg width="12" height="12">
-                <use xlinkHref="#icon__disclosure"></use>
-              </svg>
-            </a>
-            <a onClick={this.selectNextVerb}>
-              <svg width="12" height="12">
-                <use xlinkHref="#icon__disclosure"></use>
-              </svg>
-            </a>
-            <span className="hierplane__visualization-verbs__label">
-              Verb {selectedVerbIdxLabel} of {totalVerbCount}: <strong>{selectedVerb}</strong>
-            </span>
-          </div>
-          <Tree tree={this.props.trees[this.state.selectedIdx]} theme="light" />
-        </div>
-      )
-    } else {
-      return null;
-    }
-  }
-}
-
-
 const VisualizationType = {
   TREE: 'Tree',
   TEXT: 'Text'
@@ -257,7 +190,7 @@ class SrlOutput extends React.Component {
         let viz = null;
         switch(visualizationType) {
           case VisualizationType.TEXT:
-            viz = <TextVisualization verbs={verbs} />;
+            viz = <TextVisualization verbs={verbs} model="srl"/>;
             break;
           case VisualizationType.TREE:
           default:
@@ -292,11 +225,6 @@ class SrlOutput extends React.Component {
     }
 }
 
-
-const outputComponent = ({ requestData, responseData }) => (
-    <SrlOutput requestData={requestData} responseData={responseData} />
-)
-
 const examples = [
     "The keys, which were needed to access the building, were locked in the car.",
     "However, voters decided that if the stadium was such a good idea someone would build it himself, and rejected it 59% to 41%.",
@@ -305,7 +233,9 @@ const examples = [
     "More than a few CEOs say the red-carpet treatment tempts them to return to a heartland city for future meetings.",
 ].map(sentence => ({sentence}))
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
+const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
+
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent: SrlOutput}
 
 const SrlComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 

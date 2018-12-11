@@ -1,10 +1,9 @@
 import React from 'react';
 import { API_ROOT } from '../api-config';
 import { withRouter } from 'react-router-dom';
-import { PaneLeft, PaneRight } from './Pane'
-import Button from './Button'
-import ModelIntro from './ModelIntro'
-import { Tree } from 'hierplane';
+import ModelComponent from './ModelComponent'
+import HierplaneVisualization from './HierplaneVisualization'
+import TextVisualization from './TextVisualization'
 
 const title = "Open Information Extraction";
 
@@ -25,6 +24,11 @@ const fields = [
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
      placeholder: `E.g. "John likes and Bill hates ice cream."`}
 ]
+
+/* NOTE: There is a ton of duplicated code between this demo and the SRL demo,
+ * but the demos are subtlely different, so for now the duplication stays.
+ */
+
 
 const attributeToDisplayLabel = {
   "PRP": "Purpose",
@@ -169,142 +173,7 @@ function toHierplaneTrees(response) {
   return trees.filter(t => t.root.children.length > 0);
 }
 
-class OpenIeInput extends React.Component {
-  constructor(props) {
-    super(props);
 
-    // If we're showing a permalinked result, we'll get passed in a sentence.
-    const { sentence } = props;
-
-    this.state = {
-      openieSentenceValue: sentence || "",
-    };
-    this.handleListChange = this.handleListChange.bind(this);
-    this.handleSentenceChange = this.handleSentenceChange.bind(this);
-  }
-
-  handleListChange(e) {
-    if (e.target.value !== "") {
-      this.setState({
-        openieSentenceValue: openieSentences[e.target.value],
-      });
-    }
-  }
-
-  handleSentenceChange(e) {
-    this.setState({
-      openieSentenceValue: e.target.value,
-    });
-  }
-
-  render() {
-    const { openieSentenceValue } = this.state;
-    const { outputState, runOpenIeModel } = this.props;
-
-    const openieInputs = {
-      "sentenceValue": openieSentenceValue,
-    };
-
-    return (
-      <div className="model__content">
-        <ModelIntro title={title} description={description} />
-        <div className="form__instructions"><span>Enter text or</span>
-          <select disabled={outputState === "working"} onChange={this.handleListChange}>
-            <option>Choose an example...</option>
-            {openieSentences.map((sentence, index) => {
-              return (
-                <option value={index} key={index}>{sentence}</option>
-              );
-            })}
-          </select>
-        </div>
-        <div className="form__field">
-          <label htmlFor="#input--oie-sentence">Sentence</label>
-          <input onChange={this.handleSentenceChange} value={openieSentenceValue} id="input--oie-sentence" ref="openieSentence" type="text" required="true" autoFocus="true" placeholder="E.g. &quot;John likes and Bill hates ice cream.&quot;" />
-        </div>
-        <div className="form__field form__field--btn">
-          <Button enabled={outputState !== "working"} outputState={outputState} runModel={runOpenIeModel} inputs={openieInputs} />
-        </div>
-      </div>
-    );
-  }
-}
-
-
-/*******************************************************************************
-  <OpenIeOutput /> Component
-*******************************************************************************/
-
-class OpenIeOutput extends React.Component {
-  render() {
-    const { verbs } = this.props;
-
-    return (
-      <div className="model__content model__content--oie-output">
-        <div>
-          {verbs.map((verb, i) => {
-              return (
-                  <p key={i}><b>{verb.verb}:</b> {verb.description}</p>
-              )
-          })}
-        </div>
-      </div>
-    );
-  }
-}
-
-class HierplaneVisualization extends React.Component {
-  constructor(...args) {
-    super(...args);
-    this.state = { selectedIdx: 0 };
-
-    this.selectPrevVerb = this.selectPrevVerb.bind(this);
-    this.selectNextVerb = this.selectNextVerb.bind(this);
-  }
-  selectPrevVerb() {
-    const nextIdx =
-        this.state.selectedIdx === 0 ? this.props.trees.length - 1 : this.state.selectedIdx - 1;
-    this.setState({ selectedIdx: nextIdx });
-  }
-  selectNextVerb() {
-    const nextIdx =
-        this.state.selectedIdx === this.props.trees.length - 1 ? 0 : this.state.selectedIdx + 1;
-    this.setState({ selectedIdx: nextIdx });
-  }
-
-  render() {
-    if (this.props.trees) {
-      const verbs = this.props.trees.map(({ root: { word } }) => word);
-
-      const totalVerbCount = verbs.length;
-      const selectedVerbIdxLabel = this.state.selectedIdx + 1;
-      const selectedVerb = verbs[this.state.selectedIdx];
-
-      return (
-        <div className="hierplane__visualization">
-          <div className="hierplane__visualization-verbs">
-            <a className="hierplane__visualization-verbs__prev" onClick={this.selectPrevVerb}>
-              <svg width="12" height="12">
-                <use xlinkHref="#icon__disclosure"></use>
-              </svg>
-            </a>
-            <a onClick={this.selectNextVerb}>
-              <svg width="12" height="12">
-                <use xlinkHref="#icon__disclosure"></use>
-              </svg>
-            </a>
-            <span className="hierplane__visualization-verbs__label">
-              Verb {selectedVerbIdxLabel} of {totalVerbCount}: <strong>{selectedVerb}</strong>
-            </span>
-          </div>
-          <Tree tree={this.props.trees[this.state.selectedIdx]} theme="light" />
-        </div>
-      )
-    } else {
-      return null;
-    }
-  }
-}
 
 /*******************************************************************************
   <OpenIeComponent /> Component
@@ -316,82 +185,32 @@ const VisualizationType = {
 };
 Object.freeze(VisualizationType);
 
-class _OpenIeComponent extends React.Component {
-  constructor(props) {
-    super(props);
+// Stateful output compoennt
+class OpenIeOutput extends React.Component {
+    constructor(props) {
+        super(props);
 
-    const { requestData, responseData } = props;
-
-    this.state = {
-      requestData: requestData,
-      responseData: responseData,
-      // valid values: "working", "empty", "received", "error",
-      outputState: responseData ? "received" : "empty",
-      visualizationType: VisualizationType.TREE
-    };
-
-    this.runOpenIeModel = this.runOpenIeModel.bind(this);
-  }
-
-  runOpenIeModel(event, inputs) {
-    this.setState({outputState: "working"});
-
-    var payload = {sentence: inputs.sentenceValue};
-
-    fetch(`${API_ROOT}/predict/open-information-extraction`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    }).then(function (response) {
-      return response.json();
-    }).then((json) => {
-      // If the response contains a `slug` for a permalink, we want to redirect
-      // to the corresponding path using `history.push`.
-      const { slug } = json;
-      const newPath = slug ? '/open-information-extraction/' + slug : '/open-information-extraction';
-
-      // We'll pass the request and response data along as part of the location object
-      // so that the `Demo` component can use them to re-render.
-      const location = {
-        pathname: newPath,
-        state: { requestData: payload, responseData: json }
-      }
-      this.props.history.push(location);
-    }).catch((error) => {
-      this.setState({ outputState: "error" });
-      console.error(error);
-    });
-  }
-
-  render() {
-    const { requestData, responseData } = this.props;
-    const { visualizationType } = this.state;
-
-    const sentence = requestData && requestData.sentence;
-    const verbs = responseData && responseData.verbs;
-
-    let viz = null;
-    switch(visualizationType) {
-      case VisualizationType.TEXT:
-        viz = <OpenIeOutput verbs={verbs} />;
-        break;
-      case VisualizationType.TREE:
-      default:
-        viz = <HierplaneVisualization trees={responseData ? toHierplaneTrees(responseData) : null} />
-        break;
+        this.state = { visualizationType: VisualizationType.TREE }
     }
 
+    render() {
+        const { visualizationType } = this.state
+        const { responseData } = this.props
+        const { verbs } = responseData
+
+        let viz = null;
+        switch(visualizationType) {
+        case VisualizationType.TEXT:
+            viz = <TextVisualization verbs={verbs} model="oie"/>;
+            break;
+        case VisualizationType.TREE:
+        default:
+            viz = <HierplaneVisualization trees={toHierplaneTrees(responseData)} />
+            break;
+        }
+
     return (
-      <div className="pane model">
-        <PaneLeft>
-          <OpenIeInput runOpenIeModel={this.runOpenIeModel}
-            outputState={this.state.outputState}
-            sentence={sentence} />
-        </PaneLeft>
-        <PaneRight outputState={this.state.outputState}>
+      <div>
           <ul className="visualization-types">
             {Object.keys(VisualizationType).map(tpe => {
               const vizType = VisualizationType[tpe];
@@ -410,9 +229,8 @@ class _OpenIeComponent extends React.Component {
             })}
           </ul>
           {viz}
-        </PaneRight>
       </div>
-    );
+    )
   }
 }
 
@@ -426,6 +244,10 @@ const examples = [
   ].map(sentence => ({sentence}))
 
 
-const OpenIeComponent = withRouter(_OpenIeComponent)
+const apiUrl = () => `${API_ROOT}/predict/open-information-extraction`
+
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent: OpenIeOutput}
+
+const OpenIeComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 
 export default OpenIeComponent;

@@ -27,8 +27,12 @@ class ModelComponent extends React.Component {
         })).isRequired,
         // The examples to use in the demo
         examples: PropTypes.arrayOf(PropTypes.object).isRequired,
-        // A function from {requestData, responseData} => OutputComponent
-        outputComponent: PropTypes.func.isRequired
+        // A function from {requestData, responseData} => OutputComponent,
+        // or a component that takes those props
+        outputComponent: PropTypes.oneOfType([
+            PropTypes.func,
+            PropTypes.instanceOf(React.Component)
+        ]).isRequired
     }
 
     constructor(props) {
@@ -91,7 +95,8 @@ class ModelComponent extends React.Component {
                                      outputState={this.state.outputState}
                                      runModel={this.runModel} />
 
-        const demoOutput = requestData && responseData ? this.props.outputComponent({requestData, responseData}) : null
+        const Output = this.props.outputComponent
+        const demoOutput = requestData && responseData ? <Output {...this.state}/> : null
 
         if (horizontal) {
             return (

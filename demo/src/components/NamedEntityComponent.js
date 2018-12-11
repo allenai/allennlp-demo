@@ -150,7 +150,7 @@ const TokenSpan = ({ token }) => {
     }
 }
 
-const outputComponent = ({ responseData }) => {
+const NamedEntityOutput = ({ responseData }) => {
     const { words, tags } = responseData
 
     // "B" = "Beginning" (first token in a sequence of tokens comprising an entity)
@@ -228,7 +228,7 @@ const apiUrl = ({model}) => {
     return `${API_ROOT}/predict/${endpoint}`
 }
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent}
+const modelProps = {apiUrl, title, description, fields, examples, outputComponent: NamedEntityOutput}
 
 const NerComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 
