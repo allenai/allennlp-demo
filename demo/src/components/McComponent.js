@@ -93,7 +93,5 @@ const apiUrl = () => `${API_ROOT}/predict/machine-comprehension`
 
 const modelProps = {apiUrl, title, description, fields, examples, outputComponent: McOutput}
 
-const McComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
-
-export default McComponent
+export default withRouter(props => <ModelComponent {...props} {...modelProps}/>)
 

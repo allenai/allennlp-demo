@@ -201,6 +201,4 @@ const examples = [
 
 const modelProps = {apiUrl, title, description, fields, examples, outputComponent: TeOutput}
 
-const TeComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
-
-export default TeComponent
+export default withRouter(props => <ModelComponent {...props} {...modelProps}/>)

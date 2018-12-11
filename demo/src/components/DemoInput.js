@@ -25,10 +25,6 @@ class DemoInput extends React.Component {
     constructor(props) {
         super(props)
 
-        // examples looks like [{passage: "...", question: "..."}, ...]
-        // fields looks like [{name: "passage", label: "Passage", type: "TEXT_AREA"}, ...]
-        // inputState (possibly) contains values for the various inputs
-        // runModel
         const { examples, fields, inputState, runModel } = props
 
         // Populate state using (a copy of) provided values.
@@ -36,16 +32,17 @@ class DemoInput extends React.Component {
 
         // What happens when you change the example dropdown
         this.handleExampleChange = e => {
-            if (e.target.value !== "") {
+            const exampleId = e.target.value
+            if (exampleId !== "") {
                 // Because this is dynamic over fields, we need to be indirect.
                 let stateUpdate = {}
 
                 // For each field,
                 fields.forEach(({name}) => {
                     // if the chosen example has a value for that field,
-                    if (examples[e.target.value][name] !== undefined) {
+                    if (examples[exampleId][name] !== undefined) {
                         // include it in the update.
-                        stateUpdate[name] = examples[e.target.value][name];
+                        stateUpdate[name] = examples[exampleId][name];
                     }
                 })
 
@@ -54,26 +51,16 @@ class DemoInput extends React.Component {
             }
         }
 
-        // What happens when you change text in a TextArea or Input.
-        // Notice that this is a double function. The first argument is
+        // What happens when you change an input. This works for text
+        // inputs and also select inputs. The first argument is
         // the field name to update.
-        this.handleTextChange = name => e => {
+        this.handleInputChange = name => e => {
             let stateUpdate = {}
             stateUpdate[name] = e.target.value;
             this.setState(stateUpdate)
         }
 
-        // What happens when you change a Select input.
-        // Notice that this is a double function. It should be called
-        // with the field name.
-        this.handleSelectChange = name => e => {
-            let stateUpdate = {}
-            stateUpdate[name] = e.target.value
-            this.setState(stateUpdate)
-        }
-
-        // This just checks for Enter, and runs the model in that case.
-        this.handleKeyDown = e => {
+        this.runOnEnter = e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 e.stopPropagation();
@@ -83,60 +70,49 @@ class DemoInput extends React.Component {
     }
 
     render() {
+        const { title, description, fields, selectedModel, outputState } = this.props
+
+        // Only enable running the model if every required field has a value.
+        const canRun = fields.every(field => field.optional || this.state[field.name])
+
         // We render the individual inputs by map-ping over the fields.
-        const inputs = this.props.fields.map((field, idx) => {
+        const inputs = fields.map((field, idx) => {
             // The HTML id for this input:
-            const inputId = `input--${this.props.selectedModel}-${field.name}`
+            const inputId = `input--${selectedModel}-${field.name}`
             const label = field.label ? <label htmlFor={`#${inputId}`}>{field.label}</label> : null
 
             let input = null;
 
             switch (field.type) {
                 case "TEXT_AREA":
-                    input = (
-                        <textarea
-                         onChange={this.handleTextChange(field.name)}
-                         onKeyDown={this.handleKeyDown}
-                         id={inputId}
-                         type="text"
-                         required="true"
-                         autoFocus={idx === 0}
-                         placeholder={field.placeholder || ""}
-                         value={this.state[field.name]}
-                         disabled={this.props.outputState === "working"} />
-                    )
-                    break
-
                 case "TEXT_INPUT":
-                    input = (
-                        <input
-                         onChange={this.handleTextChange(field.name)}
-                         onKeyDown={this.handleKeyDown}
-                         id={inputId}
-                         type="text"
-                         required="true"
-                         autoFocus={idx === 0}
-                         placeholder={field.placeholder || ""}
-                         value={this.state[field.name]}
-                         disabled={this.props.outputState === "working"} />
-                    )
-                    break
+                    const props = {
+                        onChange: this.handleInputChange(field.name),
+                        onKeyDown: canRun ? this.runOnEnter : undefined,
+                        id: inputId,
+                        type: "text",
+                        required: "true",
+                        autoFocus: idx === 0,
+                        placeholder: field.placeholder || "",
+                        value: this.state[field.name],
+                        disabled: outputState === "working"
+                    }
 
-                // TODO(joelgrus): add more widgets
+                    input = field.type === "TEXT_AREA" ? <textarea {...props}/> : <input {...props}/>
+                    break
 
                 case "SELECT":
                     input = (
-                        <select value={this.state[field.name] || field.values[0]}
-                                onChange={this.handleSelectChange(field.name)}
-                                disabled={this.props.outputState === "working"}>
+                        <select value={this.state[field.name] || field.options[0]}
+                                onChange={this.handleInputChange(field.name)}
+                                disabled={outputState === "working"}>
                             {
-                                field.values.map((value, idx) => (
+                                field.options.map((value, idx) => (
                                     <option key={idx} value={value}>{value}</option>
                                 ))
                             }
                         </select>
                     )
-
                     break
 
                 default:
@@ -151,23 +127,19 @@ class DemoInput extends React.Component {
             )
         })
 
-        // Only enable the run button if every required field has a value.
-        const canRun = this.props.fields.every(field => field.optional || this.state[field.name])
-
         return (
             <div className="model__content">
-                <ModelIntro title={this.props.title} description={this.props.description} />
+                <ModelIntro title={title} description={description} />
                 <div className="form__instructions">
                     <span>Enter text or</span>
                     <select
-                        disabled={this.props.outputState === "working"}
-                        onChange={this.handleExampleChange}
-                        onKeyDown={this.handleKeyDown}>
+                        disabled={outputState === "working"}
+                        onChange={this.handleExampleChange}>
                             <option value="">Choose an example...</option>
                             {
                                 this.props.examples.map((example, index) => {
                                     return (
-                                        <option value={index} key={index}>{makeSnippet(example, this.props.fields)}</option>
+                                        <option value={index} key={index}>{makeSnippet(example, fields)}</option>
                                     )
                                 })
                             }
@@ -178,7 +150,7 @@ class DemoInput extends React.Component {
                     <button
                      id="input--mc-submit"
                      type="button"
-                     disabled={!canRun || this.props.outputState === "working"}
+                     disabled={!canRun || outputState === "working"}
                      className="btn btn--icon-disclosure"
                      onClick={ () => this.props.runModel(this.state) }>Run
                         <svg>

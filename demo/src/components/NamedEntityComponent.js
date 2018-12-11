@@ -47,7 +47,7 @@ const nerEndpoints = {
   };
 
 const fields = [
-    {name: "model", label: "Model", type: "SELECT", values: nerModels},
+    {name: "model", label: "Model", type: "SELECT", options: nerModels, optional: true},
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
      placeholder: `E.g. "John likes and Bill hates ice cream."`}
 ]
@@ -230,6 +230,4 @@ const apiUrl = ({model}) => {
 
 const modelProps = {apiUrl, title, description, fields, examples, outputComponent: NamedEntityOutput}
 
-const NerComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
-
-export default NerComponent;
+export default withRouter(props => <ModelComponent {...props} {...modelProps}/>)

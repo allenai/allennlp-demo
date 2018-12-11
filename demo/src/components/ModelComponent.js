@@ -1,40 +1,8 @@
 import React from 'react'
 import { PaneLeft, PaneRight, PaneTop, PaneBottom } from './Pane'
 import DemoInput from './DemoInput'
-import PropTypes from 'prop-types';
-
 
 class ModelComponent extends React.Component {
-    static propTypes = {
-        // The JSON sent to the predictor API
-        requestData: PropTypes.object,
-        // The JSON response from the predictor API
-        responseData: PropTypes.object,
-        // A function that takes the model inputs and returns a URL
-        // for the API.  Most frequently this would be a constant function,
-        // but if you wanted to use a different model depending on the inputs
-        // that logic would be contained in this function.
-        apiUrl: PropTypes.func.isRequired,
-        // The title and description
-        title: PropTypes.string.isRequired,
-        description: PropTypes.element.isRequired,
-        // The input fields
-        fields: PropTypes.arrayOf(PropTypes.shape({
-            name: PropTypes.string,
-            label: PropTypes.string,
-            type: PropTypes.string,
-            placeholder: PropTypes.string
-        })).isRequired,
-        // The examples to use in the demo
-        examples: PropTypes.arrayOf(PropTypes.object).isRequired,
-        // A function from {requestData, responseData} => OutputComponent,
-        // or a component that takes those props
-        outputComponent: PropTypes.oneOfType([
-            PropTypes.func,
-            PropTypes.instanceOf(React.Component)
-        ]).isRequired
-    }
-
     constructor(props) {
       super(props);
 
@@ -84,7 +52,7 @@ class ModelComponent extends React.Component {
 
     render() {
         const { title, description, examples, fields, selectedModel, horizontal } = this.props;
-        const { requestData, responseData } = this.state;
+        const { requestData, responseData, outputState } = this.state;
 
         const demoInput = <DemoInput selectedModel={selectedModel}
                                      title={title}
@@ -92,35 +60,29 @@ class ModelComponent extends React.Component {
                                      examples={examples}
                                      fields={fields}
                                      inputState={requestData}
-                                     outputState={this.state.outputState}
+                                     outputState={outputState}
                                      runModel={this.runModel} />
 
         const Output = this.props.outputComponent
         const demoOutput = requestData && responseData ? <Output {...this.state}/> : null
 
+        let className, InputPane, OutputPane
         if (horizontal) {
-            return (
-                <div className="pane__horizontal model">
-                    <PaneTop>
-                        {demoInput}
-                    </PaneTop>
-                    <PaneBottom outputState={this.state.outputState}>
-                        {demoOutput}
-                    </PaneBottom>
-                </div>
-            )
+            className = "pane__horizontal model"
+            InputPane = PaneTop
+            OutputPane = PaneBottom
         } else {
-            return (
-                <div className="pane model">
-                    <PaneLeft>
-                        {demoInput}
-                    </PaneLeft>
-                    <PaneRight outputState={this.state.outputState}>
-                        {demoOutput}
-                    </PaneRight>
-                </div>
-            )
+            className = "pane model"
+            InputPane = PaneLeft
+            OutputPane = PaneRight
         }
+
+        return (
+            <div className={className}>
+                <InputPane>{demoInput}</InputPane>
+                <OutputPane outputState={outputState}>{demoOutput}</OutputPane>
+            </div>
+        )
     }
 }
 
