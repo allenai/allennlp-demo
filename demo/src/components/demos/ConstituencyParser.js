@@ -1,7 +1,7 @@
 import React from 'react';
-import { API_ROOT } from '../api-config';
+import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
-import ModelComponent from './ModelComponent'
+import Model from '../Model'
 import { Tree } from 'hierplane';
 
 const title = "Constituency Parsing";
@@ -36,7 +36,7 @@ const HierplaneVisualization = ({ tree }) => {
     }
 }
 
-const ConstituencyParserOutput = ({ responseData }) => {
+const Output = ({ responseData }) => {
     return <HierplaneVisualization tree={responseData.hierplane_tree} />
 }
 
@@ -49,8 +49,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/constituency-parsing`
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent: ConstituencyParserOutput}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
-const ConstituencyParserComponent = withRouter(props => <ModelComponent {...props} {...modelProps} horizontal="true"/>)
-
-export default ConstituencyParserComponent;
+export default withRouter(props => <Model {...props} {...modelProps} horizontal="true"/>)

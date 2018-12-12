@@ -1,9 +1,9 @@
 import React from 'react';
-import { API_ROOT } from '../api-config';
+import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
-import ModelComponent from './ModelComponent'
-import HighlightContainer from './highlight/HighlightContainer';
-import { Highlight, getHighlightColor } from './highlight/Highlight';
+import Model from '../Model'
+import HighlightContainer from '../highlight/HighlightContainer';
+import { Highlight, getHighlightColor } from '../highlight/Highlight';
 
 const apiUrl = () => `${API_ROOT}/predict/coreference-resolution`
 
@@ -88,8 +88,8 @@ const transformToTree = (tokens, clusters) => {
   return insideClusters[0].contents;
 }
 
-
-class CorefOutput extends React.Component {
+// Stateful
+class Output extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -204,8 +204,6 @@ const examples = [
     }
   ]
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent: CorefOutput}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
-const CorefComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
-
-export default CorefComponent;
+export default withRouter(props => <Model {...props} {...modelProps}/>)

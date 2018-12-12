@@ -1,11 +1,11 @@
 import React from 'react';
-import HeatMap from './HeatMap'
+import HeatMap from '../HeatMap'
 import Collapsible from 'react-collapsible'
-import { API_ROOT } from '../api-config';
+import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
-import ModelComponent from './ModelComponent'
-import OutputField from './OutputField'
-import SyntaxHighlight from './highlight/SyntaxHighlight.js';
+import Model from '../Model'
+import OutputField from '../OutputField'
+import SyntaxHighlight from '../highlight/SyntaxHighlight.js';
 
 const title = "Text to SQL";
 
@@ -51,7 +51,7 @@ const ActionInfo = ({ action, tokenized_utterance }) => {
 }
 
 
-const AtisOutput = ({ responseData }) => {
+const Output = ({ responseData }) => {
     const { predicted_actions, entities, linking_scores, predicted_sql_query, tokenized_utterance} = responseData
 
     let query, internals
@@ -104,8 +104,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/atis-parser`
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent: AtisOutput}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
-const AtisComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
-
-export default AtisComponent;
+export default withRouter(props => <Model {...props} {...modelProps}/>)

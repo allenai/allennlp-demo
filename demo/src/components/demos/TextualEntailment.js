@@ -1,11 +1,11 @@
 import React from 'react';
-import { API_ROOT } from '../api-config';
+import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
-import HeatMap from './HeatMap'
-import ModelComponent from './ModelComponent'
-import OutputField from './OutputField'
+import HeatMap from '../HeatMap'
+import Model from '../Model'
+import OutputField from '../OutputField'
 import Collapsible from 'react-collapsible'
-import '../css/TeComponent.css';
+import '../../css/TeComponent.css';
 
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
 
@@ -65,7 +65,7 @@ const judgments = {
     NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
-const TeOutput = ({ responseData }) => {
+const Output = ({ responseData }) => {
     const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
     const [entailment, contradiction, neutral] = label_probs
 
@@ -199,6 +199,6 @@ const examples = [
     },
 ]
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent: TeOutput}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
-export default withRouter(props => <ModelComponent {...props} {...modelProps}/>)
+export default withRouter(props => <Model {...props} {...modelProps}/>)

@@ -1,9 +1,9 @@
 import React from 'react';
-import { API_ROOT } from '../api-config';
+import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
-import ModelComponent from './ModelComponent'
-import HierplaneVisualization from './HierplaneVisualization'
-import TextVisualization from './TextVisualization'
+import Model from '../Model'
+import HierplaneVisualization from '../HierplaneVisualization'
+import TextVisualization from '../TextVisualization'
 
 const title = "Semantic Role Labeling"
 
@@ -175,7 +175,7 @@ const VisualizationType = {
 Object.freeze(VisualizationType);
 
 // Stateful output component
-class SrlOutput extends React.Component {
+class Output extends React.Component {
     constructor(props) {
         super(props)
 
@@ -235,8 +235,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent: SrlOutput}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
-const SrlComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
-
-export default SrlComponent;
+export default withRouter(props => <Model {...props} {...modelProps}/>)

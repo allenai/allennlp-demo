@@ -1,9 +1,9 @@
 import React from 'react';
-import { API_ROOT } from '../api-config';
+import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
-import ModelComponent from './ModelComponent'
-import HierplaneVisualization from './HierplaneVisualization'
-import TextVisualization from './TextVisualization'
+import Model from '../Model'
+import HierplaneVisualization from '../HierplaneVisualization'
+import TextVisualization from '../TextVisualization'
 
 const title = "Open Information Extraction";
 
@@ -174,11 +174,6 @@ function toHierplaneTrees(response) {
 }
 
 
-
-/*******************************************************************************
-  <OpenIeComponent /> Component
-*******************************************************************************/
-
 const VisualizationType = {
   TREE: 'Tree',
   TEXT: 'Text'
@@ -186,7 +181,7 @@ const VisualizationType = {
 Object.freeze(VisualizationType);
 
 // Stateful output compoennt
-class OpenIeOutput extends React.Component {
+class Output extends React.Component {
     constructor(props) {
         super(props);
 
@@ -216,7 +211,7 @@ class OpenIeOutput extends React.Component {
               const vizType = VisualizationType[tpe];
               const className = (
                 visualizationType === vizType
-                  ? 'oie__visualization-types__active-type'
+                  ? 'visualization-types__active-type'
                   : null
               );
               return (
@@ -246,8 +241,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/open-information-extraction`
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent: OpenIeOutput}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
-const OpenIeComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
-
-export default OpenIeComponent;
+export default withRouter(props => <Model {...props} {...modelProps}/>)

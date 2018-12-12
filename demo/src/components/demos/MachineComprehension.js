@@ -1,10 +1,10 @@
 import React from 'react';
-import HeatMap from './HeatMap'
+import HeatMap from '../HeatMap'
 import Collapsible from 'react-collapsible'
 import { withRouter } from 'react-router-dom';
-import ModelComponent from './ModelComponent'
-import OutputField from './OutputField'
-import { API_ROOT } from '../api-config';
+import Model from '../Model'
+import OutputField from '../OutputField'
+import { API_ROOT } from '../../api-config';
 
 const title = "Machine Comprehension"
 
@@ -35,7 +35,7 @@ const fields = [
 ]
 
 
-const McOutput = ({ requestData, responseData }) => {
+const Output = ({ requestData, responseData }) => {
     const { passage } = requestData
     const { best_span_str, passage_question_attention, question_tokens, passage_tokens } = responseData
     const start = passage.indexOf(best_span_str);
@@ -91,7 +91,7 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/machine-comprehension`
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent: McOutput}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
-export default withRouter(props => <ModelComponent {...props} {...modelProps}/>)
+export default withRouter(props => <Model {...props} {...modelProps}/>)
 

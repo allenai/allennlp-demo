@@ -1,10 +1,10 @@
 import React from 'react';
-import { API_ROOT } from '../api-config';
+import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
-import HighlightContainer from './highlight/HighlightContainer';
-import { Highlight } from './highlight/Highlight';
-import ModelComponent from './ModelComponent'
-import { truncate } from './DemoInput'
+import HighlightContainer from '../highlight/HighlightContainer';
+import { Highlight } from '../highlight/Highlight';
+import Model from '../Model'
+import { truncate } from '../DemoInput'
 
 // LOC, PER, ORG, MISC
 
@@ -150,7 +150,7 @@ const TokenSpan = ({ token }) => {
     }
 }
 
-const NamedEntityOutput = ({ responseData }) => {
+const Output = ({ responseData }) => {
     const { words, tags } = responseData
 
     // "B" = "Beginning" (first token in a sequence of tokens comprising an entity)
@@ -228,6 +228,6 @@ const apiUrl = ({model}) => {
     return `${API_ROOT}/predict/${endpoint}`
 }
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent: NamedEntityOutput}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
-export default withRouter(props => <ModelComponent {...props} {...modelProps}/>)
+export default withRouter(props => <Model {...props} {...modelProps}/>)

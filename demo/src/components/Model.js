@@ -2,7 +2,7 @@ import React from 'react'
 import { PaneLeft, PaneRight, PaneTop, PaneBottom } from './Pane'
 import DemoInput from './DemoInput'
 
-class ModelComponent extends React.Component {
+class Model extends React.Component {
     constructor(props) {
       super(props);
 
@@ -51,7 +51,7 @@ class ModelComponent extends React.Component {
     }
 
     render() {
-        const { title, description, examples, fields, selectedModel, horizontal } = this.props;
+        const { title, description, examples, fields, selectedModel, horizontal, Output } = this.props;
         const { requestData, responseData, outputState } = this.state;
 
         const demoInput = <DemoInput selectedModel={selectedModel}
@@ -63,7 +63,6 @@ class ModelComponent extends React.Component {
                                      outputState={outputState}
                                      runModel={this.runModel} />
 
-        const Output = this.props.outputComponent
         const demoOutput = requestData && responseData ? <Output {...this.state}/> : null
 
         let className, InputPane, OutputPane
@@ -86,4 +85,4 @@ class ModelComponent extends React.Component {
     }
 }
 
-export default ModelComponent
+export default Model

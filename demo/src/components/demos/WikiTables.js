@@ -1,11 +1,11 @@
 import React from 'react';
-import HeatMap from './HeatMap'
+import HeatMap from '../HeatMap'
 import Collapsible from 'react-collapsible'
-import { API_ROOT } from '../api-config';
+import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
-import ModelComponent from './ModelComponent';
-import OutputField from './OutputField'
-import SyntaxHighlight from './highlight/SyntaxHighlight.js';
+import Model from '../Model'
+import OutputField from '../OutputField'
+import SyntaxHighlight from '../highlight/SyntaxHighlight.js';
 
 const title = "WikiTables Semantic Parsing";
 
@@ -60,7 +60,7 @@ const ActionInfo = ({ action, question_tokens }) => {
 }
 
 
-const WikiTablesOutput = ({ responseData }) => {
+const Output = ({ responseData }) => {
     const { answer, logical_form, predicted_actions, linking_scores, feature_scores, similarity_scores, entities, question_tokens } = responseData
 
     return (
@@ -136,8 +136,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/wikitables-parser`
 
-const modelProps = {apiUrl, title, description, fields, examples, outputComponent: WikiTablesOutput}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
-const WikiTablesComponent = withRouter(props => <ModelComponent {...props} {...modelProps}/>)
-
-export default WikiTablesComponent;
+export default withRouter(props => <Model {...props} {...modelProps}/>)

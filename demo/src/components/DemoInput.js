@@ -1,6 +1,9 @@
 import React from 'react';
 import ModelIntro from './ModelIntro'
+import '../css/Button.css'
 
+// If `text` is longer than `maxLen`, truncate it and add "...".
+// Otherwise just return it as-is.
 const truncate = (text, maxLen = 60) => {
     if (text.length <= maxLen) {
         return text
@@ -9,12 +12,13 @@ const truncate = (text, maxLen = 60) => {
     }
 }
 
+// Create a dropdown "snippet" for an example.
+// If the example has a field called "snippet", use that;
+// Otherwise, take the first field and truncate if necessary.
 const makeSnippet = (example, fields, maxLen = 60) => {
     if (example.snippet) {
-        // If the example has a field called "snippet", use that;
         return example.snippet
     } else {
-        // Otherwise, take the first field and truncate if necessary.
         const fieldName = fields[0].name
         const snippet = example[fieldName]
         return truncate(snippet, maxLen)
@@ -34,7 +38,7 @@ class DemoInput extends React.Component {
         this.handleExampleChange = e => {
             const exampleId = e.target.value
             if (exampleId !== "") {
-                // Because this is dynamic over fields, we need to be indirect.
+                // Because the field names vary by model, we need to be indirect.
                 let stateUpdate = {}
 
                 // For each field,
@@ -60,6 +64,7 @@ class DemoInput extends React.Component {
             this.setState(stateUpdate)
         }
 
+        // Handler that runs the model if 'Enter' is pressed.
         this.runOnEnter = e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -86,6 +91,7 @@ class DemoInput extends React.Component {
             switch (field.type) {
                 case "TEXT_AREA":
                 case "TEXT_INPUT":
+                    // Both text area and input have the exact same properties.
                     const props = {
                         onChange: this.handleInputChange(field.name),
                         onKeyDown: canRun ? this.runOnEnter : undefined,
@@ -103,6 +109,7 @@ class DemoInput extends React.Component {
 
                 case "SELECT":
                     input = (
+                        // If we have no value for this select, use the first option.
                         <select value={this.state[field.name] || field.options[0]}
                                 onChange={this.handleInputChange(field.name)}
                                 disabled={outputState === "working"}>

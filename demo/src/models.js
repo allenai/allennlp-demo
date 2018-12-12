@@ -1,28 +1,28 @@
-import SrlComponent from './components/SrlComponent';
-import OpenIeComponent from './components/OpenIeComponent';
-import Event2MindComponent from './components/Event2MindComponent';
-import TeComponent from './components/TeComponent';
-import McComponent from './components/McComponent';
-import CorefComponent from './components/CorefComponent';
-import NamedEntityComponent from './components/NamedEntityComponent';
-import ConstituencyParserComponent from './components/ConstituencyParserComponent';
-import DependencyParserComponent from './components/DependencyParserComponent';
-import WikiTablesComponent from './components/WikiTablesComponent';
-import AtisComponent from './components/AtisComponent';
+import SemanticRoleLabeling from './components/demos/SemanticRoleLabeling';
+import OpenIe from './components/demos/OpenIe';
+import Event2Mind from './components/demos/Event2Mind';
+import TextualEntailment from './components/demos/TextualEntailment';
+import MachineComprehension from './components/demos/MachineComprehension';
+import Coref from './components/demos/Coref';
+import NamedEntityRecognition from './components/demos/NamedEntityRecognition';
+import ConstituencyParser from './components/demos/ConstituencyParser';
+import DependencyParser from './components/demos/DependencyParser';
+import WikiTables from './components/demos/WikiTables';
+import Atis from './components/demos/Atis';
 
 // This is the order in which they will appear in the menu
 const models = [
-    {model: "machine-comprehension", name: "Machine Comprehension", component: McComponent},
-    {model: "textual-entailment", name: "Textual Entailment", component: TeComponent},
-    {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SrlComponent},
-    {model: "coreference-resolution", name: "Coreference Resolution", component: CorefComponent},
-    {model: "named-entity-recognition", name: "Named Entity Recognition", component: NamedEntityComponent},
-    {model: "constituency-parsing", name: "Constituency Parsing", component: ConstituencyParserComponent},
-    {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParserComponent},
-    {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIeComponent},
-    {model: "wikitables-parser", name: "WikiTableQuestions Semantic Parser", component: WikiTablesComponent},
-    {model: "event2mind", name: "Event2Mind", component: Event2MindComponent},
-    {model: "atis-parser", name: "Text to SQL (ATIS)", component: AtisComponent},
+    {model: "machine-comprehension", name: "Machine Comprehension", component: MachineComprehension},
+    {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
+    {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SemanticRoleLabeling},
+    {model: "coreference-resolution", name: "Coreference Resolution", component: Coref},
+    {model: "named-entity-recognition", name: "Named Entity Recognition", component: NamedEntityRecognition},
+    {model: "constituency-parsing", name: "Constituency Parsing", component: ConstituencyParser},
+    {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParser},
+    {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe},
+    {model: "wikitables-parser", name: "WikiTableQuestions Semantic Parser", component: WikiTables},
+    {model: "event2mind", name: "Event2Mind", component: Event2Mind},
+    {model: "atis-parser", name: "Text to SQL (ATIS)", component: Atis},
     {model: "user-models", name: "Your model here!"}
 ]
 
