@@ -95,19 +95,19 @@ const Output = ({ responseData }) => {
 
     if (confidence >= veryConfident) {
         summaryText = (
-            <div className="model__content__summary">
+            <div>
                 It is <strong>very likely</strong> that {judgment}.
             </div>
         )
     } else if (confidence >= somewhatConfident) {
         summaryText = (
-            <div className="model__content__summary">
+            <div>
                 It is <strong>somewhat likely</strong> that {judgment}.
             </div>
         )
     } else {
         summaryText = (
-            <div className="model__content__summary">The model is not confident in its judgment.</div>
+            <div>The model is not confident in its judgment.</div>
             )
     }
 

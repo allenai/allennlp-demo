@@ -69,7 +69,7 @@ const Output = ({ responseData }) => {
             { answer }
           </OutputField>
 
-          <OutputField label="Logical Form">
+          <OutputField label="Logical Form" suppressSummary="true">
             <SyntaxHighlight language="lisp">
                 {logical_form.split('fb:').join('').split('.').join('-')}
             </SyntaxHighlight>
