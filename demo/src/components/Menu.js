@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { models } from '../models'
 import '../css/Menu.css';
 
 /*******************************************************************************
@@ -12,7 +13,7 @@ class Menu extends React.Component {
 
       const buildLink = (thisModel, label) => {
         return (
-          <li>
+          <li key={thisModel}>
             <span className={`nav__link ${selectedModel === thisModel ? "nav__link--selected" : ""}`}>
               <Link to={"/" + thisModel} onClick={clearData}>
                 <span>{label}</span>
@@ -21,6 +22,8 @@ class Menu extends React.Component {
           </li>
         )
       }
+
+      const links = models.map(({model, name}) => buildLink(model, name))
 
       return (
         <div className="menu">
@@ -35,18 +38,7 @@ class Menu extends React.Component {
             </h1>
             <nav>
               <ul>
-                {buildLink("machine-comprehension", "Machine Comprehension")}
-                {buildLink("textual-entailment", "Textual Entailment")}
-                {buildLink("semantic-role-labeling", "Semantic Role Labeling")}
-                {buildLink("coreference-resolution", "Coreference Resolution")}
-                {buildLink("named-entity-recognition", "Named Entity Recognition")}
-                {buildLink("constituency-parsing", "Constituency Parsing")}
-                {buildLink("dependency-parsing", "Dependency Parsing")}
-                {buildLink("open-information-extraction", "Open Information Extraction")}
-                {buildLink("wikitables-parser", "WikiTableQuestions Semantic Parser")}
-                {buildLink("event2mind", "Event2Mind")}
-                {buildLink("atis-parser", "Text to SQL (ATIS)")}
-                {buildLink("user-models", "Your model here!")}
+                  {links}
               </ul>
             </nav>
           </div>
