@@ -86,9 +86,12 @@ const apiUrl = () => `http://my-api-server:8000/predict/machine-comprehension`
 
 ### Step 5: The Demo Output
 
-Notice that we haven't actually built out a demo. Here's where we do that, as a React component.
-This is the most involved part of creating a demo.
-In our case we'll create an `OutputField` with the answer,
+Notice that we haven't actually built out the demo part of the demo. 
+Here's where we do that, as a React component.
+This component will receive as props the `requestData` (that is, the JSON that was sent to the API)
+and the `responseData` (that is, the JSON that was received back from the API).
+
+The output for this model will contain an `OutputField` with the answer,
 another `OutputField` containing the passage itself (with the answer highlighted),
 and a third `OutputField` containing some visualizations of model internals.
 
@@ -115,15 +118,15 @@ const Output = ({ requestData, responseData }) => {
             </OutputField>
 
             <OutputField>
-            <Collapsible trigger="Model internals (beta)">
-                <Collapsible trigger="Passage to Question attention">
-                    <span>
-                    For every passage word, the model computes an attention over the question words.
-                    This heatmap shows that attention, which is normalized for every row in the matrix.
-                    </span>
-                    <HeatMap colLabels={question_tokens} rowLabels={passage_tokens} data={passage_question_attention} />
+                <Collapsible trigger="Model internals (beta)">
+                    <Collapsible trigger="Passage to Question attention">
+                        <span>
+                        For every passage word, the model computes an attention over the question words.
+                        This heatmap shows that attention, which is normalized for every row in the matrix.
+                        </span>
+                        <HeatMap colLabels={question_tokens} rowLabels={passage_tokens} data={passage_question_attention} />
+                    </Collapsible>
                 </Collapsible>
-            </Collapsible>
             </OutputField>
         </div>
     )
