@@ -9,13 +9,13 @@ it could be anything.
 In this document we'll walk through the construction of our `MachineComprehension` demo.
 The corresponding API expects inputs that look like
 
-```json
+```js
 {passage: "The Matrix is ...", question: "Who starred in ..."}
 ```
 
 and returns a result that looks like
 
-```json
+```js
 {best_span: [24, 25], best_span_str: "Keanu Reeves", ...}
 ```
 
