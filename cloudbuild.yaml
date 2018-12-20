@@ -1,0 +1,7 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/ai2-allennlp/allennlp-demo', '.']
+    timeout: 1000s
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['pytest', 'tests/']
+    timeout: 1000s
