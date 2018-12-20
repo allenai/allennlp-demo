@@ -5,3 +5,4 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['pytest', 'tests/']
     timeout: 1000s
+timeout: 2000s
