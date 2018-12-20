@@ -6,5 +6,5 @@ steps:
     args: ['run', 'gcr.io/ai2-allennlp/allennlp-demo', 'pytest', 'tests/']
     timeout: 1000s
 options:
-  machineType: 'N1-HIGHMEM-2'
+  machineType: 'N1_HIGHCPU_8'
 timeout: 2000s
