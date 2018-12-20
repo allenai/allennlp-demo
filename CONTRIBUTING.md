@@ -1,4 +1,4 @@
-# Contributing a new model to the demo
+# Contributing a new model to the
 
 The following describes the steps necessary to add a
 model implemented in [allennlp](https://github.com/allenai/allennlp) to the online demo.
