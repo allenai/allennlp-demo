@@ -9,6 +9,7 @@ import ConstituencyParser from './components/demos/ConstituencyParser';
 import DependencyParser from './components/demos/DependencyParser';
 import WikiTables from './components/demos/WikiTables';
 import Atis from './components/demos/Atis';
+import QuarelZero from './components/demos/QuarelZero'
 
 // This is the order in which they will appear in the menu
 const models = [
@@ -23,6 +24,7 @@ const models = [
     {model: "wikitables-parser", name: "WikiTableQuestions Semantic Parser", component: WikiTables},
     {model: "event2mind", name: "Event2Mind", component: Event2Mind},
     {model: "atis-parser", name: "Text to SQL (ATIS)", component: Atis},
+    {model: "quarel-parser-zero", name: "QuaRel Zero", component: QuarelZero},
     {model: "user-models", name: "Your model here!"}
 ]
 

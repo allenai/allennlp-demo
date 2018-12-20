@@ -45,6 +45,17 @@
   background: #f6f8fa;
 }
 
+.model__explanation__header {
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 0.5em;
+}
+
+.model__explanation__ul {
+    font-size: 1em;
+    margin: 0;
+}
+
 @media screen and (min-height:800px) {
   .model__content {
     padding-top: 4.6vh;

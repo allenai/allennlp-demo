@@ -236,6 +236,10 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
         elif model_name == "wikitables-parser":
              log_blob['outputs']['logical_form'] = prediction['logical_form']
              log_blob['outputs']['answer'] = prediction['answer']
+        elif model_name == "quarel-parser-zero":
+             log_blob['outputs']['logical_form'] = prediction['logical_form']
+             log_blob['outputs']['answer'] = prediction['answer']
+             log_blob['outputs']['score'] = prediction['score']
         elif model_name == "atis-parser":
             log_blob['outputs']['predicted_sql_query'] = prediction['predicted_sql_query']
         # TODO(brendanr): Add event2mind log_blob here?
@@ -272,6 +276,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/named-entity-recognition')
     @app.route('/fine-grained-named-entity-recognition')
     @app.route('/wikitables-parser')
+    @app.route('/quarel-parser-zero')
     @app.route('/event2mind')
     @app.route('/open-information-extraction/<permalink>')
     @app.route('/atis-parser')
@@ -284,6 +289,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/named-entity-recognition/<permalink>')
     @app.route('/event2mind/<permalink>')
     @app.route('/wikitables-parser/<permalink>')
+    @app.route('/quarel-parser-zero/<permalink>')
     @app.route('/atis-parser/<permalink>')
     def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
         """return the page"""
