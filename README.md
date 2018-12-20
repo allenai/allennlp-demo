@@ -36,7 +36,7 @@ To run the demo for development, you will need to:
 
     This will start a frontend service locally, which will hot refresh when you make changes to the JS.
 
-3. Start a separate backend service
+3. Start the backend service
 
     ```
     ./app.py
