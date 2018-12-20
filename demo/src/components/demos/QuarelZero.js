@@ -111,6 +111,18 @@ const qrspecDefault = "[friction, -speed, -smoothness, -distance, +heat]\n[speed
 
 const entitycuesDefault = "friction: resistance, traction\nspeed: velocity, pace, fast, slow, faster, slower, slowly, quickly, rapidly\ndistance: length, way, far, near, further, longer, shorter, long, short, farther, furthest\nheat: temperature, warmth, smoke, hot, hotter, cold, colder\nsmoothness: slickness, roughness, rough, smooth, rougher, smoother, bumpy, slicker\nacceleration: \namountSweat: sweat, sweaty\napparentSize: size, large, small, larger, smaller\nbreakability: brittleness, brittle, break, solid\nbrightness: bright, shiny, faint\nexerciseIntensity: excercise, run, walk\nflexibility: flexible, stiff, rigid\ngravity: \nloudness: loud, faint, louder, fainter\nmass: weight, heavy, light, heavier, lighter, massive\nstrength: power, strong, weak, stronger, weaker\nthickness: thick, thin, thicker, thinner, skinny\ntime: long, short\nweight: mass, heavy, light, heavier, lighter"
 
+const appendDefault = (example, fieldName, defaults) => {
+    if (example[fieldName] && example[fieldName].slice(-1) == '*') {
+        // Ends with *, so don't append anything and get rid of the '*'
+        example[fieldName] = example[fieldName].slice(0, -1)
+    } else if (example[fieldName]) {
+        example[fieldName] += "\n" + defaults
+    } else {
+        example[fieldName] = defaults
+    }
+}
+
+
 const examples = [
     {
       question: "Bill eats way more sweets than Sue. Based on this, who has more diabetes risk? (A) Sue (B) Bill",
@@ -161,14 +173,12 @@ const examples = [
     {
       question: "Jose pushed his burrito cart on the bumpy sidewalk and went slow, while much faster on the street because it had (A) more resistance (B) less resistance"
     }
-].map(example => {
-    if (!example.qrspec) {
-        example.qrspec = qrspecDefault
-    }
-    if (!example.entitycues) {
-        example.entitycues = entitycuesDefault
-    }
-    return example
+]
+
+// Add default
+examples.forEach(example => {
+    appendDefault(example, 'qrspec', qrspecDefault)
+    appendDefault(example, 'entitycues', entitycuesDefault)
 })
 
 const apiUrl = () => `${API_ROOT}/predict/quarel-parser-zero`
