@@ -33,7 +33,7 @@ const description = (
       NER dataset. It is not state of the art on that task, but it&#39;s not terrible either.
       (This is also the model constructed in our
     </span>
-    <a href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/creating_a_model.md" target="_blank" rel="noopener noreferrer">{' '}Creating a Model{' '}</a>
+    <a href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/walk_through_allennlp/creating_a_model.md" target="_blank" rel="noopener noreferrer">{' '}Creating a Model{' '}</a>
     <span>
       tutorial.)
     </span>
