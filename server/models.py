@@ -43,12 +43,12 @@ MODELS = {
                 'coreference-resolution'
         ),
         'named-entity-recognition': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.04.30.tar.gz',  # pylint: disable=line-too-long
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz',  # pylint: disable=line-too-long
                 'sentence-tagger'
         ),
         'fine-grained-named-entity-recognition': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.08.31.tar.gz',  # pylint: disable=line-too-long
-                'sentence-tagger'
+           'https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.12.21.tar.gz',  # pylint: disable=line-too-long
+               'sentence-tagger'
         ),
         'constituency-parsing': DemoModel(
                 'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz',  # pylint: disable=line-too-long
@@ -70,4 +70,9 @@ MODELS = {
             'https://s3-us-west-2.amazonaws.com/allennlp/models/atis-parser-2018.11.10.tar.gz',  # pylint: disable=line-too-long
                  'atis-parser'
         ),
+        'quarel-parser-zero': DemoModel(
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/quarel-parser-zero-2018.12.20.tar.gz',  # pylint: disable=line-too-long
+                 'quarel-parser'
+
+        )
 }
