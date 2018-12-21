@@ -1,6 +1,6 @@
 # This Dockerfile is used to serve the AllenNLP demo.
 
-FROM allennlp/allennlp:v0.7.2
+FROM allennlp/allennlp:v0.8.0
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /stage/allennlp
@@ -19,7 +19,6 @@ RUN pip install psycopg2-binary
 # Download spacy model
 RUN spacy download en_core_web_sm
 
-# Cache models early, they're huge
 COPY scripts/ scripts/
 COPY server/models.py server/models.py
 
