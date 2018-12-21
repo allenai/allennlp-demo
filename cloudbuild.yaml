@@ -3,8 +3,11 @@ steps:
     args: ['build', '-t', 'gcr.io/ai2-allennlp/allennlp-demo', '.']
     timeout: 1000s
   - name: 'gcr.io/cloud-builders/docker'
+    args: ["push", "gcr.io/ai2-allennlp/allennlp-demo"]
+  - name: 'gcr.io/cloud-builders/docker'
     args: ['run', '--entrypoint=', 'gcr.io/ai2-allennlp/allennlp-demo', 'pytest', 'tests/']
     timeout: 1000s
+images: ['gcr.io/ai2-allennlp/allennlp-demo']
 options:
   machineType: 'N1_HIGHCPU_8'
 timeout: 2000s
