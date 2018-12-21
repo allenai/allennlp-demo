@@ -10,9 +10,15 @@ const title = "Qualitative Relations Story Question Answering"
 
 const description = (
 <span>
-  Answer story questions about qualitative relations (QuaRel dataset) while adding new relations
-  without retraining. This uses the QuaSP+Zero semantic parser described in <i>QuaRel: A Dataset and Models for
-  Answering Questions about Qualitative Relationships</i> (in submission). The first few examples use
+  Answer story questions about qualitative relations
+  (<a href = "http://data.allenai.org/quarel/" target="_blank" rel="noopener noreferrer">QuaRel dataset</a>)
+  while adding new relations
+  without retraining. This uses the QuaSP+Zero semantic parser described in
+  {' '}
+  <i>QuaRel: A Dataset and Models for
+  Answering Questions about Qualitative Relationships</i>{' '}
+  (<a href = "https://arxiv.org/abs/1811.08048" target="_blank" rel="noopener noreferrer">AAAI 2019</a>).
+  The first few examples use
   new relations, the rest are from the validation set.
   </span>
 )
@@ -112,7 +118,7 @@ const qrspecDefault = "[friction, -speed, -smoothness, -distance, +heat]\n[speed
 const entitycuesDefault = "friction: resistance, traction\nspeed: velocity, pace, fast, slow, faster, slower, slowly, quickly, rapidly\ndistance: length, way, far, near, further, longer, shorter, long, short, farther, furthest\nheat: temperature, warmth, smoke, hot, hotter, cold, colder\nsmoothness: slickness, roughness, rough, smooth, rougher, smoother, bumpy, slicker\nacceleration: \namountSweat: sweat, sweaty\napparentSize: size, large, small, larger, smaller\nbreakability: brittleness, brittle, break, solid\nbrightness: bright, shiny, faint\nexerciseIntensity: excercise, run, walk\nflexibility: flexible, stiff, rigid\ngravity: \nloudness: loud, faint, louder, fainter\nmass: weight, heavy, light, heavier, lighter, massive\nstrength: power, strong, weak, stronger, weaker\nthickness: thick, thin, thicker, thinner, skinny\ntime: long, short\nweight: mass, heavy, light, heavier, lighter"
 
 const appendDefault = (example, fieldName, defaults) => {
-    if (example[fieldName] && example[fieldName].slice(-1) == '*') {
+    if (example[fieldName] && example[fieldName].slice(-1) === '*') {
         // Ends with *, so don't append anything and get rid of the '*'
         example[fieldName] = example[fieldName].slice(0, -1)
     } else if (example[fieldName]) {
@@ -175,7 +181,7 @@ const examples = [
     }
 ]
 
-// Add default
+// Add defaults
 examples.forEach(example => {
     appendDefault(example, 'qrspec', qrspecDefault)
     appendDefault(example, 'entitycues', entitycuesDefault)
