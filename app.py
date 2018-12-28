@@ -240,6 +240,9 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
              log_blob['outputs']['logical_form'] = prediction['logical_form']
              log_blob['outputs']['answer'] = prediction['answer']
              log_blob['outputs']['score'] = prediction['score']
+        elif model_name == "nlvr-parser":
+             log_blob['outputs']['logical_form'] = prediction['logical_form'][0]
+             log_blob['outputs']['answer'] = prediction['denotations'][0][0]
         elif model_name == "atis-parser":
             log_blob['outputs']['predicted_sql_query'] = prediction['predicted_sql_query']
         # TODO(brendanr): Add event2mind log_blob here?

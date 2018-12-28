@@ -8,6 +8,7 @@ import NamedEntityRecognition from './components/demos/NamedEntityRecognition';
 import ConstituencyParser from './components/demos/ConstituencyParser';
 import DependencyParser from './components/demos/DependencyParser';
 import WikiTables from './components/demos/WikiTables';
+import Nlvr from './components/demos/Nlvr';
 import Atis from './components/demos/Atis';
 import QuarelZero from './components/demos/QuarelZero'
 
@@ -22,9 +23,10 @@ const models = [
     {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParser},
     {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe},
     {model: "wikitables-parser", name: "WikiTableQuestions Semantic Parser", component: WikiTables},
-    {model: "event2mind", name: "Event2Mind", component: Event2Mind},
+    {model: "nlvr-parser", name: "Cornell NLVR Semantic Parser", component: Nlvr},
     {model: "atis-parser", name: "Text to SQL (ATIS)", component: Atis},
     {model: "quarel-parser-zero", name: "QuaRel Zero", component: QuarelZero},
+    {model: "event2mind", name: "Event2Mind", component: Event2Mind},
     {model: "user-models", name: "Your model here!"}
 ]
 
