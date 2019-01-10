@@ -34,7 +34,11 @@ PORT = os.environ.get("ALLENNLP_DEMO_PORT") or 8000
 DEMO_DIR = os.environ.get("ALLENNLP_DEMO_DIRECTORY") or 'demo/'
 
 # Load specific models with an environment variable. e.g.  LIMIT_DEMO_MODELS='open-information-extraction textual-entailment'
-LIMIT_DEMO_MODELS = os.environ.get("LIMIT_DEMO_MODELS").split(" ") or False
+LIMIT_DEMO_MODELS = False
+try:
+    LIMIT_DEMO_MODELS = os.environ.get("LIMIT_DEMO_MODELS").split(" ") or False
+except:
+    pass
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("allennlp").setLevel(logging.WARN)
