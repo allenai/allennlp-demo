@@ -28,6 +28,9 @@ from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
 from server.models import MODELS, DemoModel
 
+import sentry_sdk
+sentry_sdk.init("https://05ec91fa0b22430e8bad2cb2a978b622@sentry.io/1389489")
+
 # Can override cache size with an environment variable. If it's 0 then disable caching altogether.
 CACHE_SIZE = os.environ.get("FLASK_CACHE_SIZE") or 128
 PORT = os.environ.get("ALLENNLP_DEMO_PORT") or 8000
