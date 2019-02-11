@@ -24,7 +24,18 @@ To run the demo for development, you will need to:
     pip install -r requirements.txt
     ```
 
-    Note that this will install the latest _released_ version of AllenNLP - to use a version which you have been working on, run `python setup.py install` in the root of your clone of allennlp.
+2.  Install the version of AllenNLP you would like to use.
+
+    a.  To install the latest release, run `pip install allennlp`.
+
+    b.  If you would like to use the same version this commit was tested on, please look in the
+        Dockerfile and install that commit.
+
+        ```
+        git+git://github.com/allenai/allennlp.git@$SOURCE_COMMIT`.
+        ```
+
+    c.  To install AllenNLP from source you can use `pip install --editable .`
 
 2. Build the frontend and start a development frontend service
 
