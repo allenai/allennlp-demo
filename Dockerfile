@@ -15,6 +15,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y
 
 # Install postgres binary
 RUN pip install psycopg2-binary
+RUN pip install sentry-sdk==0.7.1
 
 # Download spacy model
 RUN spacy download en_core_web_sm
