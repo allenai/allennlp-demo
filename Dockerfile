@@ -13,8 +13,8 @@ RUN apt-get install -y -t jessie-backports openjdk-8-jdk
 # Install npm early so layer is cached when mucking with the demo
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
 
-# Install postgres binary
-RUN pip install psycopg2-binary
+# Install python dependencies
+RUN pip install -r requirements.txt
 
 # Download spacy model
 RUN spacy download en_core_web_sm
