@@ -12,6 +12,7 @@ from allennlp.common.util import JsonDict
 from allennlp.common.testing import AllenNlpTestCase
 from allennlp.models.archival import load_archive
 from allennlp.service.predictors import Predictor
+from werkzeug.wrappers import BaseResponse
 
 import app
 from app import make_app
@@ -45,6 +46,17 @@ class CountingPredictor(Predictor):
         key = json.dumps(inputs)
         self.calls[key] += 1
         return copy.deepcopy(inputs)
+
+class FailingPredictor(Predictor):
+    """
+    Guaranteed to fail.
+    """
+    # pylint: disable=abstract-method
+    def __init__(self):                 # pylint: disable=super-init-not-called
+        pass
+
+    def predict_json(self, inputs: JsonDict) -> JsonDict:
+        raise RuntimeError("Predicting is hard!")
 
 class TestFlask(AllenNlpTestCase):
     client = None
@@ -250,3 +262,31 @@ class TestFlask(AllenNlpTestCase):
         assert result2["modelName"] == "counting"
         assert result2["requestData"] == data
         assert result2["responseData"] == result
+
+    def test_db_resilient_to_prediction_failure(self):
+        db = InMemoryDemoDatabase()
+        application = make_app(build_dir=self.TEST_DIR, demo_db=db)
+        predictor = FailingPredictor()
+        application.predictors = {"failing": predictor}
+        # Keep error handling as it would be in the actual application.
+        application.testing = False
+        client = application.test_client()
+
+        def post(endpoint: str, data: JsonDict) -> Response:
+            return client.post(endpoint, content_type="application/json", data=json.dumps(data))
+
+        data = {"some": "very nasty input that will cause a failure"}
+        response = post("/predict/failing", data=data)
+        assert response.status_code == 500
+
+        # This won't be returned when the server errors out, but the necessary information is still
+        # in the database for subsequent analysis.
+        slug = app.int_to_slug(0)
+
+        response = post("/permadata", data={"slug": slug})
+        assert response.status_code == 200
+        result = json.loads(response.get_data())
+        assert set(result.keys()) == {"modelName", "requestData", "responseData"}
+        assert result["modelName"] == "failing"
+        assert result["requestData"] == data
+        assert result["responseData"] == {}
