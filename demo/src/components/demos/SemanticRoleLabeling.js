@@ -22,6 +22,12 @@ const description = (
     </span>
   );
 
+const descriptionEllipsed = (
+  <span>
+    Semantic Role Labeling (SRL) recovers the latent predicate argument structure of a sentence, providing…
+  </span>
+)
+
 const fields = [
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
      placeholder: 'E.g. "John likes and Bill hates ice cream."'}
@@ -235,6 +241,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
