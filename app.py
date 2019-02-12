@@ -15,6 +15,7 @@ from functools import lru_cache
 from flask import Flask, request, Response, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 from gevent.pywsgi import WSGIServer
+from werkzeug.contrib.fixers import ProxyFix
 
 import psycopg2
 
@@ -27,13 +28,17 @@ from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
 from server.models import MODELS, DemoModel
 
+import sentry_sdk
+sentry_sdk.init("https://05ec91fa0b22430e8bad2cb2a978b622@sentry.io/1389489")
+
 # Can override cache size with an environment variable. If it's 0 then disable caching altogether.
 CACHE_SIZE = os.environ.get("FLASK_CACHE_SIZE") or 128
 PORT = os.environ.get("ALLENNLP_DEMO_PORT") or 8000
 DEMO_DIR = os.environ.get("ALLENNLP_DEMO_DIRECTORY") or 'demo/'
 
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-logger.setLevel(logging.INFO)
 
 class ServerError(Exception):
     status_code = 400
@@ -66,7 +71,7 @@ def main():
 
     app = make_app(demo_db=demo_db)
     CORS(app)
-    
+
     for name, demo_model in MODELS.items():
         logger.info(f"loading {name} model")
         predictor = demo_model.predictor()
@@ -89,6 +94,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S %Z")
 
     app.predictors = {}
+    app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
 
     try:
         cache_size = int(CACHE_SIZE)  # type: ignore
@@ -163,7 +169,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
 
         # Do use the cache if no argument is specified
         use_cache = request.args.get("cache", "true").lower() != "false"
-        
+
         model = app.predictors.get(model_name.lower())
         if model is None:
             raise ServerError("unknown model: {}".format(model_name), status_code=400)
@@ -190,6 +196,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
             try:
                 perma_id = None
                 perma_id = demo_db.add_result(headers=dict(request.headers),
+                                              requester=request.remote_addr,
                                               model_name=model_name,
                                               inputs=data,
                                               outputs=prediction)
@@ -232,6 +239,13 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
         elif model_name == "wikitables-parser":
              log_blob['outputs']['logical_form'] = prediction['logical_form']
              log_blob['outputs']['answer'] = prediction['answer']
+        elif model_name == "quarel-parser-zero":
+             log_blob['outputs']['logical_form'] = prediction['logical_form']
+             log_blob['outputs']['answer'] = prediction['answer']
+             log_blob['outputs']['score'] = prediction['score']
+        elif model_name == "nlvr-parser":
+             log_blob['outputs']['logical_form'] = prediction['logical_form'][0]
+             log_blob['outputs']['answer'] = prediction['denotations'][0][0]
         elif model_name == "atis-parser":
             log_blob['outputs']['predicted_sql_query'] = prediction['predicted_sql_query']
         # TODO(brendanr): Add event2mind log_blob here?
@@ -268,6 +282,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/named-entity-recognition')
     @app.route('/fine-grained-named-entity-recognition')
     @app.route('/wikitables-parser')
+    @app.route('/quarel-parser-zero')
     @app.route('/event2mind')
     @app.route('/open-information-extraction/<permalink>')
     @app.route('/atis-parser')
@@ -280,6 +295,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     @app.route('/named-entity-recognition/<permalink>')
     @app.route('/event2mind/<permalink>')
     @app.route('/wikitables-parser/<permalink>')
+    @app.route('/quarel-parser-zero/<permalink>')
     @app.route('/atis-parser/<permalink>')
     def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
         """return the page"""

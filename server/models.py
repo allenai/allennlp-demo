@@ -21,53 +21,64 @@ class DemoModel:
         archive = load_archive(self.archive_file)
         return Predictor.from_archive(archive, self.predictor_name)
 
+# pylint: disable=line-too-long
 MODELS = {
         'machine-comprehension': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz',  # pylint: disable=line-too-long
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz',
                 'machine-comprehension'
         ),
         'semantic-role-labeling': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/srl-model-2018.05.25.tar.gz', # pylint: disable=line-too-long
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/srl-model-2018.05.25.tar.gz',
                 'semantic-role-labeling'
         ),
         'open-information-extraction': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz', # pylint: disable=line-too-long
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz',
                 'open-information-extraction'
         ),
         'textual-entailment': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz',  # pylint: disable=line-too-long
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz',
                 'textual-entailment'
         ),
         'coreference-resolution': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz',  # pylint: disable=line-too-long
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz',
                 'coreference-resolution'
         ),
         'named-entity-recognition': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.04.30.tar.gz',  # pylint: disable=line-too-long
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz',  # pylint: disable=line-too-long
                 'sentence-tagger'
         ),
         'fine-grained-named-entity-recognition': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.08.31.tar.gz',  # pylint: disable=line-too-long
-                'sentence-tagger'
+           'https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.12.21.tar.gz',  # pylint: disable=line-too-long
+           'sentence-tagger'
         ),
         'constituency-parsing': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz',  # pylint: disable=line-too-long
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz',
                 'constituency-parser'
         ),
         'dependency-parsing': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz',  # pylint: disable=line-too-long
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz',
                 'biaffine-dependency-parser'
         ),
         'wikitables-parser': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/wikitables-model-2018.09.14.tar.gz',  # pylint: disable=line-too-long
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/wikitables-model-2018.09.14.tar.gz',
                 'wikitables-parser'
         ),
+        'nlvr-parser': DemoModel(
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/nlvr-erm-model-2018-12-18.tar.gz',
+                'nlvr-parser'
+        ),
         'event2mind': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/event2mind-2018.10.25.tar.gz',  # pylint: disable=line-too-long
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/event2mind-2018.10.26.tar.gz',
                 'event2mind'
         ),
         'atis-parser': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/atis-parser-2018.10.04.tar.gz',  # pylint: disable=line-too-long
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/atis-parser-2018.11.10.tar.gz',
                  'atis-parser'
         ),
+        'quarel-parser-zero': DemoModel(
+            'https://s3-us-west-2.amazonaws.com/allennlp/models/quarel-parser-zero-2018.12.20.tar.gz',  # pylint: disable=line-too-long
+                 'quarel-parser'
+
+        )
 }
+# pylint: enable=line-too-long

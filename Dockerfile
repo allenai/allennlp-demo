@@ -1,6 +1,6 @@
 # This Dockerfile is used to serve the AllenNLP demo.
 
-FROM allennlp/commit:2a8bd63829ed6e84ecd011e9dd8d134db41d93dd
+FROM allennlp/allennlp:v0.8.0
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /stage/allennlp
@@ -15,14 +15,13 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y
 
 # Install postgres binary
 RUN pip install psycopg2-binary
+RUN pip install sentry-sdk==0.7.1
 
 # Download spacy model
 RUN spacy download en_core_web_sm
 
-# Cache models early, they're huge
 COPY scripts/ scripts/
 COPY server/models.py server/models.py
-RUN ./scripts/cache_models.py
 
 # Now install and build the demo
 COPY demo/ demo/

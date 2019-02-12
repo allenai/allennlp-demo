@@ -15,7 +15,6 @@ from server.permalinks import Permadata
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-
 class DemoDatabase:
     """
     This class represents a database backing the demo server.
@@ -24,6 +23,7 @@ class DemoDatabase:
     """
     def add_result(self,
                    headers: JsonDict,
+                   requester: str,
                    model_name: str,
                    inputs: JsonDict,
                    outputs: JsonDict) -> Optional[int]:
@@ -51,8 +51,8 @@ class DemoDatabase:
 # SQL for inserting predictions into the database.
 INSERT_SQL = (
         """
-        INSERT INTO queries (model_name, headers, request_data, response_data, timestamp)
-        VALUES (%(model_name)s, %(headers)s, %(request_data)s, %(response_data)s, %(timestamp)s)
+        INSERT INTO queries (model_name, requester, headers, request_data, response_data, timestamp)
+        VALUES (%(model_name)s, %(requester)s, %(headers)s, %(request_data)s, %(response_data)s, %(timestamp)s)
         RETURNING id
         """
 )
@@ -135,6 +135,7 @@ class PostgresDemoDatabase(DemoDatabase):
 
     def add_result(self,
                    headers: JsonDict,
+                   requester: str,
                    model_name: str,
                    inputs: JsonDict,
                    outputs: JsonDict) -> Optional[int]:
@@ -145,6 +146,7 @@ class PostgresDemoDatabase(DemoDatabase):
 
                 curs.execute(INSERT_SQL,
                              {'model_name'   : model_name,
+                              'requester'    : requester,
                               'headers'      : json.dumps(headers),
                               'request_data' : json.dumps(inputs),
                               'response_data': json.dumps(outputs),
@@ -186,6 +188,7 @@ class InMemoryDemoDatabase(DemoDatabase):
 
     def add_result(self,
                    headers: JsonDict,
+                   requester: str,
                    model_name: str,
                    inputs: JsonDict,
                    outputs: JsonDict) -> Optional[int]:

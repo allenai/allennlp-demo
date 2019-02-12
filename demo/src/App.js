@@ -1,19 +1,9 @@
 import React from 'react';
 import { API_ROOT } from './api-config';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import SrlComponent from './components/SrlComponent';
-import OpenIeComponent from './components/OpenIeComponent';
-import Event2MindComponent from './components/Event2MindComponent';
-import TeComponent from './components/TeComponent';
-import McComponent from './components/McComponent';
-import CorefComponent from './components/CorefComponent';
-import NamedEntityComponent from './components/NamedEntityComponent';
-import ConstituencyParserComponent from './components/ConstituencyParserComponent';
-import DependencyParserComponent from './components/DependencyParserComponent';
-import WikiTablesComponent from './components/WikiTablesComponent';
-import AtisComponent from './components/AtisComponent';
 import Menu from './components/Menu';
 import ModelIntro from './components/ModelIntro';
+import { modelComponents } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
 
@@ -117,42 +107,10 @@ class Demo extends React.Component {
       if (slug && !responseData) {
         // We're still waiting for permalink data, so just return the placeholder component.
         return (<WaitingForPermalink/>)
-      } else if (selectedModel === "semantic-role-labeling") {
-        return (<SrlComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "textual-entailment") {
-        return (<TeComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "machine-comprehension") {
-        return (<McComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "coreference-resolution") {
-        return (<CorefComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "named-entity-recognition") {
-        return (<NamedEntityComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "constituency-parsing") {
-        return (<ConstituencyParserComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "dependency-parsing") {
-        return (<DependencyParserComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "wikitables-parser") {
-        return (<WikiTablesComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "open-information-extraction") {
-        return (<OpenIeComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "event2mind") {
-        return (<Event2MindComponent requestData={requestData} responseData={responseData}/>)
-      }
-      else if (selectedModel === "atis-parser") {
-        return (<AtisComponent requestData={requestData} responseData={responseData}/    >)
-      }
-
-
-      else if (selectedModel === "user-models") {
+      } else if (modelComponents[selectedModel]) {
+          // This is a model we know the component for, so render it.
+          return React.createElement(modelComponents[selectedModel], {requestData, responseData, selectedModel})
+      } else if (selectedModel === "user-models") {
         const modelRequest = "User Contributed Models"
         const modelDescription = (
           <span>
