@@ -121,7 +121,7 @@ form {
   }
 
   .form__field+.form__field {
-    margin-top: 0.3em;
+    margin-top: 0.6em;
   }
 
   .form__field--btn {
@@ -136,15 +136,10 @@ form {
   }
 
   .form__field textarea {
-    margin-top: 0;
     min-height: 4.4em;
   }
 
   .form__field label {
     font-size: 1em;
-  }
-
-  .form__field label+* {
-    margin-top: 0.1em;
   }
 }
