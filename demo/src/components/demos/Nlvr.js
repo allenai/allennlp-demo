@@ -1,6 +1,11 @@
 import React from 'react';
 import HeatMap from '../HeatMap'
-import Collapsible from 'react-collapsible'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemTitle,
+  AccordionItemBody,
+} from 'react-accessible-accordion';
 import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
 import Model from '../Model'
@@ -26,6 +31,12 @@ const description = (
   </span>
 );
 
+const descriptionEllipsed = (
+  <span>
+    Semantic parsing maps natural language to machine language.  This page demonstrates a semantic parsing mod…
+  </span>
+)
+
 const fields = [
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
      placeholder: `E.g. "There is a tower with a blue block over a yellow block"`},
@@ -44,17 +55,21 @@ const ActionInfo = ({ action, sentence_tokens }) => {
       const action_probs = action['action_probabilities'].map(x => [x]);
 
       const probability_heatmap = (
-        <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
+        <div className="heatmap, heatmap-tile">
+          <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
+        </div>
       )
 
       const question_attention_heatmap = question_attention.length > 0 ? (
-        <HeatMap colLabels={['Prob']} rowLabels={sentence_tokens} data={question_attention} />
+        <div className="heatmap, heatmap-tile">
+          <HeatMap colLabels={['Prob']} rowLabels={sentence_tokens} data={question_attention} />
+        </div>
       ) : (
         ""
       )
 
       return (
-        <div>
+        <div className="flex-container">
           {probability_heatmap}
           {question_attention_heatmap}
         </div>
@@ -77,16 +92,30 @@ const Output = ({ responseData }) => {
             </SyntaxHighlight>
           </OutputField>
 
-          <OutputField>
-            <Collapsible trigger="Model internals (beta)">
-              <Collapsible trigger="Predicted actions">
-                {predicted_actions.map((action, action_index) => (
-                  <Collapsible key={"action_" + action_index} trigger={action['predicted_action']}>
-                    <ActionInfo action={action} sentence_tokens={sentence_tokens}/>
-                  </Collapsible>
-                ))}
-              </Collapsible>
-            </Collapsible>
+          <OutputField label="Model internals">
+          <Accordion accordion={false}>
+            <AccordionItem>
+                <AccordionItemTitle>
+                Predicted actions
+                <div className="accordion__arrow" role="presentation"/>
+                </AccordionItemTitle>
+                <AccordionItemBody>
+                  {predicted_actions.map((action, action_index) => (
+                    <Accordion accordion={false} key={"action_" + action_index}>
+                      <AccordionItem>
+                        <AccordionItemTitle>
+                          {action['predicted_action']}
+                          <div className="accordion__arrow" role="presentation"/>
+                        </AccordionItemTitle>
+                        <AccordionItemBody>
+                          <ActionInfo action={action} sentence_tokens={sentence_tokens}/>
+                        </AccordionItemBody>
+                      </AccordionItem>
+                      </Accordion>
+                    ))}
+                  </AccordionItemBody>
+              </AccordionItem>
+            </Accordion>
           </OutputField>
         </div>
       )
@@ -109,6 +138,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/nlvr-parser`
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

@@ -19,6 +19,12 @@ const description = (
   </span>
 )
 
+const descriptionEllipsed = (
+<span>
+    A dependency parser analyzes the grammatical structure of a sentence, establishing relationships between "hea…
+</span>
+)
+
 const fields = [
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
      placeholder: `E.g. "John likes and Bill hates ice cream."`}
@@ -49,6 +55,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/dependency-parsing`
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
-export default withRouter(props => <Model {...props} {...modelProps} horizontal="true"/>)
+export default withRouter(props => <Model {...props} {...modelProps}/>)

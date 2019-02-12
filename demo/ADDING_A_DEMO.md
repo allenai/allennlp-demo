@@ -34,7 +34,7 @@ The title is just a string:
 const title = "Machine Comprehension"
 ```
 
-and the description is just JSX (or some other element):
+and the description as just JSX (or some other element):
 
 ```js
 const description = (
@@ -42,6 +42,16 @@ const description = (
       <span>
         Machine Comprehension (MC) ... etc ... etc ...
       </span>
+    </span>
+)
+```
+
+add the descriptionEllipsed as just JSX (or some other element):
+
+```js
+const descriptionEllipsed = (
+    <span>
+        Machine Comprehensi… // Note: ending in a …
     </span>
 )
 ```
@@ -86,7 +96,7 @@ const apiUrl = () => `http://my-api-server:8000/predict/machine-comprehension`
 
 ### Step 5: The Demo Output
 
-Notice that we haven't actually built out the demo part of the demo. 
+Notice that we haven't actually built out the demo part of the demo.
 Here's where we do that, as a React component.
 This component will receive as props the `requestData` (that is, the JSON that was sent to the API)
 and the `responseData` (that is, the JSON that was received back from the API).
@@ -139,7 +149,7 @@ There is a pre-existing `Model` component that handles all of the inputs and out
 We just need to pass it the things we've already defined as `props`:
 
 ```js
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 ```
 
 Your `modelProps` needs to have these exact names, as that's what the `Model` component is expecting.

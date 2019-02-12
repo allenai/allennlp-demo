@@ -29,6 +29,12 @@ const description = (
   </span>
 );
 
+const descriptionEllipsed = (
+  <span>
+    Coreference resolution is the task of finding all expressions that refer to the same entity in a text. It is an importa…
+  </span>
+)
+
 const fields = [
     {name: "document", label: "Document", type: "TEXT_AREA",
      placeholder: "We 're not going to skimp on quality , but we are very focused to make next year . The only problem is that some of the fabrics are wearing out - since I was a newbie I skimped on some of the fabric and the poor quality ones are developing holes . For some , an awareness of this exit strategy permeates the enterprise , allowing them to skimp on the niceties they would more or less have to extend toward a person they were likely to meet again ." }
@@ -204,6 +210,6 @@ const examples = [
     }
   ]
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

@@ -3,7 +3,9 @@
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  margin-top: 5em;
+  margin-top: 1.5em;
+  -webkit-transition: margin-top .2s ease;
+  transition: margin-top .2s ease;
 }
 
 .te-table {
@@ -39,16 +41,8 @@
   background: url(/assets/te-plot.svg) center center/100% no-repeat;
 }
 
-@media screen and (max-width:1366px) {
+@media screen and (max-height:800px) {
   .te-output {
-    display: flex;
-    flex-direction: column;
-    margin-top: 2.5em;
-  }
-  .te-graph-labels {
-    margin: auto auto 2.5em;
-  }
-  .te-table {
-    padding-left: 0;
+    margin-top: 0.7em;
   }
 }

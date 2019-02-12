@@ -22,6 +22,12 @@ const description = (
   </span>
 )
 
+const descriptionEllipsed = (
+  <span>
+    The Event2Mind dataset proposes a commonsense inference task between events and mental states. In particula…
+  </span>
+)
+
 const fields = [
     {name: "source", label: "Event", type: "TEXT_INPUT",
      placeholder: `E.g. "PersonX eats ice cream."`}
@@ -186,6 +192,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/event2mind`
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
