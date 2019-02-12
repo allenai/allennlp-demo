@@ -34,7 +34,7 @@ const description = (
 
   const descriptionEllipsed = (
     <span>
-      Machine Comprehension (MC) answers natural language questions by selecting an answer span within an eviden…
+      Machine Comprehension (MC) answers natural language questions by selecting an answer span within an…
     </span>
   )
 

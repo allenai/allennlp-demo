@@ -33,7 +33,7 @@ const description = (
 
 const descriptionEllipsed = (
   <span>
-    Semantic parsing maps natural language to machine language.  This page demonstrates a semantic parsing mod…
+    Semantic parsing maps natural language to machine language.  This page demonstrates a semantic parsing…
   </span>
 )
 

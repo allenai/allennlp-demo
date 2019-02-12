@@ -24,7 +24,7 @@ const description = (
 
 const descriptionEllipsed = (
   <span>
-    The Event2Mind dataset proposes a commonsense inference task between events and mental states. In particula…
+    The Event2Mind dataset proposes a commonsense inference task between events and mental states. In…
   </span>
 )
 

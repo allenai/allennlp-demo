@@ -27,9 +27,6 @@
 .model__content p {
   margin: 0.5em 0 0 0;
 }
-.model__content p span {
-  width: 1000px;
-}
 
 .model__content h2 .tooltip,
 .model__content h2 span {

@@ -21,7 +21,7 @@ const description = (
 
 const descriptionEllipsed = (
 <span>
-    A dependency parser analyzes the grammatical structure of a sentence, establishing relationships between "hea…
+    A dependency parser analyzes the grammatical structure of a sentence, establishing relationships between…
 </span>
 )
 

@@ -51,7 +51,7 @@ add the descriptionEllipsed as just JSX (or some other element):
 ```js
 const descriptionEllipsed = (
     <span>
-        Machine Comprehensi… // Note: ending in a …
+        Machine Comprehension… // Note: ending in a …
     </span>
 )
 ```

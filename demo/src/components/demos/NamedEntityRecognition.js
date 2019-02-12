@@ -42,7 +42,7 @@ const description = (
 
 const descriptionEllipsed = (
   <span>
-    The named entity recognition model identifies named entities (people, locations, organizations, and miscellane…
+    The named entity recognition model identifies named entities (people, locations, organizations, and…
   </span>
 )
 

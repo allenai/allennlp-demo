@@ -32,7 +32,7 @@ const descriptionEllipsed = (
   <span>
     Answer story questions about qualitative relations
     (<a href = "http://data.allenai.org/quarel/" target="_blank" rel="noopener noreferrer">QuaRel dataset</a>)
-    while adding new relations without retraini…
+    while adding new relations without…
   </span>
 )
 

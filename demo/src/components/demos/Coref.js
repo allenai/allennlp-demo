@@ -31,7 +31,7 @@ const description = (
 
 const descriptionEllipsed = (
   <span>
-    Coreference resolution is the task of finding all expressions that refer to the same entity in a text. It is an importa…
+    Coreference resolution is the task of finding all expressions that refer to the same entity in a text. It is an…
   </span>
 )
 

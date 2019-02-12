@@ -24,7 +24,7 @@ const description = (
 
 const descriptionEllipsed = (
   <span>
-    Semantic Role Labeling (SRL) recovers the latent predicate argument structure of a sentence, providing represen…
+    Semantic Role Labeling (SRL) recovers the latent predicate argument structure of a sentence, providing…
   </span>
 )
 
