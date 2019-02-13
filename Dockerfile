@@ -14,6 +14,7 @@ RUN apt-get install -y -t jessie-backports openjdk-8-jdk
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
 
 # Install python dependencies
+COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 # Download spacy model
