@@ -36,7 +36,18 @@ To run the demo for development, you will need to:
 
     This will start a frontend service locally, which will hot refresh when you make changes to the JS.
 
-3. Start the backend service
+3. (Optional) Set up a local DB for storing permalinks.
+
+    ```
+    brew install postgresql
+    pg_ctl -D /usr/local/var/postgres start
+    psql -d postgres -a -f scripts/local_db_setup.sql
+    export DEMO_POSTGRES_HOST=localhost
+    export DEMO_POSTGRES_DBNAME=postgres
+    export DEMO_POSTGRES_USER=$USER
+    ```
+
+4. Start the backend service
 
     ```
     ./app.py
