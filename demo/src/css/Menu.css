@@ -45,10 +45,10 @@
 }
 
 .menu__content nav ul li .nav__link a {
-  padding: 16px 32px 16px 28px;
+  padding: 12px 32px 12px 28px;
   position: relative;
   background: transparent;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, padding 0.2s ease;
 }
 
 .menu__content nav ul li .nav__link a:before {
@@ -97,4 +97,10 @@
 .pane-container > .model {
   margin-left: 244px;
   overflow: auto;
+}
+
+@media screen and (max-height:800px) {
+  .menu__content nav ul li .nav__link a {
+    padding: 5px 32px 5px 28px;
+  }
 }

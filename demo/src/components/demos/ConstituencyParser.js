@@ -19,6 +19,12 @@ const description = (
   </span>
 );
 
+const descriptionEllipsed = (
+  <span>
+    A constituency parse tree breaks a text into sub-phrases, or constituents. Non-terminals in the tree are types of…
+  </span>
+)
+
 const fields = [
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
      placeholder: `E.g. "John likes and Bill hates ice cream."`}
@@ -49,6 +55,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/constituency-parsing`
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
-export default withRouter(props => <Model {...props} {...modelProps} horizontal="true"/>)
+export default withRouter(props => <Model {...props} {...modelProps}/>)

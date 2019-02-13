@@ -25,9 +25,16 @@ import '../css/HeatMap.css';
 export default class HeatMap extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       activeRow: null,
-      activeCol: null
+      activeCol: null,
+      filterOpacity: 0,
+      showRowAt: undefined,
+      showColAt: undefined,
+      opacity: undefined,
+      minFilterOpacity: 0,
+      maxFilterOpacity: 1
     };
   }
 
@@ -45,15 +52,79 @@ export default class HeatMap extends React.Component {
     });
   }
 
+  componentWillMount() {
+    this.setOpacity(this.props);
+  }
+
+  componentWillReceiveProps(newProps) {
+    if(this.props.data !== newProps.data || this.props.normalization !== newProps.normalization) {
+        this.setOpacity(newProps);
+    }
+  }
+
+  setOpacity(newProps){
+    // HeatMap opacity via normalization conditional logic
+    let opacity;
+    if (newProps.normalization === "log-global") {
+      const exped = newProps.data.map((x_list) => x_list.map((x) => Math.exp(x)));
+      const flatArray = exped.reduce((i, o) => [...o, ...i], []);
+      const sum = flatArray.reduce((a, b) => a + b, 0);
+      opacity = exped.map((x_list) => x_list.map((x) => x / sum));
+    } else if (newProps.normalization === "log-per-row") {
+      const exped = newProps.data.map((x_list) => x_list.map((x) => Math.exp(x)));
+      opacity = exped.map((x_list) => {
+        const sum = x_list.reduce((a, b) => a + b, 0);
+        return x_list.map((x) => x / sum);
+      });
+    } else if (newProps.normalization === "log-per-row-with-zero") {
+      const exped = newProps.data.map((x_list) => x_list.map((x) => Math.exp(x)));
+      opacity = exped.map((x_list) => {
+        const sum = x_list.reduce((a, b) => a + b, 0) + Math.exp(0);
+        return x_list.map((x) => x / sum);
+      });
+    } else if (newProps.normalization === "linear") {
+      const flatArray = newProps.data.reduce((i, o) => [...o, ...i], []);
+      const max = Math.max(...flatArray);
+      const min = Math.min(...flatArray);
+      if (max === min) {
+        opacity = newProps.data;
+      } else {
+        opacity = newProps.data.map((x_list) => x_list.map((x) => ((x - min) / (max - min))));
+      }
+    } else {
+      opacity = newProps.data;
+    }
+
+    const flatArray = opacity.reduce((i, o) => [...o, ...i], []);
+    this.setState({opacity: opacity, minFilterOpacity: Math.min(...flatArray), maxFilterOpacity: Math.max(...flatArray)},
+      () => this.setShowRowsAndColumns(this.state));
+  }
+
+  setShowRowsAndColumns(newState){
+    if(newState.opacity && this.props.rowLabels && this.props.colLabels) {
+      let showRowAt = this.props.rowLabels.map((label, index) => {
+        return Math.max(...newState.opacity[index]) >= this.state.filterOpacity;
+      });
+      let transposeOpacity = newState.opacity[0].map((col, i) => newState.opacity.map(row => row[i]));
+      let showColAt = this.props.colLabels.map((label, index) => {
+        return Math.max(...transposeOpacity[index]) >= this.state.filterOpacity;
+      });
+
+      this.setState({ showRowAt, showColAt});
+    }
+  }
+
   render() {
     const { data,
             colLabels,
             rowLabels,
-            color = "blue",
-            normalization = "none" } = this.props;
+            color = "blue" } = this.props;
 
     const { activeRow,
-            activeCol } = this.state;
+            activeCol,
+            showRowAt,
+            showColAt,
+            opacity } = this.state;
 
     const supportedColors = {
       // color values are [R,G,B]
@@ -62,40 +133,22 @@ export default class HeatMap extends React.Component {
       "blue": [50,159,255] // Default
     }
 
-    // HeatMap opacity via normalization conditional logic
-    let opacity;
-    if (normalization === "log-global") {
-      const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
-      const flatArray = exped.reduce((i, o) => [...o, ...i], []);
-      const sum = flatArray.reduce((a, b) => a + b, 0);
-      opacity = exped.map((x_list) => x_list.map((x) => x / sum));
-    } else if (normalization === "log-per-row") {
-      const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
-      opacity = exped.map((x_list) => {
-        const sum = x_list.reduce((a, b) => a + b, 0);
-        return x_list.map((x) => x / sum);
-      });
-    } else if (normalization === "log-per-row-with-zero") {
-      const exped = data.map((x_list) => x_list.map((x) => Math.exp(x)));
-      opacity = exped.map((x_list) => {
-        const sum = x_list.reduce((a, b) => a + b, 0) + Math.exp(0);
-        return x_list.map((x) => x / sum);
-      });
-    } else if (normalization === "linear") {
-      const flatArray = data.reduce((i, o) => [...o, ...i], []);
-      const max = Math.max(...flatArray);
-      const min = Math.min(...flatArray);
-      if (max === min) {
-        opacity = data;
-      } else {
-        opacity = data.map((x_list) => x_list.map((x) => ((x - min) / (max - min))));
-      }
-    } else if (normalization === "none") {
-      opacity = data;
+    if (!showRowAt || !showColAt || !opacity){
+      return null; // loading
     }
-
     return (
       <div className="heatmap-container">
+        {this.state.minFilterOpacity!==this.state.maxFilterOpacity && <div className="slide_container">
+          <input
+            type="range"
+            min={this.state.minFilterOpacity}
+            max={this.state.maxFilterOpacity}
+            step="0.001"
+            value={this.state.filterOpacity}
+            className="slider"
+            onChange={e => this.setState({filterOpacity: Number(e.target.value)},
+              () => this.setShowRowsAndColumns(this.state))} />
+        </div>}
         <div className="heatmap-scroll">
           <div className="heatmap">
             <div className="heatmap__ft">
@@ -107,6 +160,7 @@ export default class HeatMap extends React.Component {
                     <tbody>
                       <tr data-row="header">
                         {colLabels.map((colLabel, colIndex) => (
+                          this.state.showColAt[colIndex] &&
                           <th className={`heatmap__label${colIndex === activeCol ? " heatmap__col-label-cursor" : ""}`}
                             key={`${colLabel}_${colIndex}`}
                             onMouseOver={() => this.handleMouseOver(null, colIndex)}
@@ -129,12 +183,13 @@ export default class HeatMap extends React.Component {
                   <table className="heatmap__row-labels">
                     <tbody>
                       {rowLabels.map((rowLabel, rowIndex) => (
+                        this.state.showRowAt[rowIndex] &&
                         <tr className="heatmap__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
                           <th
                             className={`heatmap__label${rowIndex === activeRow ? " heatmap__row-label-cursor" : ""}`}
                             onMouseOver={() => this.handleMouseOver(rowIndex, null)}
                             onMouseOut={() => this.handleMouseOut()}>
-                            <span>{rowLabel}</span>
+                            <div>{rowLabel}</div>
                           </th>
                         </tr>
                       ))}
@@ -146,8 +201,10 @@ export default class HeatMap extends React.Component {
                   <table>
                     <tbody>
                       {rowLabels.map((rowLabel, rowIndex) => (
+                        this.state.showRowAt[rowIndex] &&
                         <tr className="heatmap__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
                           {colLabels.map((colLabel, colIndex) => (
+                            this.state.showColAt[colIndex] &&
                             <td key={`${colLabel}_${colIndex}_${rowLabel}_${rowIndex}`}
                               className="heatmap__cell"
                               style={{backgroundColor: `rgba(${supportedColors[color].join(",")},${opacity[rowIndex][colIndex]})`}}
