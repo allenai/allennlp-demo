@@ -12,7 +12,6 @@ from allennlp.common.util import JsonDict
 from allennlp.common.testing import AllenNlpTestCase
 from allennlp.models.archival import load_archive
 from allennlp.service.predictors import Predictor
-from werkzeug.wrappers import BaseResponse
 
 import app
 from app import make_app
