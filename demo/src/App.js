@@ -11,7 +11,7 @@ import './css/App.css';
 import './css/fonts.css';
 import './css/icons.css';
 import './css/form.css';
-import './css/Collapsible.css';
+import './css/Accordion.css';
 import './css/hierplane-overrides.css';
 import './css/visualization-types.css';
 

@@ -5,7 +5,7 @@ form {
 }
 
 .form__instructions {
-  margin: 4.25em 0 2.0625em;
+  margin: 1.1em 0 1.1em;
   -webkit-transition: margin .2s ease;
   transition: margin .2s ease;
 }
@@ -22,6 +22,7 @@ form {
 .form__instructions select {
   font-size: .8125em;
   max-width: 11.25em;
+  background: white;
 }
 
 .form__field {
@@ -30,17 +31,19 @@ form {
 }
 
 .form__field+.form__field {
-  margin-top: 2.5em;
+  margin-top: 1.1em;
 }
 
 .form__field label {
   display: block;
   font-weight: 600;
   font-size: 1.125em;
+  -webkit-transition: font-size .2s ease;
+  transition: font-size .2s ease;
 }
 
 .form__field label+* {
-  margin-top: 1.25em;
+  margin-top: 0.6em;
 }
 
 .form__field input[type=text],
@@ -48,15 +51,17 @@ form {
   -moz-appearance: none;
   -webkit-appearance: none;
   width: 100%;
+  margin-top: 0.5em;
   font-size: 1em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: .8125em 1.125em;
+  padding: .6em 0.75em;
   color: #232323;
   border: .125em solid #d4dce2;
   display: block;
   box-sizing: border-box;
-  transition: background-color .2s ease, color .2s ease, border-color .2s ease, opacity .2s ease;
+  -webkit-transition: padding .2s ease, min-height .2s ease, background-color .2s ease, color .2s ease, border-color .2s ease, opacity .2s ease;
+  transition: padding .2s ease, min-height .2s ease, background-color .2s ease, color .2s ease, border-color .2s ease, opacity .2s ease;
 }
 
 .form__field input[type=text]::-webkit-input-placeholder,
@@ -88,7 +93,7 @@ form {
 
 .form__field textarea {
   resize: vertical;
-  min-height: 8.25em;
+  min-height: 5.4em;
 }
 
 .form__field .btn {
@@ -103,14 +108,38 @@ form {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  height: 2.5em;
 }
 
-@media screen and (max-height:760px) {
+.form__field--btn button {
+  padding: 0.1em 3.6em;
+}
+
+@media screen and (max-height:800px) {
   .form__instructions {
-    margin: 1.875em 0 1.125em;
+    margin: 0.5em 0 0.5em;
   }
 
-  .form__field:not(.form__field--btn)+.form__field:not(.form__field--btn) {
-    margin-top: 1.25em;
+  .form__field+.form__field {
+    margin-top: 0.6em;
+  }
+
+  .form__field--btn {
+    margin-top: 0.5em;
+    height: 2em;
+  }
+
+  .form__field input[type=text],
+  .form__field textarea {
+    padding: .4em 0.5em;
+    margin-top: 0.1em;
+  }
+
+  .form__field textarea {
+    min-height: 4.4em;
+  }
+
+  .form__field label {
+    font-size: 1em;
   }
 }

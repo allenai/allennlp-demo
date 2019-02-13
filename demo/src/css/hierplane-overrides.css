@@ -74,3 +74,34 @@
 .hierplane__visualization .hierplane #passage p span {
   display: inline;
 }
+
+.hierplane__visualization .hierplane .parse-tree-toolbar {
+  max-height: 0;
+  align-items: center;
+}
+
+.hierplane__visualization .hierplane #passage  {
+  min-height: auto;
+  -webkit-transition: min-height 0.2s ease;
+  transition: min-height 0.2s ease;
+}
+
+.hierplane__visualization .hierplane #passage p  {
+  padding: 1em;
+  -webkit-transition: padding 0.2s ease;
+  transition: padding 0.2s ease;
+}
+
+.hierplane__visualization .hierplane #main-stage .main-stage__tree-container {
+  margin: 0 auto;
+}
+
+@media screen and (max-height:800px) {
+  .hierplane__visualization .hierplane #passage  {
+    min-height: auto;
+  }
+
+  .hierplane__visualization .hierplane #passage p  {
+    padding: 0.1em;
+  }
+}

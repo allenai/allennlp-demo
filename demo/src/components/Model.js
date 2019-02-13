@@ -51,12 +51,13 @@ class Model extends React.Component {
     }
 
     render() {
-        const { title, description, examples, fields, selectedModel, horizontal, Output } = this.props;
+        const { title, description, descriptionEllipsed, examples, fields, selectedModel, vertical, Output } = this.props;
         const { requestData, responseData, outputState } = this.state;
 
         const demoInput = <DemoInput selectedModel={selectedModel}
                                      title={title}
                                      description={description}
+                                     descriptionEllipsed={descriptionEllipsed}
                                      examples={examples}
                                      fields={fields}
                                      inputState={requestData}
@@ -66,14 +67,14 @@ class Model extends React.Component {
         const demoOutput = requestData && responseData ? <Output {...this.state}/> : null
 
         let className, InputPane, OutputPane
-        if (horizontal) {
-            className = "pane__horizontal model"
-            InputPane = PaneTop
-            OutputPane = PaneBottom
+        if (vertical) {
+          className = "pane model"
+          InputPane = PaneLeft
+          OutputPane = PaneRight
         } else {
-            className = "pane model"
-            InputPane = PaneLeft
-            OutputPane = PaneRight
+          className = "pane__horizontal model"
+          InputPane = PaneTop
+          OutputPane = PaneBottom
         }
 
         return (

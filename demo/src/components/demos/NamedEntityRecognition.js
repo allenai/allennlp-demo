@@ -40,6 +40,12 @@ const description = (
   </span>
 )
 
+const descriptionEllipsed = (
+  <span>
+    The named entity recognition model identifies named entities (people, locations, organizations, and…
+  </span>
+)
+
 const nerModels = ["ner", "fine-grained-ner"]
 const nerEndpoints = {
     "ner": "named-entity-recognition",
@@ -228,6 +234,6 @@ const apiUrl = ({model}) => {
     return `${API_ROOT}/predict/${endpoint}`
 }
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

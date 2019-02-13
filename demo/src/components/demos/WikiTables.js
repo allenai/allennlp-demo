@@ -1,6 +1,11 @@
 import React from 'react';
 import HeatMap from '../HeatMap'
-import Collapsible from 'react-collapsible'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemTitle,
+  AccordionItemBody,
+  } from 'react-accessible-accordion';
 import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
 import Model from '../Model'
@@ -24,81 +29,120 @@ const description = (
   </span>
 );
 
+const descriptionEllipsed = (
+  <span>
+    Semantic parsing maps natural language to machine language.  This page demonstrates a semantic parsing…
+  </span>
+)
+
 const fields = [
-    {name: "table", label: "Table", type: "TEXT_AREA",
-     placeholder: `E.g. "Season\tLevel\tDivision\tSection\tPosition\tMovements\n1993\tTier 3\tDivision 2\tÖstra Svealand\t1st\tPromoted\n1994\tTier 2\tDivision 1\tNorra\t11th\tRelegation Playoffs\n"`},
-    {name: "question", label: "Question", type: "TEXT_INPUT",
-     placeholder: `E.g. "What is the only year with the 1st position?"`}
+  {name: "table", label: "Table", type: "TEXT_AREA",
+    placeholder: `E.g. "Season\tLevel\tDivision\tSection\tPosition\tMovements\n1993\tTier 3\tDivision 2\tÖstra Svealand\t1st\tPromoted\n1994\tTier 2\tDivision 1\tNorra\t11th\tRelegation Playoffs\n"`},
+  {name: "question", label: "Question", type: "TEXT_INPUT",
+    placeholder: `E.g. "What is the only year with the 1st position?"`}
 ]
 
-
-
 const ActionInfo = ({ action, question_tokens }) => {
-      if (action['question_attention'] === "None") {
-        action['question_attention'] = []
-      }
-      const question_attention = action['question_attention'].map(x => [x]);
-      const considered_actions = action['considered_actions'];
-      const action_probs = action['action_probabilities'].map(x => [x]);
+  if (action['question_attention'] === "None") {
+    action['question_attention'] = []
+  }
+  const question_attention = action['question_attention'].map(x => [x]);
+  const considered_actions = action['considered_actions'];
+  const action_probs = action['action_probabilities'].map(x => [x]);
 
-      const probability_heatmap = (
-        <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
-      )
+  const probability_heatmap = (
+    <div className="heatmap, heatmap-tile">
+      <HeatMap colLabels={['Prob']} rowLabels={considered_actions} data={action_probs} />
+    </div>
+  )
 
-      const question_attention_heatmap = question_attention.length > 0 ? (
-        <HeatMap colLabels={['Prob']} rowLabels={question_tokens} data={question_attention} />
-      ) : (
-        ""
-      )
+  const question_attention_heatmap = question_attention.length > 0 ? (
+    <div className="heatmap, heatmap-tile">
+      <HeatMap colLabels={['Prob']} rowLabels={question_tokens} data={question_attention} />
+    </div>
+  ) : (
+    ""
+  )
 
-      return (
-        <div>
-          {probability_heatmap}
-          {question_attention_heatmap}
-        </div>
-      )
+  return (
+    <div className="flex-container">
+      {probability_heatmap}
+      {question_attention_heatmap}
+    </div>
+  )
 }
-
 
 const Output = ({ responseData }) => {
     const { answer, logical_form, predicted_actions, linking_scores, feature_scores, similarity_scores, entities, question_tokens } = responseData
 
     return (
-        <div className="model__content">
-          <OutputField label="Answer">
-            { answer }
-          </OutputField>
+      <div className="model__content">
+        <OutputField label="Answer">
+          { answer }
+        </OutputField>
 
-          <OutputField label="Logical Form" suppressSummary="true">
-            <SyntaxHighlight language="lisp">
-                {logical_form.split('fb:').join('').split('.').join('-')}
-            </SyntaxHighlight>
-          </OutputField>
+        <OutputField label="Logical Form" suppressSummary="true">
+          <SyntaxHighlight language="lisp">
+              {logical_form.split('fb:').join('').split('.').join('-')}
+          </SyntaxHighlight>
+        </OutputField>
 
-          <OutputField>
-            <Collapsible trigger="Model internals (beta)">
-              <Collapsible trigger="Predicted actions">
+        <OutputField label="Model internals">
+          <Accordion accordion={false}>
+            <AccordionItem>
+              <AccordionItemTitle>
+                Predicted actions
+                <div className="accordion__arrow" role="presentation"/>
+              </AccordionItemTitle>
+              <AccordionItemBody>
                 {predicted_actions.map((action, action_index) => (
-                  <Collapsible key={"action_" + action_index} trigger={action['predicted_action']}>
-                    <ActionInfo action={action} question_tokens={question_tokens}/>
-                  </Collapsible>
+                  <Accordion accordion={false} key={"action_" + action_index}>
+                    <AccordionItem>
+                      <AccordionItemTitle>
+                        {action['predicted_action']}
+                        <div className="accordion__arrow" role="presentation"/>
+                      </AccordionItemTitle>
+                      <AccordionItemBody>
+                        <ActionInfo action={action} question_tokens={question_tokens}/>
+                      </AccordionItemBody>
+                    </AccordionItem>
+                  </Accordion>
                 ))}
-              </Collapsible>
-              <Collapsible trigger="Entity linking scores">
+              </AccordionItemBody>
+            </AccordionItem>
+            <AccordionItem>
+              <AccordionItemTitle>
+                Entity linking scores
+                <div className="accordion__arrow" role="presentation"/>
+              </AccordionItemTitle>
+              <AccordionItemBody>
                 <HeatMap colLabels={question_tokens} rowLabels={entities} data={linking_scores} normalization="log-per-row-with-zero" />
-              </Collapsible>
-              {feature_scores &&
-                <Collapsible trigger="Entity linking scores (features only)">
+              </AccordionItemBody>
+            </AccordionItem>
+            {feature_scores &&
+              <AccordionItem>
+                <AccordionItemTitle>
+                  Entity linking scores (features only)
+                  <div className="accordion__arrow" role="presentation"/>
+                </AccordionItemTitle>
+                <AccordionItemBody>
                   <HeatMap colLabels={question_tokens} rowLabels={entities} data={feature_scores} normalization="log-per-row-with-zero" />
-                </Collapsible>
-              }
-              <Collapsible trigger="Entity linking scores (similarity only)">
+                </AccordionItemBody>
+              </AccordionItem>
+            }
+            <AccordionItem>
+              <AccordionItemTitle>
+                Entity linking scores (similarity only)
+                <div className="accordion__arrow" role="presentation"/>
+              </AccordionItemTitle>
+              <AccordionItemBody>
                 <HeatMap colLabels={question_tokens} rowLabels={entities} data={similarity_scores} normalization="log-per-row-with-zero" />
-              </Collapsible>
-            </Collapsible>
-          </OutputField>
-        </div>
-      )
+              </AccordionItemBody>
+            </AccordionItem>
+          </Accordion>
+        </OutputField>
+      </div>
+    )
 }
 
 const examples = [
@@ -136,6 +180,6 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/wikitables-parser`
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

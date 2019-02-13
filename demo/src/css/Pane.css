@@ -15,6 +15,7 @@
 
 .pane__horizontal {
   display: block;
+  width: 100%;
 }
 
 .pane__left,

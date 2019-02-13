@@ -40,6 +40,11 @@ logging.basicConfig(level=logging.INFO)
 logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
+if "SENTRY_PYTHON_AUTH" in os.environ:
+    logger.info("Enabling Sentry since SENTRY_PYTHON_AUTH is defined.")
+    import sentry_sdk
+    sentry_sdk.init(os.environ.get("SENTRY_PYTHON_AUTH"))
+
 class ServerError(Exception):
     status_code = 400
 
