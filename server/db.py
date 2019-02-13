@@ -65,7 +65,7 @@ INSERT_SQL = (
 # SQL for updating records to include predictions
 UPDATE_SQL = (
         """
-        UPDATE queries SET request_data = %(request_data)s WHERE id = %(id)s
+        UPDATE queries SET response_data = %(response_data)s WHERE id = %(id)s
         """
 )
 
@@ -136,7 +136,8 @@ class PostgresDemoDatabase(DemoDatabase):
         user = os.environ.get("DEMO_POSTGRES_USER")
         password = os.environ.get("DEMO_POSTGRES_PASSWORD")
 
-        if all([host, port, dbname, user, password]):
+        # Don't check for the password to allow for password-less access while developing locally.
+        if all([host, port, dbname, user]):
             try:
                 logger.info("Initializing demo database connection using environment variables")
                 return PostgresDemoDatabase(dbname=dbname, host=host, port=port, user=user, password=password)
