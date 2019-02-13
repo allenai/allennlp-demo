@@ -45,6 +45,8 @@ pre > code {
   display: block;
   color: #333;
   overflow-x: auto;
+  -webkit-transition: padding 0.2s ease;
+  transition: padding 0.2s ease;
 }
 
 ol,
@@ -170,4 +172,10 @@ th {
 .no-top-margin {
   margin-top: 0;
   padding-top: 0;
+}
+
+@media screen and (max-height:800px) {
+  pre > code {
+    padding: 0.1em;
+  }
 }

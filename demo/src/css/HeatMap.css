@@ -1,4 +1,20 @@
 /********************************************
+HeatMap Continer
+********************************************/
+
+.flex-container {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.heatmap-tile {
+  padding: 5px;
+}
+
+/********************************************
 HeatMap
 ********************************************/
 
@@ -36,7 +52,6 @@ span + .heatmap-container {
 
 .heatmap-scroll {
   background: #fbfcfd;
-  overflow: scroll;
   text-align: center;
   position: relative;
 }
@@ -115,11 +130,15 @@ Data Grid
   font-weight: normal;
 }
 
+.heatmap table th div,
 .heatmap table th span {
   font-size: 16px;
   line-height: 20px;
   color: #777;
   white-space: nowrap;
+}
+
+.heatmap table th span {
   display: block;
 }
 
@@ -170,9 +189,13 @@ tr.heatmap__row th.heatmap__label {
   position: relative;
 }
 
-tr.heatmap__row th.heatmap__label span {
+tr.heatmap__row th.heatmap__label div {
   margin-bottom: 1px;
   padding: 4px 0;
+  max-width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 td.heatmap__cell {
@@ -186,6 +209,54 @@ td.heatmap__cell {
   height: 34px;
   margin-top: -17px;
   z-index: 999;
+}
+
+/********************************************
+Slider
+********************************************/
+.slide_container {
+  margin: 4px auto;
+  width: 500px;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  background-image: linear-gradient(to right, rgb(211, 235, 255) , rgb(78, 172, 255));
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  border-radius: 10px;
+  padding: 0 15px;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  margin-right: 25px;
+  background: rgb(50,159,255);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb,
+.slider::-webkit-slider-thumb  {
+  width: 25px;
+  height: 25px;
+  background: rgb(50,159,255);
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 /********************************************

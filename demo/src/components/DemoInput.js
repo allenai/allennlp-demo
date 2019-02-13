@@ -75,7 +75,7 @@ class DemoInput extends React.Component {
     }
 
     render() {
-        const { title, description, fields, selectedModel, outputState } = this.props
+        const { title, description, descriptionEllipsed, fields, selectedModel, outputState } = this.props
 
         // Only enable running the model if every required field has a value.
         const canRun = fields.every(field => field.optional || this.state[field.name])
@@ -136,7 +136,7 @@ class DemoInput extends React.Component {
 
         return (
             <div className="model__content">
-                <ModelIntro title={title} description={description} />
+                <ModelIntro title={title} description={description} descriptionEllipsed={descriptionEllipsed}/>
                 <div className="form__instructions">
                     <span>Enter text or</span>
                     <select
