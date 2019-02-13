@@ -1,10 +1,8 @@
 -- Created with pg_dump from the live DB and simplified for local usage by
 -- removing the Google Cloud users.
 --
--- To set up a local DB do the following:
--- 1. brew install postgresql
--- 2. pg_ctl -D /usr/local/var/postgres start
--- 3. psql -d postgres -a -f scripts/local_db_setup.sql
+-- To reproduce this first set DB_HOST appropriately and then run:
+-- pg_dump -t 'queries' -h $DB_HOST -U postgres --schema-only demo > scripts/local_db_setup.sql
 
 CREATE TABLE public.queries (
     id bigint NOT NULL,
