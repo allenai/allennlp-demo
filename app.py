@@ -177,6 +177,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
             raise ServerError("unknown model: {}".format(model_name), status_code=400)
 
         data = request.get_json()
+        logger.info("request: %s", json.dumps({"model": model_name, "inputs": data}))
 
         log_blob = {"model": model_name, "inputs": data, "cached": False, "outputs": {}}
 
