@@ -177,7 +177,7 @@ class PostgresDemoDatabase(DemoDatabase):
         try:
             self._health_check()
             with self.conn.cursor() as curs:
-                logger.info("updating the database")
+                logger.info("updating the database for perma_id %s", perma_id)
 
                 curs.execute(UPDATE_SQL,
                              {'id'           : perma_id,
