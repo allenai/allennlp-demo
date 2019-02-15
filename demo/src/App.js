@@ -44,7 +44,8 @@ class Demo extends React.Component {
       slug: slug,
       selectedModel: model,
       requestData: null,
-      responseData: null
+      responseData: null,
+      expandedModelGroupIndexes: [0, 1, 2, 3, 4] // expand first five by default
     };
 
     // We'll need to pass this to the Header component so that it can clear
@@ -52,6 +53,11 @@ class Demo extends React.Component {
     this.clearData = () => {
       this.setState({requestData: null, responseData: null})
     }
+
+    // preserve open menu state
+    this.handleExpandModelGroup = (expandedModelGroupIndexes) => {
+      this.setState({ expandedModelGroupIndexes: expandedModelGroupIndexes });
+    };
 
     // Our components will be using history.push to change the location,
     // and they will be attaching any `requestData` and `responseData` updates
@@ -101,7 +107,7 @@ class Demo extends React.Component {
   }
 
   render() {
-    const { slug, selectedModel, requestData, responseData } = this.state;
+    const { slug, selectedModel, requestData, responseData, expandedModelGroupIndexes: expandedModelGroupIndexes } = this.state;
 
     const ModelComponent = () => {
       if (slug && !responseData) {
@@ -142,7 +148,11 @@ class Demo extends React.Component {
 
     return (
       <div className="pane-container">
-        <Menu selectedModel={selectedModel} clearData={this.clearData}/>
+        <Menu
+          selectedModel={selectedModel}
+          expandedModelGroupIndexes={expandedModelGroupIndexes}
+          clearData={this.clearData}
+          onExpandModelGroup={this.handleExpandModelGroup}/>
         <ModelComponent />
       </div>
     );
