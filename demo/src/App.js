@@ -19,7 +19,7 @@ import './css/visualization-types.css';
   <App /> Container
 *******************************************************************************/
 
-const DEFAULT_PATH = "/machine-comprehension"
+const DEFAULT_PATH = "/reading-comprehension"
 
 // The App is just a react-router wrapped around the Demo component.
 const App = () => (
@@ -107,7 +107,7 @@ class Demo extends React.Component {
   }
 
   render() {
-    const { slug, selectedModel, requestData, responseData, expandedModelGroupIndexes: expandedModelGroupIndexes } = this.state;
+    const { slug, selectedModel, requestData, responseData, expandedModelGroupIndexes } = this.state;
 
     const ModelComponent = () => {
       if (slug && !responseData) {

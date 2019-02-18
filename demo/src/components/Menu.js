@@ -19,10 +19,10 @@ class Menu extends React.Component {
       const { selectedModel, expandedModelGroupIndexes, clearData, onExpandModelGroup, className } = this.props;
 
       const ModelGroup = ({modelGroup, expanded, uuid}) => (
-        <MenuAccordionItem className={`accordion__item ${expanded?'expanded':''}`} expanded={expanded} uuid={uuid}>
+        <MenuAccordionItem className={`accordion__item ${expanded ? 'expanded' : ''}`} expanded={expanded} uuid={uuid}>
           <MenuAccordionItemTitle className="accordion__title">
             {modelGroup.label}
-            <div className="accordion__arrow" role="presentation"/>
+            <MenuAccordionArrow className="accordion__arrow" role="presentation"/>
           </MenuAccordionItemTitle>
           <MenuAccordionItemBody className="accordion__body">
             <ul>
@@ -55,7 +55,9 @@ class Menu extends React.Component {
             </h1>
             <nav>
               <MenuAccordion className="accordion" accordion={false} onChange={e => onExpandModelGroup(e)}>
-                  {modelGroups.map((mg, index)=> <ModelGroup key={mg.label} modelGroup={mg} uuid={index} expanded={expandedModelGroupIndexes.includes(index)}/>)}
+                  {modelGroups.map((mg, index) =>
+                    <ModelGroup key={mg.label} modelGroup={mg} uuid={index} expanded={expandedModelGroupIndexes.includes(index)}/>
+                  )}
               </MenuAccordion>
             </nav>
           </div>
@@ -76,44 +78,46 @@ const MenuAccordionItem = styled(AccordionItem)`
   }
 `;
 
+const MenuAccordionArrow = styled.div`
+  && {
+    top: 3px;
+    left: 3px;
+    color: #63a7d4;
+    width: 22px;
+    height: 10px;
+
+    &::after,
+    &::before {
+      width: 8px;
+      height: 1px;
+    }
+  }
+`;
+
 const MenuAccordionItemTitle = styled(AccordionItemTitle)`
   && {
     background-color: transparent;
     border: none;
     color: #6f7376;
     font-weight: normal;
-    padding: 0 7px;
-    font-size: 14px;
-    margin-left: 20px;
+    padding: 0 0.5em;
+    font-size: 0.9em;
+    margin: 0.8em 0 0 1.25em;
 
-    .accordion__arrow {
-      top: 3px;
-      left: 3px;
-      color: #63a7d4;
-      width: 22px;
-      height: 10px;
-    }
-
-    .accordion__arrow::after,
-    .accordion__arrow::before {
-        width: 8px;
-        height: 1px;
-    }
-
-    :hover{
+    :hover {
       background: transparent;
       color: #1c2f3a;
 
-      .accordion__arrow {
+      ${MenuAccordionArrow} {
         top: 2px;
         width: 23px;
         height: 11px;
-      }
 
-      .accordion__arrow::after,
-      .accordion__arrow::before {
+        &::after,
+        &::before {
           width: 9px;
           height: 2px;
+        }
       }
     }
   }
@@ -122,7 +126,7 @@ const MenuAccordionItemTitle = styled(AccordionItemTitle)`
 const MenuAccordionItemBody = styled(AccordionItemBody)`
   && {
     animation: none;
-    padding-left: 10px;
+    padding-left: 0.6em;
   }
 `;
 

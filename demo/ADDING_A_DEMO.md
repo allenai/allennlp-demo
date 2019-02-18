@@ -6,7 +6,7 @@ and returns some JSON output. Typically this endpoint represents
 an AllenNLP `Predictor` (wrapping an AllenNLP `Model`), but really
 it could be anything.
 
-In this document we'll walk through the construction of our `MachineComprehension` demo.
+In this document we'll walk through the construction of our `ReadingComprehension` demo.
 The corresponding API expects inputs that look like
 
 ```js
@@ -31,7 +31,7 @@ and returns a result that looks like
 The title is just a string:
 
 ```js
-const title = "Machine Comprehension"
+const title = "Reading Comprehension"
 ```
 
 and the description as just JSX (or some other element):
@@ -40,7 +40,7 @@ and the description as just JSX (or some other element):
 const description = (
     <span>
       <span>
-        Machine Comprehension (MC) ... etc ... etc ...
+        Reading Comprehension (MC) ... etc ... etc ...
       </span>
     </span>
 )
@@ -51,7 +51,7 @@ add the descriptionEllipsed as just JSX (or some other element):
 ```js
 const descriptionEllipsed = (
     <span>
-        Machine Comprehension… // Note: ending in a …
+        Reading Comprehension… // Note: ending in a …
     </span>
 )
 ```
@@ -165,13 +165,13 @@ export default withRouter(props => <Model {...props} {...modelProps}/>)
 Go to `src/models.js`. First you'll need to import your new component:
 
 ```js
-import MachineComprehension from './components/demos/MachineComprehension';
+import ReadingComprehension from './components/demos/ReadingComprehension';
 ```
 
 And then you'll need to add it to the list of models:
 
 ```js
-{model: "machine-comprehension", name: "Machine Comprehension", component: MachineComprehension}
+{model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension}
 ```
 
 And that's it, you've added a model!

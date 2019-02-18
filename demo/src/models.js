@@ -2,7 +2,7 @@ import SemanticRoleLabeling from './components/demos/SemanticRoleLabeling';
 import OpenIe from './components/demos/OpenIe';
 import Event2Mind from './components/demos/Event2Mind';
 import TextualEntailment from './components/demos/TextualEntailment';
-import MachineComprehension from './components/demos/MachineComprehension';
+import ReadingComprehension from './components/demos/ReadingComprehension';
 import Coref from './components/demos/Coref';
 import NamedEntityRecognition from './components/demos/NamedEntityRecognition';
 import ConstituencyParser from './components/demos/ConstituencyParser';
@@ -33,7 +33,7 @@ const modelGroups = [
     {
         label: "Answer a question",
         models: [
-            {model: "machine-comprehension", name: "Machine Comprehension", component: MachineComprehension}
+            {model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension}
         ]
     },
     {
