@@ -11,12 +11,12 @@ import Model from '../Model'
 import OutputField from '../OutputField'
 import { API_ROOT } from '../../api-config';
 
-const title = "Machine Comprehension"
+const title = "Reading Comprehension"
 
 const description = (
   <span>
     <span>
-      Machine Comprehension (MC) answers natural language questions by selecting an answer span within an evidence text.
+      Reading Comprehension (RC) answers natural language questions by selecting an answer span within an evidence text.
       The AllenNLP toolkit provides the following MC visualization, which can be used for any MC model in AllenNLP.
       This page demonstrates a reimplementation of
     </span>
@@ -34,7 +34,7 @@ const description = (
 
   const descriptionEllipsed = (
     <span>
-      Machine Comprehension (MC) answers natural language questions by selecting an answer span within an…
+      Reading Comprehension (RC) answers natural language questions by selecting an answer span within an…
     </span>
   )
 
