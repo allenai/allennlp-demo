@@ -1,0 +1,12 @@
+table.beam-search {
+    font-size: 0.5em;
+}
+
+table.beam-search > tbody > tr > td {
+    cursor: pointer;
+}
+
+table.beam-search > thead > tr > th.forced {
+    cursor: pointer;
+    background-color: lightpink;
+}

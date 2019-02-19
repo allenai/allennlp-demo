@@ -1,4 +1,5 @@
 import React from 'react';
+import BeamSearch from './BeamSearch'
 import ModelIntro from './ModelIntro'
 import '../css/Button.css'
 
@@ -69,13 +70,29 @@ class DemoInput extends React.Component {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 e.stopPropagation();
-                runModel(this.state)
+                runModel(this.independentInputs())
             }
+        }
+
+        // Some of the inputs (e.g. interactive beam search)
+        // depend on the previous outputs, so when we do a new run
+        // we need to clear them out.
+        this.independentInputs = () => {
+            let inputs = {...this.state}
+
+            fields.forEach((field) => {
+                (field.dependentInputs || []).forEach((name) => {
+                    delete inputs[name]
+                })
+            })
+
+            console.log(inputs)
+            return inputs
         }
     }
 
     render() {
-        const { title, description, descriptionEllipsed, fields, selectedModel, outputState } = this.props
+        const { title, description, descriptionEllipsed, fields, selectedModel, outputState, responseData, inputState } = this.props
 
         // Only enable running the model if every required field has a value.
         const canRun = fields.every(field => field.optional || this.state[field.name])
@@ -122,6 +139,13 @@ class DemoInput extends React.Component {
                     )
                     break
 
+                case "BEAM_SEARCH":
+                    const { predicted_actions } = responseData || {}
+                    const runSequenceModel = (extraState) => this.props.runModel({...this.state, ...extraState}, true)
+
+                    input = <BeamSearch inputState={inputState} predictedActions={predicted_actions} runSequenceModel={runSequenceModel}/>
+                    break
+
                 default:
                     console.error("unknown field type: " + field.type)
             }
@@ -159,7 +183,7 @@ class DemoInput extends React.Component {
                      type="button"
                      disabled={!canRun || outputState === "working"}
                      className="btn btn--icon-disclosure"
-                     onClick={ () => this.props.runModel(this.state) }>Run
+                     onClick={ () => this.props.runModel(this.independentInputs()) }>Run
                         <svg>
                             <use xlinkHref="#icon__disclosure"></use>
                         </svg>
