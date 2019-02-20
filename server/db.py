@@ -21,15 +21,20 @@ class DemoDatabase:
     Currently it is used to store predictions, in order to enable permalinks.
     In the future it could also be used to store user-submitted feedback about predictions.
     """
-    def add_result(self,
-                   headers: JsonDict,
-                   requester: str,
-                   model_name: str,
-                   inputs: JsonDict,
-                   outputs: JsonDict) -> Optional[int]:
+    def insert_request(self,
+                       headers: JsonDict,
+                       requester: str,
+                       model_name: str,
+                       inputs: JsonDict) -> Optional[int]:
         """
-        Add the prediction to the database so that it can later
+        Add the request to the database so that it can later
         be retrieved via permalink.
+        """
+        raise NotImplementedError
+
+    def update_response(self, perma_id: int, outputs: JsonDict) -> None:
+        """
+        Updates the record in the database so that it includes the model's response.
         """
         raise NotImplementedError
 
@@ -48,12 +53,19 @@ class DemoDatabase:
         raise NotImplementedError
 
 
-# SQL for inserting predictions into the database.
+# SQL for inserting requests into the database.
 INSERT_SQL = (
         """
-        INSERT INTO queries (model_name, requester, headers, request_data, response_data, timestamp)
-        VALUES (%(model_name)s, %(requester)s, %(headers)s, %(request_data)s, %(response_data)s, %(timestamp)s)
+        INSERT INTO queries (model_name, requester, headers, request_data, timestamp)
+        VALUES (%(model_name)s, %(requester)s, %(headers)s, %(request_data)s, %(timestamp)s)
         RETURNING id
+        """
+)
+
+# SQL for updating records to include predictions
+UPDATE_SQL = (
+        """
+        UPDATE queries SET response_data = %(response_data)s WHERE id = %(id)s
         """
 )
 
@@ -97,6 +109,9 @@ class PostgresDemoDatabase(DemoDatabase):
             logger.exception("unable to connect to database")
             raise error
 
+    # TODO(brendanr): Change our flow to catch exceptions due to lost connections and then retry
+    # rather than performing this check preemptively. That should be cheaper and more robust as
+    # a connection could fail between the check and the insert/update.
     def _health_check(self) -> None:
         """
         Postgres has no way of automatically reconnecting lost database
@@ -121,7 +136,8 @@ class PostgresDemoDatabase(DemoDatabase):
         user = os.environ.get("DEMO_POSTGRES_USER")
         password = os.environ.get("DEMO_POSTGRES_PASSWORD")
 
-        if all([host, port, dbname, user, password]):
+        # Don't check for the password to allow for password-less access while developing locally.
+        if all([host, port, dbname, user]):
             try:
                 logger.info("Initializing demo database connection using environment variables")
                 return PostgresDemoDatabase(dbname=dbname, host=host, port=port, user=user, password=password)
@@ -132,13 +148,11 @@ class PostgresDemoDatabase(DemoDatabase):
             logger.info("Relevant environment variables not found, so no demo database")
             return None
 
-
-    def add_result(self,
-                   headers: JsonDict,
-                   requester: str,
-                   model_name: str,
-                   inputs: JsonDict,
-                   outputs: JsonDict) -> Optional[int]:
+    def insert_request(self,
+                       headers: JsonDict,
+                       requester: str,
+                       model_name: str,
+                       inputs: JsonDict) -> Optional[int]:
         try:
             self._health_check()
             with self.conn.cursor() as curs:
@@ -149,7 +163,6 @@ class PostgresDemoDatabase(DemoDatabase):
                               'requester'    : requester,
                               'headers'      : json.dumps(headers),
                               'request_data' : json.dumps(inputs),
-                              'response_data': json.dumps(outputs),
                               'timestamp'    : datetime.datetime.now()})
 
                 perma_id = curs.fetchone()[0]
@@ -159,6 +172,19 @@ class PostgresDemoDatabase(DemoDatabase):
         except (psycopg2.Error, AttributeError):
             logger.exception("Unable to insert permadata")
             return None
+
+    def update_response(self, perma_id: int, outputs: JsonDict) -> None:
+        try:
+            self._health_check()
+            with self.conn.cursor() as curs:
+                logger.info("updating the database for perma_id %s", perma_id)
+
+                curs.execute(UPDATE_SQL,
+                             {'id'           : perma_id,
+                              'response_data': json.dumps(outputs)})
+
+        except (psycopg2.Error, AttributeError):
+            logger.exception("Unable to update response for perma_id %s", perma_id)
 
     def get_result(self, perma_id: int) -> Optional[Permadata]:
         try:
@@ -186,16 +212,18 @@ class InMemoryDemoDatabase(DemoDatabase):
     def __init__(self):
         self.data: List[Permadata] = []
 
-    def add_result(self,
-                   headers: JsonDict,
-                   requester: str,
-                   model_name: str,
-                   inputs: JsonDict,
-                   outputs: JsonDict) -> Optional[int]:
-        self.data.append(Permadata(model_name, inputs, outputs))
+    def insert_request(self,
+                       headers: JsonDict,
+                       requester: str,
+                       model_name: str,
+                       inputs: JsonDict) -> Optional[int]:
+        self.data.append(Permadata(model_name, inputs, {}))
         return len(self.data) - 1
 
-    def get_result(self, perma_id: int) -> Permadata:
+    def update_response(self, perma_id: int, outputs: JsonDict) -> None:
+        self.data[perma_id] = self.data[perma_id]._replace(response_data = outputs)
+
+    def get_result(self, perma_id: int) -> Optional[Permadata]:
         try:
             return self.data[perma_id]
         except IndexError:

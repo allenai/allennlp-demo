@@ -45,7 +45,7 @@
 }
 
 .menu__content nav ul li .nav__link a {
-  padding: 12px 32px 12px 28px;
+  padding: 6px 10px 6px 28px;
   position: relative;
   background: transparent;
   transition: background-color 0.2s ease, padding 0.2s ease;
@@ -53,7 +53,7 @@
 
 .menu__content nav ul li .nav__link a:before {
   position: absolute;
-  width: 7px;
+  width: 10px;
   height: 100%;
   top: 0;
   left: 0;
@@ -81,6 +81,7 @@
 
 .menu__content nav ul li .nav__link.nav__link--selected a:before {
   background: #63a7d4;
+  margin-left: -10px;
 }
 
 .menu__content nav ul li .nav__link.nav__link--selected a span {
@@ -97,10 +98,4 @@
 .pane-container > .model {
   margin-left: 244px;
   overflow: auto;
-}
-
-@media screen and (max-height:800px) {
-  .menu__content nav ul li .nav__link a {
-    padding: 5px 32px 5px 28px;
-  }
 }

@@ -177,12 +177,25 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
             raise ServerError("unknown model: {}".format(model_name), status_code=400)
 
         data = request.get_json()
+        logger.info("request: %s", json.dumps({"model": model_name, "inputs": data}))
 
         log_blob = {"model": model_name, "inputs": data, "cached": False, "outputs": {}}
 
         # Record the number of cache hits before we hit the cache so we can tell whether we hit or not.
         # In theory this could result in false positives.
         pre_hits = _caching_prediction.cache_info().hits  # pylint: disable=no-value-for-parameter
+
+        if record_to_database and demo_db is not None:
+            try:
+                perma_id = None
+                perma_id = demo_db.insert_request(headers=dict(request.headers),
+                                                  requester=request.remote_addr,
+                                                  model_name=model_name,
+                                                  inputs=data)
+
+            except Exception:  # pylint: disable=broad-except
+                # TODO(joelgrus): catch more specific errors
+                logger.exception("Unable to add request to database", exc_info=True)
 
         if use_cache and cache_size > 0:
             # lru_cache insists that all function arguments be hashable,
@@ -194,22 +207,16 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
 
         post_hits = _caching_prediction.cache_info().hits  # pylint: disable=no-value-for-parameter
 
-        if record_to_database and demo_db is not None:
+        if record_to_database and demo_db is not None and perma_id is not None:
             try:
-                perma_id = None
-                perma_id = demo_db.add_result(headers=dict(request.headers),
-                                              requester=request.remote_addr,
-                                              model_name=model_name,
-                                              inputs=data,
-                                              outputs=prediction)
-                if perma_id is not None:
-                    slug = int_to_slug(perma_id)
-                    prediction["slug"] = slug
-                    log_blob["slug"] = slug
+                demo_db.update_response(perma_id=perma_id, outputs=prediction)
+                slug = int_to_slug(perma_id)
+                prediction["slug"] = slug
+                log_blob["slug"] = slug
 
             except Exception:  # pylint: disable=broad-except
                 # TODO(joelgrus): catch more specific errors
-                logger.exception("Unable to add result to database", exc_info=True)
+                logger.exception("Unable to add response to database", exc_info=True)
 
         if use_cache and post_hits > pre_hits:
             # Cache hit, so insert an artifical pause
