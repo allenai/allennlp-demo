@@ -153,7 +153,6 @@ class PostgresDemoDatabase(DemoDatabase):
                        requester: str,
                        model_name: str,
                        inputs: JsonDict) -> Optional[int]:
-
         try:
             self._health_check()
             with self.conn.cursor() as curs:
