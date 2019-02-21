@@ -78,6 +78,7 @@ def main():
         logger.info(f"loading {name} model")
         predictor = demo_model.predictor()
         app.predictors[name] = predictor
+        app.max_request_lengths[name] = demo_model.max_request_length
 
     http_server = WSGIServer(('0.0.0.0', PORT), app)
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", PORT, PORT)
@@ -96,6 +97,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S %Z")
 
     app.predictors = {}
+    app.max_request_lengths = {}
     app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
 
     try:
@@ -172,11 +174,19 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
         # Do use the cache if no argument is specified
         use_cache = request.args.get("cache", "true").lower() != "false"
 
-        model = app.predictors.get(model_name.lower())
+        lowered_model_name = model_name.lower()
+        model = app.predictors.get(lowered_model_name)
         if model is None:
             raise ServerError("unknown model: {}".format(model_name), status_code=400)
+        max_request_length = app.max_request_lengths[lowered_model_name]
 
         data = request.get_json()
+
+        serialized_request = json.dumps(data)
+        if len(serialized_request) > max_request_length:
+            raise ServerError(f"Max request length exceeded for model {model_name}! " +
+                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+
         logger.info("request: %s", json.dumps({"model": model_name, "inputs": data}))
 
         log_blob = {"model": model_name, "inputs": data, "cached": False, "outputs": {}}
