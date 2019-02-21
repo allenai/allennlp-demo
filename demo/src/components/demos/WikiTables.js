@@ -40,7 +40,7 @@ const fields = [
     placeholder: `E.g. "Season\tLevel\tDivision\tSection\tPosition\tMovements\n1993\tTier 3\tDivision 2\tÖstra Svealand\t1st\tPromoted\n1994\tTier 2\tDivision 1\tNorra\t11th\tRelegation Playoffs\n"`},
   {name: "question", label: "Question", type: "TEXT_INPUT",
     placeholder: `E.g. "What is the only year with the 1st position?"`},
-  {name: "beamSearch", type: "BEAM_SEARCH", optional: true, dependentInputs: ['initial_sequence']}
+  {name: "beamSearch", type: "BEAM_SEARCH", optional: true, dependentInputs: ['initial_sequence'], inputOutput: true}
 ]
 
 const ActionInfo = ({ action, question_tokens }) => {

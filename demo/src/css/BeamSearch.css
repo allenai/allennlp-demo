@@ -1,12 +1,69 @@
-table.beam-search {
+ul.beam-search {
     font-size: 0.5em;
 }
 
-table.beam-search > tbody > tr > td {
+ul.beam-search > li {
+    display: inline-block;
+}
+
+li.choice {
+    font-size: 1em;
+}
+
+span.unchoose {
     cursor: pointer;
 }
 
-table.beam-search > thead > tr > th.forced {
-    cursor: pointer;
-    background-color: lightpink;
+a.action, a.predicted-action {
+    cursor: default;
+    color: #232323;
+}
+
+.chosen {
+    background-color: lightgray;
+    color: white;
+}
+
+.chosen:hover > a {
+    color: black;
+}
+
+.choice-dropdown, .chosen {
+    position: relative;
+    display: inline-block;
+    border: 1px solid #d4dce2;
+}
+
+.choice-dropdown:hover {
+    background-color: blue;
+}
+
+.choice-dropdown:hover > .predicted-action {
+    color: white;
+}
+
+ul.choices {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    list-style-type: none;
+    padding: 5px;
+    margin: 5px;
+    width: auto;
+    clear: both;
+}
+
+.choice-dropdown:hover > ul.choices {
+    display: table;
+    background-color: #f9f9f9;
+    font-size: 1.0em;
+    border: 1px solid black;
+}
+
+ul.beam-search > li {
+    padding: 5px;
+}
+
+.probability, .action {
+    padding: 5px;
 }

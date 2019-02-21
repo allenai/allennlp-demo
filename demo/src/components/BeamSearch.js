@@ -1,6 +1,32 @@
 import React from 'react';
 import '../css/BeamSearch.css';
 
+const Chosen = ({action, unchoose, idx}) => (
+    <li className="chosen" key={idx}>
+        <a className="action">{action}</a>
+        <span className="unchoose" role="img" aria-label="x" onClick={unchoose}>❌</span>
+    </li>
+)
+
+const ChoiceDropdown = ({predictedAction, choices, choose, idx}) => {
+
+    const options = choices.map(({action, probability}, i) => (
+        <li className="choice" key={i} onClick={() => choose(action)}>
+            <a className="probability">{probability.toFixed(3)}</a>
+            <a className="action-choice">{action}</a>
+        </li>
+    ))
+
+    return (
+        <li className="choice-dropdown" key={idx}>
+            <a className="predicted-action">{predictedAction}</a>
+            <ul className="choices">
+                {options}
+            </ul>
+        </li>
+    )
+}
+
 
 class BeamSearch extends React.Component {
     constructor(props) {
@@ -11,104 +37,67 @@ class BeamSearch extends React.Component {
         this.state = { initialSequence }
     }
 
+
     render() {
         const { initialSequence } = this.state
         const { predictedActions, runSequenceModel } = this.props
 
-        let table = null
-        if (predictedActions) {
-            const headers = predictedActions.map(pa => pa.predicted_action)
-            const cols = predictedActions.map((pa, timestep) => {
-                if (timestep >= initialSequence.length) {
-                    const choicesWithProbabilities = pa.considered_actions.map(
-                        (action, i) => ({action, "probability": pa.action_probabilities[i]}))
-                    // Sort highest probability to lowest
-                    choicesWithProbabilities.sort((a, b) => b.probability - a.probability)
-
-                    return choicesWithProbabilities
-                } else {
-                    // Show no choices
-                    return []
-                }
-            })
-            const numRows = Math.max(...cols.map(c => c.length))
-
-            const click = (row, col) => () => {
-                // Want to force sequence up to (row ,col)
-                const sequence = initialSequence.slice(0, col)
-                let idx = sequence.length
-                while (idx < col) {
-                    sequence.push(headers[idx])
-                    idx++
-                }
-                // Now add the specific element
-                sequence.push(cols[col][row].action)
-
-                runSequenceModel({initial_sequence: sequence})
-            }
-
-            const clearThrough = (col) => ()  => {
-                const sequence = initialSequence.slice(0, col)
-                runSequenceModel({initial_sequence: sequence})
-            }
-
-            const headerRow = (
-                <tr>
-                    {headers.map((h, j) => <th key={`header-${j}-${h}`}
-                                               className={j < initialSequence.length ? "forced" : null}
-                                               onClick={clearThrough(j)}>{h}</th>)}
-                </tr>
-            )
-
-            const choices = []
-            for (let i = 0; i < numRows; i++) {
-                // i-th row contains the i-th value from each column (if it exists)
-                const values = cols.map(col => col[i] || {})
-
-                const makeTd = (i, j, probability, action) => {
-                    const content = action ? (
-                        <div className="action-choice-with-probability">
-                            <div className="action-choice">{action}</div>
-                            <div className="action-probability">{probability.toFixed(3)}</div>
-                        </div>
-                    ) : null
-
-                    return (
-                        <td key={`value-${i}-${j}-${action}`} onClick={click(i, j)}>
-                            {content}
-                        </td>
-                    )
-                }
-
-                const tds = values.map(({probability, action}, j) => makeTd(i, j, probability, action))
-
-                const row = (
-                    <tr key={`row-${i}`}>
-                        {tds}
-                    </tr>
-                )
-                choices.push(row)
-            }
-
-            table = (
-                <table className="beam-search">
-                    <thead>
-                        {headerRow}
-                    </thead>
-                    <tbody>
-                        {choices}
-                    </tbody>
-                </table>
-            )
+        const unchoose = (idx) => () => {
+            runSequenceModel({initial_sequence: initialSequence.slice(0, idx)})
         }
 
+        const choose = (idx) => (action) => {
+            const sequence = initialSequence.slice(0, idx)
+            while (sequence.length < idx) {
+                sequence.push(predictedActions[sequence.length].predicted_action)
+            }
 
-        return (
-            <div>
-                {table}
-            </div>
-        )
+            sequence.push(action)
+            runSequenceModel({initial_sequence: sequence})
+        }
+
+        let listItems = []
+        if (predictedActions) {
+            // Get fixed items
+            listItems = initialSequence.map((action, idx) => (
+                <Chosen key={idx} action={action} unchoose={unchoose(idx)}/>
+            ))
+
+            // Get dropdown items
+            predictedActions.forEach((predictedAction, idx) => {
+                if (idx >= initialSequence.length) {
+                    const choices = predictedAction.considered_actions.map((action, i) => (
+                        {action, probability: predictedAction.action_probabilities[i]}
+                    ))
+                    choices.sort((a, b) => (b.probability - a.probability))
+
+                    listItems.push(
+                        <ChoiceDropdown key={idx}
+                                        predictedAction={predictedAction.predicted_action}
+                                        choices={choices}
+                                        choose={choose(idx)}/>
+                    )
+                }
+            })
+
+            return (
+                <div>
+                    <label>
+                        Interactive Beam Search
+                    </label>
+                    <ul className="beam-search">
+                        {listItems}
+                    </ul>
+                </div>
+            )
+
+
+        } else {
+            return null
+        }
     }
 }
+
+
 
 export default BeamSearch

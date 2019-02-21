@@ -97,8 +97,13 @@ class DemoInput extends React.Component {
         // Only enable running the model if every required field has a value.
         const canRun = fields.every(field => field.optional || this.state[field.name])
 
-        // We render the individual inputs by map-ping over the fields.
-        const inputs = fields.map((field, idx) => {
+        // Fields that are inputs only.
+        const inputs = []
+
+        // Fields that are both inputs and outputs (e.g. beam search)
+        const inputOutputs = []
+
+        fields.forEach((field, idx) => {
             // The HTML id for this input:
             const inputId = `input--${selectedModel}-${field.name}`
             const label = field.label ? <label htmlFor={`#${inputId}`}>{field.label}</label> : null
@@ -140,23 +145,37 @@ class DemoInput extends React.Component {
                     break
 
                 case "BEAM_SEARCH":
-                    const { predicted_actions } = responseData || {}
-                    const runSequenceModel = (extraState) => this.props.runModel({...this.state, ...extraState}, true)
+                    if (outputState !== "working") {
+                        const { predicted_actions, best_action_sequence, choices, beams } = responseData || {}
+                        const runSequenceModel = (extraState) => this.props.runModel({...this.state, ...extraState}, true)
 
-                    input = <BeamSearch inputState={inputState} predictedActions={predicted_actions} runSequenceModel={runSequenceModel}/>
+                        input = <BeamSearch inputState={inputState}
+                                            predictedActions={predicted_actions}
+                                            bestActionSequence={best_action_sequence}
+                                            choices={choices}
+                                            beams={beams}
+                                            runSequenceModel={runSequenceModel}/>
+                    }
                     break
 
                 default:
                     console.error("unknown field type: " + field.type)
             }
 
-            return (
+            const div = (
                 <div className="form__field" key={idx}>
                 {label}
                 {input}
                 </div>
             )
+
+            if (field.inputOutput) {
+                inputOutputs.push(div)
+            } else {
+                inputs.push(div)
+            }
         })
+
 
         return (
             <div className="model__content">
@@ -189,6 +208,7 @@ class DemoInput extends React.Component {
                         </svg>
                     </button>
                 </div>
+                {inputOutputs}
             </div>
         )
     }
