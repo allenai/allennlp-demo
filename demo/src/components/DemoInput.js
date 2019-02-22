@@ -119,7 +119,6 @@ class DemoInput extends React.Component {
                 })
             })
 
-            console.log(inputs)
             return inputs
         }
     }

@@ -22,8 +22,6 @@ class Model extends React.Component {
 
       this.setState({outputState: "working"});
 
-      console.log(inputs)
-
       fetch(apiUrl(inputs), {
         method: 'POST',
         headers: {
