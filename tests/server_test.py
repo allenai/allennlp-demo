@@ -31,6 +31,14 @@ PREDICTORS = {
         for name, archive_file in TEST_ARCHIVE_FILES.items()
 }
 
+LIMITS = {
+        'machine-comprehension': 311108,
+        'semantic-role-labeling': 4590,
+        'textual-entailment': 13129,
+        'open-information-extraction': 19681,
+        'event2mind': 11643
+}
+
 
 class CountingPredictor(Predictor):
     """
@@ -70,6 +78,7 @@ class TestFlask(AllenNlpTestCase):
 
             self.app = make_app(build_dir=self.TEST_DIR)
             self.app.predictors = PREDICTORS
+            self.app.max_request_lengths = LIMITS
             self.app.testing = True
             self.client = self.app.test_client()
 
@@ -139,12 +148,21 @@ class TestFlask(AllenNlpTestCase):
         assert "xreact_top_k_predicted_tokens" in results
         assert "oreact_top_k_predicted_tokens" in results
 
+    def test_checks_request_length(self):
+        long_string = "PersonX" * 3000
+
+        response = self.post_json("/predict/event2mind", data={"source": long_string})
+        assert response.status_code == 400
+        results = json.loads(response.get_data())
+        assert results["message"].startswith("Max request length exceeded for model event2mind!")
+
     def test_caching(self):
         predictor = CountingPredictor()
         data = {"input1": "this is input 1", "input2": 10}
         key = json.dumps(data)
 
         self.app.predictors["counting"] = predictor
+        self.app.max_request_lengths["counting"] = 100
 
         # call counts should be empty
         assert not predictor.calls
@@ -185,6 +203,7 @@ class TestFlask(AllenNlpTestCase):
         predictor = CountingPredictor()
         application = make_app(build_dir=self.TEST_DIR)
         application.predictors = {"counting": predictor}
+        application.max_request_lengths["counting"] = 100
         application.testing = True
         client = application.test_client()
 
@@ -207,14 +226,16 @@ class TestFlask(AllenNlpTestCase):
     def test_missing_static_dir(self):
         fake_dir = self.TEST_DIR / 'this' / 'directory' / 'does' / 'not' / 'exist'
 
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit) as context:
             make_app(fake_dir)
-            assert cm.code == -1  # pylint: disable=no-member
+
+        assert context.exception.code == -1  # pylint: disable=no-member
 
     def test_permalinks_fail_gracefully_with_no_database(self):
         application = make_app(build_dir=self.TEST_DIR)
         predictor = CountingPredictor()
         application.predictors = {"counting": predictor}
+        application.max_request_lengths["counting"] = 100
         application.testing = True
         client = application.test_client()
 
@@ -237,6 +258,7 @@ class TestFlask(AllenNlpTestCase):
         application = make_app(build_dir=self.TEST_DIR, demo_db=db)
         predictor = CountingPredictor()
         application.predictors = {"counting": predictor}
+        application.max_request_lengths["counting"] = 100
         application.testing = True
         client = application.test_client()
 
@@ -267,6 +289,7 @@ class TestFlask(AllenNlpTestCase):
         application = make_app(build_dir=self.TEST_DIR, demo_db=db)
         predictor = FailingPredictor()
         application.predictors = {"failing": predictor}
+        application.max_request_lengths["failing"] = 100
         # Keep error handling as it would be in the actual application.
         application.testing = False
         client = application.test_client()

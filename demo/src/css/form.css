@@ -19,7 +19,8 @@ form {
   color: #7c7c7c;
 }
 
-.form__instructions select {
+.form__instructions select,
+.form__field select {
   font-size: .8125em;
   max-width: 11.25em;
   background: white;

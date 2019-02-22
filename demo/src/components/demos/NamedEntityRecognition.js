@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
-import { truncate } from '../DemoInput'
+import { truncateText } from '../DemoInput'
 
 // LOC, PER, ORG, MISC
 
@@ -46,16 +46,26 @@ const descriptionEllipsed = (
   </span>
 )
 
-const nerModels = ["ner", "fine-grained-ner"]
-const nerEndpoints = {
-    "ner": "named-entity-recognition",
-    "fine-grained-ner": "fine-grained-named-entity-recognition"
-  };
+const taskModels = [
+  {
+    name: "elmo-ner",
+    desc: "Reimplementation of the NER model described in 'Deep<br/>contextualized word representations' by Peters, et. al."
+  },
+  {
+    name: "fine-grained-ner",
+    desc: "This Model identifies a broad range of 16 semantic types in the input text.<br/>This model is a reimplementation of Lample (2016) and uses a biLSTM<br/>with a CRF layer, character embeddings and ELMo embeddings. It was<br/>trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2."
+  }
+]
+
+const taskEndpoints = {
+  "elmo-ner": "named-entity-recognition",
+  "fine-grained-ner": "fine-grained-named-entity-recognition"
+};
 
 const fields = [
-    {name: "model", label: "Model", type: "SELECT", options: nerModels, optional: true},
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
-     placeholder: `E.g. "John likes and Bill hates ice cream."`}
+     placeholder: `E.g. "John likes and Bill hates ice cream."`},
+    {name: "model", label: "Model", type: "RADIO", options: taskModels, optional: true}
 ]
 
 const TokenSpan = ({ token }) => {
@@ -226,11 +236,11 @@ const examples = [
     "My preferred candidate is Cary Moon, but she won't be the next mayor of Seattle.",
     "If you like Paul McCartney you should listen to the first Wings album.",
     "When I told John that I wanted to move to Alaska, he warned me that I'd have trouble finding a Starbucks there."
-  ].map(sentence => ({sentence, snippet: truncate(sentence)}))
+  ].map(sentence => ({sentence, snippet: truncateText(sentence)}))
 
 const apiUrl = ({model}) => {
-    const selectedModel = model || nerModels[0]
-    const endpoint = nerEndpoints[selectedModel]
+    const selectedModel = model || (taskModels[0] && taskModels[0].name);
+    const endpoint = taskEndpoints[selectedModel]
     return `${API_ROOT}/predict/${endpoint}`
 }
 

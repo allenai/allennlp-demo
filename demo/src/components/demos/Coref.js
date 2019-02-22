@@ -187,7 +187,7 @@ class Output extends React.Component {
     }
 
     return (
-      <div className="model__content">
+      <div className="model__content answer">
         <div className="form__field">
           <HighlightContainer isClicking={isClicking}>
             {spanWrapper(spanTree, 0)}

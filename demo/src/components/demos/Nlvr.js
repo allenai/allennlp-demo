@@ -81,7 +81,7 @@ const Output = ({ responseData }) => {
     const { denotations, logical_form, predicted_actions, sentence_tokens } = responseData
 
     return (
-        <div className="model__content">
+        <div className="model__content answer">
           <OutputField label="Answer">
             { denotations[0] }
           </OutputField>
@@ -94,7 +94,7 @@ const Output = ({ responseData }) => {
 
           <OutputField label="Model internals">
           <Accordion accordion={false}>
-            <AccordionItem>
+            <AccordionItem expanded={true}>
                 <AccordionItemTitle>
                 Predicted actions
                 <div className="accordion__arrow" role="presentation"/>

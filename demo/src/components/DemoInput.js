@@ -1,17 +1,43 @@
 import React from 'react';
 import BeamSearch from './BeamSearch'
+import {RadioGroup, Radio, Tooltip} from './Shared'
 import ModelIntro from './ModelIntro'
 import '../css/Button.css'
 
-// If `text` is longer than `maxLen`, truncate it and add "...".
-// Otherwise just return it as-is.
-const truncate = (text, maxLen = 60) => {
-    if (text.length <= maxLen) {
-        return text
-    } else {
-        return text.substring(0, maxLen) + "..."
+const PATTERN_NON_WORD_CHAR = /\W/;
+const PATTERN_WORD_CHAR = /\w/;
+const ELLIPSIS = '…';
+/**
+ * Truncates the provided text such that no more than limit characters are rendered and adds an
+ * ellipsis upon truncation.  If the text is shorter than the provided limit, the full text is
+ * returned.
+ *
+ * @param {string} text The text to truncate.
+ * @param {number} limit The maximum number of characters to show.
+ *
+ * @return {string} the truncated text, or full text if it's shorter than the provided limit.
+ */
+const truncateText = (text, limit = 60) => {
+    if (typeof limit !== 'number') {
+      throw new Error('limit must be a number');
     }
-}
+    limit -= ELLIPSIS.length;
+    if (text.length > limit) {
+      while (
+        limit > 1 &&
+        (!PATTERN_WORD_CHAR.test(text[limit-1]) || !PATTERN_NON_WORD_CHAR.test(text[limit]))
+      ) {
+        limit -= 1;
+      }
+      if (limit === 1) {
+        return text;
+      } else {
+        return text.substring(0, limit) + ELLIPSIS;
+      }
+    } else {
+      return text;
+    }
+  }
 
 // Create a dropdown "snippet" for an example.
 // If the example has a field called "snippet", use that;
@@ -22,7 +48,7 @@ const makeSnippet = (example, fields, maxLen = 60) => {
     } else {
         const fieldName = fields[0].name
         const snippet = example[fieldName]
-        return truncate(snippet, maxLen)
+        return truncateText(snippet, maxLen)
     }
 }
 
@@ -59,9 +85,16 @@ class DemoInput extends React.Component {
         // What happens when you change an input. This works for text
         // inputs and also select inputs. The first argument is
         // the field name to update.
-        this.handleInputChange = name => e => {
+        this.handleInputChange = fieldName => e => {
             let stateUpdate = {}
-            stateUpdate[name] = e.target.value;
+            stateUpdate[fieldName] = e.target.value;
+            this.setState(stateUpdate)
+        }
+
+        // for radio input, the second param is simply the value
+        this.handleRadioInputChange = fieldName => value => {
+            let stateUpdate = {}
+            stateUpdate[fieldName] = value;
             this.setState(stateUpdate)
         }
 
@@ -137,8 +170,8 @@ class DemoInput extends React.Component {
                                 onChange={this.handleInputChange(field.name)}
                                 disabled={outputState === "working"}>
                             {
-                                field.options.map((value, idx) => (
-                                    <option key={idx} value={value}>{value}</option>
+                                field.options.map((value) => (
+                                    <option key={value} value={value}>{value}</option>
                                 ))
                             }
                         </select>
@@ -157,12 +190,30 @@ class DemoInput extends React.Component {
                     }
                     break
 
+                case "RADIO":
+                    input = (
+                        // If we have no value for this select, use the first option.
+                        <RadioGroup
+                            name={inputId}
+                            selectedValue={this.state[field.name] || (field.options[0] && field.options[0].name)}
+                            onChange={this.handleRadioInputChange(field.name)}
+                            disabled={outputState === "working"}>
+                            {
+                                field.options.map((opt) => (
+                                    <label key={opt.name} data-tip={opt.desc}>
+                                        <Radio value={opt.name}/>{opt.name}
+                                    </label>
+                                ))
+                            }
+                      </RadioGroup>
+                    )
+                    break
                 default:
                     console.error("unknown field type: " + field.type)
             }
 
             const div = (
-                <div className="form__field" key={idx}>
+                <div className="form__field" key={field.name}>
                 {label}
                 {input}
                 </div>
@@ -179,7 +230,7 @@ class DemoInput extends React.Component {
 
 
         return (
-            <div className="model__content">
+            <div className="model__content answer">
                 <ModelIntro title={title} description={description} descriptionEllipsed={descriptionEllipsed}/>
                 <div className="form__instructions">
                     <span>Enter text or</span>
@@ -210,9 +261,10 @@ class DemoInput extends React.Component {
                     </button>
                 </div>
                 {inputOutputs}
+                <Tooltip multiline/>
             </div>
         )
     }
 }
 
-export { DemoInput as default, truncate }
+export { DemoInput as default, truncateText }
