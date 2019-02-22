@@ -53,7 +53,7 @@ const taskModels = [
   },
   {
     name: "fine-grained-ner",
-    desc: "A fine-grained named entity recognition model refers to a NER model that can recognize<br/>and classify a large number of entity categories (e.g., hundreds of NE categories)"
+    desc: "This Model identifies a broad range of 16 semantic types in the input text.<br/>This model is a reimplementation of Lample (2016) and uses a biLSTM<br/>with a CRF layer, character embeddings and ELMo embeddings. It was<br/>trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2."
   }
 ]
 
