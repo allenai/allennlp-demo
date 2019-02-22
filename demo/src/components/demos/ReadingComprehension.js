@@ -10,7 +10,7 @@ import {
 import Model from '../Model'
 import OutputField from '../OutputField'
 import { API_ROOT } from '../../api-config';
-import { truncate } from '../DemoInput'
+import { truncateText } from '../DemoInput'
 
 const title = "Reading Comprehension"
 
@@ -30,13 +30,11 @@ const descriptionEllipsed = (
 
 const taskModels = [
   {
-    value: "BiDAF",
-    desc: "Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow,<br/>\
-    a widely used MC baseline that achieved state-of-the-art accuracies on<br/>\
-    the SQuAD dataset (Wikipedia sentences) in early 2017."
+    name: "BiDAF",
+    desc: "Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow,<br/>a widely used MC baseline that achieved state-of-the-art accuracies on<br/>the SQuAD dataset (Wikipedia sentences) in early 2017."
   },
   {
-    value: "Augmented QANet",
+    name: "Augmented QANet",
     desc: "Combining Local Convolution with Global Self-Attention for Reading Comprehension"
   }
 ]
@@ -319,11 +317,11 @@ const examples = [
     passage: "Kerbal Space Program (KSP) is a space flight simulation video game developed and published by Squad for Microsoft Windows, OS X, Linux, PlayStation 4, Xbox One, with a Wii U version that was supposed to be released at a later date. The developers have stated that the gaming landscape has changed since that announcement and more details will be released soon. In the game, players direct a nascent space program, staffed and crewed by humanoid aliens known as \"Kerbals\". The game features a realistic orbital physics engine, allowing for various real-life orbital maneuvers such as Hohmann transfer orbits and bi-elliptic transfer orbits.",
     question: "What does the physics engine allow for?",
   }
-].map(ex => ({...ex, snippet: truncate(ex.passage)}));
+].map(ex => ({...ex, snippet: truncateText(ex.passage)}));
 
 const apiUrl = ({model}) => {
-  const selectedModel = model || taskModels[0]
-  const endpoint = taskEndpoints[selectedModel.value]
+  const selectedModel = model || (taskModels[0] && taskModels[0].name);
+  const endpoint = taskEndpoints[selectedModel]
   return `${API_ROOT}/predict/${endpoint}`
 }
 

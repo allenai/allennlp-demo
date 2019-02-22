@@ -6,25 +6,31 @@ export const RadioGroup = styled(ReactRadioGroup.RadioGroup)`
   && {
     margin-top: 0;
     label,
-    label input {
+    label input[type='radio'] {
       margin-top: 0;
       cursor: pointer;
+    }
+
+    label {
+      display: flex;
+      flex-direction: row;
       width: fit-content;
+    }
+
+    input[type='radio'] {
+      display: flex;
+      align-self: flex-end;
+      width: 1.455em;
     }
 
     input[type='radio']:after,
     input[type='radio']:checked:after {
-        width: 11px;
-        height: 11px;
-        border-radius: 11px;
-        top: -1px;
-        left: -2px;
-        position: relative;
+        width: 1em;
+        height: 1em;
+        border-radius: 1em;
         background-color: white;
         content: '';
-        display: inline-block;
-        visibility: visible;
-        border: 2px solid gray;
+        border: 0.182em solid gray;
     }
     input[type='radio']:checked:after {
         background-color: darkGray;
@@ -33,7 +39,9 @@ export const RadioGroup = styled(ReactRadioGroup.RadioGroup)`
 `;
 
 export const Radio = styled(ReactRadioGroup.Radio)`
-  margin-right: 5px;
+  && {
+    margin-right: 5px;
+  }
 `;
 
 export const Tooltip = styled(ReactTooltip)`
