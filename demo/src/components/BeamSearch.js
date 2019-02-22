@@ -65,9 +65,9 @@ class BeamSearch extends React.Component {
             runSequenceModel({initial_sequence: sequence})
         }
 
-        // We only want to render anything if ``bestActionSequence`` is defined;
-        // that is, if we have a beam search result.
-        if (bestActionSequence) {
+        // We only want to render anything if ``choices`` is defined;
+        // that is, if we have a beam search result and if it's the new backend.
+        if (choices) {
             const listItems = bestActionSequence.map((action, idx) => {
                 // Anything in ``initialSequence`` has already been chosen.
                 if (idx < initialSequence.length) {
