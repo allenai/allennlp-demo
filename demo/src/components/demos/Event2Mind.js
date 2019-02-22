@@ -69,7 +69,7 @@ function processTokens(tokens, noneReplacement) {
 
 const DiagramOutput = ({ responseData, source }) => {
     return (
-      <div className="model__content">
+      <div className="model__content answer">
         <HighlightContainer layout="diagram">
           <div className="e2m-event-container">
             <Highlight label="Event" color="gray" labelPosition="top">{source}</Highlight>

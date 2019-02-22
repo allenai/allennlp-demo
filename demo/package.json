@@ -11,6 +11,7 @@
     "react-app-rewired": "2.1.0",
     "react-dom": "15.6.1",
     "react-proptypes": "1.0.0",
+    "react-radio-group": "3.0.3",
     "react-router-dom": "4.2.2",
     "react-scripts": "1.0.13",
     "react-syntax-highlighter": "8.0.1",

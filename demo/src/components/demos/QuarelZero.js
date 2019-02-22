@@ -71,7 +71,7 @@ const ActionInfo = ({ action, question_tokens }) => {
 }
 
 const Explanation = ({entry}) => {
-  const listItems = entry.content.map((c) => (<li className="model__explanation__ul">{c}</li>))
+  const listItems = entry.content.map((c, index) => (<li key={`content_${index}`} className="model__explanation__ul">{c}</li>))
 
   return (
     <div>
@@ -88,10 +88,10 @@ const Explanation = ({entry}) => {
 const Output = ({ responseData }) => {
   const { answer, logical_form, score, predicted_actions, question_tokens, world_extractions, explanation } = responseData
 
-  const explanations = explanation.map(entry => <Explanation entry={entry}/>)
+  const explanations = explanation.map((entry, index) => <Explanation key={`entry_${index}`} entry={entry}/>)
 
   return (
-    <div className="model__content">
+    <div className="model__content answer">
       <OutputField label="Answer">
         {answer}
       </OutputField>
@@ -112,7 +112,7 @@ const Output = ({ responseData }) => {
             world1: {world_extractions.world1} world2: {world_extractions.world2}
           </OutputField>
           <Accordion accordion={false}>
-            <AccordionItem>
+            <AccordionItem expanded={true}>
               <AccordionItemTitle>
                 Predicted actions
                 <div className="accordion__arrow" role="presentation"/>

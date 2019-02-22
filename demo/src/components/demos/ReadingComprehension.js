@@ -10,78 +10,292 @@ import {
 import Model from '../Model'
 import OutputField from '../OutputField'
 import { API_ROOT } from '../../api-config';
+import { truncateText } from '../DemoInput'
 
 const title = "Reading Comprehension"
 
 const description = (
   <span>
-    <span>
-      Reading Comprehension (RC) answers natural language questions by selecting an answer span within an evidence text.
-      The AllenNLP toolkit provides the following MC visualization, which can be used for any MC model in AllenNLP.
-      This page demonstrates a reimplementation of
-    </span>
-    <a href = "https://www.semanticscholar.org/paper/Bidirectional-Attention-Flow-for-Machine-Comprehen-Seo-Kembhavi/007ab5528b3bd310a80d553cccad4b78dc496b02" target="_blank" rel="noopener noreferrer">{' '} BiDAF (Seo et al, 2017)</a>
-    <span>
-      , or Bi-Directional Attention Flow,
-      a widely used MC baseline that achieved state-of-the-art accuracies on
-    </span>
-    <a href = "https://rajpurkar.github.io/SQuAD-explorer/" target="_blank" rel="noopener noreferrer">{' '} the SQuAD dataset {' '}</a>
-    <span>
-      (Wikipedia sentences) in early 2017.
-    </span>
+    Reading comprehension is the task of answering questions about a passage of text to show that
+    the system understands the passage.
   </span>
   )
 
-  const descriptionEllipsed = (
-    <span>
-      Reading Comprehension (RC) answers natural language questions by selecting an answer span within an…
-    </span>
-  )
+const descriptionEllipsed = (
+  <span>
+    Reading comprehension is the task of answering questions about a passage of text to show that
+    the system…
+  </span>
+)
+
+const taskModels = [
+  {
+    name: "BiDAF",
+    desc: "Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow,<br/>a widely used MC baseline that achieved state-of-the-art accuracies on<br/>the SQuAD dataset (Wikipedia sentences) in early 2017."
+  },
+  {
+    name: "Augmented QANet",
+    desc: "Combining Local Convolution with Global Self-Attention for Reading Comprehension"
+  }
+]
+
+const taskEndpoints = {
+  "BiDAF": "machine-comprehension", // TODO: we should rename tha back-end model to reading-comprehension
+  "Augmented QANet": "augmented-qanet-reading-comprehension"
+};
 
 const fields = [
   {name: "passage", label: "Passage", type: "TEXT_AREA",
    placeholder: `E.g. "Saturn is the sixth planet from the Sun and the second-largest in the Solar System, after Jupiter. It is a gas giant with an average radius about nine times that of Earth. Although it has only one-eighth the average density of Earth, with its larger volume Saturn is just over 95 times more massive. Saturn is named after the Roman god of agriculture; its astronomical symbol represents the god's sickle"`},
   {name: "question", label: "Question", type: "TEXT_INPUT",
    placeholder: `E.g. "What does Saturn’s astronomical symbol represent"`}
+  // {name: "model", label: "Model", type: "RADIO", options: taskModels, optional: true} // TODO: add when matts model is ready
 ]
 
+const Attention = ({passage_question_attention, question_tokens, passage_tokens}) => {
+  if(passage_question_attention && question_tokens && passage_tokens) {
+    return (
+        <OutputField label="Model internals">
+          <Accordion accordion={false}>
+            <AccordionItem expanded={true}>
+              <AccordionItemTitle>
+                Passage to Question attention
+                <div className="accordion__arrow" role="presentation"/>
+              </AccordionItemTitle>
+              <AccordionItemBody>
+                <p>
+                  For every passage word, the model computes an attention over the question words.
+                  This heatmap shows that attention, which is normalized for every row in the matrix.
+                </p>
+                <HeatMap
+                  colLabels={question_tokens} rowLabels={passage_tokens}
+                  data={passage_question_attention} />
+              </AccordionItemBody>
+            </AccordionItem>
+          </Accordion>
+        </OutputField>
+    )
+  }
+  return null;
+}
 
-const Output = ({ requestData, responseData }) => {
-  const { passage } = requestData
-  const { best_span_str, passage_question_attention, question_tokens, passage_tokens } = responseData
-  const start = passage.indexOf(best_span_str);
-  const head = passage.slice(0, start);
-  const tail = passage.slice(start + best_span_str.length);
-
+const NoAnswer = () => {
   return (
-    <div className="model__content">
-      <OutputField label="Answer">
-        {best_span_str}
-      </OutputField>
+    <OutputField label="Answer">
+      No answer returned.
+    </OutputField>
+  )
+}
 
-      <OutputField label="Passage Context" classes="passage">
-        <span>{head}</span>
-        <span className="passage__answer">{best_span_str}</span>
-        <span>{tail}</span>
-      </OutputField>
+const MultiSpanHighlight = ({original, highlightSpans, highlightStyles}) => {
+  if(original && highlightSpans && highlightStyles) {
+    // assumes spans are not overlapping and in order
+    let curIndex = 0;
+    let spanList = [];
+    highlightSpans.forEach((s, sIndex) => {
+      if(s[0] > curIndex){
+        // add preceding non-highlighted span
+        spanList.push(<span key={`${curIndex}_${s[0]}`}>{original.slice(curIndex, s[0])}</span>);
+        curIndex = s[0];
+      }
+      // add highlighted span
+      if(s[1] > curIndex) {
+        spanList.push(<span key={`${curIndex}_${s[1]}`} className={highlightStyles[sIndex]}>{original.slice(curIndex, s[1])}</span>);
+        curIndex = s[1];
+      }
+    });
+    // add last non-highlighted span
+    if(curIndex < original.length) {
+      spanList.push(<span key={`${curIndex}_${original.length}`}>{original.slice(curIndex)}</span>);
+    }
+    return (
+      <span>
+        {spanList.map(s=> s)}
+      </span>
+    )
+  }
+  return null;
+}
 
-      <OutputField label="Model internals">
-        <Accordion accordion={false}>
-          <AccordionItem>
-            <AccordionItemTitle>
-              Passage to Question attention
-              <div className="accordion__arrow" role="presentation"/>
-            </AccordionItemTitle>
-            <AccordionItemBody>
-              <p>
-                For every passage word, the model computes an attention over the question words.
-                This heatmap shows that attention, which is normalized for every row in the matrix.
-              </p>
-              <HeatMap colLabels={question_tokens} rowLabels={passage_tokens} data={passage_question_attention} />
-            </AccordionItemBody>
-          </AccordionItem>
-        </Accordion>
-      </OutputField>
+const ArithmeticEquation = ({numbers}) => {
+  if(numbers) {
+    let ret = numbers
+      .filter(n => n.sign !== 0)
+      .map(n => `${n.sign > 0 ? "+" : "-"} ${n.value}`)
+      .join(" ");
+    while(ret.charAt(0) === "+" || ret.charAt(0) === " ") {
+      ret = ret.substr(1);
+    }
+    return <span>{ret}</span>;
+  }
+  return null;
+}
+
+const AnswerByType = ({requestData, responseData}) => {
+  if(requestData && responseData) {
+    const { passage, question } = requestData;
+    const { answer } = responseData;
+    const { answer_type } = answer || {};
+
+    switch(answer_type) {
+      case "passage_span": {
+        const { spans, value } = answer || {};
+        if(question && passage && spans && value) {
+          return (
+            <section>
+              <OutputField label="Answer">
+                {value}
+              </OutputField>
+
+              <OutputField label="Explanation">
+                The model decided the answer was in the passage.
+              </OutputField>
+
+              <OutputField label="Passage">
+                <MultiSpanHighlight
+                  original={passage}
+                  highlightSpans={spans}
+                  highlightStyles={spans.map(s => "highlight__answer")}/>
+              </OutputField>
+
+              <OutputField label="Question">
+                {question}
+              </OutputField>
+
+              <Attention {...responseData}/>
+            </section>
+          )
+        }
+        return NoAnswer();
+      }
+
+      case "question_span": {
+        const { spans, value } = answer || {};
+        if(question && passage && spans && value) {
+          return (
+            <section>
+              <OutputField label="Answer">
+                {value}
+              </OutputField>
+
+              <OutputField label="Explanation">
+                The model decided the answer was in the question.
+              </OutputField>
+
+              <OutputField label="Passage">
+                {passage}
+              </OutputField>
+
+              <OutputField label="Question">
+                <MultiSpanHighlight
+                  original={question}
+                  highlightSpans={spans}
+                  highlightStyles={spans.map(s => "highlight__answer")}/>
+              </OutputField>
+
+              <Attention {...responseData}/>
+            </section>
+          )
+        }
+        return NoAnswer();
+      }
+
+      case "count": {
+        const { count } = answer || {};
+        if(question && passage && count) {
+          return (
+            <section>
+              <OutputField label="Answer">
+                {count}
+              </OutputField>
+
+              <OutputField label="Explanation">
+                The model decided this was a counting problem.
+              </OutputField>
+
+              <OutputField label="Passage">
+                {passage}
+              </OutputField>
+
+              <OutputField label="Question">
+                {question}
+              </OutputField>
+
+              <Attention {...responseData}/>
+            </section>
+          )
+        }
+        return NoAnswer();
+      }
+
+      case "arithmetic": {
+        const { numbers, value } = answer || {};
+        if(question && passage && numbers && value) {
+          return (
+            <section>
+              <OutputField label="Answer">
+                {value}
+              </OutputField>
+
+              <OutputField label="Explanation">
+                The model used the arithmetic expression <ArithmeticEquation numbers={numbers} /> = {value}.
+              </OutputField>
+
+              <OutputField label="Passage">
+                <MultiSpanHighlight
+                  original={passage}
+                  highlightSpans={numbers.map(n => n.span)}
+                  highlightStyles={numbers.map(n => `highlight__num_${n.sign}`)}/>
+              </OutputField>
+
+              <OutputField label="Question">
+                {question}
+              </OutputField>
+
+              <Attention {...responseData}/>
+            </section>
+          )
+        }
+        return NoAnswer();
+      }
+
+      default: { // old best_span_str path used by BiDAF model
+        const { best_span_str } = responseData;
+        if(question && passage && best_span_str) {
+          const start = passage.indexOf(best_span_str);
+          const head = passage.slice(0, start);
+          const tail = passage.slice(start + best_span_str.length);
+          return (
+            <section>
+              <OutputField label="Answer">
+                {best_span_str}
+              </OutputField>
+
+              <OutputField label="Passage Context">
+                <span>{head}</span>
+                <span className="highlight__answer">{best_span_str}</span>
+                <span>{tail}</span>
+              </OutputField>
+
+              <OutputField label="Question">
+                {question}
+              </OutputField>
+
+              <Attention {...responseData}/>
+            </section>
+          )
+        }
+        return NoAnswer();
+      }
+    }
+  }
+  return NoAnswer();
+}
+
+const Output = (props) => {
+  return (
+    <div className="model__content answer">
+      <AnswerByType {...props}/>
     </div>
   )
 }
@@ -103,11 +317,14 @@ const examples = [
     passage: "Kerbal Space Program (KSP) is a space flight simulation video game developed and published by Squad for Microsoft Windows, OS X, Linux, PlayStation 4, Xbox One, with a Wii U version that was supposed to be released at a later date. The developers have stated that the gaming landscape has changed since that announcement and more details will be released soon. In the game, players direct a nascent space program, staffed and crewed by humanoid aliens known as \"Kerbals\". The game features a realistic orbital physics engine, allowing for various real-life orbital maneuvers such as Hohmann transfer orbits and bi-elliptic transfer orbits.",
     question: "What does the physics engine allow for?",
   }
-];
+].map(ex => ({...ex, snippet: truncateText(ex.passage)}));
 
-const apiUrl = () => `${API_ROOT}/predict/machine-comprehension`
+const apiUrl = ({model}) => {
+  const selectedModel = model || (taskModels[0] && taskModels[0].name);
+  const endpoint = taskEndpoints[selectedModel]
+  return `${API_ROOT}/predict/${endpoint}`
+}
 
 const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
-
