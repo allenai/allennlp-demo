@@ -261,7 +261,7 @@ const AnswerByType = ({requestData, responseData}) => {
         return NoAnswer();
       }
 
-      default: { // old best_span_str path (TODO: delete after api update)
+      default: { // old best_span_str path used by BiDAF model
         const { best_span_str } = responseData;
         if(question && passage && best_span_str) {
           const start = passage.indexOf(best_span_str);
