@@ -1,6 +1,8 @@
 import React from 'react';
 import '../css/BeamSearch.css';
 
+// Component representing an element of the sequence that has been fixed,
+// with an X to "unchoose" it.
 const Chosen = ({action, unchoose, idx}) => (
     <li className="chosen" key={idx}>
         <a className="action">{action}</a>
@@ -8,9 +10,11 @@ const Chosen = ({action, unchoose, idx}) => (
     </li>
 )
 
+// Component representing an element of the sequence that can be selected,
+// with a dropdown containing all the possible choices.
 const ChoiceDropdown = ({predictedAction, choices, choose, idx}) => {
 
-    const options = choices.map(({action, probability}, i) => (
+    const options = choices.map(([probability, action], i) => (
         <li className="choice" key={i} onClick={() => choose(action)}>
             <a className="probability">{probability.toFixed(3)}</a>
             <a className="action-choice">{action}</a>
@@ -40,43 +44,44 @@ class BeamSearch extends React.Component {
 
     render() {
         const { initialSequence } = this.state
-        const { predictedActions, runSequenceModel } = this.props
+        const { bestActionSequence, choices, runSequenceModel } = this.props
 
+        // To "unchoose" the choice at a given index, we just rerun the model
+        // with initial_sequence truncaated at that point.
         const unchoose = (idx) => () => {
             runSequenceModel({initial_sequence: initialSequence.slice(0, idx)})
         }
 
+        // To choose an action at an index, we start with the existing forced choices,
+        // then fill in with the elements of the bestActionSequence, and finally add
+        // the chosen action.
         const choose = (idx) => (action) => {
             const sequence = initialSequence.slice(0, idx)
             while (sequence.length < idx) {
-                sequence.push(predictedActions[sequence.length].predicted_action)
+                sequence.push(bestActionSequence[sequence.length])
             }
 
             sequence.push(action)
             runSequenceModel({initial_sequence: sequence})
         }
 
-        let listItems = []
-        if (predictedActions) {
-            // Get fixed items
-            listItems = initialSequence.map((action, idx) => (
-                <Chosen key={idx} action={action} unchoose={unchoose(idx)}/>
-            ))
+        // We only want to render anything if ``bestActionSequence`` is defined;
+        // that is, if we have a beam search result.
+        if (bestActionSequence) {
+            const listItems = bestActionSequence.map((action, idx) => {
+                // Anything in ``initialSequence`` has already been chosen.
+                if (idx < initialSequence.length) {
+                    return <Chosen key={idx} action={action} unchoose={unchoose(idx)}/>
+                } else {
+                // Otherwise we need to offer a choice dropdown, and we should sort
+                // from highest probability to lowest probability.
+                const timestepChoices = choices[idx]
+                timestepChoices.sort((a, b) => (b[0] - a[0]))
 
-            // Get dropdown items
-            predictedActions.forEach((predictedAction, idx) => {
-                if (idx >= initialSequence.length) {
-                    const choices = predictedAction.considered_actions.map((action, i) => (
-                        {action, probability: predictedAction.action_probabilities[i]}
-                    ))
-                    choices.sort((a, b) => (b.probability - a.probability))
-
-                    listItems.push(
-                        <ChoiceDropdown key={idx}
-                                        predictedAction={predictedAction.predicted_action}
-                                        choices={choices}
-                                        choose={choose(idx)}/>
-                    )
+                return <ChoiceDropdown key={idx}
+                                       predictedAction={action}
+                                       choices={timestepChoices}
+                                       choose={choose(idx)}/>
                 }
             })
 
@@ -90,14 +95,10 @@ class BeamSearch extends React.Component {
                     </ul>
                 </div>
             )
-
-
         } else {
             return null
         }
     }
 }
-
-
 
 export default BeamSearch

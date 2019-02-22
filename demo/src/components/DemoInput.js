@@ -100,7 +100,8 @@ class DemoInput extends React.Component {
         // Fields that are inputs only.
         const inputs = []
 
-        // Fields that are both inputs and outputs (e.g. beam search)
+        // Fields that are both inputs and outputs (e.g. beam search). These will be
+        // rendered below the RUN button.
         const inputOutputs = []
 
         fields.forEach((field, idx) => {
@@ -146,14 +147,12 @@ class DemoInput extends React.Component {
 
                 case "BEAM_SEARCH":
                     if (outputState !== "working") {
-                        const { predicted_actions, best_action_sequence, choices, beams } = responseData || {}
+                        const { best_action_sequence, choices } = responseData || {}
                         const runSequenceModel = (extraState) => this.props.runModel({...this.state, ...extraState}, true)
 
                         input = <BeamSearch inputState={inputState}
-                                            predictedActions={predicted_actions}
                                             bestActionSequence={best_action_sequence}
                                             choices={choices}
-                                            beams={beams}
                                             runSequenceModel={runSequenceModel}/>
                     }
                     break
@@ -169,6 +168,8 @@ class DemoInput extends React.Component {
                 </div>
             )
 
+            // By default we assume a field is just an input,
+            // unless it has the ``inputOutput`` attribute set.
             if (field.inputOutput) {
                 inputOutputs.push(div)
             } else {

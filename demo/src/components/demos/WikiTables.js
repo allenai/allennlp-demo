@@ -73,6 +73,7 @@ const ActionInfo = ({ action, question_tokens }) => {
   )
 }
 
+
 const Output = ({ responseData }) => {
     const { answer, logical_form, predicted_actions, linking_scores, feature_scores, similarity_scores, entities, question_tokens } = responseData
 
