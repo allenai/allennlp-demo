@@ -61,6 +61,10 @@
     margin: 0;
 }
 
+.model__content.answer {
+  padding-top: 0.9em;
+}
+
 @media screen and (max-height:800px) {
   .model__content {
     padding-top: 0.15em;

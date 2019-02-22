@@ -76,7 +76,7 @@ const Output = ({ responseData }) => {
     internals = (
       <OutputField label="Model internals">
         <Accordion accordion={false}>
-          <AccordionItem>
+          <AccordionItem expanded={true}>
             <AccordionItemTitle>
                 Predicted actions
                 <div className="accordion__arrow" role="presentation"/>
@@ -115,7 +115,7 @@ const Output = ({ responseData }) => {
   }
 
   return (
-    <div className="model__content">
+    <div className="model__content answer">
       <OutputField label="SQL Query" suppressSummary="true">
         {query}
       </OutputField>

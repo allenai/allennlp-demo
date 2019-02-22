@@ -46,16 +46,28 @@ const descriptionEllipsed = (
   </span>
 )
 
-const nerModels = ["ner", "fine-grained-ner"]
-const nerEndpoints = {
-    "ner": "named-entity-recognition",
-    "fine-grained-ner": "fine-grained-named-entity-recognition"
-  };
+const taskModels = [
+  {
+    value: "ner",
+    desc: "A coarse-grained named entity recognition model refers to a NER model that can recognize<br/>\
+    and classify a small number of entity categories (e.g., 10 or less NE categories)"
+  },
+  {
+    value: "fine-grained-ner",
+    desc: "A fine-grained named entity recognition model refers to a NER model that can recognize<br/>\
+    and classify a large number of entity categories (e.g., hundreds of NE categories)"
+  }
+]
+
+const taskEndpoints = {
+  "ner": "named-entity-recognition",
+  "fine-grained-ner": "fine-grained-named-entity-recognition"
+};
 
 const fields = [
-    {name: "model", label: "Model", type: "SELECT", options: nerModels, optional: true},
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
-     placeholder: `E.g. "John likes and Bill hates ice cream."`}
+     placeholder: `E.g. "John likes and Bill hates ice cream."`},
+    {name: "model", label: "Model", type: "RADIO", options: taskModels, optional: true}
 ]
 
 const TokenSpan = ({ token }) => {
@@ -229,8 +241,8 @@ const examples = [
   ].map(sentence => ({sentence, snippet: truncate(sentence)}))
 
 const apiUrl = ({model}) => {
-    const selectedModel = model || nerModels[0]
-    const endpoint = nerEndpoints[selectedModel]
+    const selectedModel = model || taskModels[0]
+    const endpoint = taskEndpoints[selectedModel.value]
     return `${API_ROOT}/predict/${endpoint}`
 }
 

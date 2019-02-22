@@ -134,7 +134,7 @@ const Output = ({ responseData }) => {
   const y = (c / (a + b + c))
 
   return (
-  <div className="model__content">
+  <div className="model__content answer">
     <OutputField label="Summary">
     {summaryText}
     </OutputField>
@@ -167,7 +167,7 @@ const Output = ({ responseData }) => {
     </div>
     <OutputField label=" Model internals">
       <Accordion accordion={false}>
-        <AccordionItem>
+        <AccordionItem expanded={true}>
           <AccordionItemTitle>
             Premise to Hypothesis Attention
             <div className="accordion__arrow" role="presentation"/>

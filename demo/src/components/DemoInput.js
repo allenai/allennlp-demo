@@ -1,15 +1,19 @@
 import React from 'react';
+import {RadioGroup, Radio, Tooltip} from './Shared'
 import ModelIntro from './ModelIntro'
 import '../css/Button.css'
 
 // If `text` is longer than `maxLen`, truncate it and add "...".
 // Otherwise just return it as-is.
 const truncate = (text, maxLen = 60) => {
-    if (text.length <= maxLen) {
-        return text
-    } else {
-        return text.substring(0, maxLen) + "..."
+    if(text) {
+        if (text.length <= maxLen) {
+            return text
+        } else {
+            return text.substring(0, maxLen) + "..."
+        }
     }
+    return "";
 }
 
 // Create a dropdown "snippet" for an example.
@@ -64,6 +68,13 @@ class DemoInput extends React.Component {
             this.setState(stateUpdate)
         }
 
+        // for radio input, the event is simply the value
+        this.handleRadioInputChange = name => e => {
+            let stateUpdate = {}
+            stateUpdate[name] = e;
+            this.setState(stateUpdate)
+        }
+
         // Handler that runs the model if 'Enter' is pressed.
         this.runOnEnter = e => {
             if (e.key === 'Enter') {
@@ -110,18 +121,36 @@ class DemoInput extends React.Component {
                 case "SELECT":
                     input = (
                         // If we have no value for this select, use the first option.
-                        <select value={this.state[field.name] || field.options[0]}
+                        <select value={this.state[field.name] || field.options[0].value}
                                 onChange={this.handleInputChange(field.name)}
                                 disabled={outputState === "working"}>
                             {
-                                field.options.map((value, idx) => (
-                                    <option key={idx} value={value}>{value}</option>
+                                field.options.map((opt, idx) => (
+                                    <option key={idx} value={opt.value}>{opt.value}</option>
                                 ))
                             }
                         </select>
                     )
                     break
 
+                case "RADIO":
+                    input = (
+                        // If we have no value for this select, use the first option.
+                        <RadioGroup
+                            name={inputId}
+                            selectedValue={this.state[field.name] || field.options[0].value}
+                            onChange={this.handleRadioInputChange(field.name)}
+                            disabled={outputState === "working"}>
+                            {
+                                field.options.map((opt, idx) => (
+                                    <label key={idx} data-tip={opt.desc}>
+                                        <Radio value={opt.value}/>{opt.value}
+                                    </label>
+                                ))
+                            }
+                      </RadioGroup>
+                    )
+                    break
                 default:
                     console.error("unknown field type: " + field.type)
             }
@@ -135,7 +164,7 @@ class DemoInput extends React.Component {
         })
 
         return (
-            <div className="model__content">
+            <div className="model__content answer">
                 <ModelIntro title={title} description={description} descriptionEllipsed={descriptionEllipsed}/>
                 <div className="form__instructions">
                     <span>Enter text or</span>
@@ -165,6 +194,7 @@ class DemoInput extends React.Component {
                         </svg>
                     </button>
                 </div>
+                <Tooltip multiline/>
             </div>
         )
     }

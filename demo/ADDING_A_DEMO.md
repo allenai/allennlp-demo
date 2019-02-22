@@ -40,7 +40,7 @@ and the description as just JSX (or some other element):
 const description = (
     <span>
       <span>
-        Reading Comprehension (MC) ... etc ... etc ...
+        Reading Comprehension (RC) ... etc ... etc ...
       </span>
     </span>
 )
@@ -67,8 +67,9 @@ const fields = [
 ]
 ```
 
-Currently the only other field implemented is a `"SELECT"` field,
-which takes an `options` parameter specifying its choices.
+Currently the only other fields implemented are a `"SELECT"` and a `"RADIO"` field,
+which take an `options` parameter specifying its choices.
+
 
 ### Step 3: Examples
 
@@ -110,33 +111,25 @@ and a third `OutputField` containing some visualizations of model internals.
 ```js
 const Output = ({ requestData, responseData }) => {
     const { passage } = requestData
-    const { best_span_str, passage_question_attention, question_tokens, passage_tokens } = responseData
-    const start = passage.indexOf(best_span_str);
+    const { answer } = responseData
+    const start = passage.indexOf(answer);
     const head = passage.slice(0, start);
-    const tail = passage.slice(start + best_span_str.length);
+    const tail = passage.slice(start + answer.length);
 
     return (
-        <div className="model__content">
+        <div className="model__content answer answer">
             <OutputField label="Answer">
-            {best_span_str}
+                {answer}
             </OutputField>
 
-            <OutputField label="Passage Context" classes="passage">
+            <OutputField label="Passage Context">
                 <span>{head}</span>
-                <span className="passage__answer">{best_span_str}</span>
+                <span className="highlight__answer">{answer}</span>
                 <span>{tail}</span>
             </OutputField>
 
             <OutputField>
-                <Collapsible trigger="Model internals (beta)">
-                    <Collapsible trigger="Passage to Question attention">
-                        <span>
-                        For every passage word, the model computes an attention over the question words.
-                        This heatmap shows that attention, which is normalized for every row in the matrix.
-                        </span>
-                        <HeatMap colLabels={question_tokens} rowLabels={passage_tokens} data={passage_question_attention} />
-                    </Collapsible>
-                </Collapsible>
+                etc...
             </OutputField>
         </div>
     )
