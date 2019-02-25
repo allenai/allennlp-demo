@@ -103,14 +103,14 @@ class DemoInput extends React.Component {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 e.stopPropagation();
-                runModel(this.independentInputs())
+                runModel(this.cleanInputs())
             }
         }
 
         // Some of the inputs (e.g. interactive beam search)
         // depend on the previous outputs, so when we do a new run
         // we need to clear them out.
-        this.independentInputs = () => {
+        this.cleanInputs = () => {
             let inputs = {...this.state}
 
             fields.forEach((field) => {
@@ -253,7 +253,7 @@ class DemoInput extends React.Component {
                      type="button"
                      disabled={!canRun || outputState === "working"}
                      className="btn btn--icon-disclosure"
-                     onClick={ () => this.props.runModel(this.independentInputs()) }>Run
+                     onClick={ () => this.props.runModel(this.cleanInputs()) }>Run
                         <svg>
                             <use xlinkHref="#icon__disclosure"></use>
                         </svg>

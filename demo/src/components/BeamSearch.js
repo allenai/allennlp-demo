@@ -5,7 +5,7 @@ import styled from 'styled-components';
 // with an X to "unchoose" it.
 /* eslint-disable jsx-a11y/accessible-emoji */
 const Chosen = ({action, unchoose, idx}) => (
-    <ChosenLI key={idx}>
+    <ChosenLI key={`${idx}-${action}`}>
         <Action>{action}</Action>
         { /* eslint-disable-next-line */ }
         <Unchooser role="img" aria-label="x" onClick={unchoose}>❌</Unchooser>
@@ -18,7 +18,7 @@ const Chosen = ({action, unchoose, idx}) => (
 const ChoiceDropdown = ({predictedAction, choices, choose, idx}) => {
 
     const options = choices.map(([probability, action], i) => (
-        <ChoiceLI key={i} onClick={() => choose(action)}>
+        <ChoiceLI key={`${idx}-${action}`} onClick={() => choose(action)}>
             <Choice>{probability.toFixed(3)} {action}</Choice>
         </ChoiceLI>
     ))
