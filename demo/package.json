@@ -16,6 +16,7 @@
     "react-scripts": "1.0.13",
     "react-syntax-highlighter": "8.0.1",
     "react-tooltip": "3.8.4",
+    "react-vis": "^1.11.6",
     "styled-components": "3.4.10"
   },
   "scripts": {

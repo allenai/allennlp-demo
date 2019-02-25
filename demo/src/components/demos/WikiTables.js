@@ -39,7 +39,13 @@ const fields = [
   {name: "table", label: "Table", type: "TEXT_AREA",
     placeholder: `E.g. "Season\tLevel\tDivision\tSection\tPosition\tMovements\n1993\tTier 3\tDivision 2\tÖstra Svealand\t1st\tPromoted\n1994\tTier 2\tDivision 1\tNorra\t11th\tRelegation Playoffs\n"`},
   {name: "question", label: "Question", type: "TEXT_INPUT",
-    placeholder: `E.g. "What is the only year with the 1st position?"`}
+    placeholder: `E.g. "What is the only year with the 1st position?"`},
+  {name: "beamSearch", type: "BEAM_SEARCH", optional: true,
+   // When we get fresh inputs to the model, we want to clear out the value of initial_sequence
+   dependentInputs: ['initial_sequence'],
+   // The beam search is an "input-output" and so should be rendered below the RUN button.
+   inputOutput: true
+  }
 ]
 
 const ActionInfo = ({ action, question_tokens }) => {
@@ -72,6 +78,7 @@ const ActionInfo = ({ action, question_tokens }) => {
   )
 }
 
+
 const Output = ({ responseData }) => {
     const { answer, logical_form, predicted_actions, linking_scores, feature_scores, similarity_scores, entities, question_tokens } = responseData
 
@@ -95,7 +102,7 @@ const Output = ({ responseData }) => {
                 <div className="accordion__arrow" role="presentation"/>
               </AccordionItemTitle>
               <AccordionItemBody>
-                {predicted_actions.map((action, action_index) => (
+                {(predicted_actions || []).map((action, action_index) => (
                   <Accordion accordion={false} key={"action_" + action_index}>
                     <AccordionItem>
                       <AccordionItemTitle>

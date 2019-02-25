@@ -1,4 +1,5 @@
 import React from 'react';
+import BeamSearch from './BeamSearch'
 import {RadioGroup, Radio, Tooltip} from './Shared'
 import ModelIntro from './ModelIntro'
 import '../css/Button.css'
@@ -102,19 +103,40 @@ class DemoInput extends React.Component {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 e.stopPropagation();
-                runModel(this.state)
+                runModel(this.cleanInputs())
             }
+        }
+
+        // Some of the inputs (e.g. interactive beam search)
+        // depend on the previous outputs, so when we do a new run
+        // we need to clear them out.
+        this.cleanInputs = () => {
+            let inputs = {...this.state}
+
+            fields.forEach((field) => {
+                (field.dependentInputs || []).forEach((name) => {
+                    delete inputs[name]
+                })
+            })
+
+            return inputs
         }
     }
 
     render() {
-        const { title, description, descriptionEllipsed, fields, selectedModel, outputState } = this.props
+        const { title, description, descriptionEllipsed, fields, selectedModel, outputState, responseData, inputState } = this.props
 
         // Only enable running the model if every required field has a value.
         const canRun = fields.every(field => field.optional || this.state[field.name])
 
-        // We render the individual inputs by map-ping over the fields.
-        const inputs = fields.map((field, idx) => {
+        // Fields that are inputs only.
+        const inputs = []
+
+        // Fields that are both inputs and outputs (e.g. beam search). These will be
+        // rendered below the RUN button.
+        const inputOutputs = []
+
+        fields.forEach((field, idx) => {
             // The HTML id for this input:
             const inputId = `input--${selectedModel}-${field.name}`
             const label = field.label ? <label htmlFor={`#${inputId}`}>{field.label}</label> : null
@@ -155,6 +177,18 @@ class DemoInput extends React.Component {
                     )
                     break
 
+                case "BEAM_SEARCH":
+                    if (outputState !== "working") {
+                        const { best_action_sequence, choices } = responseData || {}
+                        const runSequenceModel = (extraState) => this.props.runModel({...this.state, ...extraState}, true)
+
+                        input = <BeamSearch inputState={inputState}
+                                            bestActionSequence={best_action_sequence}
+                                            choices={choices}
+                                            runSequenceModel={runSequenceModel}/>
+                    }
+                    break
+
                 case "RADIO":
                     input = (
                         // If we have no value for this select, use the first option.
@@ -177,13 +211,22 @@ class DemoInput extends React.Component {
                     console.error("unknown field type: " + field.type)
             }
 
-            return (
+            const div = (
                 <div className="form__field" key={field.name}>
                 {label}
                 {input}
                 </div>
             )
+
+            // By default we assume a field is just an input,
+            // unless it has the ``inputOutput`` attribute set.
+            if (field.inputOutput) {
+                inputOutputs.push(div)
+            } else {
+                inputs.push(div)
+            }
         })
+
 
         return (
             <div className="model__content answer">
@@ -210,12 +253,13 @@ class DemoInput extends React.Component {
                      type="button"
                      disabled={!canRun || outputState === "working"}
                      className="btn btn--icon-disclosure"
-                     onClick={ () => this.props.runModel(this.state) }>Run
+                     onClick={ () => this.props.runModel(this.cleanInputs()) }>Run
                         <svg>
                             <use xlinkHref="#icon__disclosure"></use>
                         </svg>
                     </button>
                 </div>
+                {inputOutputs}
                 <Tooltip multiline/>
             </div>
         )

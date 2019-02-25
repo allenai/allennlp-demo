@@ -61,8 +61,9 @@ class Model extends React.Component {
                                      examples={examples}
                                      fields={fields}
                                      inputState={requestData}
+                                     responseData={responseData}
                                      outputState={outputState}
-                                     runModel={this.runModel} />
+                                     runModel={this.runModel}/>
 
         const demoOutput = requestData && responseData ? <Output {...this.state}/> : null
 
