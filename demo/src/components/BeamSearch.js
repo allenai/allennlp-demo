@@ -1,33 +1,35 @@
 import React from 'react';
-import '../css/BeamSearch.css';
+import styled from 'styled-components';
 
 // Component representing an element of the sequence that has been fixed,
 // with an X to "unchoose" it.
+/* eslint-disable jsx-a11y/accessible-emoji */
 const Chosen = ({action, unchoose, idx}) => (
-    <li className="chosen" key={idx}>
-        <a className="action">{action}</a>
-        <span className="unchoose" role="img" aria-label="x" onClick={unchoose}>❌</span>
-    </li>
+    <ChosenLI key={idx}>
+        <Action>{action}</Action>
+        { /* eslint-disable-next-line */ }
+        <Unchooser role="img" aria-label="x" onClick={unchoose}>❌</Unchooser>
+    </ChosenLI>
 )
+/* eslint-enable jsx-a11y/accessible-emoji */
 
 // Component representing an element of the sequence that can be selected,
 // with a dropdown containing all the possible choices.
 const ChoiceDropdown = ({predictedAction, choices, choose, idx}) => {
 
     const options = choices.map(([probability, action], i) => (
-        <li className="choice" key={i} onClick={() => choose(action)}>
-            <a className="probability">{probability.toFixed(3)}</a>
-            <a className="action-choice">{action}</a>
-        </li>
+        <ChoiceLI key={i} onClick={() => choose(action)}>
+            <Choice>{probability.toFixed(3)} {action}</Choice>
+        </ChoiceLI>
     ))
 
     return (
-        <li className="choice-dropdown" key={idx}>
-            <a className="predicted-action">{predictedAction}</a>
-            <ul className="choices">
+        <ChoicesLI className="choice-dropdown" key={idx}>
+            <Action>{predictedAction}</Action>
+            <ChoicesUL>
                 {options}
-            </ul>
-        </li>
+            </ChoicesUL>
+        </ChoicesLI>
     )
 }
 
@@ -90,9 +92,9 @@ class BeamSearch extends React.Component {
                     <label>
                         Interactive Beam Search
                     </label>
-                    <ul className="beam-search">
-                        {listItems}
-                    </ul>
+                    <BeamSearchUL>
+                       {listItems}
+                    </BeamSearchUL>
                 </div>
             )
         } else {
@@ -100,5 +102,74 @@ class BeamSearch extends React.Component {
         }
     }
 }
+
+
+const BeamSearchUL = styled.ul`
+    font-size: 0.5em;
+`
+
+const BeamSearchLI = styled.li`
+    display: inline-block;
+    font-size: 1em;
+    position: relative;
+    display: inline-block;
+    border: 1px solid #d4dce2;
+    padding: 5px;
+`
+
+
+const ChosenLI = styled(BeamSearchLI)`
+    background-color: lightgray;
+    color: white;
+
+    :hover a {
+        color: black;
+    }
+`
+
+
+const ChoicesLI = styled(BeamSearchLI)`
+    :hover {
+        background-color: blue;
+    }
+
+    :hover .predicted-action {
+        color: white;
+    }
+
+    :hover ul {
+        display: table;
+        background-color: #f9f9f9;
+        font-size: 1.0em;
+        border: 1px solid black;
+    }
+`
+
+const Unchooser = styled.span`
+    cursor: pointer;
+`
+
+const Action = styled.a`
+    cursor: default;
+    color: #232323;
+`
+
+const ChoicesUL = styled.ul`
+    display: none;
+    position: absolute;
+    z-index: 1;
+    list-style-type: none;
+    padding: 5px;
+    margin: 5px;
+    width: auto;
+    clear: both;
+`
+
+const ChoiceLI = styled.li`
+`
+
+const Choice = styled.a`
+    padding: 5px;
+`
 
 export default BeamSearch
