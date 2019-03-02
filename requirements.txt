@@ -1,3 +1,3 @@
-git+git://github.com/allenai/allennlp.git@c54fcc62936392cff23a7174a0309165c749df90
+allennlp
 psycopg2-binary
 sentry-sdk==0.7.1
