@@ -247,17 +247,7 @@ class DemoInput extends React.Component {
                             <option value="">Choose an example...</option>
                             {
                                 this.normalizedExamples.map((exampleInfo, groupIndex) => {
-                                    return (
-                                      exampleInfo[0] !== "default" && <optgroup label={exampleInfo[0]}>
-                                      {
-                                          exampleInfo[1].map((example, index) => {
-                                              return (
-                                                  <option value={groupIndex + "@@" + index} key={groupIndex + "@@" + index}>{makeSnippet(example, fields)}</option>
-                                              )
-                                          })
-                                      }
-                                      exampleInfo[0] !== "default" && </optgroup>
-                                    )
+                                    return OptionGroup(exampleInfo, groupIndex, fields)
                                 })
                             }
                     </select>
@@ -280,6 +270,28 @@ class DemoInput extends React.Component {
             </div>
         )
     }
+}
+
+function OptionGroup(exampleInfo, groupIndex, fields) {
+  const exampleType = exampleInfo[0]
+  const examples = exampleInfo[1]
+  if (exampleType === "default") {
+      return RenderOptions(examples, groupIndex, fields)
+  } else {
+      return (
+          <optgroup label={exampleType}>
+              {RenderOptions(examples, groupIndex, fields)}
+          </optgroup>
+      )
+  }
+}
+
+function RenderOptions(examples, groupIndex, fields) {
+    return examples.map((example, index) => {
+        return (
+            <option value={groupIndex + "@@" + index} key={groupIndex + "@@" + index}>{makeSnippet(example, fields)}</option>
+        )
+    })
 }
 
 export { DemoInput as default, truncateText }
