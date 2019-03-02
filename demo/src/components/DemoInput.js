@@ -57,8 +57,8 @@ class DemoInput extends React.Component {
         super(props)
 
         const { examples, fields, inputState, runModel } = props
-        if (Array.isArray(examples)) {
-          this.normalizedExamples = {'default': {'text': 'Choose an example...', 'examples': examples}}
+        if (!Array.isArray(examples[0])) {
+          this.normalizedExamples = [["default", examples]]
         } else {
           this.normalizedExamples = examples
         }
@@ -66,14 +66,15 @@ class DemoInput extends React.Component {
         // Populate state using (a copy of) provided values.
         this.state = inputState ? {...inputState} : {}
 
-
         // What happens when you change the example dropdown
-        this.handleExampleChange = exampleType => { return e => {
-            const exampleId = e.target.value
+        this.handleExampleChange = e => {
+            const parts = e.target.value.split('@@')
+            const exampleGroup = parts[0]
+            const exampleId = parts[1]
             if (exampleId !== "") {
+                const example = this.normalizedExamples[exampleGroup][1][exampleId]
                 // Because the field names vary by model, we need to be indirect.
                 let stateUpdate = {}
-                const example = this.normalizedExamples[exampleType]['examples'][exampleId]
 
                 // For each field,
                 fields.forEach(({name}) => {
@@ -87,7 +88,7 @@ class DemoInput extends React.Component {
                 // And now pass the updates to setState.
                 this.setState(stateUpdate)
             }
-        }}
+        }
 
         // What happens when you change an input. This works for text
         // inputs and also select inputs. The first argument is
@@ -234,29 +235,32 @@ class DemoInput extends React.Component {
             }
         })
 
+
         return (
             <div className="model__content answer">
                 <ModelIntro title={title} description={description} descriptionEllipsed={descriptionEllipsed}/>
                 <div className="form__instructions">
                     <span>Enter text or</span>
-                    {
-                        Object.keys(this.normalizedExamples).map((example_type) => {
-                            const example_data = this.normalizedExamples[example_type]
-                            return (<div><select
-                                disabled={outputState === "working"}
-                                style={{"max-width": "17em"}}
-                                onChange={this.handleExampleChange(example_type)}>
-                                    <option value="">{example_data['text']}</option>
-                                    {
-                                        example_data['examples'].map((example, index) => {
-                                            return (
-                                                <option value={index} key={index}>{makeSnippet(example, fields)}</option>
-                                            )
-                                        })
-                                    }
-                            </select></div>)
-                        })
-                    }
+                    <select
+                        disabled={outputState === "working"}
+                        onChange={this.handleExampleChange}>
+                            <option value="">Choose an example...</option>
+                            {
+                                this.normalizedExamples.map((exampleInfo, groupIndex) => {
+                                    return (
+                                      exampleInfo[0] !== "default" && <optgroup label={exampleInfo[0]}>
+                                      {
+                                          exampleInfo[1].map((example, index) => {
+                                              return (
+                                                  <option value={groupIndex + "@@" + index} key={groupIndex + "@@" + index}>{makeSnippet(example, fields)}</option>
+                                              )
+                                          })
+                                      }
+                                      exampleInfo[0] !== "default" && </optgroup>
+                                    )
+                                })
+                            }
+                    </select>
                 </div>
                 {inputs}
                 <div className="form__field form__field--btn">

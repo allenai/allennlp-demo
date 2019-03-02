@@ -300,10 +300,8 @@ const Output = (props) => {
   )
 }
 
-const examples = {
-  'span_extraction': {
-    'text': 'Choose a SQuAD-like example...',
-    'examples': [
+const examples = [
+  ['SQuAD-like Span Extraction', [
         {
           passage: "A reusable launch system (RLS, or reusable launch vehicle, RLV) is a launch system which is capable of launching a payload into space more than once. This contrasts with expendable launch systems, where each launch vehicle is launched once and then discarded. No completely reusable orbital launch system has ever been created. Two partially reusable launch systems were developed, the Space Shuttle and Falcon 9. The Space Shuttle was partially reusable: the orbiter (which included the Space Shuttle main engines and the Orbital Maneuvering System engines), and the two solid rocket boosters were reused after several months of refitting work for each launch. The external tank was discarded after each flight.",
           question: "How many partially reusable launch systems were developed?",
@@ -320,33 +318,23 @@ const examples = {
           passage: "Kerbal Space Program (KSP) is a space flight simulation video game developed and published by Squad for Microsoft Windows, OS X, Linux, PlayStation 4, Xbox One, with a Wii U version that was supposed to be released at a later date. The developers have stated that the gaming landscape has changed since that announcement and more details will be released soon. In the game, players direct a nascent space program, staffed and crewed by humanoid aliens known as \"Kerbals\". The game features a realistic orbital physics engine, allowing for various real-life orbital maneuvers such as Hohmann transfer orbits and bi-elliptic transfer orbits.",
           question: "What does the physics engine allow for?",
         }
-      ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))
-  },
+      ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
 
-  'counting': {
-    'text': 'Choose a counting example...',
-    'examples': [
+  ['Counting', [
         {
           passage: "Hoping to rebound from their fourth-quarter collapse to the Panthers, the Vikings flew to Soldier Field to face Jay Cutler and the Chicago Bears in a Week 16 rematch to conclude the 40th season of Monday Night Football. Due to the Saints losing to Tampa Bay 20-17 in overtime the previous day, the Vikings needed to win their last two games and have the Saints lose to Carolina the next week in order to clinch homefield advantage. In the first quarter, the Bears drew first blood as kicker Robbie Gould nailed a 22-yard field goal for the only score of the period. In the second quarter, the Bears increased their lead with Gould nailing a 42-yard field goal. They increased their lead with Cutler firing a 7-yard TD pass to tight end Greg Olsen. The Bears then closed out the first half with Gould's 41-yard field goal. In the third quarter, the Vikes started to rally with running back Adrian Peterson's 1-yard touchdown run (with the extra point attempt blocked). The Bears increased their lead over the Vikings with Cutler's 2-yard TD pass to tight end Desmond Clark. The Vikings then closed out the quarter with quarterback Brett Favre firing a 6-yard TD pass to tight end Visanthe Shiancoe. An exciting fourth quarter ensued. The Vikings started out the quarter's scoring with kicker Ryan Longwell's 41-yard field goal, along with Adrian Peterson's second 1-yard TD run. The Bears then responded with Cutler firing a 20-yard TD pass to wide receiver Earl Bennett. The Vikings then completed the remarkable comeback with Favre finding wide receiver Sidney Rice on a 6-yard TD pass on 4th-and-goal with 15 seconds left in regulation. The Bears then took a knee to force overtime. In overtime, the Bears won the toss and marched down the field, stopping at the 35-yard line. However, the potential game-winning 45-yard field goal attempt by Gould went wide right, giving the Vikings a chance to win. After an exchange of punts, the Vikings had the ball at the 26-yard line with 11 minutes left in the period. On the first play of scrimmage, Favre fired a screen pass to Peterson who caught it and went 16 yards, before being confronted by Hunter Hillenmeyer, who caused Peterson to fumble the ball, which was then recovered by Bears' linebacker Nick Roach. The Bears then won on Jay Cutler's game-winning 39-yard TD pass to wide receiver Devin Aromashodu. With the loss, not only did the Vikings fall to 11-4, they also surrendered homefield advantage to the Saints.",
           question: "How many field goals did Nate Kaeding kick?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))
-  },
+    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
 
-  'argmax': {
-    'text': 'Choose an argmax example...',
-    'examples': [
+  ['Argmax', [
         {
           passage: "Hoping to rebound from their fourth-quarter collapse to the Panthers, the Vikings flew to Soldier Field to face Jay Cutler and the Chicago Bears in a Week 16 rematch to conclude the 40th season of Monday Night Football. Due to the Saints losing to Tampa Bay 20-17 in overtime the previous day, the Vikings needed to win their last two games and have the Saints lose to Carolina the next week in order to clinch homefield advantage. In the first quarter, the Bears drew first blood as kicker Robbie Gould nailed a 22-yard field goal for the only score of the period. In the second quarter, the Bears increased their lead with Gould nailing a 42-yard field goal. They increased their lead with Cutler firing a 7-yard TD pass to tight end Greg Olsen. The Bears then closed out the first half with Gould's 41-yard field goal. In the third quarter, the Vikes started to rally with running back Adrian Peterson's 1-yard touchdown run (with the extra point attempt blocked). The Bears increased their lead over the Vikings with Cutler's 2-yard TD pass to tight end Desmond Clark. The Vikings then closed out the quarter with quarterback Brett Favre firing a 6-yard TD pass to tight end Visanthe Shiancoe. An exciting fourth quarter ensued. The Vikings started out the quarter's scoring with kicker Ryan Longwell's 41-yard field goal, along with Adrian Peterson's second 1-yard TD run. The Bears then responded with Cutler firing a 20-yard TD pass to wide receiver Earl Bennett. The Vikings then completed the remarkable comeback with Favre finding wide receiver Sidney Rice on a 6-yard TD pass on 4th-and-goal with 15 seconds left in regulation. The Bears then took a knee to force overtime. In overtime, the Bears won the toss and marched down the field, stopping at the 35-yard line. However, the potential game-winning 45-yard field goal attempt by Gould went wide right, giving the Vikings a chance to win. After an exchange of punts, the Vikings had the ball at the 26-yard line with 11 minutes left in the period. On the first play of scrimmage, Favre fired a screen pass to Peterson who caught it and went 16 yards, before being confronted by Hunter Hillenmeyer, who caused Peterson to fumble the ball, which was then recovered by Bears' linebacker Nick Roach. The Bears then won on Jay Cutler's game-winning 39-yard TD pass to wide receiver Devin Aromashodu. With the loss, not only did the Vikings fall to 11-4, they also surrendered homefield advantage to the Saints.",
-
           question: "Who threw the longest touchdown pass of the game?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))
-  },
+    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
 
-  'max': {
-    'text': 'Choose a max example...',
-    'examples': [
+  ['Max', [
         {
           passage: "Hoping to rebound from their loss to the Patriots, the Raiders stayed at home for a Week 16 duel with the Houston Texans.  Oakland would get the early lead in the first quarter as quarterback JaMarcus Russell completed a 20-yard touchdown pass to rookie wide receiver Chaz Schilens.  The Texans would respond with fullback Vonta Leach getting a 1-yard touchdown run, yet the Raiders would answer with kicker Sebastian Janikowski getting a 33-yard and a 30-yard field goal.  Houston would tie the game in the second quarter with kicker Kris Brown getting a 53-yard and a 24-yard field goal. Oakland would take the lead in the third quarter with wide receiver Johnnie Lee Higgins catching a 29-yard touchdown pass from Russell, followed up by an 80-yard punt return for a touchdown.  The Texans tried to rally in the fourth quarter as Brown nailed a 40-yard field goal, yet the Raiders' defense would shut down any possible attempt.",
           question: "How many yards was the longest passing touchdown?",
@@ -355,12 +343,9 @@ const examples = {
           passage: "A power outage that disrupted play in the third quarter served as a fitting metaphor for the Giants' general lack of power on the field this night. Smith was sidelined by a torn pectoral muscle suffered during practice, and backup receiver Ramses Barden saw his season come to an end during this game by way of a torn Achilles tendon. Former Giant Jason Garrett was making his head coaching debut for a Cowboys team revitalized by the firing of head coach Wade Phillips one week earlier. The Dallas defense held the Giants to just 6 points in the first half, aided by cornerback Bryan McCann's 101-yard \"pick 6\" from his own end zone. In a dimly lit third quarter, after a bank of lights went dark, Felix Jones extended the Cowboys' lead to 20 points on a 71-yard touchdown reception. Only after a total blackout caused an eight-minute play stoppage did Manning finally put the Giants' first touchdown on the board, in the form of a 5-yard pass to Manningham. The teams continued to trade touchdowns; a 24-yard pass from Kitna to Austin was followed by a 35-yard reception by Boss. But the Giants' turnover problem resurfaced in the fourth quarter, where a fumble and an interception ended up costing them any chance at a comeback.",
           question: "How many yards was the longest touchdown reception?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))
-  },
+    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
 
-  'arithmetic': {
-    'text': 'Choose an arithmetic example...',
-    'examples': [
+  ['Arithmetic', [
         {
           passage: "The total number of active military personnel in the Croatian Armed Forces stands at 14,506 and 6,000 reserves working in various service branches of the armed forces. In May 2016, Armed Forces had 16,019 members, of which 14,506 were active military personnel and 1,513 civil servants. Of the 14,506 active military personnel, 3,183 were officers, 5,389 non-commissioned officers, 5,393 soldiers, 520 military specialists, 337 civil servants and 1,176 other employees.",
           question: "In May 2016, how many members of the Armed Forces were not active military personnel?",
@@ -381,12 +366,9 @@ const examples = {
           passage: "The Mavericks finished 49–33, one game ahead of Phoenix for the eighth and final playoff spot, which meant that they would once again have to face their in-state rivals, the San Antonio Spurs, who were the top seed in the Western Conference with a 62–20 record. In Game 1 in San Antonio, Dallas had an 81–71 lead in the fourth quarter, but the Spurs rallied back and took Game 1, 85-90. However, the Mavs forced 22 turnovers in Game 2 to rout the Spurs 113–92, splitting the first two games before the series went to Dallas. In Game 3, Manu Ginóbili hit a shot that put the Spurs up 108–106 with 1.7 seconds left, but a buzzer-beater by Vince Carter gave the Mavs the victory, putting them up 2–1 in the series. The Spurs took Game 4 in Dallas 93–89 despite a late Dallas comeback after the Spurs at one point had a 20-point lead and later won Game 5 at home, 109–103, giving them a 3–2 series lead. The Mavs avoided elimination in Game 6 at home by rallying in the fourth quarter, winning 111–113. Game 7 was on the Spurs home court, and the Spurs beat the Mavericks 119–96, putting an end to the Mavericks season.",
           question: "How many points did the Spurs beat the Mavericks by in Game 7?"
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))
-  },
+    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
 
-  'comparison': {
-    'text': 'Choose a comparison example...',
-    'examples': [
+  ['Comparison', [
         {
           passage: "The institutional framework of Navarre was preserved following the 1512 invasion. Once Ferdinand II of Aragon died in January, the Parliament of Navarre gathered in Pamplona, urging Charles V  to attend a coronation ceremony in the town following tradition, but the envoys of the Parliament were met with the Emperor's utter indifference if not contempt. He refused to attend any ceremony and responded with a brief \"let's say I am happy and  pleases me.\" Eventually the Parliament met in 1517 without Charles V, represented instead by the Duke of Najera pronouncing an array of promises of little certitude, while the acting Parliament kept piling up grievances and demands for damages due to the Emperor, totalling 67—the 2nd Viceroy of Navarre Fadrique de Acuña was deposed in 1515 probably for acceding to send grievances.:39-40 Contradictions inherent to the documents accounting for the Emperor's non-existent oath pledge in 1516 point to a contemporary manipulation of the records.",
           question: "Who died first: Ferdinand II or Charles V?"
@@ -395,10 +377,9 @@ const examples = {
           passage: "Kannada language is the official language of Karnataka and spoken as a native language by about 66.54% of the people as of 2011. Other linguistic minorities in the state were Urdu (10.83%), Telugu language (5.84%), Tamil language (3.45%), Marathi language (3.38%), Hindi (3.3%), Tulu language (2.61%), Konkani language (1.29%), Malayalam (1.27%) and Kodava Takk (0.18%). In 2007 the state had a birth rate of 2.2%, a death rate of 0.7%, an infant mortality rate of 5.5% and a maternal mortality rate of 0.2%. The total fertility rate was 2.2.",
           question: "Which linguistic minority is larger, Hindi or Malayalam?"
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))
-  },
+    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
 
-}
+]
 
 const apiUrl = ({model}) => {
   const selectedModel = model || (taskModels[0] && taskModels[0].name);
