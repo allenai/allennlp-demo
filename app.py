@@ -235,7 +235,7 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
 
         # The model predictions are extremely verbose, so we only log the most human-readable
         # parts of them.
-        if model_name == "machine-comprehension":
+        if "comprehension" in model_name:
             if 'best_span_str' in prediction:
                 answer = prediction['best_span_str']
             else:

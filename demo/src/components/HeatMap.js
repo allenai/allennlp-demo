@@ -11,6 +11,7 @@ import '../css/HeatMap.css';
                               corresponds to a table cell / heatmap intensity value
     colLabels: string[]     * List of table header labels describing each column
     rowLabels: string[]     * List of table header labels describing each row
+    includeSlider: bool     * Whether to include a slider to filter out values below a threshold
     color: string           * Heatmap color (optional, default = "blue", see supportedColors below)
     normalization: string   * Sets normalization type (optional). Supported types:
 
@@ -138,7 +139,8 @@ export default class HeatMap extends React.Component {
     }
     return (
       <div className="heatmap-container">
-        {this.state.minFilterOpacity!==this.state.maxFilterOpacity && <div className="slide_container">
+        {this.props.includeSlider && this.state.minFilterOpacity!==this.state.maxFilterOpacity &&
+        <div className="slide_container">
           <input
             type="range"
             min={this.state.minFilterOpacity}

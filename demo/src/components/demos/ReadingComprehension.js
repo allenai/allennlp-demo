@@ -30,18 +30,18 @@ const descriptionEllipsed = (
 
 const taskModels = [
   {
-    name: "BiDAF",
+    name: "BiDAF (trained on SQuAD)",
     desc: "Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow,<br/>a widely used MC baseline that achieved state-of-the-art accuracies on<br/>the SQuAD dataset (Wikipedia sentences) in early 2017."
   },
   {
-    name: "NAQANet",
+    name: "NAQANet (trained on DROP)",
     desc: "An augmented version of QANet that adds rudimentary numerical reasoning ability,<br/>trained on DROP (Dua et al., 2019), as published in the original DROP paper."
   }
 ]
 
 const taskEndpoints = {
-  "BiDAF": "machine-comprehension", // TODO: we should rename tha back-end model to reading-comprehension
-  "NAQANet": "naqanet-reading-comprehension"
+  "BiDAF (trained on SQuAD)": "machine-comprehension", // TODO: we should rename tha back-end model to reading-comprehension
+  "NAQANet (trained on DROP)": "naqanet-reading-comprehension"
 };
 
 const fields = [
@@ -57,7 +57,7 @@ const Attention = ({passage_question_attention, question_tokens, passage_tokens}
     return (
         <OutputField label="Model internals">
           <Accordion accordion={false}>
-            <AccordionItem expanded={true}>
+            <AccordionItem expanded={false}>
               <AccordionItemTitle>
                 Passage to Question attention
                 <div className="accordion__arrow" role="presentation"/>
@@ -202,7 +202,7 @@ const AnswerByType = ({requestData, responseData}) => {
 
       case "count": {
         const { count } = answer || {};
-        if(question && passage && count) {
+        if(question && passage && count.toString()) {
           return (
             <section>
               <OutputField label="Answer">
@@ -230,7 +230,7 @@ const AnswerByType = ({requestData, responseData}) => {
 
       case "arithmetic": {
         const { numbers, value } = answer || {};
-        if(question && passage && numbers && value) {
+        if (question && passage && numbers && value.toString()) {
           return (
             <section>
               <OutputField label="Answer">
@@ -318,21 +318,21 @@ const examples = [
           passage: "Kerbal Space Program (KSP) is a space flight simulation video game developed and published by Squad for Microsoft Windows, OS X, Linux, PlayStation 4, Xbox One, with a Wii U version that was supposed to be released at a later date. The developers have stated that the gaming landscape has changed since that announcement and more details will be released soon. In the game, players direct a nascent space program, staffed and crewed by humanoid aliens known as \"Kerbals\". The game features a realistic orbital physics engine, allowing for various real-life orbital maneuvers such as Hohmann transfer orbits and bi-elliptic transfer orbits.",
           question: "What does the physics engine allow for?",
         }
-      ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
+      ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
 
   ['Counting', [
         {
           passage: "Hoping to rebound from their fourth-quarter collapse to the Panthers, the Vikings flew to Soldier Field to face Jay Cutler and the Chicago Bears in a Week 16 rematch to conclude the 40th season of Monday Night Football. Due to the Saints losing to Tampa Bay 20-17 in overtime the previous day, the Vikings needed to win their last two games and have the Saints lose to Carolina the next week in order to clinch homefield advantage. In the first quarter, the Bears drew first blood as kicker Robbie Gould nailed a 22-yard field goal for the only score of the period. In the second quarter, the Bears increased their lead with Gould nailing a 42-yard field goal. They increased their lead with Cutler firing a 7-yard TD pass to tight end Greg Olsen. The Bears then closed out the first half with Gould's 41-yard field goal. In the third quarter, the Vikes started to rally with running back Adrian Peterson's 1-yard touchdown run (with the extra point attempt blocked). The Bears increased their lead over the Vikings with Cutler's 2-yard TD pass to tight end Desmond Clark. The Vikings then closed out the quarter with quarterback Brett Favre firing a 6-yard TD pass to tight end Visanthe Shiancoe. An exciting fourth quarter ensued. The Vikings started out the quarter's scoring with kicker Ryan Longwell's 41-yard field goal, along with Adrian Peterson's second 1-yard TD run. The Bears then responded with Cutler firing a 20-yard TD pass to wide receiver Earl Bennett. The Vikings then completed the remarkable comeback with Favre finding wide receiver Sidney Rice on a 6-yard TD pass on 4th-and-goal with 15 seconds left in regulation. The Bears then took a knee to force overtime. In overtime, the Bears won the toss and marched down the field, stopping at the 35-yard line. However, the potential game-winning 45-yard field goal attempt by Gould went wide right, giving the Vikings a chance to win. After an exchange of punts, the Vikings had the ball at the 26-yard line with 11 minutes left in the period. On the first play of scrimmage, Favre fired a screen pass to Peterson who caught it and went 16 yards, before being confronted by Hunter Hillenmeyer, who caused Peterson to fumble the ball, which was then recovered by Bears' linebacker Nick Roach. The Bears then won on Jay Cutler's game-winning 39-yard TD pass to wide receiver Devin Aromashodu. With the loss, not only did the Vikings fall to 11-4, they also surrendered homefield advantage to the Saints.",
-          question: "How many field goals did Nate Kaeding kick?",
+          question: "How many field goals did Robbie Gould kick?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
+    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
 
   ['Argmax', [
         {
           passage: "Hoping to rebound from their fourth-quarter collapse to the Panthers, the Vikings flew to Soldier Field to face Jay Cutler and the Chicago Bears in a Week 16 rematch to conclude the 40th season of Monday Night Football. Due to the Saints losing to Tampa Bay 20-17 in overtime the previous day, the Vikings needed to win their last two games and have the Saints lose to Carolina the next week in order to clinch homefield advantage. In the first quarter, the Bears drew first blood as kicker Robbie Gould nailed a 22-yard field goal for the only score of the period. In the second quarter, the Bears increased their lead with Gould nailing a 42-yard field goal. They increased their lead with Cutler firing a 7-yard TD pass to tight end Greg Olsen. The Bears then closed out the first half with Gould's 41-yard field goal. In the third quarter, the Vikes started to rally with running back Adrian Peterson's 1-yard touchdown run (with the extra point attempt blocked). The Bears increased their lead over the Vikings with Cutler's 2-yard TD pass to tight end Desmond Clark. The Vikings then closed out the quarter with quarterback Brett Favre firing a 6-yard TD pass to tight end Visanthe Shiancoe. An exciting fourth quarter ensued. The Vikings started out the quarter's scoring with kicker Ryan Longwell's 41-yard field goal, along with Adrian Peterson's second 1-yard TD run. The Bears then responded with Cutler firing a 20-yard TD pass to wide receiver Earl Bennett. The Vikings then completed the remarkable comeback with Favre finding wide receiver Sidney Rice on a 6-yard TD pass on 4th-and-goal with 15 seconds left in regulation. The Bears then took a knee to force overtime. In overtime, the Bears won the toss and marched down the field, stopping at the 35-yard line. However, the potential game-winning 45-yard field goal attempt by Gould went wide right, giving the Vikings a chance to win. After an exchange of punts, the Vikings had the ball at the 26-yard line with 11 minutes left in the period. On the first play of scrimmage, Favre fired a screen pass to Peterson who caught it and went 16 yards, before being confronted by Hunter Hillenmeyer, who caused Peterson to fumble the ball, which was then recovered by Bears' linebacker Nick Roach. The Bears then won on Jay Cutler's game-winning 39-yard TD pass to wide receiver Devin Aromashodu. With the loss, not only did the Vikings fall to 11-4, they also surrendered homefield advantage to the Saints.",
           question: "Who threw the longest touchdown pass of the game?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
+    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
 
   ['Max', [
         {
@@ -343,7 +343,7 @@ const examples = [
           passage: "A power outage that disrupted play in the third quarter served as a fitting metaphor for the Giants' general lack of power on the field this night. Smith was sidelined by a torn pectoral muscle suffered during practice, and backup receiver Ramses Barden saw his season come to an end during this game by way of a torn Achilles tendon. Former Giant Jason Garrett was making his head coaching debut for a Cowboys team revitalized by the firing of head coach Wade Phillips one week earlier. The Dallas defense held the Giants to just 6 points in the first half, aided by cornerback Bryan McCann's 101-yard \"pick 6\" from his own end zone. In a dimly lit third quarter, after a bank of lights went dark, Felix Jones extended the Cowboys' lead to 20 points on a 71-yard touchdown reception. Only after a total blackout caused an eight-minute play stoppage did Manning finally put the Giants' first touchdown on the board, in the form of a 5-yard pass to Manningham. The teams continued to trade touchdowns; a 24-yard pass from Kitna to Austin was followed by a 35-yard reception by Boss. But the Giants' turnover problem resurfaced in the fourth quarter, where a fumble and an interception ended up costing them any chance at a comeback.",
           question: "How many yards was the longest touchdown reception?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
+    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
 
   ['Arithmetic', [
         {
@@ -366,7 +366,7 @@ const examples = [
           passage: "The Mavericks finished 49–33, one game ahead of Phoenix for the eighth and final playoff spot, which meant that they would once again have to face their in-state rivals, the San Antonio Spurs, who were the top seed in the Western Conference with a 62–20 record. In Game 1 in San Antonio, Dallas had an 81–71 lead in the fourth quarter, but the Spurs rallied back and took Game 1, 85-90. However, the Mavs forced 22 turnovers in Game 2 to rout the Spurs 113–92, splitting the first two games before the series went to Dallas. In Game 3, Manu Ginóbili hit a shot that put the Spurs up 108–106 with 1.7 seconds left, but a buzzer-beater by Vince Carter gave the Mavs the victory, putting them up 2–1 in the series. The Spurs took Game 4 in Dallas 93–89 despite a late Dallas comeback after the Spurs at one point had a 20-point lead and later won Game 5 at home, 109–103, giving them a 3–2 series lead. The Mavs avoided elimination in Game 6 at home by rallying in the fourth quarter, winning 111–113. Game 7 was on the Spurs home court, and the Spurs beat the Mavericks 119–96, putting an end to the Mavericks season.",
           question: "How many points did the Spurs beat the Mavericks by in Game 7?"
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
+    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
 
   ['Comparison', [
         {
@@ -377,7 +377,7 @@ const examples = [
           passage: "Kannada language is the official language of Karnataka and spoken as a native language by about 66.54% of the people as of 2011. Other linguistic minorities in the state were Urdu (10.83%), Telugu language (5.84%), Tamil language (3.45%), Marathi language (3.38%), Hindi (3.3%), Tulu language (2.61%), Konkani language (1.29%), Malayalam (1.27%) and Kodava Takk (0.18%). In 2007 the state had a birth rate of 2.2%, a death rate of 0.7%, an infant mortality rate of 5.5% and a maternal mortality rate of 0.2%. The total fertility rate was 2.2.",
           question: "Which linguistic minority is larger, Hindi or Malayalam?"
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.passage)}))],
+    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
 
 ]
 
