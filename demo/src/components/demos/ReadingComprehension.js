@@ -69,7 +69,7 @@ const Attention = ({passage_question_attention, question_tokens, passage_tokens}
                 </p>
                 <HeatMap
                   colLabels={question_tokens} rowLabels={passage_tokens}
-                  data={passage_question_attention} />
+                  data={passage_question_attention} includeSlider={true} showAllCols={true} />
               </AccordionItemBody>
             </AccordionItem>
           </Accordion>
