@@ -7,6 +7,8 @@ import '../css/Button.css'
 const PATTERN_NON_WORD_CHAR = /\W/;
 const PATTERN_WORD_CHAR = /\w/;
 const ELLIPSIS = '…';
+const EXAMPLE_NAME_SEPARATOR = '@@';
+const DEFAULT_OPTION_GROUP = "DEFAULT_OPTION_GROUP";
 /**
  * Truncates the provided text such that no more than limit characters are rendered and adds an
  * ellipsis upon truncation.  If the text is shorter than the provided limit, the full text is
@@ -58,7 +60,10 @@ class DemoInput extends React.Component {
 
         const { examples, fields, inputState, runModel } = props
         if (!Array.isArray(examples[0])) {
-          this.normalizedExamples = [["default", examples]]
+          // TODO(mattg,jonb): Change this type to be [{"default": examples}]. Doing this requires
+          // updating all of the other demos, and is probably best done by adding some kind of
+          // Examples class, with a function like AddExample(data, optional group name).
+          this.normalizedExamples = [[DEFAULT_OPTION_GROUP, examples]]
         } else {
           this.normalizedExamples = examples
         }
@@ -68,11 +73,9 @@ class DemoInput extends React.Component {
 
         // What happens when you change the example dropdown
         this.handleExampleChange = e => {
-            const parts = e.target.value.split('@@')
-            const exampleGroup = parts[0]
-            const exampleId = parts[1]
-            if (exampleId !== "") {
-                const example = this.normalizedExamples[exampleGroup][1][exampleId]
+            if (e.target.value !== "") {
+                const { groupIndex, exampleIndex } = decodeExampleName(e.target.value)
+                const example = this.normalizedExamples[groupIndex][1][exampleIndex]
                 // Because the field names vary by model, we need to be indirect.
                 let stateUpdate = {}
 
@@ -275,7 +278,7 @@ class DemoInput extends React.Component {
 function OptionGroup(exampleInfo, groupIndex, fields) {
   const exampleType = exampleInfo[0]
   const examples = exampleInfo[1]
-  if (exampleType === "default") {
+  if (!exampleType || exampleType === DEFAULT_OPTION_GROUP) {
       return RenderOptions(examples, groupIndex, fields)
   } else {
       return (
@@ -287,11 +290,24 @@ function OptionGroup(exampleInfo, groupIndex, fields) {
 }
 
 function RenderOptions(examples, groupIndex, fields) {
-    return examples.map((example, index) => {
+    return examples.map((example, exampleIndex) => {
+        const encodedName = encodeExampleName(groupIndex, exampleIndex)
         return (
-            <option value={groupIndex + "@@" + index} key={groupIndex + "@@" + index}>{makeSnippet(example, fields)}</option>
+            <option value={encodedName} key={encodedName}>{makeSnippet(example, fields)}</option>
         )
     })
+}
+
+function encodeExampleName(groupIndex, exampleIndex) {
+  return groupIndex + EXAMPLE_NAME_SEPARATOR + exampleIndex
+}
+
+function decodeExampleName(name) {
+  const parts = name.split(EXAMPLE_NAME_SEPARATOR)
+  return {
+    groupIndex: parts.length ? parts[0] : undefined,
+    exampleIndex: parts.length > 0 ? parts[1] : undefined,
+  }
 }
 
 export { DemoInput as default, truncateText }

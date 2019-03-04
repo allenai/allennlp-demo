@@ -202,7 +202,7 @@ const AnswerByType = ({requestData, responseData}) => {
 
       case "count": {
         const { count } = answer || {};
-        if(question && passage && count.toString()) {
+        if(question && passage && count !== undefined) {
           return (
             <section>
               <OutputField label="Answer">
@@ -230,7 +230,7 @@ const AnswerByType = ({requestData, responseData}) => {
 
       case "arithmetic": {
         const { numbers, value } = answer || {};
-        if (question && passage && numbers && value.toString()) {
+        if (question && passage && numbers && value !== undefined) {
           return (
             <section>
               <OutputField label="Answer">
@@ -300,6 +300,10 @@ const Output = (props) => {
   )
 }
 
+const addSnippet = (example) => {
+  return {...example, snippet: truncateText(example.question)}
+}
+
 const examples = [
   ['SQuAD-like Argument Finding', [
         {
@@ -322,7 +326,7 @@ const examples = [
           passage: "The institutional framework of Navarre was preserved following the 1512 invasion. Once Ferdinand II of Aragon died in January, the Parliament of Navarre gathered in Pamplona, urging Charles V  to attend a coronation ceremony in the town following tradition, but the envoys of the Parliament were met with the Emperor's utter indifference if not contempt. He refused to attend any ceremony and responded with a brief \"let's say I am happy and  pleases me.\" Eventually the Parliament met in 1517 without Charles V, represented instead by the Duke of Najera pronouncing an array of promises of little certitude, while the acting Parliament kept piling up grievances and demands for damages due to the Emperor, totalling 67—the 2nd Viceroy of Navarre Fadrique de Acuña was deposed in 1515 probably for acceding to send grievances. Contradictions inherent to the documents accounting for the Emperor's non-existent oath pledge in 1516 point to a contemporary manipulation of the records.",
           question: "Who represented the Charles V at Parliament?",
         },
-      ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
+      ].map(addSnippet)],
 
   ['Counting', [
         {
@@ -337,7 +341,7 @@ const examples = [
           passage: "In 1085, Guadalajara was retaken by the Christian forces of Alfonso VI . The chronicles say that the Christian army was led by Alvar Fanez de Minaya, one of the lieutenants  of El Cid. From 1085 until the Battle of Las    Navas de Tolosa in 1212, the city suffered wars against the Almoravid and the Almohad Empires. In spite of the wars, the Christian population could definitely settle down in the area thanks to the repopulation with people from the North  who received their first fuero in 1133 from Alfonso VII.In 1219, the king Fernando III gave a new fuero to the city .During the reign of Alfonso X of Castile, the protection of the king allowed the city to develop its economy by protecting merchants and allowing markets.",
           question: "How many empires attacked Guadalajara?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
+    ].map(addSnippet)],
 
   ['Argmax', [
         {
@@ -348,7 +352,7 @@ const examples = [
           passage: "A power outage that disrupted play in the third quarter served as a fitting metaphor for the Giants' general lack of power on the field this night. Smith was sidelined by a torn pectoral muscle suffered during practice, and backup receiver Ramses Barden saw his season come to an end during this game by way of a torn Achilles tendon. Former Giant Jason Garrett was making his head coaching debut for a Cowboys team revitalized by the firing of head coach Wade Phillips one week earlier. The Dallas defense held the Giants to just 6 points in the first half, aided by cornerback Bryan McCann's 101-yard \"pick 6\" from his own end zone. In a dimly lit third quarter, after a bank of lights went dark, Felix Jones extended the Cowboys' lead to 20 points on a 71-yard touchdown reception. Only after a total blackout caused an eight-minute play stoppage did Manning finally put the Giants' first touchdown on the board, in the form of a 5-yard pass to Manningham. The teams continued to trade touchdowns; a 24-yard pass from Kitna to Austin was followed by a 35-yard reception by Boss. But the Giants' turnover problem resurfaced in the fourth quarter, where a fumble and an interception ended up costing them any chance at a comeback.",
           question: "Who caught the shortest touchdown pass?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
+    ].map(addSnippet)],
 
   ['Max', [
         {
@@ -359,7 +363,7 @@ const examples = [
           passage: "A power outage that disrupted play in the third quarter served as a fitting metaphor for the Giants' general lack of power on the field this night. Smith was sidelined by a torn pectoral muscle suffered during practice, and backup receiver Ramses Barden saw his season come to an end during this game by way of a torn Achilles tendon. Former Giant Jason Garrett was making his head coaching debut for a Cowboys team revitalized by the firing of head coach Wade Phillips one week earlier. The Dallas defense held the Giants to just 6 points in the first half, aided by cornerback Bryan McCann's 101-yard \"pick 6\" from his own end zone. In a dimly lit third quarter, after a bank of lights went dark, Felix Jones extended the Cowboys' lead to 20 points on a 71-yard touchdown reception. Only after a total blackout caused an eight-minute play stoppage did Manning finally put the Giants' first touchdown on the board, in the form of a 5-yard pass to Manningham. The teams continued to trade touchdowns; a 24-yard pass from Kitna to Austin was followed by a 35-yard reception by Boss. But the Giants' turnover problem resurfaced in the fourth quarter, where a fumble and an interception ended up costing them any chance at a comeback.",
           question: "How many yards was the longest touchdown reception?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
+    ].map(addSnippet)],
 
   ['Arithmetic', [
         {
@@ -390,7 +394,7 @@ const examples = [
           passage: "The Mavericks finished 49–33, one game ahead of Phoenix for the eighth and final playoff spot, which meant that they would once again have to face their in-state rivals, the San Antonio Spurs, who were the top seed in the Western Conference with a 62–20 record. In Game 1 in San Antonio, Dallas had an 81–71 lead in the fourth quarter, but the Spurs rallied back and took Game 1, 85-90. However, the Mavs forced 22 turnovers in Game 2 to rout the Spurs 113–92, splitting the first two games before the series went to Dallas. In Game 3, Manu Ginóbili hit a shot that put the Spurs up 108–106 with 1.7 seconds left, but a buzzer-beater by Vince Carter gave the Mavs the victory, putting them up 2–1 in the series. The Spurs took Game 4 in Dallas 93–89 despite a late Dallas comeback after the Spurs at one point had a 20-point lead and later won Game 5 at home, 109–103, giving them a 3–2 series lead. The Mavs avoided elimination in Game 6 at home by rallying in the fourth quarter, winning 111–113. Game 7 was on the Spurs home court, and the Spurs beat the Mavericks 119–96, putting an end to the Mavericks season.",
           question: "How many points did the Spurs beat the Mavericks by in Game 7?"
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
+    ].map(addSnippet)],
 
   ['Comparison', [
         {
@@ -409,7 +413,7 @@ const examples = [
           passage: "In 1905, 1,003 Korean immigrants, which included 802 men and 231 women and children, departed from the port of Chemulpo, Incheon aboard the ship Ilford to Salina Cruz, Oaxaca, Mexico. The journey took 45 days, after which they took a train to Coatzacoalcos, Veracruz. In the Veracruz port, another boat was taken to the port of Progreso with the final destination being the capital city of Mérida, Yucatan. They arrived in May 1905, with previously signed contracts for four years' work as indentured laborers on the Yucatán henequen haciendas. Many of these Koreans were distributed throughout the Yucatán in 32 henequen haciendas. The town of Motul, Yucatan, located in the heart of the henequen zone, was a destination for many of the Korean immigrants. Subsequently, in 1909, at the end of their contracts, they began a new stage in which they scattered even further  Thus, the majority of those who came were single men who made or remade their family lives with Yucatecan especially Maya women. While Korean girls were much more subject to marriages arranged by Korean parents, males had greater freedom when it came to making a family. This rapid intermarriage by Koreans, coupled with geographic dispersal, prevented the establishment of close social networks among these migrants and therefore provided the basis for Korean descendants among the Yucatan Peninsula. After that 1905 ship, no further entries of Koreans into Mexico were recorded, until many years later, leading to a new community of Koreans with completely different characteristics from those who entered in 1905. These descendants have started the Museo Conmemorativo de la Inmigración Coreana a Yucatán, a museum for the remembrance of their ancestors journey.",
           question: "Where did the immigrants arrive first, Coatzacoalcos or Salina Cruz?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
+    ].map(addSnippet)],
 
   ['Coreference', [
         {
@@ -424,7 +428,7 @@ const examples = [
           passage: "The institutional framework of Navarre was preserved following the 1512 invasion. Once Ferdinand II of Aragon died in January, the Parliament of Navarre gathered in Pamplona, urging Charles V  to attend a coronation ceremony in the town following tradition, but the envoys of the Parliament were met with the Emperor's utter indifference if not contempt. He refused to attend any ceremony and responded with a brief \"let's say I am happy and  pleases me.\" Eventually the Parliament met in 1517 without Charles V, represented instead by the Duke of Najera pronouncing an array of promises of little certitude, while the acting Parliament kept piling up grievances and demands for damages due to the Emperor, totalling 67—the 2nd Viceroy of Navarre Fadrique de Acuña was deposed in 1515 probably for acceding to send grievances. Contradictions inherent to the documents accounting for the Emperor's non-existent oath pledge in 1516 point to a contemporary manipulation of the records.",
           question: "Where was the coronation that Charles V was supposed to attend?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
+    ].map(addSnippet)],
 
   ['Combinations', [
         {
@@ -439,7 +443,7 @@ const examples = [
           passage: "1% of those at school in the South-East gained no GCSE passes in 2010; Portsmouth was most with 2.5%, and Windsor and Maidenhead had the lowest with 0.2%. For school free school meals, the region has the lowest percentage in England with 7.2%; the highest percentage is Southampton with 17%, and the lowest is Wokingham with 3.5% (the second lowest in England after Rutland); Buckinghamshire is 4.3%, then Bracknell Forest and Surrey are 4.9%. For truancy, the highest is South Bucks at 7.0, then Canterbury 7.0, Portsmouth 6.9, Thanet 6.9, Southampton 6.4, and Rushmoor 6.1. The lowest truancy percentages are for Tandridge 2.5, Windsor & Maidenhead 2.5, and Slough 2.5.",
           question: "Which areas are tied for the highest truancy rates?",
         },
-    ].map(ex => ({...ex, snippet: truncateText(ex.question)}))],
+    ].map(addSnippet)],
 
 ]
 
