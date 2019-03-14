@@ -1,11 +1,30 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/ai2-allennlp/allennlp-demo', '.']
+    args: ['pull',
+      'gcr.io/ai2-allennlp/allennlp-demo:latest']
     timeout: 1000s
   - name: 'gcr.io/cloud-builders/docker'
-    args: ["push", "gcr.io/ai2-allennlp/allennlp-demo"]
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['run', '--entrypoint=', 'gcr.io/ai2-allennlp/allennlp-demo', 'pytest', 'tests/']
+    args: ['build',
+      '-t', 'gcr.io/ai2-allennlp/allennlp-demo:$COMMIT_SHA',
+      '-t', 'gcr.io/ai2-allennlp/allennlp-demo:latest',
+      '--cache-from', 'gcr.io/ai2-allennlp/allennlp-demo:latest',
+      '.']
     timeout: 1000s
-images: ['gcr.io/ai2-allennlp/allennlp-demo']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ["push",
+    "gcr.io/ai2-allennlp/allennlp-demo:$COMMIT_SHA"]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ["push",
+    "gcr.io/ai2-allennlp/allennlp-demo:latest"]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['run',
+      '--entrypoint=',
+      'gcr.io/ai2-allennlp/allennlp-demo:$COMMIT_SHA',
+      'pytest',
+      'tests/']
+    timeout: 1000s
 timeout: 2000s
+images: [
+  'gcr.io/ai2-allennlp/allennlp-demo:$COMMIT_SHA',
+  'gcr.io/ai2-allennlp/allennlp-demo:latest'
+]
