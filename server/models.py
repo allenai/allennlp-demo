@@ -37,11 +37,11 @@ MODELS = {
                 'machine-comprehension',
                 311108
         ),
-        'naqanet-reading-comprehension': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/naqanet-2019.03.01.tar.gz',
-                'machine-comprehension',
-                25819
-        ),
+        # 'naqanet-reading-comprehension': DemoModel(
+        #         'https://s3-us-west-2.amazonaws.com/allennlp/models/naqanet-2019.03.01.tar.gz',
+        #         'machine-comprehension',
+        #         25819
+        # ),
         'semantic-role-labeling': DemoModel(
                 'https://s3-us-west-2.amazonaws.com/allennlp/models/srl-model-2018.05.25.tar.gz',
                 'semantic-role-labeling',

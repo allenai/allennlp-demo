@@ -33,6 +33,9 @@ CACHE_SIZE = os.environ.get("FLASK_CACHE_SIZE") or 128
 PORT = os.environ.get("ALLENNLP_DEMO_PORT") or 8000
 DEMO_DIR = os.environ.get("ALLENNLP_DEMO_DIRECTORY") or 'demo/'
 
+# If this environment variable is set, then we only load the one model with this name.
+MODEL_NAME = os.environ.get("ALLENNLP_MODEL_NAME")
+
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -71,22 +74,28 @@ def main():
     if demo_db is None:
         logger.warning("demo db credentials not provided, so not using demo db")
 
-    app = make_app(demo_db=demo_db)
-    CORS(app)
+    # If environment variables said to load only one model, only load that model.
+    if MODEL_NAME is not None:
+        models = {MODEL_NAME: MODELS[MODEL_NAME]}
+    else:
+        models = MODELS
 
-    for name, demo_model in MODELS.items():
-        logger.info(f"loading {name} model")
-        predictor = demo_model.predictor()
-        app.predictors[name] = predictor
-        app.max_request_lengths[name] = demo_model.max_request_length
+    app = make_app(demo_db=demo_db, models=models)
+    CORS(app)
 
     http_server = WSGIServer(('0.0.0.0', PORT), app)
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", PORT, PORT)
     http_server.serve_forever()
 
-def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> Flask:
+
+def make_app(build_dir: str = None,
+             demo_db: Optional[DemoDatabase] = None,
+             models: Dict[str, DemoModel] = None) -> Flask:
     if build_dir is None:
         build_dir = os.path.join(DEMO_DIR, 'build')
+
+    if models is None:
+        models = {}
 
     if not os.path.exists(build_dir):
         logger.error("app directory %s does not exist, aborting", build_dir)
@@ -99,6 +108,12 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
     app.predictors = {}
     app.max_request_lengths = {}
     app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
+
+    for name, demo_model in models.items():
+        logger.info(f"loading {name} model")
+        predictor = demo_model.predictor()
+        app.predictors[name] = predictor
+        app.max_request_lengths[name] = demo_model.max_request_length
 
     try:
         cache_size = int(CACHE_SIZE)  # type: ignore
@@ -294,37 +309,14 @@ def make_app(build_dir: str = None, demo_db: Optional[DemoDatabase] = None) -> F
                 "peak_memory_mb": peak_memory_mb(),
                 "githubUrl": "http://github.com/allenai/allennlp-demo/commit/" + git_version})
 
-    # As an SPA, we need to return index.html for /model-name and /model-name/permalink.
-    @app.route('/open-information-extraction')
-    @app.route('/semantic-role-labeling')
-    @app.route('/constituency-parsing')
-    @app.route('/dependency-parsing')
-    @app.route('/reading-comprehension')
-    @app.route('/textual-entailment')
-    @app.route('/coreference-resolution')
-    @app.route('/named-entity-recognition')
-    @app.route('/fine-grained-named-entity-recognition')
-    @app.route('/wikitables-parser')
-    @app.route('/nlvr-parser')
-    @app.route('/quarel-parser-zero')
-    @app.route('/event2mind')
-    @app.route('/open-information-extraction/<permalink>')
-    @app.route('/atis-parser')
-    @app.route('/semantic-role-labeling/<permalink>')
-    @app.route('/constituency-parsing/<permalink>')
-    @app.route('/dependency-parsing/<permalink>')
-    @app.route('/reading-comprehension/<permalink>')
-    @app.route('/textual-entailment/<permalink>')
-    @app.route('/coreference-resolution/<permalink>')
-    @app.route('/named-entity-recognition/<permalink>')
-    @app.route('/event2mind/<permalink>')
-    @app.route('/wikitables-parser/<permalink>')
-    @app.route('/nlvr-parser/<permalink>')
-    @app.route('/quarel-parser-zero/<permalink>')
-    @app.route('/atis-parser/<permalink>')
+    # As an SPA, we need to return index.html for /model-name and /model-name/permalink,
     def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
         """return the page"""
         return send_file(os.path.join(build_dir, 'index.html'))
+
+    for model_name in models:
+        app.add_url_rule(f"/{model_name}", view_func=return_page)
+        app.add_url_rule(f"/{model_name}/<permalink>", view_func=return_page)
 
     @app.route('/<path:path>')
     def static_proxy(path: str) -> Response: # pylint: disable=unused-variable
