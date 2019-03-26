@@ -4,7 +4,8 @@
 A `Flask <http://flask.pocoo.org/>`_ server that serves up our demo.
 """
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict, Optional, List
+import argparse
 import json
 import logging
 import os
@@ -28,13 +29,7 @@ from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
 from server.models import MODELS, DemoModel
 
-# Can override cache size with an environment variable. If it's 0 then disable caching altogether.
-CACHE_SIZE = os.environ.get("FLASK_CACHE_SIZE") or 128
-PORT = os.environ.get("ALLENNLP_DEMO_PORT") or 8000
-DEMO_DIR = os.environ.get("ALLENNLP_DEMO_DIRECTORY") or 'demo/'
 
-# If this environment variable is set, then we only load the one model with this name.
-MODEL_NAME = os.environ.get("ALLENNLP_MODEL_NAME")
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("allennlp").setLevel(logging.WARN)
@@ -61,11 +56,14 @@ class ServerError(Exception):
         error_dict['message'] = self.message
         return error_dict
 
-def main():
+def main(demo_dir: str,
+         port: int,
+         cache_size: int,
+         model_names: List[str]) -> None:
     """Run the server programatically"""
-    logger.info("Starting a flask server on port %i.", PORT)
+    logger.info("Starting a flask server on port %i.", port)
 
-    if PORT != 8000:
+    if port != 8000:
         logger.warning("The demo requires the API to be run on port 8000.")
 
     # This will be ``None`` if all the relevant environment variables are not defined or if
@@ -75,25 +73,27 @@ def main():
         logger.warning("demo db credentials not provided, so not using demo db")
 
     # If environment variables said to load only one model, only load that model.
-    if MODEL_NAME is not None:
-        models = {MODEL_NAME: MODELS[MODEL_NAME]}
+    if model_names:
+        models = {
+            name: demo_model
+            for name, demo_model in MODELS.items()
+            if name in model_names
+        }
     else:
         models = MODELS
 
-    app = make_app(demo_db=demo_db, models=models)
+    app = make_app(build_dir=f"{demo_dir}/build", demo_db=demo_db, models=models)
     CORS(app)
 
-    http_server = WSGIServer(('0.0.0.0', PORT), app)
-    logger.info("Server started on port %i.  Please visit: http://localhost:%i", PORT, PORT)
+    http_server = WSGIServer(('0.0.0.0', port), app)
+    logger.info("Server started on port %i.  Please visit: http://localhost:%i", port, port)
     http_server.serve_forever()
 
 
 def make_app(build_dir: str = None,
              demo_db: Optional[DemoDatabase] = None,
-             models: Dict[str, DemoModel] = None) -> Flask:
-    if build_dir is None:
-        build_dir = os.path.join(DEMO_DIR, 'build')
-
+             models: Dict[str, DemoModel] = None,
+             cache_size: int = 128) -> Flask:
     if models is None:
         models = {}
 
@@ -114,12 +114,6 @@ def make_app(build_dir: str = None,
         predictor = demo_model.predictor()
         app.predictors[name] = predictor
         app.max_request_lengths[name] = demo_model.max_request_length
-
-    try:
-        cache_size = int(CACHE_SIZE)  # type: ignore
-    except ValueError:
-        logger.warning("unable to parse cache size %s as int, disabling cache", CACHE_SIZE)
-        cache_size = 0
 
     @app.errorhandler(ServerError)
     def handle_invalid_usage(error: ServerError) -> Response:  # pylint: disable=unused-variable
@@ -333,4 +327,15 @@ def make_app(build_dir: str = None,
     return app
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser("start the allennlp demo")
+    parser.add_argument('--port', type=int, default=8000, help='port to serve the demo on')
+    parser.add_argument('--demo-dir', type=str, default='demo/', help="directory where the demo HTML is located")
+    parser.add_argument('--cache-size', type=int, default=128, help="how many results to keep in memory")
+    parser.add_argument('--model-name', type=str, action='append', default=[], help='if specified, only load these models')
+
+    args = parser.parse_args()
+
+    main(demo_dir=args.demo_dir,
+         port=args.port,
+         cache_size=args.cache_size,
+         model_names=args.model_name)

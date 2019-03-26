@@ -199,10 +199,8 @@ class TestFlask(AllenNlpTestCase):
             assert len(predictor.calls) == 2
 
     def test_disable_caching(self):
-        app.CACHE_SIZE = 0
-
         predictor = CountingPredictor()
-        application = make_app(build_dir=self.TEST_DIR)
+        application = make_app(build_dir=self.TEST_DIR, cache_size=0)
         application.predictors = {"counting": predictor}
         application.max_request_lengths["counting"] = 100
         application.testing = True
