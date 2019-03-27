@@ -1,14 +1,12 @@
 # This Dockerfile is used to serve the AllenNLP demo.
 
-FROM allennlp/commit:31af01e0db7ac401b6c4923d5badd7de2691d6a2
+FROM allennlp/commit:263d3401a3986b0bebb51033c55d6132b5d321d2
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /stage/allennlp
 
 # Install Java.
-RUN echo "deb http://http.debian.net/debian jessie-backports main" >>/etc/apt/sources.list
-RUN apt-get update
-RUN apt-get install -y -t jessie-backports openjdk-8-jdk
+RUN apt-get update --fix-missing && apt-get install -y openjdk-8-jdk
 
 # Install npm early so layer is cached when mucking with the demo
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
