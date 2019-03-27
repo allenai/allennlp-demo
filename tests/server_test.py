@@ -16,6 +16,7 @@ from allennlp.service.predictors import Predictor
 import app
 from app import make_app
 from server.db import InMemoryDemoDatabase
+from server.models import DemoModel
 
 TEST_ARCHIVE_FILES = {
         'machine-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
@@ -197,10 +198,8 @@ class TestFlask(AllenNlpTestCase):
             assert len(predictor.calls) == 2
 
     def test_disable_caching(self):
-        app.CACHE_SIZE = 0
-
         predictor = CountingPredictor()
-        application = make_app(build_dir=self.TEST_DIR)
+        application = make_app(build_dir=self.TEST_DIR, cache_size=0)
         application.predictors = {"counting": predictor}
         application.max_request_lengths["counting"] = 100
         application.testing = True
@@ -311,3 +310,39 @@ class TestFlask(AllenNlpTestCase):
         assert result["modelName"] == "failing"
         assert result["requestData"] == data
         assert result["responseData"] == {}
+
+    def test_microservice(self):
+        models = {
+            'machine-comprehension': DemoModel(TEST_ARCHIVE_FILES['machine-comprehension'],
+                                               'machine-comprehension',
+                                               LIMITS['machine-comprehension'])
+        }
+
+        app = make_app(build_dir=self.TEST_DIR, models=models)
+        app.testing = True
+
+
+        client = app.test_client()
+
+        # Should have only one model
+        response = client.get("/models")
+        data = json.loads(response.get_data())
+        assert data["models"] == ["machine-comprehension"]
+
+        # Should return results for that model
+        response = client.post("/predict/machine-comprehension",
+                               content_type="application/json",
+                               data="""{"passage": "the super bowl was played in seattle",
+                                        "question": "where was the super bowl played?"}""")
+        assert response.status_code == 200
+        results = json.loads(response.data)
+        assert "best_span" in results
+
+        # Other models should be unknown
+        response = client.post("/predict/textual-entailment",
+                               content_type="application/json",
+                               data="""{"premise": "the super bowl was played in seattle",
+                                        "hypothesis": "the super bowl was played in ohio"}""")
+        assert response.status_code == 400
+        data = response.get_data()
+        assert b"unknown model" in data and b"textual-entailment" in data
