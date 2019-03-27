@@ -37,4 +37,5 @@ ENV ALLENNLP_DEMO_SOURCE_COMMIT $SOURCE_COMMIT
 
 EXPOSE 8000
 
-ENTRYPOINT ["./app.py", "--demo-dir /stage/allennlp/demo"]
+ENTRYPOINT ["./app.py"]
+CMD ["--demo-dir", "/stage/allennlp/demo"]

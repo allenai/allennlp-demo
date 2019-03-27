@@ -331,11 +331,11 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=8000, help='port to serve the demo on')
     parser.add_argument('--demo-dir', type=str, default='demo/', help="directory where the demo HTML is located")
     parser.add_argument('--cache-size', type=int, default=128, help="how many results to keep in memory")
-    parser.add_argument('--model-name', type=str, action='append', default=[], help='if specified, only load these models')
+    parser.add_argument('--model', type=str, action='append', default=[], help='if specified, only load these models')
 
     args = parser.parse_args()
 
     main(demo_dir=args.demo_dir,
          port=args.port,
          cache_size=args.cache_size,
-         model_names=args.model_name)
+         model_names=args.model)
