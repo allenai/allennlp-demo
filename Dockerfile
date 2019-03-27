@@ -6,9 +6,7 @@ LABEL maintainer="allennlp-contact@allenai.org"
 WORKDIR /stage/allennlp
 
 # Install Java.
-RUN echo "deb http://http.debian.net/debian jessie-backports main" >>/etc/apt/sources.list
-RUN apt-get update
-RUN apt-get install -y -t jessie-backports openjdk-8-jdk
+RUN apt-get install -y openjdk-8-jdk
 
 # Install npm early so layer is cached when mucking with the demo
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
