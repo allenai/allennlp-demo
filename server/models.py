@@ -88,7 +88,7 @@ MODELS = {
                 8177
         ),
         'nlvr-parser': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/nlvr-erm-model-2018-12-18.tar.gz',
+                'https://s3-us-west-2.amazonaws.com/allennlp/models/nlvr-erm-model-2018-12-18-rule-vocabulary-updated.tar.gz',
                 'nlvr-parser',
                 1136
         ),

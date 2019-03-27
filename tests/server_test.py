@@ -88,7 +88,6 @@ class TestFlask(AllenNlpTestCase):
                                 content_type="application/json",
                                 data=json.dumps(data))
 
-
     def tearDown(self):
         super().tearDown()
         try:
