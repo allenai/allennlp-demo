@@ -1,0 +1,113 @@
+#
+# This cloudbuild config runs whenever we push code to master or release
+# and updates the target cluster (specified via the $_CLUSTER envrionment
+# variable).
+#
+steps:
+# Pull the current latest image, so we can use its cached layers.
+- id: 'pull'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/bash'
+  args: [
+    '-c',
+    'docker pull gcr.io/$PROJECT_ID/$REPO_NAME:latest || exit 0'
+  ]
+# Pull the UI image, which we build and publish separately for cache purposes
+# only.
+- id: 'pull-ui'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/bash'
+  args: [
+    '-c',
+    'docker pull gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest || exit 0'
+  ]
+# Build the UI separately, so that we can re-use it later (for cacheing)
+# to speed up our builds
+- id: 'build-ui'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '--target', 'ui-build',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest',
+    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest',
+    '.'
+  ]
+# Build the Docker image and tag with the current SHA and latest.
+- id: 'build'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
+    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest',
+    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
+    '.'
+  ]
+# Push the image tagged by the SHA
+- id: 'push'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'push',
+    'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
+  ]
+# Generate our Kubernetes configuration
+- id: 'config'
+  name: 'gcr.io/ai2-reviz/jsonnet'
+  args: [
+    'eval',
+    '-y',
+    '--output-file', './webapp.json',
+    '--ext-str', 'env=$_ENV',
+    '--ext-str', 'image=gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
+    '--ext-str', 'sha=$COMMIT_SHA',
+    './webapp.jsonnet'
+  ]
+  dir: '.skiff'
+# Extract the deployment definition, which we need in order to query the
+# state of the deployment, so that we can block till it's complete.
+- id: 'extract-deployment-config'
+  name: 'gcr.io/ai2-reviz/rudder'
+  args: [
+    'get',
+    '-f', './webapp.json',
+    '-k', 'deployment',
+    '-o', './deployment.json'
+  ]
+  dir: '.skiff'
+# Deploy the image to Kubernetes
+- id: 'deploy'
+  name: 'gcr.io/cloud-builders/kubectl'
+  args: [
+    'apply',
+    '-f',
+    'webapp.json'
+  ]
+  env: [
+    'CLOUDSDK_COMPUTE_ZONE=us-west1',
+    'CLOUDSDK_CONTAINER_CLUSTER=skiff-prod'
+  ]
+  dir: '.skiff'
+# Block until the deploy is complete. If this step fails your deployment
+# failed.
+- id: 'wait-for-deploy'
+  name: 'gcr.io/cloud-builders/kubectl'
+  args: [
+    'rollout', 'status',
+    '-f', 'deployment.json'
+  ]
+  env: [
+    'CLOUDSDK_COMPUTE_ZONE=us-west1',
+    'CLOUDSDK_CONTAINER_CLUSTER=skiff-prod'
+  ]
+  dir: '.skiff'
+substitutions:
+  _ENV: staging
+images: [
+  'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
+  'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
+  'gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest'
+]
+artifacts:
+  objects:
+    location: 'gs://skiff-archive/$REPO_NAME/$_ENV/$COMMIT_SHA'
+    paths: ['.skiff/webapp.json']
