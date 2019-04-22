@@ -73,14 +73,11 @@ def main(demo_dir: str,
         logger.warning("demo db credentials not provided, so not using demo db")
 
     # If environment variables said to load only one model, only load that model.
-    if model_names:
-        models = {
-            name: demo_model
-            for name, demo_model in MODELS.items()
-            if name in model_names
-        }
-    else:
-        models = MODELS
+    models = {
+        name: demo_model
+        for name, demo_model in MODELS.items()
+        if name in model_names
+    }
 
     app = make_app(build_dir=f"{demo_dir}/build", demo_db=demo_db, models=models)
     CORS(app)
@@ -332,10 +329,26 @@ if __name__ == "__main__":
     parser.add_argument('--demo-dir', type=str, default='demo/', help="directory where the demo HTML is located")
     parser.add_argument('--cache-size', type=int, default=128, help="how many results to keep in memory")
     parser.add_argument('--model', type=str, action='append', default=[], help='if specified, only load these models')
+    parser.add_argument('--no-models', dest='no_models', action='store_true', help='start just the front-end with no models')
 
     args = parser.parse_args()
+
+    if args.model and args.no_models:
+        raise RuntimeError("cannot specify both a model and no-models")
+
+    if args.no_models:
+        # Don't load any models
+        model_names = []
+    elif args.model:
+        # Load only the specified model
+        model_names = [model for model in MODELS if model in args.model]
+    else:
+        # Load all known models
+        model_names = list(MODELS.keys())
+
+    print(model_names)
 
     main(demo_dir=args.demo_dir,
          port=args.port,
          cache_size=args.cache_size,
-         model_names=args.model)
+         model_names=model_names)
