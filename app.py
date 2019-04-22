@@ -321,19 +321,20 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=8000, help='port to serve the demo on')
     parser.add_argument('--demo-dir', type=str, default='demo/', help="directory where the demo HTML is located")
     parser.add_argument('--cache-size', type=int, default=128, help="how many results to keep in memory")
-    parser.add_argument('--model', type=str, action='append', default=[], help='if specified, only load these models')
-    parser.add_argument('--no-models', dest='no_models', action='store_true', help='start just the front-end with no models')
+
+    models_group = parser.add_mutually_exclusive_group()
+    models_group.add_argument('--model', type=str, action='append', default=[], help='if specified, only load these models')
+    models_group.add_argument('--no-models', dest='no_models', action='store_true', help='start just the front-end with no models')
 
     args = parser.parse_args()
 
-    if args.model and args.no_models:
-        raise RuntimeError("cannot specify both a model and no-models")
-
     if args.no_models:
         # Don't load any models
+        logger.info("starting the front-end with no models loaded")
         models = {}
     elif args.model:
         # Load only the specified models
+        logger.info(f"loading only the specified models: {args.model}")
         models = {
             model_name: model
             for model_name, model in MODELS.items()
@@ -341,6 +342,7 @@ if __name__ == "__main__":
         }
     else:
         # Load all known models
+        logger.info("loading all known models")
         models = MODELS
 
     main(demo_dir=args.demo_dir,
