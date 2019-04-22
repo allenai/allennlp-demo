@@ -59,7 +59,7 @@ class ServerError(Exception):
 def main(demo_dir: str,
          port: int,
          cache_size: int,
-         model_names: List[str]) -> None:
+         models: Dict[str, DemoModel]) -> None:
     """Run the server programatically"""
     logger.info("Starting a flask server on port %i.", port)
 
@@ -71,13 +71,6 @@ def main(demo_dir: str,
     demo_db = PostgresDemoDatabase.from_environment()
     if demo_db is None:
         logger.warning("demo db credentials not provided, so not using demo db")
-
-    # If environment variables said to load only one model, only load that model.
-    models = {
-        name: demo_model
-        for name, demo_model in MODELS.items()
-        if name in model_names
-    }
 
     app = make_app(build_dir=f"{demo_dir}/build", demo_db=demo_db, models=models)
     CORS(app)
@@ -338,17 +331,19 @@ if __name__ == "__main__":
 
     if args.no_models:
         # Don't load any models
-        model_names = []
+        models = {}
     elif args.model:
-        # Load only the specified model
-        model_names = [model for model in MODELS if model in args.model]
+        # Load only the specified models
+        models = {
+            model_name: model
+            for model_name, model in MODELS.items()
+            if model_name in args.model
+        }
     else:
         # Load all known models
-        model_names = list(MODELS.keys())
-
-    print(model_names)
+        models = MODELS
 
     main(demo_dir=args.demo_dir,
          port=args.port,
          cache_size=args.cache_size,
-         model_names=model_names)
+         models=models)
