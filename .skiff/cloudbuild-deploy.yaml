@@ -12,26 +12,6 @@ steps:
     '-c',
     'docker pull gcr.io/$PROJECT_ID/$REPO_NAME:latest || exit 0'
   ]
-# Pull the UI image, which we build and publish separately for cache purposes
-# only.
-- id: 'pull-ui'
-  name: 'gcr.io/cloud-builders/docker'
-  entrypoint: '/bin/bash'
-  args: [
-    '-c',
-    'docker pull gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest || exit 0'
-  ]
-# Build the UI separately, so that we can re-use it later (for cacheing)
-# to speed up our builds
-- id: 'build-ui'
-  name: 'gcr.io/cloud-builders/docker'
-  args: [
-    'build',
-    '--target', 'ui-build',
-    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest',
-    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest',
-    '.'
-  ]
 # Build the Docker image and tag with the current SHA and latest.
 - id: 'build'
   name: 'gcr.io/cloud-builders/docker'
@@ -104,8 +84,7 @@ substitutions:
   _ENV: staging
 images: [
   'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
-  'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
-  'gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest'
+  'gcr.io/$PROJECT_ID/$REPO_NAME:latest'
 ]
 artifacts:
   objects:
