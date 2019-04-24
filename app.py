@@ -27,7 +27,7 @@ from allennlp.predictors import Predictor
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
-from server.models import MODELS, DemoModel
+from server.models import DemoModel, load_demo_models
 
 
 
@@ -321,6 +321,7 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=8000, help='port to serve the demo on')
     parser.add_argument('--demo-dir', type=str, default='demo/', help="directory where the demo HTML is located")
     parser.add_argument('--cache-size', type=int, default=128, help="how many results to keep in memory")
+    parser.add_argument('--models-file', type=str, default='models.json', help="json file containing the details of the models to load")
 
     models_group = parser.add_mutually_exclusive_group()
     models_group.add_argument('--model', type=str, action='append', default=[], help='if specified, only load these models')
@@ -332,18 +333,9 @@ if __name__ == "__main__":
         # Don't load any models
         logger.info("starting the front-end with no models loaded")
         models = {}
-    elif args.model:
-        # Load only the specified models
-        logger.info(f"loading only the specified models: {args.model}")
-        models = {
-            model_name: model
-            for model_name, model in MODELS.items()
-            if model_name in args.model
-        }
     else:
-        # Load all known models
-        logger.info("loading all known models")
-        models = MODELS
+        logger.info("loading models")
+        models = load_demo_models(args.models_file, args.model)
 
     main(demo_dir=args.demo_dir,
          port=args.port,
