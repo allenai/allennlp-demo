@@ -178,7 +178,32 @@ local deployment = {
                                 value: sha
                             }
                         ]
-                    },
+                    }
+                ]
+            }
+        }
+    }
+};
+
+local deployment2 = {
+    apiVersion: 'extensions/v1beta1',
+    kind: 'Deployment',
+    metadata: {
+        labels: labels,
+        name: fullyQualifiedName + "-machine-comprehension",
+        namespace: namespaceName,
+    },
+    spec: {
+        revisionHistoryLimit: 3,
+        replicas: 2,
+        template: {
+            metadata: {
+                name: fullyQualifiedName + "-machine-comprehension",
+                namespace: namespaceName,
+                labels: labels
+            },
+            spec: {
+                containers: [
                     {
                         name: config.appName + '-machine-comprehension',
                         image: image,
@@ -228,9 +253,31 @@ local service = {
     }
 };
 
+
+local service2 = {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+        name: fullyQualifiedName + "-machine-comprehension",
+        namespace: namespaceName,
+        labels: labels
+    },
+    spec: {
+        selector: labels,
+        ports: [
+            {
+                port: config.httpPort,
+                name: 'http'
+            }
+        ]
+    }
+};
+
 [
     namespace,
     ingress,
     deployment,
-    service
+    service,
+    deployment2,
+    service2
 ]
