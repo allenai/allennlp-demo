@@ -158,7 +158,7 @@ local deployment = {
                     {
                         name: config.appName,
                         image: image,
-                        args: [ 'server/start.py', '--prod' ],
+                        args: [ '--no-models' ],
                         readinessProbe: healthCheck,
                         livenessProbe: healthCheck,
                         resources: {
