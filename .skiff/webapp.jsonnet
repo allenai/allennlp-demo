@@ -178,6 +178,30 @@ local deployment = {
                                 value: sha
                             }
                         ]
+                    },
+                    {
+                        name: config.appName + '-machine-comprehension',
+                        image: image,
+                        args: [ '--model', 'machine-comprehension' ],
+                        readinessProbe: healthCheck,
+                        livenessProbe: healthCheck,
+                        resources: {
+                            requests: {
+                                // Our machines currently have 2 vCPUs, so this
+                                // will allow 4 apps to run per machine
+                                cpu: '0.5',
+                                // Each machine has 13 GB of RAM. We target 4
+                                // apps per machine, so we reserve 3 GB of RAM
+                                // for each (whether they use it our not).
+                                memory: '3Gi'
+                            }
+                        },
+                        env: [
+                            {
+                                name: 'GIT_SHA',
+                                value: sha
+                            }
+                        ]
                     }
                 ]
             }
