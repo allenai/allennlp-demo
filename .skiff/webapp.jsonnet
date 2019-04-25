@@ -77,6 +77,10 @@ local labels = {
     contact: config.contact
 };
 
+local machineComprehensionLabels = labels + {
+    model: 'machine-comprehension'
+};
+
 local namespace = {
     apiVersion: 'v1',
     kind: 'Namespace',
@@ -197,7 +201,7 @@ local deployment2 = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Deployment',
     metadata: {
-        labels: labels,
+        labels: machineComprehensionLabels,
         name: fullyQualifiedName + "-machine-comprehension",
         namespace: namespaceName,
     },
@@ -208,7 +212,7 @@ local deployment2 = {
             metadata: {
                 name: fullyQualifiedName + "-machine-comprehension",
                 namespace: namespaceName,
-                labels: labels
+                labels: machineComprehensionLabels
             },
             spec: {
                 containers: [
@@ -268,10 +272,10 @@ local service2 = {
     metadata: {
         name: fullyQualifiedName + "-machine-comprehension",
         namespace: namespaceName,
-        labels: labels
+        labels: machineComprehensionLabels
     },
     spec: {
-        selector: labels,
+        selector: machineComprehensionLabels,
         ports: [
             {
                 port: config.httpPort,
