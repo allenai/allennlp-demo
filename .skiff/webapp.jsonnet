@@ -80,6 +80,10 @@ local labels = {
     contact: config.contact
 };
 
+local model_labels(model_name) = labels + {
+    model: model_name
+};
+
 local namespace = {
     apiVersion: 'v1',
     kind: 'Namespace',
@@ -204,7 +208,7 @@ local model_deployment(model_name) = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Deployment',
     metadata: {
-        labels: labels,
+        labels: model_labels(model_name),
         name: fullyQualifiedName + "-" + model_name,
         namespace: namespaceName,
     },
@@ -215,7 +219,7 @@ local model_deployment(model_name) = {
             metadata: {
                 name: fullyQualifiedName + "-" + model_name,
                 namespace: namespaceName,
-                labels: labels
+                labels: model_labels(model_name)
             },
             spec: {
                 containers: [
@@ -275,10 +279,10 @@ local model_service(model_name) = {
     metadata: {
         name: fullyQualifiedName + "-" + model_name,
         namespace: namespaceName,
-        labels: labels
+        labels: model_labels(model_name)
     },
     spec: {
-        selector: labels,
+        selector: model_labels(model_name),
         ports: [
             {
                 port: config.httpPort,
