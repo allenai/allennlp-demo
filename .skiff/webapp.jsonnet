@@ -118,6 +118,10 @@ local ingress = {
         }
     },
     spec: {
+        backend: {
+            serviceName: fullyQualifiedName,
+            servicePort: config.httpPort
+        },
         tls: [
             {
                 secretName: fullyQualifiedName + '-tls',
@@ -131,13 +135,6 @@ local ingress = {
                     paths: [
                         ingress_path(model_name)
                         for model_name in model_names
-                    ] + [
-                        {
-                            backend: {
-                                serviceName: fullyQualifiedName,
-                                servicePort: config.httpPort
-                            }
-                        }
                     ]
                 }
             } for host in hosts
