@@ -113,6 +113,13 @@ local ingress = {
                 http: {
                     paths: [
                         {
+                            path: '/predict/machine-comprehension',
+                            backend: {
+                                serviceName: fullyQualifiedName + '-machine-comprehension',
+                                servicePort: config.httpPort
+                            },
+                        },
+                        {
                             backend: {
                                 serviceName: fullyQualifiedName,
                                 servicePort: config.httpPort
