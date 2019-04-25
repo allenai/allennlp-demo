@@ -40,6 +40,9 @@
 // from that point forward.
 local config = import 'config.json';
 
+// Load the models
+local models = import '../models_small.json';
+
 // These values are provided at runtime.
 local env = std.extVar('env');
 local image = std.extVar('image');
@@ -86,6 +89,15 @@ local namespace = {
     }
 };
 
+// Generate the ingress path entry for the given model
+local ingress_path(model_name) = {
+    path: 'predict/' + model_name,
+    backend: {
+        serviceName: fullyQualifiedName + '-' + model_name,
+        servicePort: config.httpPort
+    },
+};
+
 local ingress = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Ingress',
@@ -112,13 +124,8 @@ local ingress = {
                 host: host,
                 http: {
                     paths: [
-                        {
-                            path: '/predict/machine-comprehension',
-                            backend: {
-                                serviceName: fullyQualifiedName + '-machine-comprehension',
-                                servicePort: config.httpPort
-                            },
-                        },
+                        ingress_path('machine-comprehension')
+                    ] + [
                         {
                             path: '/',
                             backend: {
@@ -193,12 +200,12 @@ local deployment = {
     }
 };
 
-local deployment2 = {
+local model_deployment(model_name) = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Deployment',
     metadata: {
         labels: labels,
-        name: fullyQualifiedName + "-machine-comprehension",
+        name: fullyQualifiedName + "-" + model_name,
         namespace: namespaceName,
     },
     spec: {
@@ -206,16 +213,16 @@ local deployment2 = {
         replicas: 1,
         template: {
             metadata: {
-                name: fullyQualifiedName + "-machine-comprehension",
+                name: fullyQualifiedName + "-" + model_name,
                 namespace: namespaceName,
                 labels: labels
             },
             spec: {
                 containers: [
                     {
-                        name: config.appName + '-machine-comprehension',
+                        name: config.appName + '-' + model_name,
                         image: image,
-                        args: [ '--model', 'machine-comprehension' ],
+                        args: [ '--model', model_name ],
                         readinessProbe: healthCheck,
                         livenessProbe: healthCheck,
                         resources: {
@@ -262,11 +269,11 @@ local service = {
 };
 
 
-local service2 = {
+local model_service(model_name) = {
     apiVersion: 'v1',
     kind: 'Service',
     metadata: {
-        name: fullyQualifiedName + "-machine-comprehension",
+        name: fullyQualifiedName + "-" + model_name,
         namespace: namespaceName,
         labels: labels
     },
@@ -286,6 +293,8 @@ local service2 = {
     ingress,
     deployment,
     service,
-    deployment2,
-    service2
+] + [
+    model_deployment('machine-comprehension')
+] + [
+    model_service('machine-comprehension')
 ]
