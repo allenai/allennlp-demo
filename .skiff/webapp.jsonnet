@@ -153,7 +153,7 @@ local deployment = {
     },
     spec: {
         revisionHistoryLimit: 3,
-        replicas: 2,
+        replicas: 1,
         template: {
             metadata: {
                 name: fullyQualifiedName,
@@ -202,7 +202,7 @@ local deployment2 = {
     },
     spec: {
         revisionHistoryLimit: 3,
-        replicas: 2,
+        replicas: 1,
         template: {
             metadata: {
                 name: fullyQualifiedName + "-machine-comprehension",
