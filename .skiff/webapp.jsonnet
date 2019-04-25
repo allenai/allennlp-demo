@@ -95,7 +95,7 @@ local namespace = {
 
 // Generate the ingress path entry for the given model
 local ingress_path(model_name) = {
-    path: 'predict/' + model_name,
+    path: '/predict/' + model_name,
     backend: {
         serviceName: fullyQualifiedName + '-' + model_name,
         servicePort: config.httpPort
