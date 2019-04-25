@@ -101,10 +101,6 @@ local ingress = {
         }
     },
     spec: {
-        backend: {
-            serviceName: fullyQualifiedName,
-            servicePort: config.httpPort
-        },
         tls: [
             {
                 secretName: fullyQualifiedName + '-tls',
@@ -122,6 +118,13 @@ local ingress = {
                                 serviceName: fullyQualifiedName + '-machine-comprehension',
                                 servicePort: config.httpPort
                             },
+                        },
+                        {
+                            path: '/',
+                            backend: {
+                                serviceName: fullyQualifiedName,
+                                servicePort: config.httpPort
+                            }
                         }
                     ]
                 }
