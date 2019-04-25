@@ -41,7 +41,7 @@
 local config = import 'config.json';
 
 // Load the models
-local models = import '../models_small.json';
+local models = import '../models.json';
 local model_names = std.objectFields(models);
 
 // These values are provided at runtime.
