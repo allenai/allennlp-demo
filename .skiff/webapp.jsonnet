@@ -42,6 +42,7 @@ local config = import 'config.json';
 
 // Load the models
 local models = import '../models_small.json';
+local model_names = std.objectFields(models);
 
 // These values are provided at runtime.
 local env = std.extVar('env');
@@ -128,7 +129,8 @@ local ingress = {
                 host: host,
                 http: {
                     paths: [
-                        ingress_path('machine-comprehension')
+                        ingress_path(model_name)
+                        for model_name in model_names
                     ] + [
                         {
                             path: '/',
@@ -298,7 +300,9 @@ local model_service(model_name) = {
     deployment,
     service,
 ] + [
-    model_deployment('machine-comprehension')
+    model_deployment(model_name)
+    for model_name in model_names
 ] + [
-    model_service('machine-comprehension')
+    model_service(model_name)
+    for model_name in model_names
 ]
