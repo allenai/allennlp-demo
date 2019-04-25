@@ -133,7 +133,6 @@ local ingress = {
                         for model_name in model_names
                     ] + [
                         {
-                            path: '/',
                             backend: {
                                 serviceName: fullyQualifiedName,
                                 servicePort: config.httpPort
