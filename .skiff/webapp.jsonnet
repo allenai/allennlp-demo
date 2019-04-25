@@ -95,12 +95,28 @@ local namespace = {
 };
 
 // Generate the ingress path entry for the given model
-local ingress_path(model_name) = {
+local predict_path(model_name) = {
     path: '/predict/' + model_name,
     backend: {
         serviceName: fullyQualifiedName + '-' + model_name,
         servicePort: config.httpPort
     },
+};
+
+local frontend_path(model_name) = {
+    path: '/' + model_name,
+    backend: {
+        serviceName: fullyQualifiedName,
+        servicePort: config.httpPort
+    }
+};
+
+local permalink_path(model_name) = {
+    path: '/' + model_name + '/.*',
+    backend: {
+        serviceName: fullyQualifiedName,
+        servicePort: config.httpPort
+    }
 };
 
 local ingress = {
@@ -114,7 +130,8 @@ local ingress = {
             'certmanager.k8s.io/cluster-issuer': 'letsencrypt-prod',
             'kubernetes.io/ingress.class': 'nginx',
             'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
-            'nginx.ingress.kubernetes.io/enable-cors': 'false'
+            'nginx.ingress.kubernetes.io/enable-cors': 'false',
+            'nginx.ingress.kubernetes.io/use-regex': 'true'
         }
     },
     spec: {
@@ -133,9 +150,15 @@ local ingress = {
                 host: host,
                 http: {
                     paths: [
-                        ingress_path(model_name)
+                        predict_path(model_name)
                         for model_name in model_names
-                    ]
+                    ] + [
+                        frontend_path(model_name)
+                        for model_name in model_names
+                    ] + [
+                        permalink_path(model_name)
+                        for model_name in model_names
+                    ],
                 }
             } for host in hosts
         ]
