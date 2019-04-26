@@ -130,7 +130,7 @@ local cloudsql_volumes = [
     },
     {
         name: "cloudsql",
-        emptyDir: ""
+        emptyDir: {},
     },
     {
         name: "ssl-certs",
