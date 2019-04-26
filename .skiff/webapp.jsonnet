@@ -280,7 +280,6 @@ local deployment = {
                 labels: labels
             },
             spec: {
-                initContainers: [cloudsql_proxy_container],
                 containers: [
                     {
                         name: config.appName,
@@ -300,7 +299,8 @@ local deployment = {
                             }
                         },
                         env: env_variables
-                    }
+                    },
+                    cloudsql_proxy_container
                 ],
                 volumes: cloudsql_volumes
             }
@@ -326,7 +326,6 @@ local model_deployment(model_name) = {
                 labels: model_labels(model_name)
             },
             spec: {
-                initContainers: [cloudsql_proxy_container],
                 containers: [
                     {
                         name: config.appName + '-' + model_name,
@@ -346,7 +345,8 @@ local model_deployment(model_name) = {
                             }
                         },
                         env: env_variables
-                    }
+                    },
+                    cloudsql_proxy_container
                 ],
                 volumes: cloudsql_volumes
             }
