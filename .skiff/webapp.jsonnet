@@ -82,7 +82,12 @@ local labels = {
 };
 
 local model_labels(model_name) = labels + {
-    model: model_name
+    model: model_name,
+    role: 'model-server'
+};
+
+local ui_server_labels = labels + {
+    role: 'ui-server'
 };
 
 local namespace = {
@@ -149,22 +154,6 @@ local predict_path(model_name) = {
     },
 };
 
-local frontend_path(model_name) = {
-    path: '/' + model_name,
-    backend: {
-        serviceName: fullyQualifiedName,
-        servicePort: config.httpPort
-    }
-};
-
-local permalink_path(model_name) = {
-    path: '/' + model_name + '/.*',
-    backend: {
-        serviceName: fullyQualifiedName,
-        servicePort: config.httpPort
-    }
-};
-
 local ingress = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Ingress',
@@ -181,10 +170,6 @@ local ingress = {
         }
     },
     spec: {
-        backend: {
-            serviceName: fullyQualifiedName,
-            servicePort: config.httpPort
-        },
         tls: [
             {
                 secretName: fullyQualifiedName + '-tls',
@@ -199,12 +184,13 @@ local ingress = {
                         predict_path(model_name)
                         for model_name in model_names
                     ] + [
-                        frontend_path(model_name)
-                        for model_name in model_names
-                    ] + [
-                        permalink_path(model_name)
-                        for model_name in model_names
-                    ],
+                        {
+                            backend: {
+                                serviceName: fullyQualifiedName,
+                                servicePort: config.httpPort
+                            }
+                        }
+                    ]
                 }
             } for host in hosts
         ]
@@ -266,7 +252,7 @@ local deployment = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Deployment',
     metadata: {
-        labels: labels,
+        labels: ui_server_labels,
         name: fullyQualifiedName,
         namespace: namespaceName,
     },
@@ -277,7 +263,7 @@ local deployment = {
             metadata: {
                 name: fullyQualifiedName,
                 namespace: namespaceName,
-                labels: labels
+                labels: ui_server_labels
             },
             spec: {
                 containers: [
@@ -363,7 +349,7 @@ local service = {
         labels: labels
     },
     spec: {
-        selector: labels,
+        selector: ui_server_labels,
         ports: [
             {
                 port: config.httpPort,
