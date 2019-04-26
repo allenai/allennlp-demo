@@ -296,7 +296,7 @@ def make_app(build_dir: str = None,
     # As an SPA, we need to return index.html for /model-name and /model-name/permalink,
     def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
         """return the page"""
-        return send_file(os.path.join(build_dir, 'index.html'))
+        return app.send_static_file('index.html')
 
     for model_name in models:
         app.add_url_rule(f"/{model_name}", view_func=return_page)
