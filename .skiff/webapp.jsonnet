@@ -347,7 +347,7 @@ local service = {
     metadata: {
         name: fullyQualifiedName,
         namespace: namespaceName,
-        labels: labels
+        labels: ui_server_labels
     },
     spec: {
         selector: ui_server_labels,

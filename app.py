@@ -75,7 +75,7 @@ def main(demo_dir: str,
     app = make_app(build_dir=f"{demo_dir}/build", demo_db=demo_db, models=models)
     CORS(app)
 
-    http_server = WSGIServer(('0.0.0.0', port), app)
+    http_server = WSGIServer(('0.0.0.0', port), app, log=logger, error_log=logger)
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", port, port)
     http_server.serve_forever()
 
