@@ -97,7 +97,7 @@ local namespace = {
 local cloudsql_proxy_container = {
     name: "cloudsql-proxy",
     image: "gcr.io/cloudsql-docker/gce-proxy:1.11",
-    command: ["/cloud_sql_proxy", # "--dir=/cloudsql",
+    command: ["/cloud_sql_proxy", "--dir=/cloudsql",
               "-instances=ai2-allennlp:us-central1:allennlp-demo-database=tcp:5432",
               "-credential_file=/secrets/cloudsql/credentials.json"],
     securityContext: {
@@ -109,10 +109,36 @@ local cloudsql_proxy_container = {
             name: "cloudsql-instance-credentials",
             mountPath: "/secrets/cloudsql",
             readOnly: true
+        },
+        {
+            name: "ssl-certs",
+            mountPath: "/etc/ssl/certs"
+        },
+        {
+            name: "cloudsql",
+            mountPath: "/cloudsql"
         }
     ]
 };
 
+local cloudsql_volumes = [
+    {
+        name: "cloudsql-instance-credentials",
+        secret: {
+            secretName: "cloudsql-instance-credentials"
+        },
+    },
+    {
+        name: "cloudsql",
+        emptyDir: ""
+    },
+    {
+        name: "ssl-certs",
+        hostPath: {
+            path: "/etc/ssl/certs"
+        }
+    }
+];
 
 // Generate the ingress path entry for the given model
 local predict_path(model_name) = {
@@ -275,7 +301,8 @@ local deployment = {
                         env: env_variables
                     },
                     cloudsql_proxy_container
-                ]
+                ],
+                volumes: cloudsql_volumes
             }
         }
     }
@@ -320,7 +347,8 @@ local model_deployment(model_name) = {
                         env: env_variables
                     },
                     cloudsql_proxy_container
-                ]
+                ],
+                volumes: cloudsql_volumes
             }
         }
     }
