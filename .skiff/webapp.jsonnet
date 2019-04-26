@@ -97,22 +97,18 @@ local namespace = {
 local cloudsql_proxy_container = {
     name: "cloudsql-proxy",
     image: "gcr.io/cloudsql-docker/gce-proxy:1.11",
-    command: ["/cloud_sql_proxy", "--dir=/cloudsql",
+    command: ["/cloud_sql_proxy", # "--dir=/cloudsql",
               "-instances=ai2-allennlp:us-central1:allennlp-demo-database=tcp:5432",
               "-credential_file=/secrets/cloudsql/credentials.json"],
+    securityContext: {
+        runAsUser: 2,
+        allowPrivilegeEscalation: false
+    },
     volumeMounts: [
         {
             name: "cloudsql-instance-credentials",
             mountPath: "/secrets/cloudsql",
             readOnly: true
-        },
-        {
-            name: "ssl-certs",
-            mountPath: "/etc/ssl/certs"
-        },
-        {
-            name: "cloudsql",
-            mountPath: "/cloudsql"
         }
     ]
 };
