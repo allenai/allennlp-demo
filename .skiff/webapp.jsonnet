@@ -123,7 +123,7 @@ local ingress = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Ingress',
     metadata: {
-        name: fullyQualifiedName,
+        name: fullyQualifiedName + '-ingress',
         namespace: namespaceName,
         labels: labels,
         annotations: {
