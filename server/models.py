@@ -34,13 +34,19 @@ class DemoModel:
         return Predictor.from_archive(archive, self.predictor_name)
 
 def load_demo_models(models_file: str,
-                     task_names: List[str] = None) -> Dict[str, DemoModel]:
+                     task_names: List[str] = None,
+                     model_names_only: bool = False) -> Dict[str, DemoModel]:
     with open(models_file) as f:
         blob = json.load(f)
 
     # If no task names specified, load all of them
     task_names = task_names or blob.keys()
 
-    return {task_name: DemoModel(**model)
+    if model_names_only:
+        load = lambda *args, **kwargs: None
+    else:
+        load = DemoModel
+
+    return {task_name: load(**model)
             for task_name, model in blob.items()
             if task_name in task_names}

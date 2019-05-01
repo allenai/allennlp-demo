@@ -4,7 +4,7 @@
 A `Flask <http://flask.pocoo.org/>`_ server that serves up our demo.
 """
 from datetime import datetime
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Iterable
 import argparse
 import json
 import logging
@@ -80,13 +80,10 @@ def main(demo_dir: str,
     http_server.serve_forever()
 
 
-def make_app(build_dir: str = None,
+def make_app(build_dir: str,
+             models: Dict[str, DemoModel],
              demo_db: Optional[DemoDatabase] = None,
-             models: Dict[str, DemoModel] = None,
              cache_size: int = 128) -> Flask:
-    if models is None:
-        models = {}
-
     if not os.path.exists(build_dir):
         logger.error("app directory %s does not exist, aborting", build_dir)
         sys.exit(-1)
@@ -100,10 +97,11 @@ def make_app(build_dir: str = None,
     app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
 
     for name, demo_model in models.items():
-        logger.info(f"loading {name} model")
-        predictor = demo_model.predictor()
-        app.predictors[name] = predictor
-        app.max_request_lengths[name] = demo_model.max_request_length
+        if demo_model is not None:
+            logger.info(f"loading {name} model")
+            predictor = demo_model.predictor()
+            app.predictors[name] = predictor
+            app.max_request_lengths[name] = demo_model.max_request_length
 
     @app.errorhandler(ServerError)
     def handle_invalid_usage(error: ServerError) -> Response:  # pylint: disable=unused-variable
@@ -329,13 +327,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.no_models:
-        # Don't load any models
-        logger.info("starting the front-end with no models loaded")
-        models = {}
-    else:
-        logger.info("loading models")
-        models = load_demo_models(args.models_file, args.model)
+    models = load_demo_models(args.models_file, args.model, model_names_only=args.no_models)
 
     main(demo_dir=args.demo_dir,
          port=args.port,
