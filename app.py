@@ -75,7 +75,7 @@ def main(demo_dir: str,
     app = make_app(build_dir=f"{demo_dir}/build", demo_db=demo_db, models=models)
     CORS(app)
 
-    http_server = WSGIServer(('0.0.0.0', port), app)
+    http_server = WSGIServer(('0.0.0.0', port), app, log=logger, error_log=logger)
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", port, port)
     http_server.serve_forever()
 
@@ -291,18 +291,16 @@ def make_app(build_dir: str,
                 "peak_memory_mb": peak_memory_mb(),
                 "githubUrl": "http://github.com/allenai/allennlp-demo/commit/" + git_version})
 
-    # As an SPA, we need to return index.html for /model-name and /model-name/permalink,
-    def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
-        """return the page"""
-        return send_file(os.path.join(build_dir, 'index.html'))
-
-    for model_name in models:
-        app.add_url_rule(f"/{model_name}", view_func=return_page)
-        app.add_url_rule(f"/{model_name}/<permalink>", view_func=return_page)
-
+    @app.route('/', defaults={ 'path': '' })
     @app.route('/<path:path>')
     def static_proxy(path: str) -> Response: # pylint: disable=unused-variable
-        return send_from_directory(build_dir, path)
+        if os.path.isfile(os.path.join(build_dir, path)):
+            return send_from_directory(build_dir, path)
+        else:
+            # Send the index.html page back to the client as a catch-all, since
+            # we're an SPA and JavaScript acts to handle routes the server
+            # doesn't.
+            return app.send_static_file('index.html')
 
     @app.route('/static/js/<path:path>')
     def static_js_proxy(path: str) -> Response: # pylint: disable=unused-variable
