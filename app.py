@@ -63,6 +63,8 @@ def main(demo_dir: str,
     """Run the server programatically"""
     logger.info("Starting a flask server on port %i.", port)
 
+    logger.info(f"With models {models}")
+
     if port != 8000:
         logger.warning("The demo requires the API to be run on port 8000.")
 
@@ -290,6 +292,17 @@ def make_app(build_dir: str,
                 "git_version": git_version,
                 "peak_memory_mb": peak_memory_mb(),
                 "githubUrl": "http://github.com/allenai/allennlp-demo/commit/" + git_version})
+
+  # As an SPA, we need to return index.html for /model-name and /model-name/permalink
+    def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
+        """return the page"""
+        return send_file(os.path.join(build_dir, 'index.html'))
+
+    for model_name in models:
+        logger.info(f"setting up default routes for {model_name}")
+        app.add_url_rule(f"/{model_name}", view_func=return_page)
+        app.add_url_rule(f"/{model_name}/<permalink>", view_func=return_page)
+
 
     @app.route('/', defaults={ 'path': '' })
     @app.route('/<path:path>')
