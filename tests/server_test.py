@@ -19,21 +19,29 @@ from server.db import InMemoryDemoDatabase
 from server.models import DemoModel
 
 TEST_ARCHIVE_FILES = {
-        'machine-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
+        'reading-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
         'semantic-role-labeling': 'tests/fixtures/srl/model.tar.gz',
         'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz',
         'open-information-extraction': 'tests/fixtures/openie/model.tar.gz',
         'event2mind': 'tests/fixtures/event2mind/model.tar.gz'
 }
 
+PREDICTOR_NAMES = {
+    'reading-comprehension': 'machine-comprehension',
+        'semantic-role-labeling': 'semantic-role-labeling',
+        'textual-entailment': 'textual-entailment',
+        'open-information-extraction': 'open-information-extraction',
+        'event2mind': 'event2mind'
+}
+
 PREDICTORS = {
         name: Predictor.from_archive(load_archive(archive_file),
-                                     predictor_name=name)
+                                     predictor_name=PREDICTOR_NAMES[name])
         for name, archive_file in TEST_ARCHIVE_FILES.items()
 }
 
 LIMITS = {
-        'machine-comprehension': 311108,
+        'reading-comprehension': 311108,
         'semantic-role-labeling': 4590,
         'textual-entailment': 13129,
         'open-information-extraction': 19681,
@@ -99,7 +107,7 @@ class TestFlask(AllenNlpTestCase):
     def test_list_models(self):
         response = self.client.get("/models")
         data = json.loads(response.get_data())
-        assert "machine-comprehension" in set(data["models"])
+        assert "reading-comprehension" in set(data["models"])
 
     def test_unknown_model(self):
         response = self.post_json("/predict/bogus_model",
@@ -109,7 +117,7 @@ class TestFlask(AllenNlpTestCase):
         assert b"unknown model" in data and b"bogus_model" in data
 
     def test_machine_comprehension(self):
-        response = self.post_json("/predict/machine-comprehension",
+        response = self.post_json("/predict/reading-comprehension",
                                   data={"passage": "the super bowl was played in seattle",
                                         "question": "where was the super bowl played?"})
 
@@ -313,9 +321,9 @@ class TestFlask(AllenNlpTestCase):
 
     def test_microservice(self):
         models = {
-            'machine-comprehension': DemoModel(TEST_ARCHIVE_FILES['machine-comprehension'],
+            'reading-comprehension': DemoModel(TEST_ARCHIVE_FILES['reading-comprehension'],
                                                'machine-comprehension',
-                                               LIMITS['machine-comprehension'])
+                                               LIMITS['reading-comprehension'])
         }
 
         app = make_app(build_dir=self.TEST_DIR, models=models)
@@ -327,10 +335,10 @@ class TestFlask(AllenNlpTestCase):
         # Should have only one model
         response = client.get("/models")
         data = json.loads(response.get_data())
-        assert data["models"] == ["machine-comprehension"]
+        assert data["models"] == ["reading-comprehension"]
 
         # Should return results for that model
-        response = client.post("/predict/machine-comprehension",
+        response = client.post("/predict/reading-comprehension",
                                content_type="application/json",
                                data="""{"passage": "the super bowl was played in seattle",
                                         "question": "where was the super bowl played?"}""")
