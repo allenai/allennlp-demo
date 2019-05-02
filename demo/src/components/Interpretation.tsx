@@ -7,13 +7,13 @@ interface Props extends DefaultProps {
 }
 
 interface DefaultProps {
-  colormap: ColorMap
+  colormapProps: ColorMapProps
 }
 
-interface ColorMap {
-  colorScheme: ColorScheme;
+interface ColorMapProps {
+  colormap: ColorScheme;
   format: ColorMapFormat; 
-  nShades: number;
+  nshades: number;
 }
 
 type ColorMapFormat = "hex" | "rgbaString" | "rba" | "float";
@@ -38,25 +38,24 @@ class TextSaliencyMap extends React.Component<Props> {
   }
 
   static defaultProps: DefaultProps = {
-    colormap: {
-      colorScheme: 'RdBu',
+    colormapProps: {
+      colormap: 'RdBu',
       format: 'hex',
-      nShades: 20
+      nshades: 20
     }
   }
 
   colorize(tokensWithWeights: {token: string, weight: number}[]) {
-    let colors = colormap({
-      colormap: this.props.colormap.colorScheme,
-      format: this.props.colormap.format,
-      nshades: Math.min(Math.max(this.props.colormap.nShades, 1), 72)
-    })
+    const {colormapProps} = this.props
+    // colormap package takes minimum of 6 shades 
+    colormapProps.nshades =  Math.min(Math.max(colormapProps.nshades, 6), 72);
+    let colors = colormap(colormapProps)
 
     let result_string: JSX.Element[] = [];
     tokensWithWeights.forEach((obj: {token: string, weight: number}, idx: number) => {
       result_string.push(
-        <ColorizedToken backgroundColor={obj['weight'] ? colors[Math.round(obj['weight'] * (this.props.colormap.nShades - 1))] : 'transparent'}
-                        key={idx}>{obj['token']}
+        <ColorizedToken backgroundColor={obj.weight ? colors[Math.round(obj.weight * (colormapProps.nshades - 1))] : 'transparent'}
+                        key={idx}>{obj.token}
         </ColorizedToken>
       )
     })
