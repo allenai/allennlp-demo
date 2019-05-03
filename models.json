@@ -7,7 +7,9 @@
     "naqanet-reading-comprehension": {
         "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/naqanet-2019.03.01.tar.gz",
         "predictor_name": "machine-comprehension",
-        "max_request_length": 25819
+        "max_request_length": 25819,
+        "cpu": "0.2",
+        "memory": "1Gi"
     },
     "semantic-role-labeling": {
         "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/srl-model-2018.05.25.tar.gz",
