@@ -47,6 +47,8 @@ def load_demo_models(models_file: str,
     else:
         load = DemoModel
 
-    return {task_name: load(**model)
+    return {task_name: load(archive_file=model["archive_file"],
+                            predictor_name=model["predictor_name"],
+                            max_request_length=model["max_request_length"])
             for task_name, model in blob.items()
             if task_name in task_names}
