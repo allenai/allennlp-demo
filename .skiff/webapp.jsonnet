@@ -297,15 +297,8 @@ local deployment = {
 
 // We allow each model's JSON to specify how much memory and CPU it needs.
 // If not specified, we fall back to defaults.
-
-// Our machines currently have 2 vCPUs, so this
-// will allow 4 apps to run per machine
-local DEFAULT_CPU = "0.5";
-
-// Each machine has 13 GB of RAM. We target 4
-// apps per machine, so we reserve 3 GB of RAM
-// for each (whether they use it our not).
-local DEFAULT_MEMORY = "3Gi";
+local DEFAULT_CPU = "0.2";
+local DEFAULT_MEMORY = "1Gi";
 
 local get_cpu(model_name) = if std.objectHas(models[model_name], "cpu") then models[model_name]["cpu"] else DEFAULT_CPU;
 local get_memory(model_name) = if std.objectHas(models[model_name], "memory") then models[model_name]["memory"] else DEFAULT_MEMORY;
