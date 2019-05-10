@@ -33,7 +33,7 @@ from server.models import DemoModel, load_demo_models
 
 logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-logger.setLevel('INFO')
+logger.setLevel(logging.INFO)
 
 if "SENTRY_PYTHON_AUTH" in os.environ:
     logger.info("Enabling Sentry since SENTRY_PYTHON_AUTH is defined.")
@@ -42,7 +42,9 @@ if "SENTRY_PYTHON_AUTH" in os.environ:
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(StackdriverJsonFormatter())
+handler.setLevel(logging.INFO)
 logger.addHandler(handler)
+logger.propagate = False
 
 
 class ServerError(Exception):
@@ -83,6 +85,7 @@ def main(demo_dir: str,
     CORS(app)
 
     http_server = WSGIServer(('0.0.0.0', port), app, log=logger, error_log=logger)
+
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", port, port)
     http_server.serve_forever()
 
