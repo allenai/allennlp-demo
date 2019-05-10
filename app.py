@@ -31,17 +31,16 @@ from server.logging import StackdriverJsonFormatter
 from server.models import DemoModel, load_demo_models
 
 
-
-logging.basicConfig(level=logging.INFO)
 logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger.setLevel('INFO')
 
 if "SENTRY_PYTHON_AUTH" in os.environ:
     logger.info("Enabling Sentry since SENTRY_PYTHON_AUTH is defined.")
     import sentry_sdk
     sentry_sdk.init(os.environ.get("SENTRY_PYTHON_AUTH"))
 
-handler = logging.StreamHandler()
+handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(StackdriverJsonFormatter())
 logger.addHandler(handler)
 
