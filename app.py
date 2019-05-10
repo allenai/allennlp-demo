@@ -293,6 +293,11 @@ def make_app(build_dir: str,
                 "peak_memory_mb": peak_memory_mb(),
                 "githubUrl": "http://github.com/allenai/allennlp-demo/commit/" + git_version})
 
+    @app.route('/health')
+    def health() -> Response:  # pylint: disable=unused-variable
+        return "healthy"
+
+
   # As an SPA, we need to return index.html for /model-name and /model-name/permalink
     def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
         """return the page"""

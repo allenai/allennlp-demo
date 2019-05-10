@@ -203,7 +203,7 @@ local healthCheck = {
     periodSeconds: 10,
     initialDelaySeconds: 15,
     httpGet: {
-        path: '/',
+        path: '/health',
         port: config.httpPort,
         scheme: 'HTTP'
     }
