@@ -27,6 +27,7 @@ from allennlp.predictors import Predictor
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
+from server.logging import StackdriverJsonFormatter
 from server.models import DemoModel, load_demo_models
 
 
@@ -39,6 +40,11 @@ if "SENTRY_PYTHON_AUTH" in os.environ:
     logger.info("Enabling Sentry since SENTRY_PYTHON_AUTH is defined.")
     import sentry_sdk
     sentry_sdk.init(os.environ.get("SENTRY_PYTHON_AUTH"))
+
+handler = logging.StreamHandler()
+handler.setFormatter(StackdriverJsonFormatter())
+logger.addHandler(handler)
+
 
 class ServerError(Exception):
     status_code = 400
