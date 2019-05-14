@@ -4,7 +4,7 @@
 A `Flask <http://flask.pocoo.org/>`_ server that serves up our demo.
 """
 from datetime import datetime
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Iterable
 import argparse
 import json
 import logging
@@ -27,18 +27,25 @@ from allennlp.predictors import Predictor
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
-from server.models import MODELS, DemoModel
+from server.logging import StackdriverJsonFormatter
+from server.models import DemoModel, load_demo_models
 
 
-
-logging.basicConfig(level=logging.INFO)
 logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger.setLevel(logging.INFO)
 
 if "SENTRY_PYTHON_AUTH" in os.environ:
     logger.info("Enabling Sentry since SENTRY_PYTHON_AUTH is defined.")
     import sentry_sdk
     sentry_sdk.init(os.environ.get("SENTRY_PYTHON_AUTH"))
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(StackdriverJsonFormatter())
+handler.setLevel(logging.INFO)
+logger.addHandler(handler)
+logger.propagate = False
+
 
 class ServerError(Exception):
     status_code = 400
@@ -63,6 +70,8 @@ def main(demo_dir: str,
     """Run the server programatically"""
     logger.info("Starting a flask server on port %i.", port)
 
+    logger.info(f"With models {models}")
+
     if port != 8000:
         logger.warning("The demo requires the API to be run on port 8000.")
 
@@ -75,18 +84,16 @@ def main(demo_dir: str,
     app = make_app(build_dir=f"{demo_dir}/build", demo_db=demo_db, models=models)
     CORS(app)
 
-    http_server = WSGIServer(('0.0.0.0', port), app)
+    http_server = WSGIServer(('0.0.0.0', port), app, log=logger, error_log=logger)
+
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", port, port)
     http_server.serve_forever()
 
 
-def make_app(build_dir: str = None,
+def make_app(build_dir: str,
+             models: Dict[str, DemoModel],
              demo_db: Optional[DemoDatabase] = None,
-             models: Dict[str, DemoModel] = None,
              cache_size: int = 128) -> Flask:
-    if models is None:
-        models = {}
-
     if not os.path.exists(build_dir):
         logger.error("app directory %s does not exist, aborting", build_dir)
         sys.exit(-1)
@@ -100,10 +107,11 @@ def make_app(build_dir: str = None,
     app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
 
     for name, demo_model in models.items():
-        logger.info(f"loading {name} model")
-        predictor = demo_model.predictor()
-        app.predictors[name] = predictor
-        app.max_request_lengths[name] = demo_model.max_request_length
+        if demo_model is not None:
+            logger.info(f"loading {name} model")
+            predictor = demo_model.predictor()
+            app.predictors[name] = predictor
+            app.max_request_lengths[name] = demo_model.max_request_length
 
     @app.errorhandler(ServerError)
     def handle_invalid_usage(error: ServerError) -> Response:  # pylint: disable=unused-variable
@@ -293,18 +301,32 @@ def make_app(build_dir: str = None,
                 "peak_memory_mb": peak_memory_mb(),
                 "githubUrl": "http://github.com/allenai/allennlp-demo/commit/" + git_version})
 
-    # As an SPA, we need to return index.html for /model-name and /model-name/permalink,
+    @app.route('/health')
+    def health() -> Response:  # pylint: disable=unused-variable
+        return "healthy"
+
+
+  # As an SPA, we need to return index.html for /model-name and /model-name/permalink
     def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
         """return the page"""
         return send_file(os.path.join(build_dir, 'index.html'))
 
     for model_name in models:
+        logger.info(f"setting up default routes for {model_name}")
         app.add_url_rule(f"/{model_name}", view_func=return_page)
         app.add_url_rule(f"/{model_name}/<permalink>", view_func=return_page)
 
+
+    @app.route('/', defaults={ 'path': '' })
     @app.route('/<path:path>')
     def static_proxy(path: str) -> Response: # pylint: disable=unused-variable
-        return send_from_directory(build_dir, path)
+        if os.path.isfile(os.path.join(build_dir, path)):
+            return send_from_directory(build_dir, path)
+        else:
+            # Send the index.html page back to the client as a catch-all, since
+            # we're an SPA and JavaScript acts to handle routes the server
+            # doesn't.
+            return app.send_static_file('index.html')
 
     @app.route('/static/js/<path:path>')
     def static_js_proxy(path: str) -> Response: # pylint: disable=unused-variable
@@ -321,6 +343,7 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=8000, help='port to serve the demo on')
     parser.add_argument('--demo-dir', type=str, default='demo/', help="directory where the demo HTML is located")
     parser.add_argument('--cache-size', type=int, default=128, help="how many results to keep in memory")
+    parser.add_argument('--models-file', type=str, default='models.json', help="json file containing the details of the models to load")
 
     models_group = parser.add_mutually_exclusive_group()
     models_group.add_argument('--model', type=str, action='append', default=[], help='if specified, only load these models')
@@ -328,22 +351,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.no_models:
-        # Don't load any models
-        logger.info("starting the front-end with no models loaded")
-        models = {}
-    elif args.model:
-        # Load only the specified models
-        logger.info(f"loading only the specified models: {args.model}")
-        models = {
-            model_name: model
-            for model_name, model in MODELS.items()
-            if model_name in args.model
-        }
-    else:
-        # Load all known models
-        logger.info("loading all known models")
-        models = MODELS
+    models = load_demo_models(args.models_file, args.model, model_names_only=args.no_models)
 
     main(demo_dir=args.demo_dir,
          port=args.port,

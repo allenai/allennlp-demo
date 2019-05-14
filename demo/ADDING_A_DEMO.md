@@ -92,7 +92,7 @@ In most cases this will be a constant function; however, if you wanted your demo
 based on its inputs, that logic would live here:
 
 ```js
-const apiUrl = () => `http://my-api-server:8000/predict/machine-comprehension`
+const apiUrl = () => `http://my-api-server:8000/predict/reading-comprehension`
 ```
 
 ### Step 5: The Demo Output
