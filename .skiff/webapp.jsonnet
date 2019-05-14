@@ -201,7 +201,7 @@ local ingress = {
 local healthCheck = {
     failureThreshold: 3,
     periodSeconds: 10,
-    initialDelaySeconds: 15,
+    initialDelaySeconds: 60,
     httpGet: {
         path: '/health',
         port: config.httpPort,
