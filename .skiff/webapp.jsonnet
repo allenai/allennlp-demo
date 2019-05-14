@@ -49,6 +49,14 @@ local env = std.extVar('env');
 local image = std.extVar('image');
 local sha = std.extVar('sha');
 
+// Use 2 replicas in prod, only 1 in staging.
+local num_replicas = (
+    if env == 'prod' then
+        2
+    else
+        1
+);
+
 local topLevelDomain = '.apps.allenai.org';
 
 // We only allow registration of hostnames attached to '*.apps.allenai.org'
@@ -259,7 +267,7 @@ local deployment = {
     },
     spec: {
         revisionHistoryLimit: 3,
-        replicas: 1,
+        replicas: num_replicas,
         template: {
             metadata: {
                 name: fullyQualifiedName,
@@ -278,11 +286,11 @@ local deployment = {
                             requests: {
                                 // Our machines currently have 2 vCPUs, so this
                                 // will allow 4 apps to run per machine
-                                cpu: '0.5',
+                                cpu: '0.2',
                                 // Each machine has 13 GB of RAM. We target 4
                                 // apps per machine, so we reserve 3 GB of RAM
                                 // for each (whether they use it our not).
-                                memory: '3Gi'
+                                memory: '1Gi'
                             }
                         },
                         env: env_variables
@@ -313,7 +321,7 @@ local model_deployment(model_name) = {
     },
     spec: {
         revisionHistoryLimit: 3,
-        replicas: 1,
+        replicas: num_replicas,
         template: {
             metadata: {
                 name: fullyQualifiedName + "-" + model_name,
