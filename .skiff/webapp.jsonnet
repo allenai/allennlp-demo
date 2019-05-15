@@ -58,16 +58,17 @@ local num_replicas = (
 );
 
 local topLevelDomain = '.apps.allenai.org';
+local canonicalTopLevelDomain = '.allennlp.org';
 
-// We only allow registration of hostnames attached to '*.apps.allenai.org'
-// at this point, as that's all our certmanager can (easily) handle. At one
-// point we may support additional domain names. If you support for this, let
-// us know! https://github.com/allenai/skiff/issues/new
 local hosts = [
     if env == 'prod' then
         config.appName + topLevelDomain
     else
-        config.appName + '.' + env + topLevelDomain
+        config.appName + '.' + env + topLevelDomain,
+    if env == 'prod' then
+        'demo' + canonicalTopLevelDomain
+    else
+        'demo' + '.' + env + canonicalTopLevelDomain
 ];
 
 // Each app gets it's own namespace
