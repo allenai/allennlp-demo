@@ -277,7 +277,7 @@ local deployment = {
             spec: {
                 containers: [
                     {
-                        name: config.appName,
+                        name: "model",
                         image: image,
                         args: [ '--no-models' ],
                         readinessProbe: healthCheck,
