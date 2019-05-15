@@ -23,7 +23,6 @@ COPY scripts/ scripts/
 COPY server/models.py server/models.py
 COPY models.json models.json
 COPY models_small.json models_small.json
-COPY .skiff/ .skiff/
 
 # Now install and build the demo
 COPY demo/ demo/
