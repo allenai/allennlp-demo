@@ -103,7 +103,7 @@ def make_app(build_dir: str,
     start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S %Z")
 
     app.predictors = {}
-    app.max_request_lengths = {}
+    app.max_request_lengths = {} # requests longer than these will be rejected to prevent OOME
     app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
 
     for name, demo_model in models.items():
