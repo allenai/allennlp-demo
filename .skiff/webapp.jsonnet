@@ -208,7 +208,7 @@ local ingress = {
 };
 
 local healthCheck = {
-    failureThreshold: 3,
+    failureThreshold: 9,
     periodSeconds: 10,
     initialDelaySeconds: 180,
     httpGet: {
