@@ -207,10 +207,10 @@ local ingress = {
     }
 };
 
-local healthCheck = {
-    failureThreshold: 9,
+local readinessProbe = {
+    failureThreshold: 2,
     periodSeconds: 10,
-    initialDelaySeconds: 180,
+    initialDelaySeconds: 15,
     httpGet: {
         path: '/health',
         port: config.httpPort,
@@ -281,8 +281,7 @@ local deployment = {
                         name: config.appName,
                         image: image,
                         args: [ '--no-models' ],
-                        readinessProbe: healthCheck,
-                        livenessProbe: healthCheck,
+                        readinessProbe: readinessProbe,
                         resources: {
                             requests: {
                                 // Our machines currently have 2 vCPUs, so this
@@ -335,8 +334,7 @@ local model_deployment(model_name) = {
                         name: "model",
                         image: image,
                         args: [ '--model', model_name ],
-                        readinessProbe: healthCheck,
-                        livenessProbe: healthCheck,
+                        readinessProbe: readinessProbe,
                         resources: {
                             requests: {
                                 cpu: get_cpu(model_name),
