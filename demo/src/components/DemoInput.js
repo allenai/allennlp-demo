@@ -168,7 +168,7 @@ class DemoInput extends React.Component {
                         placeholder: field.placeholder || "",
                         value: this.state[field.name],
                         disabled: outputState === "working",
-                        maxlength: field.maxlength || (field.type === "TEXT_INPUT" ? 1000 : 100000)
+                        maxLength: field.maxLength || (field.type === "TEXT_INPUT" ? 1000 : 100000)
                     }
 
                     input = field.type === "TEXT_AREA" ? <textarea {...props}/> : <input {...props}/>
