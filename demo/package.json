@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "hierplane": "0.0.11",
+    "lodash": "^4.17.11",
     "npm": "6.1.0",
     "react": "15.6.1",
     "react-accessible-accordion": "2.4.5",

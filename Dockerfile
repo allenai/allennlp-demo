@@ -15,6 +15,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y
 RUN pip install psycopg2-binary
 RUN pip install sentry-sdk==0.7.1
 RUN pip install python-json-logger
+RUN pip install pytorch-pretrained-bert
 
 # Download spacy model
 RUN spacy download en_core_web_sm

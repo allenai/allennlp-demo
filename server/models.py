@@ -3,35 +3,16 @@ import json
 
 from allennlp.predictors import Predictor
 from allennlp.models.archival import load_archive
+
+from server.demo_model import DemoModel
+from server.gpt2 import Gpt2DemoModel
+
 # This maps from the name of the task
 # to the ``DemoModel`` indicating the location of the trained model
 # and the type of the ``Predictor``.  This is necessary, as you might
 # have multiple models (for example, a NER tagger and a POS tagger)
 # that have the same ``Predictor`` wrapper. The corresponding model
 # will be served at the `/predict/<name-of-task>` API endpoint.
-
-class DemoModel:
-    """
-    A demo model is determined by an archive file (representing the trained model), a
-    choice of predictor, and a limit on the maximum request length it can handle.
-
-    The initial max_request_length values were selected by querying the DB for:
-
-        with queries_with_len as (select *, char_length(request_data) as request_len from queries)
-            select model_name, max(request_len)/2 as max_lim from queries_with_len
-            where response_data is not null
-            group by model_name;
-
-    These limits affect less than 1% of queries for each model.
-    """
-    def __init__(self, archive_file: str, predictor_name: str, max_request_length: int) -> None:
-        self.archive_file = archive_file
-        self.predictor_name = predictor_name
-        self.max_request_length = max_request_length
-
-    def predictor(self) -> Predictor:
-        archive = load_archive(self.archive_file)
-        return Predictor.from_archive(archive, self.predictor_name)
 
 def load_demo_models(models_file: str,
                      task_names: List[str] = None,
@@ -42,13 +23,28 @@ def load_demo_models(models_file: str,
     # If no task names specified, load all of them
     task_names = task_names or blob.keys()
 
+    # No models, so return None for everything
     if model_names_only:
-        load = lambda *args, **kwargs: None
-    else:
-        load = DemoModel
+        return {task_name: None for task_name in task_names}
 
-    return {task_name: load(archive_file=model["archive_file"],
-                            predictor_name=model["predictor_name"],
-                            max_request_length=model["max_request_length"])
-            for task_name, model in blob.items()
-            if task_name in task_names}
+    # Otherwise
+    demo_models = {}
+
+    for task_name in task_names:
+        model = blob[task_name]
+        model_type = model.get("type", "allennlp")
+
+        if model_type == "allennlp":
+            load = DemoModel
+        elif model_type == "gpt2":
+            load = Gpt2DemoModel
+        else:
+            raise ValueError(f"unknown model type: {model_type}")
+
+        demo_models[task_name] = load(
+                    archive_file=model["archive_file"],
+                    predictor_name=model["predictor_name"],
+                    max_request_length=model["max_request_length"]
+        )
+
+    return demo_models

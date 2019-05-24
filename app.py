@@ -28,7 +28,8 @@ from allennlp.predictors import Predictor
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
 from server.logging import StackdriverJsonFormatter
-from server.models import DemoModel, load_demo_models
+from server.demo_model import DemoModel
+from server.models import load_demo_models
 
 
 logging.getLogger("allennlp").setLevel(logging.WARN)
@@ -188,6 +189,7 @@ def make_app(build_dir: str,
         max_request_length = app.max_request_lengths[lowered_model_name]
 
         data = request.get_json()
+        print(request.args)
 
         serialized_request = json.dumps(data)
         if len(serialized_request) > max_request_length:
