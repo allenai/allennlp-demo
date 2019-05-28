@@ -6,75 +6,12 @@ import _ from 'lodash';
 
 const Wrapper = styled.div`
   color: #232323;
-  border-top: 4px solid #fcb431;
-  max-width: 940px;
   flex-grow: 1;
-  margin: 2rem;
-  background: #fff;
-  padding: 2rem;
   font-size: 1em;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-  font-size: 1em;
-  line-height: 1.4;
 
   @media(max-width: 500px) {
     margin: 0;
   }
-`
-
-const Title = styled.h1`
-  font-size: 1.5em;
-  margin: 0 0 1rem;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-
-  @media(max-width: 500px) {
-    justify-content: center;
-  }
-`
-
-const AppName = styled.span`
-  background: #2085bc;
-  font-weight: 200;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  line-height: 1;
-  border-radius: 2rem;
-  margin-left: auto;
-
-  @media(max-width: 500px) {
-    margin: 1rem 0 0;
-  }
-`
-
-const LinkHome = styled.a`
-  background-image: url('static/ai2-logo-header.png');
-  background-size: 360px 71px;
-  backround-repeat: no-repeat;
-  width: 360px;
-  height: 71px;
-  display: block;
-  margin: 0 1rem 0 0;
-
-  @media(max-width: 500px) {
-    background-image: url('static/ai2-logo-header-crop.png');
-    background-size: 89px 71px;
-    width: 89px;
-    height: 71px;
-  }
-`
-
-const Intro = styled.div`
-  margin: 2em 0;
-
-  @media(max-width: 500px) {
-    font-size: 0.8em;
-  }
-`
-
-const TextInputWrapper = styled.div`
-  position: relative;
 `
 
 const Loading = styled.div`
@@ -97,6 +34,7 @@ const LoadingText = styled.div`
 
 const InputOutput = styled.div`
   display: flex;
+  margin-top: 10px;
 
   @media(max-width: 500px) {
     display: block;
@@ -132,26 +70,11 @@ const TextInput = styled.textarea`
   font-size: 1.25em;
   min-height: 100px;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.1);
   padding: 1rem;
-  border-radius: 0.25rem;
-`
-
-const Button = styled.button`
-  color: #fff!important;
-  background: #2085bc;
 `
 
 const ListItem = styled.li`
   margin: 0 0 0.5rem;
-`
-
-const InputHeader = styled.h2`
-  font-weight: 600;
-  font-size: 1.1em;
-  margin: 0 0 1rem;
-  padding: 0 0 0.5rem;
-  border-bottom: 1px solid #eee;
 `
 
 const ChoiceList = styled.ul`
@@ -189,28 +112,6 @@ const Token = styled.span`
   font-weight: 600;
 `
 
-const OutputSentence = styled.div`
-  margin: 20px;
-  font-family: monospace;
-  flex: 1;
-`
-
-const OutputToken = styled.span`
-  cursor: pointer;
-
-  :hover {
-      font-weight: bold;
-  }
-`
-
-const OutputSpace = styled.span``
-
-const ModelChoice = styled.span`
-  font-weight: ${props => props.selected ? 'bold' : 'normal'};
-  color: ${props => props.selected ? 'black' : 'lightgray'};
-  cursor: ${props => props.selected ? 'default' : 'pointer'};
-`
-
 const Footer = styled.div`
   margin: 2rem 0 0 0;
 `
@@ -227,7 +128,7 @@ function loadFromUrl() {
   const params =
       document.location.search.substr(1).split('&').map(p => p.split('='));
   const text = params.find(p => p[0] === 'text');
-  return Array.isArray(text) && text.length == 2 ?  decodeURIComponent(text.pop()) : null;
+  return Array.isArray(text) && text.length === 2 ?  decodeURIComponent(text.pop()) : null;
 }
 
 function trimRight(str) {
@@ -235,6 +136,17 @@ function trimRight(str) {
 }
 
 const DEFAULT_MODEL = "345M"
+
+const description = (
+  <span>
+This demonstration uses the public 345M
+parameter <a href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</a> language model
+to generate sentences.<br /><br />
+Enter some initial text and the model will generate the most likely next words.
+You can click on one of those words to choose it and continue or just keep typing.
+Click the left arrow at the bottom to undo your last choice.
+  </span>
+)
 
 class App extends React.Component {
 
@@ -316,7 +228,7 @@ class App extends React.Component {
     }
 
     const currentReqId = this.createRequestId();
-    const endpoint = `${API_ROOT}/predict`
+    const endpoint = `${API_ROOT}/predict/gpt2`
 
     if ('history' in window && !doNotChangeUrl) {
       addToUrl(this.state.output, choice);
@@ -354,42 +266,33 @@ class App extends React.Component {
   }
 
   render() {
+
     return (
-      <Wrapper>
-        <Title>
-          <LinkHome href="https://allenai.org" target="_blank"></LinkHome>
-          <AppName>GPT-2 Explorer</AppName>
-        </Title>
-        <Intro>
-          This demonstration uses the public 345M
-          parameter <a href="https://github.com/openai/gpt-2" target="_blank">OpenAI GPT-2</a> language model
-          to generate sentences.<br /><br />
-          Enter some initial text and the model will generate the most likely next words.
-          You can click on one of those words to choose it and continue or just keep typing.
-          Click the left arrow at the bottom to undo your last choice.
-        </Intro>
+      <Wrapper className="model">
+        <div className="model__content answer">
+        <h2><span>Language Modeling</span></h2>
+        <p><span>{description}</span></p>
+
         <InputOutput>
-          <InputOutputColumn>
-            <InputHeader>Sentence:</InputHeader>
-            <TextInputWrapper>
+          <InputOutputColumn className="form__field">
+            <label>Sentence:</label>
               <TextInput type="text"
                         value={this.state.output}
                         onChange={this.setOutput}/>
               {this.state.loading ? (
                 <Loading>
-                  <img src="/static/loading-bars.svg" width="25" height="25" />
+                  <img src="/assets/loading-bars.svg" width="25" height="25" alt="loading" />
                   <LoadingText>Loading</LoadingText>
                 </Loading>
               ) : null}
               {this.state.error ? (
                 <Error>
-                  ⚠️ Something went wrong. Please try again.
+                  <span role="img" aria-label="warning">️⚠</span> Something went wrong. Please try again.
                 </Error>
               ) : null}
-            </TextInputWrapper>
           </InputOutputColumn>
-          <InputOutputColumn>
-            <InputHeader>Options:</InputHeader>
+          <InputOutputColumn className="form__field">
+            <label>Options:</label>
             <Choices output={this.state.output}
                      choose={this.choose}
                      logits={this.state.logits}
@@ -399,10 +302,11 @@ class App extends React.Component {
           </InputOutputColumn>
         </InputOutput>
         <Footer>
-          Built at the <a href="https://allenai.org" target="_blank">Allen Institute for Artificial Intelligence</a>
-          {' '}using Hugging Face’s <a href="https://github.com/huggingface/pytorch-pretrained-BERT" target="_blank">pytorch-pretrained-BERT</a>
-          {' '}library.  See the <a href="https://github.com/allenai/lm-explorer">source code on GitHub</a>.
+          Built at the <a href="https://allenai.org" target="_blank" rel="noopener noreferrer">Allen Institute for Artificial Intelligence</a>
+          {' '}using Hugging Face’s <a href="https://github.com/huggingface/pytorch-pretrained-BERT" target="_blank" rel="noopener noreferrer">pytorch-pretrained-BERT</a>
+          {' '}library.
         </Footer>
+      </div>
       </Wrapper>
     )
   }
@@ -418,7 +322,6 @@ const Choices = ({output, logits, words, choose, probabilities}) => {
   if (!words) { return null }
 
   const lis = words.map((word, idx) => {
-    const logit = logits[idx]
     const prob = formatProbability(probabilities[idx])
 
     // get rid of CRs
@@ -458,62 +361,6 @@ const Choices = ({output, logits, words, choose, probabilities}) => {
     </ChoiceList>
   )
 }
-
-/*
-
-class Gpt2Model extends React.Component {
-    constructor(props) {
-      super(props);
-
-      const { requestData, responseData } = props;
-
-      this.state = {
-        outputState: responseData ? "received" : "empty", // valid values: "working", "empty", "received", "error"
-        requestData: requestData,
-        responseData: responseData
-      };
-
-      this.runModel = this.runModel.bind(this)
-    }
-
-    runModel(inputs) {
-      const { selectedModel, apiUrl } = this.props
-
-      this.setState({outputState: "working"});
-
-      fetch(apiUrl(inputs), {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(inputs)
-      }).then((response) => {
-        return response.json();
-      }).then((json) => {
-        // If the response contains a `slug` for a permalink, we want to redirect
-        // to the corresponding path using `history.push`.
-        const { slug } = json;
-        const newPath = slug ? `/${selectedModel}/${slug}` : `/${selectedModel}`
-
-        // We'll pass the request and response data along as part of the location object
-        // so that the `Demo` component can use them to re-render.
-        const location = {
-          pathname: newPath,
-          state: { requestData: inputs, responseData: json }
-        }
-        this.props.history.push(location);
-      }).catch((error) => {
-        this.setState({outputState: "error"});
-        console.error(error);
-      });
-    }
-
-    render() {
-        return <App/>
-    }
-}
-*/
 
 const modelProps = {}
 

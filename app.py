@@ -189,7 +189,6 @@ def make_app(build_dir: str,
         max_request_length = app.max_request_lengths[lowered_model_name]
 
         data = request.get_json()
-        print(request.args)
 
         serialized_request = json.dumps(data)
         if len(serialized_request) > max_request_length:

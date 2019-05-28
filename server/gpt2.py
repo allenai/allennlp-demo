@@ -6,12 +6,12 @@ import torch
 from server.demo_model import DemoModel
 from server.lru_cache import LRUCache
 
-
+SMALL_MODEL = 'gpt2'
 MEDIUM_MODEL = 'https://storage.googleapis.com/allennlp/models/gpt2-345M-dump'
 
 class Gpt2Predictor(Predictor):
     def __init__(self,
-                 model_name: str = MEDIUM_MODEL,
+                 model_name: str = SMALL_MODEL,
                  cache_size: int = 0) -> None:
         """
         Each cache element is about 8MB, so size accordingly.
@@ -19,7 +19,7 @@ class Gpt2Predictor(Predictor):
         # Cache stores tuples, so default value is a tuple
         self._cache = LRUCache(cache_size, default_value=(None, None))
         self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
-        self.model = GPT2LMHeadModel.from_pretrained(MEDIUM_MODEL)
+        self.model = GPT2LMHeadModel.from_pretrained(model_name)
 
         # The end of text marker.
         self.END_OF_TEXT = self.tokenizer.encoder["<|endoftext|>"]
