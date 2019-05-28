@@ -11,7 +11,7 @@ MEDIUM_MODEL = 'https://storage.googleapis.com/allennlp/models/gpt2-345M-dump'
 
 class Gpt2Predictor(Predictor):
     def __init__(self,
-                 model_name: str = SMALL_MODEL,
+                 model_name: str = MEDIUM_MODEL,
                  cache_size: int = 0) -> None:
         """
         Each cache element is about 8MB, so size accordingly.
