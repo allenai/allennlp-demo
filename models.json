@@ -80,6 +80,6 @@
         "archive_file": "https://storage.googleapis.com/allennlp/models/gpt2-345M-dump",
         "predictor_name": "",
         "max_request_length": 10000,
-        "memory": "3Gi"
+        "memory": "4Gi"
     }
 }
