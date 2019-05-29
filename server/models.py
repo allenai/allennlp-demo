@@ -34,6 +34,8 @@ def load_demo_models(models_file: str,
         model = blob[task_name]
         model_type = model.get("type", "allennlp")
 
+        # If ever we introduce additional model types,
+        # we'll need to add corresponding logic here.
         if model_type == "allennlp":
             load = DemoModel
         elif model_type == "gpt2":

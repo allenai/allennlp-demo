@@ -10,6 +10,11 @@ SMALL_MODEL = 'gpt2'
 MEDIUM_MODEL = 'https://storage.googleapis.com/allennlp/models/gpt2-345M-dump'
 
 class Gpt2Predictor(Predictor):
+    """
+    The HuggingFace implementation of GPT-2 is not an AllenNLP model;
+    however, our demo only expects an AllenNLP ``Predictor``. Accordingly,
+    we implement a ``Predictor`` that wraps the HuggingFace GPT-2 implementation.
+    """
     def __init__(self,
                  model_name: str = MEDIUM_MODEL,
                  cache_size: int = 0) -> None:
@@ -75,6 +80,7 @@ class Gpt2Predictor(Predictor):
 
     def __getitem__(self, index: int) -> str:
         return self.tokenizer.decode([index])
+
 
 class Gpt2DemoModel(DemoModel):
     def predictor(self) -> Predictor:
