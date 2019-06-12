@@ -45,7 +45,7 @@ steps:
   dir: '.skiff'
 # Deploy the image to Kubernetes
 - id: 'deploy'
-  name: 'gcr.io/cloud-builders/rudder'
+  name: 'gcr.io/ai2-reviz/rudder'
   args: [
     'deploy',
     '-f',
