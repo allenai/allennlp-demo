@@ -43,41 +43,13 @@ steps:
     './webapp.jsonnet'
   ]
   dir: '.skiff'
-# Extract the deployment definition, which we need in order to query the
-# state of the deployment, so that we can block till it's complete.
-- id: 'extract-deployment-config'
-  name: 'gcr.io/ai2-reviz/rudder'
-  args: [
-    'get',
-    '-f', './webapp.json',
-    '-k', 'deployment',
-    '-o', './deployment.json'
-  ]
-  dir: '.skiff'
 # Deploy the image to Kubernetes
 - id: 'deploy'
-  name: 'gcr.io/cloud-builders/kubectl'
+  name: 'gcr.io/cloud-builders/rudder'
   args: [
-    'apply',
+    'deploy',
     '-f',
     'webapp.json'
-  ]
-  env: [
-    'CLOUDSDK_COMPUTE_ZONE=us-west1',
-    'CLOUDSDK_CONTAINER_CLUSTER=skiff-prod'
-  ]
-  dir: '.skiff'
-# Block until the deploy is complete. If this step fails your deployment
-# failed.
-- id: 'wait-for-deploy'
-  name: 'gcr.io/cloud-builders/kubectl'
-  args: [
-    'rollout', 'status',
-    '-f', 'deployment.json'
-  ]
-  env: [
-    'CLOUDSDK_COMPUTE_ZONE=us-west1',
-    'CLOUDSDK_CONTAINER_CLUSTER=skiff-prod'
   ]
   dir: '.skiff'
 substitutions:
@@ -88,5 +60,5 @@ images: [
 ]
 artifacts:
   objects:
-    location: 'gs://skiff-archive/$REPO_NAME/$_ENV/$COMMIT_SHA'
+    location: 'gs://skiff-archive/$REPO_NAME/$_ENV/$COMMIT_SHA/$BUILD_ID'
     paths: ['.skiff/webapp.json']
