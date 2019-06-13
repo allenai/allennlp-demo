@@ -167,7 +167,8 @@ class DemoInput extends React.Component {
                         autoFocus: idx === 0,
                         placeholder: field.placeholder || "",
                         value: this.state[field.name],
-                        disabled: outputState === "working"
+                        disabled: outputState === "working",
+                        maxLength: field.maxLength || (field.type === "TEXT_INPUT" ? 1000 : 100000)
                     }
 
                     input = field.type === "TEXT_AREA" ? <textarea {...props}/> : <input {...props}/>
