@@ -15,9 +15,9 @@ const description = (
         The AllenNLP toolkit provides the following SRL visualization, which can be used for any SRL model in AllenNLP.
         This page demonstrates a reimplementation of
       </span>
-      <a href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener noreferrer">{' '} a BERT based model (Shi et al, 2019)</a>
+      <a href="https://www.semanticscholar.org/paper/Deep-Semantic-Role-Labeling-What-Works-and-What-s-He-Lee/a3ccff7ad63c2805078b34b8514fa9eab80d38e9" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM model (He et al, 2017)</a>
       <span>
-        with some modifications (no additional parameters apart from a linear classification layer), which is currently the state of the art single model for English PropBank SRL (Newswire sentences).
+        , which is currently state of the art for PropBank SRL (Newswire sentences).
       </span>
     </span>
   );
