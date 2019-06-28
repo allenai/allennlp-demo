@@ -10,7 +10,8 @@ import DependencyParser from './components/demos/DependencyParser';
 import WikiTables from './components/demos/WikiTables';
 import Nlvr from './components/demos/Nlvr';
 import Atis from './components/demos/Atis';
-import QuarelZero from './components/demos/QuarelZero'
+import QuarelZero from './components/demos/QuarelZero';
+import Gpt2 from './components/demos/Gpt2';
 
 // This is the order in which they will appear in the menu
 const modelGroups = [
@@ -50,6 +51,7 @@ const modelGroups = [
         models: [
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
             {model: "event2mind", name: "Event2Mind", component: Event2Mind},
+            {model: "gpt2", name: "Language Modeling", component: Gpt2},
             {model: "user-models", name: "Your model here!"}
         ]
     }

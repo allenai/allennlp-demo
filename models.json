@@ -74,5 +74,12 @@
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/quarel-parser-zero-2018.12.20.tar.gz",
         "predictor_name": "quarel-parser",
         "max_request_length": 6695
+    },
+    "gpt2": {
+        "type": "gpt2",
+        "archive_file": "https://storage.googleapis.com/allennlp/models/gpt2-345M-dump",
+        "predictor_name": "",
+        "max_request_length": 10000,
+        "memory": "4Gi"
     }
 }
