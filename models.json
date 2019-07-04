@@ -81,5 +81,10 @@
         "predictor_name": "",
         "max_request_length": 10000,
         "memory": "4Gi"
+    },
+    "sentiment-analysis": {
+        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
+        "predictor_name": "text_classifier",
+        "max_request_length": 1000
     }
 }

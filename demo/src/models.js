@@ -2,6 +2,7 @@ import SemanticRoleLabeling from './components/demos/SemanticRoleLabeling';
 import OpenIe from './components/demos/OpenIe';
 import Event2Mind from './components/demos/Event2Mind';
 import TextualEntailment from './components/demos/TextualEntailment';
+import SentimentAnalysis from './components/demos/SentimentAnalysis';
 import ReadingComprehension from './components/demos/ReadingComprehension';
 import Coref from './components/demos/Coref';
 import NamedEntityRecognition from './components/demos/NamedEntityRecognition';
@@ -50,6 +51,7 @@ const modelGroups = [
         label: "Other",
         models: [
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
+            {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis},
             {model: "event2mind", name: "Event2Mind", component: Event2Mind},
             {model: "gpt2", name: "Language Modeling", component: Gpt2},
             {model: "user-models", name: "Your model here!"}
