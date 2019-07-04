@@ -2,6 +2,7 @@ import React from 'react';
 import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
 import HeatMap from '../HeatMap'
+import SaliencyComponent from '../Saliency'
 import Model from '../Model'
 import OutputField from '../OutputField'
 import {
@@ -13,8 +14,13 @@ import {
 import '../../css/TeComponent.css';
 
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
+const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/textual-entailment/${interpreter}`
 
 const title = "Textual Entailment"
+
+const GRAD_INTERPRETER = 'simple_gradients_interpreter'
+const IG_INTERPRETER = 'integrated_gradients_interpreter'
+const SG_INTERPRETER = 'smooth_gradient_interpreter'
 
 const description = (
   <span>
@@ -76,7 +82,7 @@ const judgments = {
   NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
-const Output = ({ responseData }) => {
+const Output = ({ responseData,requestData, interpretData, interpretModel}) => {
   const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
   const [entailment, contradiction, neutral] = label_probs
 
@@ -165,8 +171,12 @@ const Output = ({ responseData }) => {
       </table>
     </div>
     </div>
-    <OutputField label=" Model internals">
+    <OutputField>
       <Accordion accordion={false}>
+        <SaliencyComponent interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
+
         <AccordionItem expanded={true}>
           <AccordionItemTitle>
             Premise to Hypothesis Attention
@@ -193,6 +203,7 @@ const Output = ({ responseData }) => {
             <HeatMap colLabels={hypothesis_tokens} rowLabels={premise_tokens} data={p2h_attention} />
           </AccordionItemBody>
         </AccordionItem>
+
       </Accordion>
     </OutputField>
   </div>
@@ -222,6 +233,6 @@ const examples = [
   },
 ]
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, apiUrlInterpret, title, description, descriptionEllipsed, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

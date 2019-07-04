@@ -4,7 +4,7 @@
 A `Flask <http://flask.pocoo.org/>`_ server that serves up our demo.
 """
 from datetime import datetime
-from typing import Dict, Optional, List, Iterable
+from typing import Dict, Optional, List
 import argparse
 import json
 import logging
@@ -12,6 +12,7 @@ import os
 import sys
 import time
 from functools import lru_cache
+from collections import defaultdict
 
 from flask import Flask, request, Response, jsonify, send_file, send_from_directory
 from flask_cors import CORS
@@ -24,13 +25,13 @@ import pytz
 
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.predictors import Predictor
+from allennlp.interpret.saliency import SaliencyInterpreter
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
 from server.logging import StackdriverJsonFormatter
 from server.demo_model import DemoModel
 from server.models import load_demo_models
-
 
 logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -46,7 +47,6 @@ handler.setFormatter(StackdriverJsonFormatter())
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 logger.propagate = False
-
 
 class ServerError(Exception):
     status_code = 400
@@ -70,7 +70,6 @@ def main(demo_dir: str,
          models: Dict[str, DemoModel]) -> None:
     """Run the server programatically"""
     logger.info("Starting a flask server on port %i.", port)
-
     logger.info(f"With models {models}")
 
     if port != 8000:
@@ -86,7 +85,6 @@ def main(demo_dir: str,
     CORS(app)
 
     http_server = WSGIServer(('0.0.0.0', port), app, log=logger, error_log=logger)
-
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", port, port)
     http_server.serve_forever()
 
@@ -105,6 +103,7 @@ def make_app(build_dir: str,
 
     app.predictors = {}
     app.max_request_lengths = {} # requests longer than these will be rejected to prevent OOME
+    app.interpreters = defaultdict(dict)
     app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
 
     for name, demo_model in models.items():
@@ -113,6 +112,14 @@ def make_app(build_dir: str,
             predictor = demo_model.predictor()
             app.predictors[name] = predictor
             app.max_request_lengths[name] = demo_model.max_request_length
+
+            simple_gradients_interpreter = SaliencyInterpreter.by_name('simple-gradients-interpreter')(predictor)
+            integrated_gradients_interpreter = SaliencyInterpreter.by_name('integrated-gradients-interpreter')(predictor)
+            smooth_gradient_interpreter = SaliencyInterpreter.by_name('smooth-gradient-interpreter')(predictor)
+
+            app.interpreters[name]['simple-gradients-interpreter'] = simple_gradients_interpreter
+            app.interpreters[name]['integrated-gradients-interpreter'] = integrated_gradients_interpreter
+            app.interpreters[name]['smooth-gradient-interpreter'] = smooth_gradient_interpreter
 
     @app.errorhandler(ServerError)
     def handle_invalid_usage(error: ServerError) -> Response:  # pylint: disable=unused-variable
@@ -169,6 +176,31 @@ def make_app(build_dir: str,
                 "requestData": permadata.request_data,
                 "responseData": permadata.response_data
         })
+
+    @app.route('/interpret/<model_name>/<interpreter>', methods=['POST', 'OPTIONS'])
+    def interpret(model_name: str, interpreter: str) -> Response:
+        """
+        Interpret prediction of the model
+        """
+        if request.method == "OPTIONS":
+            return Response(response="", status=200)
+        lowered_model_name = model_name.lower()
+        interpreter = interpreter.replace("_","-")
+
+        model = app.interpreters.get(lowered_model_name)[interpreter]
+
+        if model is None:
+            raise ServerError("unknown model: {}".format(model_name), status_code=400)
+        max_request_length = app.max_request_lengths[lowered_model_name]
+
+        data = request.get_json()
+        serialized_request = json.dumps(data)
+        if len(serialized_request) > max_request_length:
+            raise ServerError(f"Max request length exceeded for model {model_name}! " +
+                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+
+        interpretation = model.saliency_interpret_from_json(data)
+        return jsonify(interpretation)
 
     @app.route('/predict/<model_name>', methods=['POST', 'OPTIONS'])
     def predict(model_name: str) -> Response:  # pylint: disable=unused-variable

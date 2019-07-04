@@ -55,3 +55,12 @@ export const Tooltip = styled(ReactTooltip)`
     }
   }
 `;
+
+export const ColorizedToken = styled.span`
+  background-color: ${props => props.backgroundColor};
+  padding: 1px;
+  margin: 1px;
+  display: inline-block;
+  border-radius: 3px;
+  font-weight: normal;
+`;
