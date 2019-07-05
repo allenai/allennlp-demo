@@ -1,6 +1,7 @@
 import React from 'react'
 import { PaneLeft, PaneRight, PaneTop, PaneBottom } from './Pane'
 import DemoInput from './DemoInput'
+import { AI2Banner } from '@allenai/varnish/components/AI2Banner'
 
 class Model extends React.Component {
     constructor(props) {
@@ -80,6 +81,7 @@ class Model extends React.Component {
 
         return (
             <div className={className}>
+                <AI2Banner/>
                 <InputPane>{demoInput}</InputPane>
                 <OutputPane outputState={outputState}>{demoOutput}</OutputPane>
             </div>

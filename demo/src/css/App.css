@@ -1,5 +1,7 @@
 /* Base Styles */
 
+/*
+
 body,
 html {
   min-width: 48em;
@@ -11,10 +13,14 @@ html {
   padding: 0;
 }
 
+*/
+
+/*
 * {
   font-family: 'Source Sans Pro', sans-serif;
   color: #232323;
 }
+*/
 
 #root,
 #root > div {
@@ -74,6 +80,8 @@ pre {
   margin: 2em 0;
 }
 
+/*
+
 h1,
 h2 {
   -webkit-font-smoothing: antialiased;
@@ -111,6 +119,8 @@ a:active {
   -webkit-transition-duration: 0s;
   transition-duration: 0s;
 }
+
+*/
 
 blockquote {
   border-left: #f6f8fa solid .375em;

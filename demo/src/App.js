@@ -6,6 +6,7 @@ import ModelIntro from './components/ModelIntro';
 import { modelComponents } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
+import { ThemeProvider } from '@allenai/varnish/theme';
 
 import './css/App.css';
 import './css/fonts.css';
@@ -15,6 +16,7 @@ import './css/Accordion.css';
 import './css/hierplane-overrides.css';
 import './css/visualization-types.css';
 
+
 /*******************************************************************************
   <App /> Container
 *******************************************************************************/
@@ -23,14 +25,16 @@ const DEFAULT_PATH = "/reading-comprehension"
 
 // The App is just a react-router wrapped around the Demo component.
 const App = () => (
-  <Router>
-    <div>
-      <Route exact path="/" render={() => (
-        <Redirect to={DEFAULT_PATH}/>
-      )}/>
-      <Route path="/:model/:slug?" component={Demo}/>
-    </div>
-  </Router>
+  <ThemeProvider>
+    <Router>
+        <div>
+          <Route exact path="/" render={() => (
+            <Redirect to={DEFAULT_PATH}/>
+          )}/>
+          <Route path="/:model/:slug?" component={Demo}/>
+        </div>
+    </Router>
+  </ThemeProvider>
 )
 
 class Demo extends React.Component {
@@ -147,16 +151,19 @@ class Demo extends React.Component {
     }
 
     return (
-      <div className="pane-container">
-        <Menu
-          selectedModel={selectedModel}
-          expandedModelGroupIndexes={expandedModelGroupIndexes}
-          clearData={this.clearData}
-          onExpandModelGroup={this.handleExpandModelGroup}/>
-        <ModelComponent />
+      <div>
+        <div className="pane-container">
+          <Menu
+            selectedModel={selectedModel}
+            expandedModelGroupIndexes={expandedModelGroupIndexes}
+            clearData={this.clearData}
+            onExpandModelGroup={this.handleExpandModelGroup}/>
+          <ModelComponent />
+        </div>
       </div>
     );
   }
 }
+
 
 export default App;
