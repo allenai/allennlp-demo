@@ -45,7 +45,7 @@ class Menu extends React.Component {
       return (
         <div className={`menu ${className}`}>
           <div className="menu__content">
-          <h1 className="menu__content__logo">
+            <h1 className="menu__content__logo">
               <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
                 <svg>
                   <use xlinkHref="#icon__allennlp-logo"></use>

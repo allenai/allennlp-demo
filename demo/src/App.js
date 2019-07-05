@@ -151,15 +151,13 @@ class Demo extends React.Component {
     }
 
     return (
-      <div>
-        <div className="pane-container">
-          <Menu
-            selectedModel={selectedModel}
-            expandedModelGroupIndexes={expandedModelGroupIndexes}
-            clearData={this.clearData}
-            onExpandModelGroup={this.handleExpandModelGroup}/>
-          <ModelComponent />
-        </div>
+      <div className="pane-container">
+        <Menu
+          selectedModel={selectedModel}
+          expandedModelGroupIndexes={expandedModelGroupIndexes}
+          clearData={this.clearData}
+          onExpandModelGroup={this.handleExpandModelGroup}/>
+        <ModelComponent />
       </div>
     );
   }
