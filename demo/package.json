@@ -16,7 +16,7 @@
     "react-proptypes": "1.0.0",
     "react-radio-group": "3.0.3",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "1.0.13",
+    "react-scripts": "2.0.3",
     "react-syntax-highlighter": "8.0.1",
     "react-tooltip": "3.8.4",
     "react-vis": "^1.11.6",
@@ -27,5 +27,11 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
