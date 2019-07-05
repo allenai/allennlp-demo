@@ -64,3 +64,12 @@ export const ColorizedToken = styled.span`
   border-radius: 3px;
   font-weight: normal;
 `;
+
+export const BlankToken = styled.span`
+  background-color: transparent;
+  color: white;
+  padding: 1px;
+  margin: 1px;
+  display: inline-block;
+  border-radius: 3px;
+`;

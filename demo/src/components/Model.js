@@ -6,17 +6,21 @@ class Model extends React.Component {
     constructor(props) {
       super(props);
 
-      const { requestData, responseData, interpretData} = props;
+      const { requestData, responseData, interpretData, inputReductionData, hotflipData } = props;
 
       this.state = {
         outputState: responseData ? "received" : "empty", // valid values: "working", "empty", "received", "error"
         requestData: requestData,
         responseData: responseData,
-        interpretData: interpretData
+        interpretData: interpretData,
+        inputReductionData: inputReductionData,
+        hotflipData: hotflipData
       };
 
       this.runModel = this.runModel.bind(this)
       this.interpretModel = this.interpretModel.bind(this)
+      this.reduceInput = this.reduceInput.bind(this)
+      this.hotflipInput = this.hotflipInput.bind(this)
     }
 
     runModel(inputs) {
@@ -70,6 +74,38 @@ class Model extends React.Component {
       })
     }
 
+    reduceInput(inputs) {
+      const { selectedModel, inputReductionUrl } = this.props
+
+      fetch(inputReductionUrl(inputs), {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(inputs)
+      }).then((response) => {
+        return response.json();
+      }).then((json) => {        
+        this.setState({inputReductionData: json})
+      });
+    }
+    hotflipInput(inputs) {
+      const { selectedModel, hotflipUrl } = this.props
+      fetch(hotflipUrl(inputs), {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(inputs)
+      }).then((response) => {        
+        return response.json();
+      }).then((json) => {        
+        this.setState({hotflipData: json})
+      });
+    }
+
  render() {
         const { title, description, descriptionEllipsed, examples, fields, selectedModel, vertical, Output } = this.props;
         const { requestData, responseData, outputState } = this.state;
@@ -84,7 +120,7 @@ class Model extends React.Component {
                                      outputState={outputState}
                                      runModel={this.runModel}/>
 
-        const demoOutput = requestData && responseData ? <Output {...this.state} interpretModel={this.interpretModel}/> : null
+        const demoOutput = requestData && responseData ? <Output {...this.state} interpretModel={this.interpretModel} reduceInput={this.reduceInput} hotflipInput={this.hotflipInput}/> : null
         let className, InputPane, OutputPane
         if (vertical) {
           className = "pane model"

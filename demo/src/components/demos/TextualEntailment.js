@@ -3,6 +3,8 @@ import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
 import HeatMap from '../HeatMap'
 import SaliencyComponent from '../Saliency'
+import InputReductionComponent from '../InputReduction'
+import HotflipComponent from '../Hotflip'
 import Model from '../Model'
 import OutputField from '../OutputField'
 import {
@@ -14,6 +16,8 @@ import {
 import '../../css/TeComponent.css';
 
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
+const hotflipUrl = () => `${API_ROOT}/hotflip/textual-entailment`
+const inputReductionUrl = () => `${API_ROOT}/input-reduction/textual-entailment`
 const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/textual-entailment/${interpreter}`
 
 const title = "Textual Entailment"
@@ -82,7 +86,7 @@ const judgments = {
   NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
-const Output = ({ responseData,requestData, interpretData, interpretModel}) => {
+const Output = ({ responseData,requestData, interpretData, interpretModel, inputReductionData, hotflipData, reduceInput, hotflipInput}) => {    
   const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
   const [entailment, contradiction, neutral] = label_probs
 
@@ -139,6 +143,8 @@ const Output = ({ responseData,requestData, interpretData, interpretModel}) => {
   const x = 0.5 * (2 * b + c) / (a + b + c)
   const y = (c / (a + b + c))
 
+  let task = "textual_entailment"
+
   return (
   <div className="model__content answer">
     <OutputField label="Summary">
@@ -176,6 +182,8 @@ const Output = ({ responseData,requestData, interpretData, interpretModel}) => {
         <SaliencyComponent interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
         <SaliencyComponent interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
         <SaliencyComponent interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
+        <InputReductionComponent inputReductionData={inputReductionData} reduceInput={reduceInput} requestDataObject={requestData}/>                              
+        <HotflipComponent hotflipData={hotflipData} hotflipInput={hotflipInput} requestDataObject={requestData} task={task} />                    
 
         <AccordionItem expanded={true}>
           <AccordionItemTitle>
@@ -233,6 +241,5 @@ const examples = [
   },
 ]
 
-const modelProps = {apiUrl, apiUrlInterpret, title, description, descriptionEllipsed, fields, examples, Output}
-
+const modelProps = {apiUrl, apiUrlInterpret, inputReductionUrl, hotflipUrl, title, description, descriptionEllipsed, fields, examples, Output}
 export default withRouter(props => <Model {...props} {...modelProps}/>)
