@@ -178,10 +178,10 @@ const Output = ({ responseData,requestData, interpretData, interpretModel, input
     </div>
     </div>
     <OutputField>
-      <Accordion accordion={false}>
-        <SaliencyComponent interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
+      <Accordion accordion={false}>      
+        <SaliencyComponent interpretData={interpretData} input1_tokens={premise_tokens} input2_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} input1_tokens={premise_tokens} input2_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} input1_tokens={premise_tokens} input2_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
         <InputReductionComponent inputReductionData={inputReductionData} reduceInput={reduceInput} requestDataObject={requestData}/>                              
         <HotflipComponent hotflipData={hotflipData} hotflipInput={hotflipInput} requestDataObject={requestData} task={task} />                    
 

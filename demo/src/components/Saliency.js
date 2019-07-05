@@ -7,19 +7,27 @@ import {
   AccordionItemBody,
   } from 'react-accessible-accordion';
 
-const getTokenWeightPairs = (premiseGrads, hypothesisGrads, premise_tokens, hypothesis_tokens) => {
-  // We do 1 - weight because the colormap is inverted
-  const premiseTokensWithWeights = premise_tokens.map((token, idx) => {
-    let weight = premiseGrads[idx]
-    return { token, weight: 1 - weight }
-  })
-  
-  const hypothesisTokensWithWeights = hypothesis_tokens.map((token, idx) => {
-    let weight = hypothesisGrads[idx]
-    return { token, weight: 1 - weight }
-  })
-
-  return [premiseTokensWithWeights, hypothesisTokensWithWeights]
+const getTokenWeightPairs = (input1Grads, input2Grads, input1_tokens, input2_tokens) => {
+  if (input1Grads === undefined){  
+    const input1TokensWithWeights = input1_tokens.map((token, idx) => {
+      let weight = input2Grads[idx]
+      return { token, weight: 1 - weight }
+    })  
+    return [input1TokensWithWeights]
+  }  
+  else{
+    // We do 1 - weight because the colormap is inverted
+    const input1TokensWithWeights = input1_tokens.map((token, idx) => {
+      let weight = input1Grads[idx]
+      return { token, weight: 1 - weight }
+    })
+    
+    const input2TokensWithWeights = input2_tokens.map((token, idx) => {
+      let weight = input2Grads[idx]
+      return { token, weight: 1 - weight }
+    })  
+    return [input1TokensWithWeights, input2TokensWithWeights]
+  }
 }
 
 export default class SaliencyComponent extends React.Component {
@@ -27,13 +35,13 @@ export default class SaliencyComponent extends React.Component {
     super(props)
 
     this.state = {
-      premtopK: 3,
-      hypotopK: 3
+      input1topK: 3,
+      input2topK: 3
     }
 
     this.colorize = this.colorize.bind(this)
-    this.handlePremTopKChange = this.handlePremTopKChange.bind(this)
-    this.handleHypoTopKChange = this.handleHypoTopKChange.bind(this)
+    this.handleInput1TopKChange = this.handleInput1TopKChange.bind(this)
+    this.handleInput2TopKChange = this.handleInput2TopKChange.bind(this)
     this.getTopKIndices = this.getTopKIndices.bind(this)
   }
 
@@ -67,26 +75,26 @@ export default class SaliencyComponent extends React.Component {
     return result_string 
   }
 
-  handlePremTopKChange = e => {
+  handleInput1TopKChange = e => {
     let stateUpdate = Object.assign({}, this.state)
     if (e.target.value.trim() === "") {
-      stateUpdate['premtopK'] = e.target.value    
+      stateUpdate['input1topK'] = e.target.value    
     } else {
-      stateUpdate['premtopK'] = parseInt(e.target.value, 10)      
+      stateUpdate['input1topK'] = parseInt(e.target.value, 10)      
     }
     this.setState(stateUpdate)
   }
-  handleHypoTopKChange = e => {
+  handleInput2TopKChange = e => {
     let stateUpdate = Object.assign({}, this.state)
     if (e.target.value.trim() === "") {
-      stateUpdate['hypotopK'] = e.target.value
+      stateUpdate['input2topK'] = e.target.value
     } else {
-      stateUpdate['hypotopK'] = parseInt(e.target.value, 10)
+      stateUpdate['input2topK'] = parseInt(e.target.value, 10)
     }
     this.setState(stateUpdate)
   }
 
-  getTopKIndices(tokensWithWeights, use_prem) {
+  getTopKIndices(tokensWithWeights, use_input1) {
     function grad_compare(obj1, obj2) {
       return obj1.weight - obj2.weight
     }
@@ -96,18 +104,18 @@ export default class SaliencyComponent extends React.Component {
     indexedTokens.sort(grad_compare)
   
     // Extract top K tokens and return only the indices of the top tokens
-    if (use_prem){
-      const topKTokens = indexedTokens.slice(0, this.state.premtopK)
+    if (use_input1){
+      const topKTokens = indexedTokens.slice(0, this.state.input1topK)
       return topKTokens.map(obj => obj.idx)
     }
     else{
-      const topKTokens = indexedTokens.slice(0, this.state.hypotopK) 
+      const topKTokens = indexedTokens.slice(0, this.state.input2topK) 
       return topKTokens.map(obj => obj.idx)
     }  
   }
 
   render() {    
-    const { interpretData, premise_tokens, hypothesis_tokens, interpretModel, requestData, interpreter } = this.props 
+    const { interpretData, input1_tokens, input2_tokens, interpretModel, requestData, interpreter } = this.props 
 
     const GRAD_INTERPRETER = 'simple_gradients_interpreter'
     const IG_INTERPRETER = 'integrated_gradients_interpreter'    
@@ -130,37 +138,37 @@ export default class SaliencyComponent extends React.Component {
 
     const { simple_gradients_interpreter, integrated_gradients_interpreter, smooth_gradient_interpreter } = interpretData ? interpretData : {[GRAD_INTERPRETER]: undefined, [IG_INTERPRETER]: undefined, [SG_INTERPRETER]: undefined} 
 
-    let premTokensWithWeights = []
-    let hypoTokensWithWeights = []    
+    let input1TokensWithWeights = []
+    let input2TokensWithWeights = []    
     
     if (simple_gradients_interpreter && interpreter === GRAD_INTERPRETER) {
-      const { instance_1 } = simple_gradients_interpreter
-      const { grad_input_1, grad_input_2 } = instance_1
-      const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, premise_tokens, hypothesis_tokens)
-      premTokensWithWeights = tokensWithWeights[0]
-      hypoTokensWithWeights = tokensWithWeights[1]      
+      const { instance_1 } = simple_gradients_interpreter      
+      const { grad_input_1, grad_input_2 } = instance_1      
+      const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1_tokens, input2_tokens)
+      input1TokensWithWeights = tokensWithWeights[0]
+      input2TokensWithWeights = tokensWithWeights[1]        
     }
     if (integrated_gradients_interpreter && interpreter === IG_INTERPRETER) {
       const { instance_1 } = integrated_gradients_interpreter
       const { grad_input_1, grad_input_2 } = instance_1 
-      const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, premise_tokens, hypothesis_tokens)
-      premTokensWithWeights = tokensWithWeights[0]
-      hypoTokensWithWeights = tokensWithWeights[1]      
+      const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1_tokens, input2_tokens)
+      input1TokensWithWeights = tokensWithWeights[0]
+      input2TokensWithWeights = tokensWithWeights[1]      
     }
     if (smooth_gradient_interpreter && interpreter === SG_INTERPRETER){
      const { instance_1 } = smooth_gradient_interpreter
      const { grad_input_1, grad_input_2 } = instance_1 
-     const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, premise_tokens, hypothesis_tokens)
-     premTokensWithWeights = tokensWithWeights[0]
-     hypoTokensWithWeights = tokensWithWeights[1]      
+     const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1_tokens, input2_tokens)
+      input1TokensWithWeights = tokensWithWeights[0]
+      input2TokensWithWeights = tokensWithWeights[1]      
     }
           
-    const premtopKIdx = new Set(this.getTopKIndices(premTokensWithWeights, true))
-    const hypoKIdx = new Set(this.getTopKIndices(hypoTokensWithWeights, false))
-    const prem_token_color_map = this.colorize(premTokensWithWeights, premtopKIdx)
-    const hypo_token_color_map = this.colorize(hypoTokensWithWeights, hypoKIdx)          
-
-    return (
+    const input1TopKIdx = new Set(this.getTopKIndices(input1TokensWithWeights, true))
+    const input1_token_color_map = this.colorize(input1TokensWithWeights, input1TopKIdx)
+    if (input2TokensWithWeights !== undefined){ 
+      const input2TopKIdx = new Set(this.getTopKIndices(input2TokensWithWeights, false))
+      const input2_token_color_map = this.colorize(input2TokensWithWeights, input2TopKIdx)
+      return (
       <div>
        <AccordionItem expanded={true}>
           <AccordionItemTitle>
@@ -172,17 +180,38 @@ export default class SaliencyComponent extends React.Component {
               {title2}  
             </div>            
             <p><strong>Saliency Map:</strong></p>
-            {premTokensWithWeights.length !== 0 ? <div>{prem_token_color_map} <Tooltip /> <input type="range" min={0} max={prem_token_color_map.length} step="1" value={this.state.premtopK} className="slider" onChange={this.handlePremTopKChange} style={{ padding: "0px", margin: "10px 0px" }} /> 
-            <br /> <span style={{ color: "#72BCFF" }}>Visualizing the top {this.state.premtopK} words.</span> <br /><br /></div> : <p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>}
+            {input1TokensWithWeights.length !== 0 ? <div>{input1_token_color_map} <Tooltip /> <input type="range" min={0} max={input1_token_color_map.length} step="1" value={this.state.input1topK} className="slider" onChange={this.handleInput1TopKChange} style={{ padding: "0px", margin: "10px 0px" }} /> 
+            <br /> <span style={{ color: "#72BCFF" }}>Visualizing the top {this.state.input1topK} words.</span> <br /><br /></div> : <p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>}
                                    
             <p><strong>Saliency Map:</strong></p>                                                                
-            {hypoTokensWithWeights.length !== 0 ? <div>{hypo_token_color_map} <Tooltip /> <input type="range" min={0} max={hypo_token_color_map.length} step="1" value={this.state.hypotopK} className="slider"
-            onChange={this.handleHypoTopKChange} style={{ padding: "0px", margin: "0px" }} /> <br /> <span style={{ color: "#72BCFF" }}>Visualizing the top {this.state.hypotopK} words.</span> <br /><br /></div> : <p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>}
+            {input2TokensWithWeights.length !== 0 ? <div>{input2_token_color_map} <Tooltip /> <input type="range" min={0} max={input2_token_color_map.length} step="1" value={this.state.input2topK} className="slider"
+            onChange={this.handleInput2TopKChange} style={{ padding: "0px", margin: "0px" }} /> <br /> <span style={{ color: "#72BCFF" }}>Visualizing the top {this.state.input2topK} words.</span> <br /><br /></div> : <p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>}
             <button type="button" className="btn" style={{margin: "30px 0px"}} onClick={() => interpretModel(requestData, interpreter)}>Interpret Prediction            
             </button>
           </AccordionItemBody>
         </AccordionItem>
       </div>
-    )
+      )
+    }
+    else{
+      return (
+      <div>
+       <AccordionItem expanded={true}>
+          <AccordionItemTitle>
+            {title1}
+            <div className="accordion__arrow" role="presentation"/>
+          </AccordionItemTitle>
+          <AccordionItemBody>
+            <div className="content">
+              {title2}  
+            </div>            
+            <p><strong>Saliency Map:</strong></p>
+            {input1TokensWithWeights.length !== 0 ? <div>{input1_token_color_map} <Tooltip /> <input type="range" min={0} max={input1_token_color_map.length} step="1" value={this.state.input1topK} className="slider" onChange={this.handleInput1TopKChange} style={{ padding: "0px", margin: "10px 0px" }} /> 
+            <br /> <span style={{ color: "#72BCFF" }}>Visualizing the top {this.state.input1topK} words.</span> <br /><br /></div> : <p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>}                                   
+          </AccordionItemBody>
+        </AccordionItem>
+      </div>
+      )
+    }    
   }
 }
