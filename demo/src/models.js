@@ -51,7 +51,7 @@ const modelGroups = [
     {
         label: "Other",
         models: [
-            {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},           
+            {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
             {model: "event2mind", name: "Event2Mind", component: Event2Mind},
             {model: "gpt2", name: "Language Modeling", component: Gpt2},
             {model: "user-models", name: "Your model here!"}
