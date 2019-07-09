@@ -2,6 +2,7 @@ import SemanticRoleLabeling from './components/demos/SemanticRoleLabeling';
 import OpenIe from './components/demos/OpenIe';
 import Event2Mind from './components/demos/Event2Mind';
 import TextualEntailment from './components/demos/TextualEntailment';
+import SentimentAnalysis from './components/demos/SentimentAnalysis';
 import ReadingComprehension from './components/demos/ReadingComprehension';
 import Coref from './components/demos/Coref';
 import NamedEntityRecognition from './components/demos/NamedEntityRecognition';
@@ -22,7 +23,8 @@ const modelGroups = [
             {model: "named-entity-recognition", name: "Named Entity Recognition", component: NamedEntityRecognition},
             {model: "constituency-parsing", name: "Constituency Parsing", component: ConstituencyParser},
             {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParser},
-            {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe}
+            {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe},
+            {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis}
         ]
     },
     {
