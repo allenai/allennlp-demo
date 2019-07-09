@@ -7,9 +7,9 @@ import {
   AccordionItemBody,
   } from 'react-accessible-accordion';
 
-const getTokenWeightPairs = (input1Grads, input2Grads, input1_tokens, input2_tokens) => {
+const getTokenWeightPairs = (input1Grads, input2Grads, input1Tokens, input2Tokens) => {
   if (input1Grads === undefined){  
-    const input1TokensWithWeights = input1_tokens.map((token, idx) => {
+    const input1TokensWithWeights = input1Tokens.map((token, idx) => {
       let weight = input2Grads[idx]
       return { token, weight: 1 - weight }
     })  
@@ -17,12 +17,12 @@ const getTokenWeightPairs = (input1Grads, input2Grads, input1_tokens, input2_tok
   }  
   else{
     // We do 1 - weight because the colormap is inverted
-    const input1TokensWithWeights = input1_tokens.map((token, idx) => {
+    const input1TokensWithWeights = input1Tokens.map((token, idx) => {
       let weight = input1Grads[idx]
       return { token, weight: 1 - weight }
     })
     
-    const input2TokensWithWeights = input2_tokens.map((token, idx) => {
+    const input2TokensWithWeights = input2Tokens.map((token, idx) => {
       let weight = input2Grads[idx]
       return { token, weight: 1 - weight }
     })  
@@ -57,7 +57,7 @@ export default class SaliencyComponent extends React.Component {
     const {colormapProps} = this.props
     // colormap package takes minimum of 6 shades 
     colormapProps.nshades =  Math.min(Math.max(colormapProps.nshades, 6), 72);
-    let colors = colormap(colormapProps)
+    const colors = colormap(colormapProps)
 
     let result_string = [];
     tokensWithWeights.forEach((obj, idx) => {
@@ -115,8 +115,7 @@ export default class SaliencyComponent extends React.Component {
   }
 
   render() {    
-    const { interpretData, input1_tokens, input2_tokens, interpretModel, requestData, interpreter } = this.props 
-
+    const { interpretData, input1Tokens, input2Tokens, interpretModel, requestData, interpreter } = this.props
     const GRAD_INTERPRETER = 'simple_gradients_interpreter'
     const IG_INTERPRETER = 'integrated_gradients_interpreter'    
     const SG_INTERPRETER = 'smooth_gradient_interpreter'    
@@ -144,21 +143,21 @@ export default class SaliencyComponent extends React.Component {
     if (simple_gradients_interpreter && interpreter === GRAD_INTERPRETER) {
       const { instance_1 } = simple_gradients_interpreter      
       const { grad_input_1, grad_input_2 } = instance_1      
-      const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1_tokens, input2_tokens)
+      const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1Tokens, input2Tokens)
       input1TokensWithWeights = tokensWithWeights[0]
       input2TokensWithWeights = tokensWithWeights[1]        
     }
     if (integrated_gradients_interpreter && interpreter === IG_INTERPRETER) {
       const { instance_1 } = integrated_gradients_interpreter
       const { grad_input_1, grad_input_2 } = instance_1 
-      const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1_tokens, input2_tokens)
+      const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1Tokens, input2Tokens)
       input1TokensWithWeights = tokensWithWeights[0]
       input2TokensWithWeights = tokensWithWeights[1]      
     }
     if (smooth_gradient_interpreter && interpreter === SG_INTERPRETER){
      const { instance_1 } = smooth_gradient_interpreter
      const { grad_input_1, grad_input_2 } = instance_1 
-     const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1_tokens, input2_tokens)
+     const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1Tokens, input2Tokens)
       input1TokensWithWeights = tokensWithWeights[0]
       input2TokensWithWeights = tokensWithWeights[1]      
     }

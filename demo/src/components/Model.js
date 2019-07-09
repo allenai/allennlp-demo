@@ -6,21 +6,19 @@ class Model extends React.Component {
     constructor(props) {
       super(props);
 
-      const { requestData, responseData, interpretData, inputReductionData, hotflipData } = props;
+      const { requestData, responseData, interpretData, attackData } = props;
 
       this.state = {
         outputState: responseData ? "received" : "empty", // valid values: "working", "empty", "received", "error"
         requestData: requestData,
         responseData: responseData,
         interpretData: interpretData,
-        inputReductionData: inputReductionData,
-        hotflipData: hotflipData
+        attackData: attackData        
       };
 
       this.runModel = this.runModel.bind(this)
       this.interpretModel = this.interpretModel.bind(this)
-      this.reduceInput = this.reduceInput.bind(this)
-      this.hotflipInput = this.hotflipInput.bind(this)
+      this.attackModel = this.attackModel.bind(this)    
     }
 
     runModel(inputs) {
@@ -57,7 +55,6 @@ class Model extends React.Component {
 
     interpretModel(inputs, interpreter) {
       const { apiUrlInterpret } = this.props
-
       fetch(apiUrlInterpret(Object.assign(inputs, {interpreter})), {
         method: 'POST',
         headers: {
@@ -70,14 +67,13 @@ class Model extends React.Component {
       }).then((json) => {
         let stateUpdate = Object.assign({}, this.state)
         stateUpdate['interpretData'] = Object.assign({}, { [interpreter]: json }, stateUpdate['interpretData'])
-        this.setState(stateUpdate)
+        this.setState(stateUpdate)      
       })
     }
 
-    reduceInput(inputs) {
-      const { selectedModel, inputReductionUrl } = this.props
-
-      fetch(inputReductionUrl(inputs), {
+    attackModel(inputs, attacker, name_of_input_to_attack, name_of_grad_input) {      
+      const { apiUrlAttack } = this.props
+      fetch(apiUrlAttack(Object.assign(inputs, {attacker}, {name_of_input_to_attack}, {name_of_grad_input})), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -86,24 +82,11 @@ class Model extends React.Component {
         body: JSON.stringify(inputs)
       }).then((response) => {
         return response.json();
-      }).then((json) => {        
-        this.setState({inputReductionData: json})
-      });
-    }
-    hotflipInput(inputs) {
-      const { selectedModel, hotflipUrl } = this.props
-      fetch(hotflipUrl(inputs), {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(inputs)
-      }).then((response) => {        
-        return response.json();
-      }).then((json) => {        
-        this.setState({hotflipData: json})
-      });
+      }).then((json) => {
+        let stateUpdate = Object.assign({}, this.state)
+        stateUpdate['attackData'] = Object.assign({}, { [attacker]: json }, stateUpdate['attackData'])
+        this.setState(stateUpdate)
+      })
     }
 
  render() {
@@ -120,7 +103,7 @@ class Model extends React.Component {
                                      outputState={outputState}
                                      runModel={this.runModel}/>
 
-        const demoOutput = requestData && responseData ? <Output {...this.state} interpretModel={this.interpretModel} reduceInput={this.reduceInput} hotflipInput={this.hotflipInput}/> : null
+        const demoOutput = requestData && responseData ? <Output {...this.state} interpretModel={this.interpretModel} attackModel={this.attackModel}/> : null
         let className, InputPane, OutputPane
         if (vertical) {
           className = "pane model"

@@ -16,8 +16,7 @@ import {
 import '../../css/TeComponent.css';
 
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
-const hotflipUrl = () => `${API_ROOT}/hotflip/textual-entailment`
-const inputReductionUrl = () => `${API_ROOT}/input-reduction/textual-entailment`
+const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/textual-entailment/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
 const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/textual-entailment/${interpreter}`
 
 const title = "Textual Entailment"
@@ -25,6 +24,11 @@ const title = "Textual Entailment"
 const GRAD_INTERPRETER = 'simple_gradients_interpreter'
 const IG_INTERPRETER = 'integrated_gradients_interpreter'
 const SG_INTERPRETER = 'smooth_gradient_interpreter'
+
+const INPUT_REDUCTION_ATTACKER = 'input_reduction'
+const HOTFLIP_ATTACKER = 'hotflip'
+const NAME_OF_INPUT_TO_ATTACK = "hypothesis"
+const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 const description = (
   <span>
@@ -86,10 +90,10 @@ const judgments = {
   NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
-const Output = ({ responseData,requestData, interpretData, interpretModel, inputReductionData, hotflipData, reduceInput, hotflipInput}) => {    
+const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
   const [entailment, contradiction, neutral] = label_probs
-
+  
   // Find judgment and confidence.
   let judgment
   let confidence
@@ -143,7 +147,7 @@ const Output = ({ responseData,requestData, interpretData, interpretModel, input
   const x = 0.5 * (2 * b + c) / (a + b + c)
   const y = (c / (a + b + c))
 
-  let task = "textual_entailment"
+  const task = "textual_entailment"
 
   return (
   <div className="model__content answer">
@@ -179,11 +183,11 @@ const Output = ({ responseData,requestData, interpretData, interpretModel, input
     </div>
     <OutputField>
       <Accordion accordion={false}>      
-        <SaliencyComponent interpretData={interpretData} input1_tokens={premise_tokens} input2_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} input1_tokens={premise_tokens} input2_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} input1_tokens={premise_tokens} input2_tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
-        <InputReductionComponent inputReductionData={inputReductionData} reduceInput={reduceInput} requestDataObject={requestData}/>                              
-        <HotflipComponent hotflipData={hotflipData} hotflipInput={hotflipInput} requestDataObject={requestData} task={task} />                    
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>        
+        <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} task={task} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
 
         <AccordionItem expanded={true}>
           <AccordionItemTitle>
@@ -241,5 +245,5 @@ const examples = [
   },
 ]
 
-const modelProps = {apiUrl, apiUrlInterpret, inputReductionUrl, hotflipUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output}
 export default withRouter(props => <Model {...props} {...modelProps}/>)
