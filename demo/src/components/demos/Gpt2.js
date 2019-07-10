@@ -139,9 +139,12 @@ const DEFAULT_MODEL = "345M"
 
 const description = (
   <span>
-This demonstration uses the public 345M
-parameter <a href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</a> language model
-to generate sentences.<br /><br />
+This demonstration uses the public 345M 
+parameter <a href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</a> language model 
+to generate sentences.  The model implementation is provided by Hugging Face’s 
+<a href="https://github.com/huggingface/pytorch-pretrained-BERT" target="_blank" rel="noopener noreferrer">pytorch-pretrained-BERT</a> 
+library.
+
 Enter some initial text and the model will generate the most likely next words.
 You can click on one of those words to choose it and continue or just keep typing.
 Click the left arrow at the bottom to undo your last choice.
@@ -301,11 +304,6 @@ class App extends React.Component {
                      hidden={this.state.loading}/>
           </InputOutputColumn>
         </InputOutput>
-        <Footer>
-          Built at the <a href="https://allenai.org" target="_blank" rel="noopener noreferrer">Allen Institute for Artificial Intelligence</a>
-          {' '}using Hugging Face’s <a href="https://github.com/huggingface/pytorch-pretrained-BERT" target="_blank" rel="noopener noreferrer">pytorch-pretrained-BERT</a>
-          {' '}library.
-        </Footer>
       </div>
       </Wrapper>
     )
