@@ -25,8 +25,7 @@ import pytz
 
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.predictors import Predictor
-from allennlp.interpret.saliency import SaliencyInterpreter
-from allennlp.interpret.attack import Attacker
+from allennlp.interpret import SimpleGradient, IntegratedGradient, SmoothGradient, InputReduction, Hotflip
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
@@ -114,19 +113,13 @@ def make_app(build_dir: str,
             predictor = demo_model.predictor()
             app.predictors[name] = predictor
             app.max_request_lengths[name] = demo_model.max_request_length
-
-            input_reducer = Attacker.by_name("input-reduction")(predictor)
-            app.attackers[name]["input-reduction"] = input_reducer
-            hotfliper = Attacker.by_name("hotflip")(predictor)
-            app.attackers[name]["hotflip"] = hotfliper
-
-            simple_gradients_interpreter = SaliencyInterpreter.by_name('simple-gradients-interpreter')(predictor)
-            integrated_gradients_interpreter = SaliencyInterpreter.by_name('integrated-gradients-interpreter')(predictor)
-            smooth_gradient_interpreter = SaliencyInterpreter.by_name('smooth-gradient-interpreter')(predictor)
-
-            app.interpreters[name]['simple-gradients-interpreter'] = simple_gradients_interpreter
-            app.interpreters[name]['integrated-gradients-interpreter'] = integrated_gradients_interpreter
-            app.interpreters[name]['smooth-gradient-interpreter'] = smooth_gradient_interpreter
+            
+            app.attackers[name]["input_reduction"] = InputReduction(predictor)            
+            app.attackers[name]["hotflip"] = Hotflip(predictor)
+            
+            app.interpreters[name]['simple_gradients_interpreter'] = SimpleGradient(predictor)
+            app.interpreters[name]['integrated_gradients_interpreter'] = IntegratedGradient(predictor)
+            app.interpreters[name]['smooth_gradient_interpreter'] = SmoothGradient(predictor)
 
     @app.errorhandler(ServerError)
     def handle_invalid_usage(error: ServerError) -> Response:  # pylint: disable=unused-variable
@@ -184,14 +177,20 @@ def make_app(build_dir: str,
                 "responseData": permadata.response_data
         })
 
-    @app.route('/input-reduction/<model_name>', methods=['POST','OPTIONS'])
-    def attack(model_name: str) -> Response:
-        print("REDUCTION!!!\n\n\n")
+    @app.route('/attack/<model_name>/<attacker_name>/<name_of_input_to_attack>/<name_of_grad_input>',
+     methods=['POST','OPTIONS'])
+    def attack(model_name: str,
+                attacker_name: str,
+                name_of_input_to_attack: str,
+                name_of_grad_input: str) -> Response:            
+        """
+        Modify input to change prediction of model
+        """
         if request.method == "OPTIONS":
             return Response(response="", status=200)
         lowered_model_name = model_name.lower()
-        model = app.attackers.get(lowered_model_name).get("input-reduction")
-        if model is None:
+        attacker = app.attackers.get(lowered_model_name).get(attacker_name)
+        if attacker is None:
             raise ServerError("unknown model: {}".format(model_name), status_code=400)
         max_request_length = app.max_request_lengths[lowered_model_name]
         data = request.get_json()
@@ -199,56 +198,30 @@ def make_app(build_dir: str,
         if len(serialized_request) > max_request_length:
             raise ServerError(f"Max request length exceeded for model {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
-
-        inputs_to_attack = {"sentiment-analysis":"tokens","machine-comprehension":"question", "textual-entailment":"hypothesis","naqanet-reading-comprehension":"question","named-entity-recognition":"tokens"}
-        inputs_to_attack_map = {"question":"grad_input_2", "passage":"grad_input_1","hypothesis":"grad_input_1","premise":"grad_input_2","tokens":"grad_input_1"}
-        attack = model.attack_from_json(data,inputs_to_attack[lowered_model_name],inputs_to_attack_map[inputs_to_attack[lowered_model_name]])
-        print(attack)
+        
+        attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input)        
         return jsonify(attack)
 
-    @app.route('/hotflip/<model_name>', methods=['POST','OPTIONS'])
-    def hotflip(model_name: str) -> Response:    
-        if request.method == "OPTIONS":
-            return Response(response="", status=200)
-        lowered_model_name = model_name.lower()
-        model = app.attackers.get(lowered_model_name).get("hotflip")
-        if model is None:
-            raise ServerError("unknown model: {}".format(model_name), status_code=400)
-        max_request_length = app.max_request_lengths[lowered_model_name]
-        data = request.get_json()
-        serialized_request = json.dumps(data)
-        if len(serialized_request) > max_request_length:
-            raise ServerError(f"Max request length exceeded for model {model_name}! " +
-                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
-
-        inputs_to_attack = {"sentiment-analysis":"tokens","machine-comprehension":"question", "textual-entailment":"hypothesis","naqanet-reading-comprehension":"question","named-entity-recognition":"tokens"}
-        inputs_to_attack_map = {"question":"grad_input_2", "passage":"grad_input_1","hypothesis":"grad_input_1","premise":"grad_input_2","tokens":"grad_input_1"}
-        attack = model.attack_from_json(data,inputs_to_attack[lowered_model_name],inputs_to_attack_map[inputs_to_attack[lowered_model_name]])        
-        return jsonify(attack)
-
-    @app.route('/interpret/<model_name>/<interpreter>', methods=['POST', 'OPTIONS'])
-    def interpret(model_name: str, interpreter: str) -> Response:
+    @app.route('/interpret/<model_name>/<interpreter_name>', methods=['POST', 'OPTIONS'])
+    def interpret(model_name: str, interpreter_name: str) -> Response:
         """
         Interpret prediction of the model
         """
         if request.method == "OPTIONS":
             return Response(response="", status=200)
-        lowered_model_name = model_name.lower()
-        interpreter = interpreter.replace("_","-")
-
-        model = app.interpreters.get(lowered_model_name)[interpreter]
-
-        if model is None:
-            raise ServerError("unknown model: {}".format(model_name), status_code=400)
+        lowered_model_name = model_name.lower()    
+        interpreter = app.interpreters.get(lowered_model_name)[interpreter_name]
+        if interpreter is None:
+            raise ServerError("unknown interpreter: {}".format(model_name), status_code=400)
         max_request_length = app.max_request_lengths[lowered_model_name]
 
         data = request.get_json()
         serialized_request = json.dumps(data)
         if len(serialized_request) > max_request_length:
-            raise ServerError(f"Max request length exceeded for model {model_name}! " +
+            raise ServerError(f"Max request length exceeded for interpreter {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
 
-        interpretation = model.saliency_interpret_from_json(data)
+        interpretation = interpreter.saliency_interpret_from_json(data)
         return jsonify(interpretation)
 
     @app.route('/predict/<model_name>', methods=['POST', 'OPTIONS'])
