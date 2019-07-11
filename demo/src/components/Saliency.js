@@ -115,10 +115,10 @@ export default class SaliencyComponent extends React.Component {
   }
 
   render() {    
-    const { interpretData, input1Tokens, input2Tokens, interpretModel, requestData, interpreter } = this.props
-    const GRAD_INTERPRETER = 'simple_gradients_interpreter'
-    const IG_INTERPRETER = 'integrated_gradients_interpreter'    
-    const SG_INTERPRETER = 'smooth_gradient_interpreter'    
+    const { interpretData, input1Tokens, input2Tokens, interpretModel, requestData, interpreter } = this.props    
+    const GRAD_INTERPRETER = 'simple_gradient'
+    const IG_INTERPRETER = 'integrated_gradient'
+    const SG_INTERPRETER = 'smooth_gradient'    
 
     let title1 = ''
     let title2 = ''    
@@ -135,27 +135,27 @@ export default class SaliencyComponent extends React.Component {
         title2 = <p> See saliency map interpretations generated using <a href="https://arxiv.org/abs/1706.03825" target="_blank" rel="noopener noreferrer">SmoothGrad</a>.</p>
     }
 
-    const { simple_gradients_interpreter, integrated_gradients_interpreter, smooth_gradient_interpreter } = interpretData ? interpretData : {[GRAD_INTERPRETER]: undefined, [IG_INTERPRETER]: undefined, [SG_INTERPRETER]: undefined} 
+    const { simple_gradient, integrated_gradient, smooth_gradient } = interpretData ? interpretData : {[GRAD_INTERPRETER]: undefined, [IG_INTERPRETER]: undefined, [SG_INTERPRETER]: undefined} 
 
     let input1TokensWithWeights = []
     let input2TokensWithWeights = []    
     
-    if (simple_gradients_interpreter && interpreter === GRAD_INTERPRETER) {
-      const { instance_1 } = simple_gradients_interpreter      
-      const { grad_input_1, grad_input_2 } = instance_1      
+    if (simple_gradient && interpreter === GRAD_INTERPRETER) {            
+      const { instance_1 } = simple_gradient      
+      const { grad_input_1, grad_input_2 } = instance_1          
       const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1Tokens, input2Tokens)
       input1TokensWithWeights = tokensWithWeights[0]
       input2TokensWithWeights = tokensWithWeights[1]        
     }
-    if (integrated_gradients_interpreter && interpreter === IG_INTERPRETER) {
-      const { instance_1 } = integrated_gradients_interpreter
+    if (integrated_gradient && interpreter === IG_INTERPRETER) {    
+      const { instance_1 } = integrated_gradient
       const { grad_input_1, grad_input_2 } = instance_1 
       const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1Tokens, input2Tokens)
       input1TokensWithWeights = tokensWithWeights[0]
       input2TokensWithWeights = tokensWithWeights[1]      
     }
-    if (smooth_gradient_interpreter && interpreter === SG_INTERPRETER){
-     const { instance_1 } = smooth_gradient_interpreter
+    if (smooth_gradient && interpreter === SG_INTERPRETER){      
+     const { instance_1 } = smooth_gradient
      const { grad_input_1, grad_input_2 } = instance_1 
      const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1Tokens, input2Tokens)
       input1TokensWithWeights = tokensWithWeights[0]
@@ -164,7 +164,7 @@ export default class SaliencyComponent extends React.Component {
           
     const input1TopKIdx = new Set(this.getTopKIndices(input1TokensWithWeights, true))
     const input1_token_color_map = this.colorize(input1TokensWithWeights, input1TopKIdx)
-    if (input2TokensWithWeights !== undefined){ 
+    if (input2TokensWithWeights !== undefined){       
       const input2TopKIdx = new Set(this.getTopKIndices(input2TokensWithWeights, false))
       const input2_token_color_map = this.colorize(input2TokensWithWeights, input2TopKIdx)
       return (
@@ -179,12 +179,17 @@ export default class SaliencyComponent extends React.Component {
               {title2}  
             </div>            
             <p><strong>Saliency Map:</strong></p>
-            {input1TokensWithWeights.length !== 0 ? <div>{input1_token_color_map} <Tooltip /> <input type="range" min={0} max={input1_token_color_map.length} step="1" value={this.state.input1topK} className="slider" onChange={this.handleInput1TopKChange} style={{ padding: "0px", margin: "10px 0px" }} /> 
-            <br /> <span style={{ color: "#72BCFF" }}>Visualizing the top {this.state.input1topK} words.</span> <br /><br /></div> : <p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>}
+
+            {input1TokensWithWeights.length !== 0 ? 
+              <div>{input1_token_color_map} <Tooltip /> <input type="range" min={0} max={input1_token_color_map.length} step="1" value={this.state.input1topK} className="slider" onChange={this.handleInput1TopKChange} style={{ padding: "0px", margin: "10px 0px" }} /> <br /> <span style={{ color: "#72BCFF" }}>Visualizing the top {this.state.input1topK} words.</span> <br /><br /></div> : 
+              <p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>}
                                    
             <p><strong>Saliency Map:</strong></p>                                                                
+
             {input2TokensWithWeights.length !== 0 ? <div>{input2_token_color_map} <Tooltip /> <input type="range" min={0} max={input2_token_color_map.length} step="1" value={this.state.input2topK} className="slider"
-            onChange={this.handleInput2TopKChange} style={{ padding: "0px", margin: "0px" }} /> <br /> <span style={{ color: "#72BCFF" }}>Visualizing the top {this.state.input2topK} words.</span> <br /><br /></div> : <p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>}
+            onChange={this.handleInput2TopKChange} style={{ padding: "0px", margin: "0px" }} /> <br /> <span style={{ color: "#72BCFF" }}>Visualizing the top {this.state.input2topK} words.</span> <br /><br /></div> :
+             <p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>}
+
             <button type="button" className="btn" style={{margin: "30px 0px"}} onClick={() => interpretModel(requestData, interpreter)}>Interpret Prediction            
             </button>
           </AccordionItemBody>

@@ -2,8 +2,8 @@ import React from 'react';
 import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
 import Model from '../Model'
-import { Accordion } from 'react-accessible-accordion';
 import OutputField from '../OutputField'
+import { Accordion } from 'react-accessible-accordion';
 import SaliencyComponent from '../Saliency'
 import InputReductionComponent from '../InputReduction'
 import HotflipComponent from '../Hotflip'
@@ -17,9 +17,9 @@ const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) =
 const title = "Sentiment Analysis"
 
 // The interpreters
-const GRAD_INTERPRETER = 'simple_gradients_interpreter'
-const IG_INTERPRETER = 'integrated_gradients_interpreter'
-const SG_INTERPRETER = 'smooth_gradient_interpreter'
+const GRAD_INTERPRETER = 'simple_gradient'
+const IG_INTERPRETER = 'integrated_gradient'
+const SG_INTERPRETER = 'smooth_gradient'
 
 // The attackers
 const INPUT_REDUCTION_ATTACKER = 'input_reduction'
@@ -47,26 +47,25 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const prediction = negativeClassProbability < positiveClassProbability ? "Positive" : "Negative"
 
   var t = requestData;
-  var tokens = t['sentence'].split(' '); // this model expects space-separated inputs
-  const task = "sentiment";
+  const tokens = t['sentence'].split(' '); // this model expects space-separated inputs  
 
-  // The "Answer" output field has the models predictions. The other output fields are the reusable HTML/JavaScript for the interpretation methods.
+  // The "Answer" output field has the models predictions. The other output fields are the 
+  // reusable HTML/JavaScript for the interpretation methods.  
   return (
     <div className="model__content answer">
       <OutputField label="Answer">
-      {prediction}
+        {prediction}
       </OutputField>
 
     <OutputField>
-    <Accordion accordion={false}>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
-        <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
-        <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} task={task} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
-        
-    </Accordion>
-    </OutputField>
+      <Accordion accordion={false}>
+          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
+          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
+          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
+          <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+          <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+      </Accordion>
+    </OutputField>      
   </div>
   );
 }

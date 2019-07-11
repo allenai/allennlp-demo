@@ -51,12 +51,12 @@ export default class HotflipComponent extends React.Component {
                 var [first,second] = colorizeTokensForHotflipUI(hotflipData["hotflip"]["original"],hotflipData["hotflip"]["final"][0])
                 new_string_colorized = second
                 original_string_colorized = first 
-                if (task === "sentiment") {
-                    const [pos, neg] = hotflipData["hotflip"]["new_prediction"]
+                if (task === "Sentiment Analysis") {                
+                    const [pos, neg] = hotflipData["hotflip"]["outputs"]["probs"]
                     new_prediction = <p><b>Prediction changed to:</b> {pos > neg ? 'Positive' : 'Negative'}</p>
                 }
-                else if (task === "textual_entailment") {
-                    const [entail, contr, neutral] = hotflipData["hotflip"]["new_prediction"]
+                else if (task === "Textual Entailment") {
+                    const [entail, contr, neutral] = hotflipData["hotflip"]["outputs"]["label_probs"]
                     let prediction = ''
                     if (entail > contr) {
                         if (entail > neutral) {
@@ -72,6 +72,23 @@ export default class HotflipComponent extends React.Component {
                         }
                     }
                     new_prediction = <p><b>Prediction changed to:</b> {prediction}</p>
+                }
+                else if (task === "Reading Comprehension") {
+                  new_prediction = <p>hi</p>
+                    console.log(hotflipData["hotflip"]["outputs"])
+                    const output = hotflipData["hotflip"]["outputs"];
+                    if ('best_span_str' in output){
+                       new_prediction = <p><b>Prediction changed to:</b> {output['best_span_str']}</p>
+                    }
+                    else if ('answer' in output) {                                     
+                        const ans_type = output["answer"]["answer_type"]
+                        if(ans_type === "count"){
+                            new_prediction = <p><b>Prediction changed to:</b> {output['answer']['count']}</p> 
+                        }
+                        else {
+                            new_prediction = <p><b>Prediction changed to:</b> {output['answer']['value']}</p> 
+                        }                    
+                    }
                 }
             }
 
@@ -103,10 +120,10 @@ export default class HotflipComponent extends React.Component {
                                 <div className="accordion__arrow" role="presentation"/>
                             </AccordionItemTitle>
                             <AccordionItemBody>            
-                                <p> <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the Hypothesis to change the model's prediction. We iteratively flip the word in the Hypothesis with the highest gradient until the prediction changes.</p>                                
-                                {new_string_colorized !== " " ? <p><strong>Original Premise:</strong> {requestDataObject['premise']}</p> : <p></p>}    
-                                {new_string_colorized !== " " ? <p><strong>Original Hypothesis:</strong> {original_string_colorized}</p> : <p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>}    
-                                {new_string_colorized !== " " ? <p><strong>Flipped Hypothesis:</strong> {new_string_colorized}</p> : <p></p>}             
+                                <p> <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words to change the model's prediction. We iteratively flip the word  with the highest gradient until the prediction changes.</p>                                
+                                {new_string_colorized !== " " ? <p><strong>Original:</strong> {requestDataObject['premise']}</p> : <p></p>}    
+                                {new_string_colorized !== " " ? <p><strong>Original:</strong> {original_string_colorized}</p> : <p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>}    
+                                {new_string_colorized !== " " ? <p><strong>Flipped:</strong> {new_string_colorized}</p> : <p></p>}             
                                 {new_prediction}         
                                         <button
                                             type="button"

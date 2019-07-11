@@ -23,7 +23,8 @@ const modelGroups = [
             {model: "named-entity-recognition", name: "Named Entity Recognition", component: NamedEntityRecognition},
             {model: "constituency-parsing", name: "Constituency Parsing", component: ConstituencyParser},
             {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParser},
-            {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe}
+            {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe},
+            {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis}
         ]
     },
     {
@@ -51,7 +52,6 @@ const modelGroups = [
         label: "Other",
         models: [
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
-            {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis},
             {model: "event2mind", name: "Event2Mind", component: Event2Mind},
             {model: "gpt2", name: "Language Modeling", component: Gpt2},
             {model: "user-models", name: "Your model here!"}
