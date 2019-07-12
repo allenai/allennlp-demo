@@ -93,7 +93,7 @@ const judgments = {
 const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
   const [entailment, contradiction, neutral] = label_probs
-  
+
   // Find judgment and confidence.
   let judgment
   let confidence
@@ -146,7 +146,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const c = entailment;
   const x = 0.5 * (2 * b + c) / (a + b + c)
   const y = (c / (a + b + c))
-  
+
   return (
   <div className="model__content answer">
     <OutputField label="Summary">
@@ -180,10 +180,10 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
     </div>
     </div>
     <OutputField>
-      <Accordion accordion={false}>      
+      <Accordion accordion={false}>
         <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
         <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>        
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
         <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
         <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
 

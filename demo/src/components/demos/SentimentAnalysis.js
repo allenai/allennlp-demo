@@ -47,10 +47,10 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const prediction = negativeClassProbability < positiveClassProbability ? "Positive" : "Negative"
 
   var t = requestData;
-  const tokens = t['sentence'].split(' '); // this model expects space-separated inputs  
+  const tokens = t['sentence'].split(' '); // this model expects space-separated inputs
 
-  // The "Answer" output field has the models predictions. The other output fields are the 
-  // reusable HTML/JavaScript for the interpretation methods.  
+  // The "Answer" output field has the models predictions. The other output fields are the
+  // reusable HTML/JavaScript for the interpretation methods.
   return (
     <div className="model__content answer">
       <OutputField label="Answer">
@@ -65,7 +65,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
           <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
           <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
       </Accordion>
-    </OutputField>      
+    </OutputField>
   </div>
   );
 }

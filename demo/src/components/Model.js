@@ -13,12 +13,12 @@ class Model extends React.Component {
         requestData: requestData,
         responseData: responseData,
         interpretData: interpretData,
-        attackData: attackData        
+        attackData: attackData
       };
 
       this.runModel = this.runModel.bind(this)
       this.interpretModel = this.interpretModel.bind(this)
-      this.attackModel = this.attackModel.bind(this)    
+      this.attackModel = this.attackModel.bind(this)
     }
 
     runModel(inputs) {
@@ -40,6 +40,7 @@ class Model extends React.Component {
         // to the corresponding path using `history.push`.
         const { slug } = json;
         const newPath = slug ? `/${selectedModel}/${slug}` : `/${selectedModel}`
+
         // We'll pass the request and response data along as part of the location object
         // so that the `Demo` component can use them to re-render.
         const location = {
@@ -65,13 +66,13 @@ class Model extends React.Component {
       }).then((response) => {
         return response.json();
       }).then((json) => {
-        let stateUpdate = Object.assign({}, this.state)
+        const stateUpdate = { ...this.state }
         stateUpdate['interpretData'] = Object.assign({}, { [interpreter]: json }, stateUpdate['interpretData'])
-        this.setState(stateUpdate)      
+        this.setState(stateUpdate)
       })
     }
 
-    attackModel(inputs, attacker, name_of_input_to_attack, name_of_grad_input) {      
+    attackModel(inputs, attacker, name_of_input_to_attack, name_of_grad_input) {
       const { apiUrlAttack } = this.props
       fetch(apiUrlAttack(Object.assign(inputs, {attacker}, {name_of_input_to_attack}, {name_of_grad_input})), {
         method: 'POST',
@@ -83,7 +84,7 @@ class Model extends React.Component {
       }).then((response) => {
         return response.json();
       }).then((json) => {
-        let stateUpdate = Object.assign({}, this.state)
+        const stateUpdate = { ...this.state }
         stateUpdate['attackData'] = Object.assign({}, { [attacker]: json }, stateUpdate['attackData'])
         this.setState(stateUpdate)
       })

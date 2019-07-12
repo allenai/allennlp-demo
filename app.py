@@ -208,8 +208,7 @@ def make_app(build_dir: str,
             raise ServerError(f"Max request length exceeded for model {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
         
-        attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input)                
-        print(attack)
+        attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input)
         return jsonify(attack)
 
     @app.route('/interpret/<model_name>/<interpreter_name>', methods=['POST', 'OPTIONS'])

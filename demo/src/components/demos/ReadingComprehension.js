@@ -69,7 +69,7 @@ const fields = [
 const Attention = ({passage_question_attention, question_tokens, passage_tokens}) => {
   if(passage_question_attention && question_tokens && passage_tokens) {
     return (
-        <OutputField>
+        <OutputField label="Model internals"> 
           <Accordion accordion={false}>
             <AccordionItem expanded={false}>
               <AccordionItemTitle>
@@ -145,19 +145,19 @@ const ArithmeticEquation = ({numbers}) => {
   return null;
 }
 
-const SaliencyMaps = ({interpretData, question_tokens, passage_tokens, interpretModel, requestData}) => {  
+const SaliencyMaps = ({interpretData, question_tokens, passage_tokens, interpretModel, requestData}) => {
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>              
-        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>       
-        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>       
+        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
       </Accordion>
     </OutputField>
   )
 }
 
-const Attacks = ({attackData, attackModel, requestData}) => {  
+const Attacks = ({attackData, attackModel, requestData}) => {
   return (
     <OutputField>
       <Accordion accordion={false}>
@@ -168,14 +168,12 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   )
 }
 
-
 const AnswerByType = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
-
   if(requestData && responseData) {
     const { passage, question } = requestData;
     const { answer, question_tokens, passage_tokens } = responseData;
     const { answer_type } = answer || {};
-            
+
     switch(answer_type) {
       case "passage_span": {
         const { spans, value } = answer || {};
@@ -202,8 +200,8 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
               </OutputField>
               
               <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
-              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>              
-              <Attention {...responseData}/>              
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+              <Attention {...responseData}/>
 
             </section>
           )
@@ -234,11 +232,11 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
                   highlightSpans={spans}
                   highlightStyles={spans.map(s => "highlight__answer")}/>
               </OutputField>
-              
+
               <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
-              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>              
-              <Attention {...responseData}/>              
-            
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+              <Attention {...responseData}/>
+
             </section>
           )
         }
@@ -265,10 +263,10 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
               <OutputField label="Question">
                 {question}
               </OutputField>
-              
+
               <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
-              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>              
-              <Attention {...responseData}/>              
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+              <Attention {...responseData}/>
 
             </section>
           )
@@ -299,10 +297,10 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
               <OutputField label="Question">
                 {question}
               </OutputField>
-              
+
               <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
-              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>              
-              <Attention {...responseData}/>              
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+              <Attention {...responseData}/>
 
             </section>
           )
@@ -324,15 +322,15 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
 
                 <strong>Passage Context:</strong><br />
                 <span>{head}</span>
-                <span className="highlight__answer">{best_span_str}</span>                
+                <span className="highlight__answer">{best_span_str}</span>
                 <span>{tail}</span>
                 <br /><br />
 
               <strong>Question:</strong><br />  {question} <br /><br />
-              
+
               <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
-              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>              
-              <Attention {...responseData}/>              
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+              <Attention {...responseData}/>
 
             </section>
           )
@@ -511,7 +509,7 @@ const apiUrlInterpret = ({model, interpreter}) => {
   return `${API_ROOT}/interpret/${endpoint}/${interpreter}`
 }
 
-const apiUrlAttack = ({model, attacker, name_of_input_to_attack, name_of_grad_input}) => {  
+const apiUrlAttack = ({model, attacker, name_of_input_to_attack, name_of_grad_input}) => {
   const selectedModel = model || (taskModels[0] && taskModels[0].name);
   const endpoint = taskEndpoints[selectedModel]
   return `${API_ROOT}/attack/${endpoint}/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
