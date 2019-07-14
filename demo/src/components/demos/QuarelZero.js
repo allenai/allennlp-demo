@@ -1,12 +1,14 @@
 import React from 'react';
-import HeatMap from '../HeatMap'
 import {
   Accordion,
   AccordionItem,
   AccordionItemTitle,
   AccordionItemBody,
   } from 'react-accessible-accordion';
+import { ExternalLink } from  '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
+
+import HeatMap from '../HeatMap'
 import Model from '../Model'
 import OutputField from '../OutputField'
 import { API_ROOT } from '../../api-config';
@@ -16,23 +18,15 @@ const title = "Qualitative Relations Story Question Answering"
 const description = (
   <span>
     Answer story questions about qualitative relations
-    (<a href = "http://data.allenai.org/quarel/" target="_blank" rel="noopener noreferrer">QuaRel dataset</a>)
+    (<ExternalLink href = "http://data.allenai.org/quarel/" target="_blank" rel="noopener noreferrer">QuaRel dataset</ExternalLink>)
     while adding new relations
     without retraining. This uses the QuaSP+Zero semantic parser described in
     {' '}
     <i>QuaRel: A Dataset and Models for
     Answering Questions about Qualitative Relationships</i>{' '}
-    (<a href = "https://arxiv.org/abs/1811.08048" target="_blank" rel="noopener noreferrer">AAAI 2019</a>).
+    (<ExternalLink href = "https://arxiv.org/abs/1811.08048" target="_blank" rel="noopener noreferrer">AAAI 2019</ExternalLink>).
     The first few examples use
     new relations, the rest are from the validation set.
-  </span>
-)
-
-const descriptionEllipsed = (
-  <span>
-    Answer story questions about qualitative relations
-    (<a href = "http://data.allenai.org/quarel/" target="_blank" rel="noopener noreferrer">QuaRel dataset</a>)
-    while adding new relations without…
   </span>
 )
 
@@ -217,7 +211,7 @@ examples.forEach(example => {
 
 const apiUrl = () => `${API_ROOT}/predict/quarel-parser-zero`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
 

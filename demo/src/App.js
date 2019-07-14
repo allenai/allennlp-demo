@@ -1,17 +1,19 @@
 import React from 'react';
-import { API_ROOT } from './api-config';
+import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import Menu from './components/Menu';
+import { ThemeProvider } from '@allenai/varnish/theme';
+import { Header, ExternalLink } from '@allenai/varnish/components';
+
+import { API_ROOT } from './api-config';
+import { Menu } from './components/Menu';
 import ModelIntro from './components/ModelIntro';
 import { modelComponents } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
-import { ThemeProvider } from '@allenai/varnish/theme';
 
 import './css/App.css';
 import './css/fonts.css';
 import './css/icons.css';
-import './css/form.css';
 import './css/Accordion.css';
 import './css/hierplane-overrides.css';
 import './css/visualization-types.css';
@@ -27,12 +29,12 @@ const DEFAULT_PATH = "/reading-comprehension"
 const App = () => (
   <ThemeProvider>
     <Router>
-        <div>
+        <BlockOverflow>
           <Route exact path="/" render={() => (
             <Redirect to={DEFAULT_PATH}/>
           )}/>
           <Route path="/:model/:slug?" component={Demo}/>
-        </div>
+        </BlockOverflow>
     </Router>
   </ThemeProvider>
 )
@@ -49,7 +51,6 @@ class Demo extends React.Component {
       selectedModel: model,
       requestData: null,
       responseData: null,
-      expandedModelGroupIndexes: [0, 1, 2, 3, 4] // expand first five by default
     };
 
     // We'll need to pass this to the Header component so that it can clear
@@ -57,11 +58,6 @@ class Demo extends React.Component {
     this.clearData = () => {
       this.setState({requestData: null, responseData: null})
     }
-
-    // preserve open menu state
-    this.handleExpandModelGroup = (expandedModelGroupIndexes) => {
-      this.setState({ expandedModelGroupIndexes: expandedModelGroupIndexes });
-    };
 
     // Our components will be using history.push to change the location,
     // and they will be attaching any `requestData` and `responseData` updates
@@ -111,7 +107,7 @@ class Demo extends React.Component {
   }
 
   render() {
-    const { slug, selectedModel, requestData, responseData, expandedModelGroupIndexes } = this.state;
+    const { slug, selectedModel, requestData, responseData } = this.state;
 
     const ModelComponent = () => {
       if (slug && !responseData) {
@@ -130,38 +126,41 @@ class Demo extends React.Component {
               in adding your model to a list of publically available implementations, as a service to this demo, or as a component in the library itself,
               please consider opening an issue on our
             </span>
-            <a href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener noreferrer">{' '} public Github repository </a>
+            <ExternalLink href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener noreferrer">{' '} public Github repository </ExternalLink>
             <span>
               or sending us an email at allennlp-contact@allenai.org to discuss what you have in mind.
             </span>
           </span>
-      );
+        );
 
         return (
-          <div className="pane__horizontal model">
+          <div className="model model__content">
             <div className='model__content'>
               <PaneTop>
                 <ModelIntro title={modelRequest} description={modelDescription}/>
               </PaneTop>
-              </div>
+            </div>
           </div>
-
         )
       }
     }
 
     return (
-      <div className="pane-container">
-        <Menu
-          selectedModel={selectedModel}
-          expandedModelGroupIndexes={expandedModelGroupIndexes}
-          clearData={this.clearData}
-          onExpandModelGroup={this.handleExpandModelGroup}/>
-        <ModelComponent />
-      </div>
+      <React.Fragment>
+        <Header alwaysVisible={true} />
+        <div className="pane-container">
+          <Menu
+            selectedModel={selectedModel}
+            clearData={this.clearData}/>
+          <ModelComponent />
+        </div>
+      </React.Fragment>
     );
   }
 }
 
+const BlockOverflow = styled.div`
+  overflow-y: hidden;
+`;
 
 export default App;

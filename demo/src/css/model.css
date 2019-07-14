@@ -2,10 +2,6 @@
   background: #fff;
 }
 
-.model__output.model__output--empty {
-  background: 0 0;
-}
-
 .model__content {
   padding: 0.6em 2em 0.875em 2em;
   margin: auto;
@@ -21,7 +17,7 @@
 
 .model__content h2 span {
   font-size: 2em;
-  color: #08426C;
+  color: rgba(35, 35, 35, .75);
 }
 
 .model__content p {

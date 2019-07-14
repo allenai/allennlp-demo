@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@allenai/varnish": "^0.3.11",
+    "@allenai/varnish": "^0.3.15",
     "antd": "^3.20.0",
     "hierplane": "^0.1.0",
     "lodash": "^4.17.11",
@@ -14,7 +14,6 @@
     "react-app-rewired": "2.1.0",
     "react-dom": "^16.8.6",
     "react-proptypes": "1.0.0",
-    "react-radio-group": "3.0.3",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.0.3",
     "react-syntax-highlighter": "8.0.1",

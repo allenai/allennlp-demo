@@ -1,13 +1,15 @@
 import React from 'react';
-import HeatMap from '../HeatMap'
 import {
   Accordion,
   AccordionItem,
   AccordionItemTitle,
   AccordionItemBody,
 } from 'react-accessible-accordion';
-import { API_ROOT } from '../../api-config';
+import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
+
+import HeatMap from '../HeatMap'
+import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import OutputField from '../OutputField'
 import SyntaxHighlight from '../highlight/SyntaxHighlight.js';
@@ -19,10 +21,10 @@ const description = (
     <span>
       Semantic parsing maps natural language to machine language.  This page demonstrates a semantic
       parsing model on the
-      <a href="http://lic.nlp.cornell.edu/nlvr/">{' '}Cornell NLVR</a> dataset.
+      <ExternalLink href="http://lic.nlp.cornell.edu/nlvr/">{' '}Cornell NLVR</ExternalLink> dataset.
       The model is similar to the model in the
-      <a href="https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a">
-      {' '}EMNLP 2017 paper by Krishnamurthy, Dasigi and Gardner</a>, and performs comparably to the best published result
+      <ExternalLink href="https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a">
+      {' '}EMNLP 2017 paper by Krishnamurthy, Dasigi and Gardner</ExternalLink>, and performs comparably to the best published result
       on this dataset as of December 2018.
 
       The structured representation is not particularly useful here, unless you know what you're doing.

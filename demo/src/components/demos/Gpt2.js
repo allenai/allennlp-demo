@@ -1,17 +1,25 @@
 import React from 'react'
-import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import _ from 'lodash';
+import { Footer, ExternalLink } from '@allenai/varnish/components';
+
+import { FormField, FormLabel, FormTextArea } from '../Form';
+import { API_ROOT } from '../../api-config';
 
 const Wrapper = styled.div`
   color: #232323;
   flex-grow: 1;
   font-size: 1em;
+  background: ${({theme}) => theme.palette.background.dark};
 
   @media(max-width: 500px) {
     margin: 0;
   }
+`
+
+const ModelArea = styled.div`
+  background: ${({theme}) => theme.palette.common.white};
 `
 
 const Loading = styled.div`
@@ -29,27 +37,27 @@ const Error = styled(Loading)`
 `
 
 const LoadingText = styled.div`
-  padding-left: 0.5rem;
+  padding-left: ${({theme}) => theme.spacing.xs};
 `
 
 const InputOutput = styled.div`
   display: flex;
-  margin-top: 10px;
+  margin-top: ${({theme}) => theme.spacing.sm};
 
   @media(max-width: 500px) {
     display: block;
   }
 `
 
-const InputOutputColumn = styled.div`
+const InputOutputColumn = styled(FormField)`
   flex: 1 1 50%;
 
   :first-child {
-    padding-right: 1rem;
+    padding-right: ${({theme}) => theme.spacing.md};
   }
 
   :last-child {
-    padding-left: 1rem;
+    padding-left: ${({theme}) => theme.spacing.md};
   }
 
   @media(max-width: 500px) {
@@ -59,22 +67,22 @@ const InputOutputColumn = styled.div`
     }
 
     :first-child {
-      padding: 0 0 1rem;
+      padding: ${({theme}) => `0 0 ${theme.spacing.md}`};
     }
   }
 `
 
-const TextInput = styled.textarea`
+const TextInput = styled(FormTextArea)`
   display: block;
   width: 100%;
   font-size: 1.25em;
   min-height: 100px;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  padding: 1rem;
+  padding: ${({theme}) => theme.spacing.md};
 `
 
 const ListItem = styled.li`
-  margin: 0 0 0.5rem;
+  margin: ${({theme}) => `0 0 ${theme.spacing.xs}`};
 `
 
 const ChoiceList = styled.ul`
@@ -93,16 +101,17 @@ const ChoiceItem = styled.button`
   line-height: 1;
   font-size: 1.15em;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-bottom: ${({theme}) => `2px solid ${theme.palette.common.transparent}`};
 `
 
 const UndoButton = styled(ChoiceItem)`
   color: #8c9296;
+  margin-bottom: ${({theme}) => theme.spacing.xl};
 `
 
 const Probability = styled.span`
   color: #8c9296;
-  margin-right: 0.5rem;
+  margin-right: ${({theme}) => theme.spacing.xs};
   font-size: 0.8em;
   min-width: 4em;
   text-align: right;
@@ -110,10 +119,6 @@ const Probability = styled.span`
 
 const Token = styled.span`
   font-weight: 600;
-`
-
-const Footer = styled.div`
-  margin: 2rem 0 0 0;
 `
 
 const DEFAULT = "Joel is";
@@ -140,7 +145,7 @@ const DEFAULT_MODEL = "345M"
 const description = (
   <span>
 This demonstration uses the public 345M
-parameter <a href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</a> language model
+parameter <ExternalLink href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</ExternalLink> language model
 to generate sentences.<br /><br />
 Enter some initial text and the model will generate the most likely next words.
 You can click on one of those words to choose it and continue or just keep typing.
@@ -269,44 +274,47 @@ class App extends React.Component {
 
     return (
       <Wrapper className="model">
-        <div className="model__content answer">
-        <h2><span>Language Modeling</span></h2>
-        <p><span>{description}</span></p>
+        <ModelArea className="model__content answer">
+          <h2><span>Language Modeling</span></h2>
+          <p><span>{description}</span></p>
 
-        <InputOutput>
-          <InputOutputColumn className="form__field">
-            <label>Sentence:</label>
-              <TextInput type="text"
-                        value={this.state.output}
-                        onChange={this.setOutput}/>
-              {this.state.loading ? (
-                <Loading>
-                  <img src="/assets/loading-bars.svg" width="25" height="25" alt="loading" />
-                  <LoadingText>Loading</LoadingText>
-                </Loading>
-              ) : null}
-              {this.state.error ? (
-                <Error>
-                  <span role="img" aria-label="warning">️⚠</span> Something went wrong. Please try again.
-                </Error>
-              ) : null}
-          </InputOutputColumn>
-          <InputOutputColumn className="form__field">
-            <label>Options:</label>
-            <Choices output={this.state.output}
-                     choose={this.choose}
-                     logits={this.state.logits}
-                     words={this.state.words}
-                     probabilities={this.state.probabilities}
-                     hidden={this.state.loading}/>
-          </InputOutputColumn>
-        </InputOutput>
+          <InputOutput>
+            <InputOutputColumn>
+              <FormLabel>Sentence:</FormLabel>
+                <TextInput type="text"
+                          autosize={{ minRows: 5, maxRows: 10 }}
+                          value={this.state.output}
+                          onChange={this.setOutput}/>
+                {this.state.loading ? (
+                  <Loading>
+                    <img src="/assets/loading-bars.svg" width="25" height="25" alt="loading" />
+                    <LoadingText>Loading</LoadingText>
+                  </Loading>
+                ) : null}
+                {this.state.error ? (
+                  <Error>
+                    <span role="img" aria-label="warning">️⚠</span> Something went wrong. Please try again.
+                  </Error>
+                ) : null}
+            </InputOutputColumn>
+            <InputOutputColumn>
+              <FormLabel>Options:</FormLabel>
+              <Choices output={this.state.output}
+                      choose={this.choose}
+                      logits={this.state.logits}
+                      words={this.state.words}
+                      probabilities={this.state.probabilities}
+                      hidden={this.state.loading}/>
+            </InputOutputColumn>
+          </InputOutput>
+        </ModelArea>
         <Footer>
-          Built at the <a href="https://allenai.org" target="_blank" rel="noopener noreferrer">Allen Institute for Artificial Intelligence</a>
-          {' '}using Hugging Face’s <a href="https://github.com/huggingface/pytorch-pretrained-BERT" target="_blank" rel="noopener noreferrer">pytorch-pretrained-BERT</a>
-          {' '}library.
-        </Footer>
-      </div>
+            Proudly built at the <ExternalLink contrast={true} target="_blank" href="https://allenai.org">Allen Institute for Artificial Intelligence (AI2)</ExternalLink>
+            {' '}using Hugging Face’s <ExternalLink contrast={true} target="_blank" href="https://github.com/huggingface/pytorch-pretrained-BERT" target="_blank" rel="noopener noreferrer">pytorch-pretrained-BERT</ExternalLink>
+            {' '}library
+            {' '}| <ExternalLink contrast={true} href="https://allenai.org/privacy-policy.html">Privacy Policy</ExternalLink>
+            {' '}| <ExternalLink contrast={true} href="https://allenai.org/terms.html">Terms of Use</ExternalLink>
+          </Footer>
       </Wrapper>
     )
   }

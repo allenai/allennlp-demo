@@ -8,65 +8,6 @@
   flex-direction: column;
 }
 
-section {
-  background: #fff;
-}
-
-code,
-code span,
-pre {
-  font-family: 'Roboto Mono', monospace !important;
-}
-
-code {
-  background: #f6f8fa;
-}
-
-pre > code {
-  font-size: .8125em;
-  line-height: 1.5em;
-  padding: 1.875em;
-  display: block;
-  color: #333;
-  overflow-x: auto;
-  -webkit-transition: padding 0.2s ease;
-  transition: padding 0.2s ease;
-}
-
-ol,
-ul {
-  font-size: 16px;
-}
-
-li,
-p,
-td,
-th {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: 1.125em;
-  line-height: 1.5em;
-  margin: 1.2em 0;
-}
-
-p code {
-  font-size: .78125em;
-  padding: .125em .375em;
-}
-
-pre {
-  margin: 2em 0;
-}
-
-blockquote {
-  border-left: #f6f8fa solid .375em;
-  padding-left: 1.125em;
-}
-
-blockquote * {
-  color: rgba(35, 35, 35, .75);
-}
-
 img {
   max-width: 100%;
 }
@@ -76,10 +17,6 @@ hr {
   border: none;
   height: .375em;
   background: #f6f8fa;
-}
-
-blockquote,
-hr {
   margin: 2.4em 0;
 }
 
@@ -111,17 +48,7 @@ th {
   border-bottom: .375em solid rgba(184, 198, 213, .13);
 }
 
-.u-hidden {
-  display: none;
-}
-
 .no-top-margin {
   margin-top: 0;
   padding-top: 0;
-}
-
-@media screen and (max-height:800px) {
-  pre > code {
-    padding: 0.1em;
-  }
 }

@@ -1,6 +1,8 @@
 import React from 'react';
-import { API_ROOT } from '../../api-config';
+import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
+
+import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
@@ -16,7 +18,7 @@ const description = (
     The AllenNLP toolkit provides the following Open IE visualization, which can be used for any Open IE model in AllenNLP.
       This page demonstrates a reimplementation of
     </span>
-    <a href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</a>.
+    <ExternalLink href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</ExternalLink>.
   </span>
 )
 

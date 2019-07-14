@@ -17,6 +17,8 @@ import Gpt2 from './components/demos/Gpt2';
 const modelGroups = [
     {
         label: "Annotate a sentence",
+        icon: "build", // TODO: getting new icons from design
+        defaultOpen: true,
         models: [
             {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SemanticRoleLabeling},
             {model: "named-entity-recognition", name: "Named Entity Recognition", component: NamedEntityRecognition},
@@ -27,18 +29,24 @@ const modelGroups = [
     },
     {
         label: "Annotate a passage",
+        icon: "pic-right", // TODO: getting new icons from design
+        defaultOpen: true,
         models: [
             {model: "coreference-resolution", name: "Coreference Resolution", component: Coref}
         ]
     },
     {
         label: "Answer a question",
+        icon: "read", // TODO: getting new icons from design
+        defaultOpen: true,
         models: [
             {model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension}
         ]
     },
     {
         label: "Semantic parsing",
+        icon: "apartment", // TODO: getting new icons from design
+        defaultOpen: true,
         models: [
             {model: "wikitables-parser", name: "WikiTableQuestions Semantic Parser", component: WikiTables},
             {model: "nlvr-parser", name: "Cornell NLVR Semantic Parser", component: Nlvr},
@@ -48,6 +56,8 @@ const modelGroups = [
     },
     {
         label: "Other",
+        icon: "experiment", // TODO: getting new icons from design
+        defaultOpen: false,
         models: [
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
             {model: "event2mind", name: "Event2Mind", component: Event2Mind},
