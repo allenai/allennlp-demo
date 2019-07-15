@@ -339,6 +339,10 @@ def make_app(build_dir: str,
     def static_css_proxy(path: str) -> Response: # pylint: disable=unused-variable
         return send_from_directory(os.path.join(build_dir, 'static/css'), path)
 
+    @app.route('/static/media/<path:path>')
+    def static_media_proxy(path: str) -> Response: # pylint: disable=unused-variable
+        return send_from_directory(os.path.join(build_dir, 'static/media'), path)
+
     return app
 
 if __name__ == "__main__":
