@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components';
 
-import { PaneLeft, PaneRight, PaneTop, PaneBottom } from './Pane'
+import { PaneTop, PaneBottom } from './Pane'
 import DemoInput from './DemoInput'
 
 class Model extends React.Component {

@@ -1,4 +1,3 @@
-import React from 'react';
 import styled, { css } from 'styled-components';
 import { TextArea, Input, Select } from '@allenai/varnish/components';
 
