@@ -254,6 +254,8 @@ def make_app(build_dir: str,
             log_blob["outputs"]["document"] = prediction["document"]
         elif model_name == "textual-entailment":
             log_blob["outputs"]["label_probs"] = prediction["label_probs"]
+        elif model_name == "sentiment-analysis":
+            log_blob["outputs"]["probs"] = prediction["probs"]
         elif model_name == "named-entity-recognition":
             log_blob["outputs"]["tags"] = prediction["tags"]
         elif model_name == "semantic-role-labeling":
