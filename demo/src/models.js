@@ -57,7 +57,7 @@ const modelGroups = [
     {
         label: "Other",
         icon: "experiment", // TODO: getting new icons from design
-        defaultOpen: false,
+        defaultOpen: true,
         models: [
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
             {model: "event2mind", name: "Event2Mind", component: Event2Mind},

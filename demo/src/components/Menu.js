@@ -82,7 +82,7 @@ const Logo = styled.div`
 const MenuContent = styled(AntMenu)`
   &&& {
     min-width: 15em;
-    max-width: 15em;
+    max-width: 20em;
     overflow-x: hidden;
     overflow-y: auto;
     padding: ${({theme}) => `${theme.spacing.md} 0`};
@@ -107,6 +107,7 @@ const NarrowSubMenu = styled(AntMenu.SubMenu)`
     .ant-menu-submenu-title {
       line-height: 1.4em;
       height: initial;
+      font-weight: bold;
     }
   }
 `;
