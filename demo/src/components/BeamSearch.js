@@ -113,8 +113,7 @@ const BeamSearchLI = styled.li`
     font-size: 1em;
     position: relative;
     display: inline-block;
-    border: 1px solid #d4dce2;
-    padding: 5px;
+    border: ${({theme}) => `1px solid ${theme.palette.border.main}`};
 `
 
 
@@ -141,7 +140,7 @@ const ChoicesLI = styled(BeamSearchLI)`
         display: table;
         background-color: #f9f9f9;
         font-size: 1.0em;
-        border: 1px solid black;
+        border: ${({theme}) => `1px solid ${theme.palette.common.black}`};
     }
 `
 
@@ -159,8 +158,8 @@ const ChoicesUL = styled.ul`
     position: absolute;
     z-index: 1;
     list-style-type: none;
-    padding: 5px;
-    margin: 5px;
+    padding: ${({theme}) => theme.spacing.xxs};
+    margin: ${({theme}) => theme.spacing.xxs};
     width: auto;
     clear: both;
 `
@@ -169,7 +168,7 @@ const ChoiceLI = styled.li`
 `
 
 const Choice = styled.a`
-    padding: 5px;
+    padding: ${({theme}) => theme.spacing.xxs};
 `
 
 export default BeamSearch

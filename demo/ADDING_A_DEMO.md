@@ -46,7 +46,7 @@ const description = (
 )
 ```
 
-add the descriptionEllipsed as just JSX (or some other element):
+If the description is long, add the descriptionEllipsed as just JSX (or some other element):
 
 ```js
 const descriptionEllipsed = (

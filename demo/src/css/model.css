@@ -2,10 +2,6 @@
   background: #fff;
 }
 
-.model__output.model__output--empty {
-  background: 0 0;
-}
-
 .model__content {
   padding: 0.6em 2em 0.875em 2em;
   margin: auto;

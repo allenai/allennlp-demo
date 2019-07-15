@@ -1,134 +1,118 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemTitle,
-  AccordionItemBody,
-  } from 'react-accessible-accordion';
+import { Menu as AntMenu, Icon } from 'antd';
+import { InternalLink } from '@allenai/varnish/components';
+
+import allenNlpLogo from './allennlp_logo.svg';
 import { modelGroups } from '../models'
-import '../css/Menu.css';
 
 /*******************************************************************************
-  <Header /> Component
+  <Menu /> Component
 *******************************************************************************/
 
-class Menu extends React.Component {
-    render() {
-      const { selectedModel, expandedModelGroupIndexes, clearData, onExpandModelGroup, className } = this.props;
+export class MenuBase extends React.Component {
+  render() {
+    const { selectedModel, clearData } = this.props;
 
-      const ModelGroup = ({modelGroup, expanded, uuid}) => (
-        <MenuAccordionItem className={`accordion__item ${expanded ? 'expanded' : ''}`} expanded={expanded} uuid={uuid}>
-          <MenuAccordionItemTitle className="accordion__title">
-            {modelGroup.label}
-            <MenuAccordionArrow className="accordion__arrow" role="presentation"/>
-          </MenuAccordionItemTitle>
-          <MenuAccordionItemBody className="accordion__body">
-            <ul>
-                {modelGroup.models.map(m => <ModelLink key={m.name} model={m.model} name={m.name} />)}
-            </ul>
-          </MenuAccordionItemBody>
-        </MenuAccordionItem>
-      );
-
-      const ModelLink = ({model, name}) => (
-        <li key={model}>
-          <span className={`nav__link ${selectedModel === model ? "nav__link--selected" : ""}`}>
-            <Link to={"/" + model} onClick={clearData}>
-              <span>{name}</span>
-            </Link>
+    const ModelGroup = ({modelGroup, expanded, ...other}) => (
+      <NarrowSubMenu
+        {...other}
+        title={
+          <span>
+            <Icon type={modelGroup.icon} />
+            <span>{modelGroup.label}</span>
           </span>
-        </li>
-      );
+        }>
+          {modelGroup.models.map(m => <ModelLink key={m.model} model={m.model} name={m.name} />)}
+      </NarrowSubMenu>
+    );
 
-      return (
-        <div className={`menu ${className}`}>
-          <div className="menu__content">
-            <h1 className="menu__content__logo">
-              <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
-                <svg>
-                  <use xlinkHref="#icon__allennlp-logo"></use>
-                </svg>
-                <span className="u-hidden">AllenNLP</span>
-              </a>
-            </h1>
-            <nav>
-              <MenuAccordion className="accordion" accordion={false} onChange={e => onExpandModelGroup(e)}>
-                  {modelGroups.map((mg, index) =>
-                    <ModelGroup key={mg.label} modelGroup={mg} uuid={index} expanded={expandedModelGroupIndexes.includes(index)}/>
-                  )}
-              </MenuAccordion>
-            </nav>
-          </div>
-        </div>
-      );
-    }
-  }
+    const ModelLink = ({model, name, ...other}) => (
+      <NarrowMenuItem {...other}>
+          <WrappingLink to={"/" + model} onClick={clearData}>
+            <span>{name}</span>
+          </WrappingLink>
+      </NarrowMenuItem>
+    );
 
-const MenuAccordion = styled(Accordion)`
-  && {
-    background: transparent;
+    return (
+      <OuterGrid>
+        <Logo>
+          <a href="http://www.allennlp.org/" target="_blank" rel="noopener">
+            <img
+              src={allenNlpLogo}
+              width={"124px"}
+              height={"22px"}
+              alt="AllenNLP" />
+          </a>
+        </Logo>
+        <MenuContent
+          onClick={clearData}
+          defaultOpenKeys={modelGroups.filter((mg) => mg.defaultOpen).map((mg) => mg.label)}
+          defaultSelectedKeys={selectedModel ? [selectedModel] : undefined}
+          mode="inline">
+          {modelGroups.map((mg) =>
+            <ModelGroup key={mg.label} modelGroup={mg}/>
+          )}
+        </MenuContent>
+      </OuterGrid>
+    );
   }
+}
+
+export const Menu = styled(MenuBase)`
+  height: 100%;
+  position: fixed;
+  z-index: 2;
 `;
 
-const MenuAccordionItem = styled(AccordionItem)`
+const OuterGrid = styled.div`
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  height: 100%;
+`;
+
+const Logo = styled.div`
+  z-index: 3;
+  padding: ${({theme}) => `1.3125rem ${theme.spacing.xl}`}; /* match position of initial placement of model title in right pane */
+  box-shadow: ${({theme}) => `-${theme.spacing.sm} ${theme.spacing.xxs} ${theme.spacing.md} ${theme.palette.border.main}`};
+  border-right: ${({theme}) => `1px solid ${theme.palette.border.main}`};
+`;
+
+const MenuContent = styled(AntMenu)`
   &&& {
-    border: none;
+    min-width: 15em;
+    max-width: 20em;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: ${({theme}) => `${theme.spacing.md} 0`};
   }
 `;
 
-const MenuAccordionArrow = styled.div`
-  && {
-    top: 3px;
-    left: 3px;
-    color: #63a7d4;
-    width: 22px;
-    height: 10px;
+const NarrowMenuItem = styled(AntMenu.Item)`
+  &&& {
+    line-height: 1.4em;
+    height: initial;
+    padding-bottom: 0.375em;
+    padding-top: 0.375em;
+    margin-bottom: -0.125em;
+    margin-top: -0.125em;
+  }
+`;
 
-    &::after,
-    &::before {
-      width: 8px;
-      height: 1px;
+const NarrowSubMenu = styled(AntMenu.SubMenu)`
+  &&& {
+    margin-bottom: ${({theme}) => theme.spacing.md};
+
+    .ant-menu-submenu-title {
+      line-height: 1.4em;
+      height: initial;
+      font-weight: bold;
     }
   }
 `;
 
-const MenuAccordionItemTitle = styled(AccordionItemTitle)`
-  && {
-    background-color: transparent;
-    border: none;
-    color: #6f7376;
-    font-weight: normal;
-    padding: 0 0.5em;
-    font-size: 0.9em;
-    margin: 0.8em 0 0 1.25em;
-
-    :hover {
-      background: transparent;
-      color: #1c2f3a;
-
-      ${MenuAccordionArrow} {
-        top: 2px;
-        width: 23px;
-        height: 11px;
-
-        &::after,
-        &::before {
-          width: 9px;
-          height: 2px;
-        }
-      }
-    }
-  }
-`;
-
-const MenuAccordionItemBody = styled(AccordionItemBody)`
-  && {
-    animation: none;
-    padding-left: 0.6em;
-  }
-`;
-
-export default styled(Menu)`
+const WrappingLink = styled(InternalLink)`
+    white-space: pre-wrap;
+    word-wrap: break-word;
 `;

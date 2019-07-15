@@ -21,13 +21,6 @@ const description = (
   </span>
   )
 
-const descriptionEllipsed = (
-  <span>
-    Reading comprehension is the task of answering questions about a passage of text to show that
-    the system…
-  </span>
-)
-
 const taskModels = [
   {
     name: "BiDAF (trained on SQuAD)",
@@ -453,6 +446,6 @@ const apiUrl = ({model}) => {
   return `${API_ROOT}/predict/${endpoint}`
 }
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
