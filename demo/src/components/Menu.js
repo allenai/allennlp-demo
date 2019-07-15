@@ -38,7 +38,7 @@ export class MenuBase extends React.Component {
     return (
       <OuterGrid>
         <Logo>
-          <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
+          <a href="http://www.allennlp.org/" target="_blank" rel="noopener">
             <img
               src={allenNlpLogo}
               width={"124px"}
@@ -74,7 +74,7 @@ const OuterGrid = styled.div`
 
 const Logo = styled.div`
   z-index: 3;
-  padding: ${({theme}) => `1.3125rem ${theme.spacing.xl}`};
+  padding: ${({theme}) => `1.3125rem ${theme.spacing.xl}`}; /* match position of initial placement of model title in right pane */
   box-shadow: ${({theme}) => `-${theme.spacing.sm} ${theme.spacing.xxs} ${theme.spacing.md} ${theme.palette.border.main}`};
   border-right: ${({theme}) => `1px solid ${theme.palette.border.main}`};
 `;

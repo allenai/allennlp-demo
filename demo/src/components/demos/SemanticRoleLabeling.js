@@ -17,7 +17,7 @@ const description = (
         The AllenNLP toolkit provides the following SRL visualization, which can be used for any SRL model in AllenNLP.
         This page demonstrates a reimplementation of
       </span>
-      <ExternalLink href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener noreferrer">{' '} a BERT based model (Shi et al, 2019)</ExternalLink>
+      <ExternalLink href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener">{' '} a BERT based model (Shi et al, 2019)</ExternalLink>
       <span>
         with some modifications (no additional parameters apart from a linear classification layer), which is currently the state of the art single model for English PropBank SRL (Newswire sentences). It achieves 86.49 test F1 on the Ontonotes 5.0 dataset.
       </span>
