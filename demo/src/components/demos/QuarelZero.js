@@ -18,13 +18,13 @@ const title = "Qualitative Relations Story Question Answering"
 const description = (
   <span>
     Answer story questions about qualitative relations
-    (<ExternalLink href = "http://data.allenai.org/quarel/" target="_blank" rel="noopener noreferrer">QuaRel dataset</ExternalLink>)
+    (<ExternalLink href = "http://data.allenai.org/quarel/" target="_blank" rel="noopener">QuaRel dataset</ExternalLink>)
     while adding new relations
     without retraining. This uses the QuaSP+Zero semantic parser described in
     {' '}
     <i>QuaRel: A Dataset and Models for
     Answering Questions about Qualitative Relationships</i>{' '}
-    (<ExternalLink href = "https://arxiv.org/abs/1811.08048" target="_blank" rel="noopener noreferrer">AAAI 2019</ExternalLink>).
+    (<ExternalLink href = "https://arxiv.org/abs/1811.08048" target="_blank" rel="noopener">AAAI 2019</ExternalLink>).
     The first few examples use
     new relations, the rest are from the validation set.
   </span>

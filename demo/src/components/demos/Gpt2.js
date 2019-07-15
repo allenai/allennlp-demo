@@ -145,7 +145,7 @@ const DEFAULT_MODEL = "345M"
 const description = (
   <span>
 This demonstration uses the public 345M
-parameter <ExternalLink href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</ExternalLink> language model
+parameter <ExternalLink href="https://github.com/openai/gpt-2" target="_blank" rel="noopener">OpenAI GPT-2</ExternalLink> language model
 to generate sentences.<br /><br />
 Enter some initial text and the model will generate the most likely next words.
 You can click on one of those words to choose it and continue or just keep typing.
@@ -310,7 +310,7 @@ class App extends React.Component {
         </ModelArea>
         <Footer>
             Proudly built at the <ExternalLink contrast={true} target="_blank" href="https://allenai.org">Allen Institute for Artificial Intelligence (AI2)</ExternalLink>
-            {' '}using Hugging Face’s <ExternalLink contrast={true} target="_blank" href="https://github.com/huggingface/pytorch-pretrained-BERT" target="_blank" rel="noopener noreferrer">pytorch-pretrained-BERT</ExternalLink>
+            {' '}using Hugging Face’s <ExternalLink contrast={true} target="_blank" href="https://github.com/huggingface/pytorch-pretrained-BERT" target="_blank" rel="noopener">pytorch-pretrained-BERT</ExternalLink>
             {' '}library
             {' '}| <ExternalLink contrast={true} href="https://allenai.org/privacy-policy.html">Privacy Policy</ExternalLink>
             {' '}| <ExternalLink contrast={true} href="https://allenai.org/terms.html">Terms of Use</ExternalLink>

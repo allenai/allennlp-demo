@@ -105,21 +105,21 @@ class DemoInput extends React.Component {
         // inputs and also select inputs. The first argument is
         // the field name to update.
         this.handleInputChange = fieldName => e => {
-            let stateUpdate = {}
+            const stateUpdate = {}
             stateUpdate[fieldName] = e.target.value;
             this.setState(stateUpdate)
         }
 
         // Select input selection
         this.handleSelectChange = fieldName => eVal => {
-            let stateUpdate = {}
+            const stateUpdate = {}
             stateUpdate[fieldName] = eVal;
             this.setState(stateUpdate)
         }
 
         // Radio input selection
         this.handleRadioChange = fieldName => e => {
-            let stateUpdate = {}
+            const stateUpdate = {}
             stateUpdate[fieldName] = e.target.value;
             this.setState(stateUpdate)
         }
@@ -137,7 +137,7 @@ class DemoInput extends React.Component {
         // depend on the previous outputs, so when we do a new run
         // we need to clear them out.
         this.cleanInputs = () => {
-            let inputs = {...this.state}
+            const inputs = {...this.state}
 
             fields.forEach((field) => {
                 (field.dependentInputs || []).forEach((name) => {
@@ -294,7 +294,6 @@ const BlockRadio = styled(Radio)`
 
 const FormInstructions = styled.div`
   margin: ${({theme}) => `${theme.spacing.md} 0 ${theme.spacing.md}`};
-  -webkit-transition: margin .2s ease;
   transition: margin .2s ease;
 
   span {
@@ -303,7 +302,7 @@ const FormInstructions = styled.div`
     color: ${({theme}) => theme.palette.text.secondary};
   }
 
-  @media screen and (max-height:800px) {
+  @media screen and (max-height: ${({theme}) => theme.breakpoints.md}) {
     margin: ${({theme}) => `${theme.spacing.xs} 0 ${theme.spacing.xs}`};
   }
 `;

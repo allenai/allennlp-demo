@@ -27,11 +27,11 @@ const description = (
     which can be run for any TE model you develop.
     This page demonstrates a reimplementation of
     </span>
-    <ExternalLink href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27" target="_blanke" rel="noopener noreferrer">{' '} the decomposable attention model (Parikh et al, 2017) {' '}</ExternalLink>
+    <ExternalLink href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27" target="_blanke" rel="noopener">{' '} the decomposable attention model (Parikh et al, 2017) {' '}</ExternalLink>
     <span>
     , which was state of the art for
     </span>
-    <ExternalLink href = "https://nlp.stanford.edu/projects/snli/" target="_blank" rel="noopener noreferrer">{' '} the SNLI benchmark {' '}</ExternalLink>
+    <ExternalLink href = "https://nlp.stanford.edu/projects/snli/" target="_blank" rel="noopener">{' '} the SNLI benchmark {' '}</ExternalLink>
     <span>
     (short sentences about visual scenes) in 2016.
     Rather than pre-trained Glove vectors, this model uses <ExternalLink href="https://arxiv.org/abs/1802.05365">ELMo embeddings</ExternalLink>, which are completely character based and improve performance by 2%

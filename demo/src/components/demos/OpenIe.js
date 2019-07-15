@@ -18,7 +18,7 @@ const description = (
     The AllenNLP toolkit provides the following Open IE visualization, which can be used for any Open IE model in AllenNLP.
       This page demonstrates a reimplementation of
     </span>
-    <ExternalLink href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</ExternalLink>.
+    <ExternalLink href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</ExternalLink>.
   </span>
 )
 

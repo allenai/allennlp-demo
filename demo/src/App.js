@@ -126,7 +126,7 @@ class Demo extends React.Component {
               in adding your model to a list of publically available implementations, as a service to this demo, or as a component in the library itself,
               please consider opening an issue on our
             </span>
-            <ExternalLink href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener noreferrer">{' '} public Github repository </ExternalLink>
+            <ExternalLink href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener">{' '} public Github repository </ExternalLink>
             <span>
               or sending us an email at allennlp-contact@allenai.org to discuss what you have in mind.
             </span>

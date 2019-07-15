@@ -4,7 +4,6 @@ import { TextArea, Input, Select } from '@allenai/varnish/components';
 
 export const FormField = styled.div`
   margin-top: ${({theme}) => theme.spacing.md};
-
   transition: margin .2s ease;
 
   @media (max-height: ${({theme}) => theme.breakpoints.md}) {
@@ -16,7 +15,6 @@ export const FormLabel = styled.label`
   display: block;
   font-weight: ${({theme}) => theme.typography.bodyBold.fontWeight};
   margin-top: ${({theme}) => theme.spacing.xs};
-
   transition: font-size .2s ease;
 `;
 
@@ -24,10 +22,9 @@ const baseInputStyles = css`
   width: 100%;
   margin-top: ${({theme}) => theme.spacing.xs};
   display: block;
-
   transition: min-height .2s ease, opacity .2s ease;
 
-  &:focus{
+  &:focus {
     outline: 0;
     box-shadow: 0 0 ${({theme}) => theme.spacing.md} ${({theme}) => theme.palette.primary};
   }
