@@ -18,7 +18,7 @@ import Gpt2 from './components/demos/Gpt2';
 const modelGroups = [
     {
         label: "Annotate a sentence",
-        icon: "build", // TODO: getting new icons from design
+        icon: "highlight", // TODO: getting new icons from design
         defaultOpen: true,
         models: [
             {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SemanticRoleLabeling},
