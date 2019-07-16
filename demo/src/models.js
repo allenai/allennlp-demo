@@ -13,12 +13,18 @@ import Nlvr from './components/demos/Nlvr';
 import Atis from './components/demos/Atis';
 import QuarelZero from './components/demos/QuarelZero';
 import Gpt2 from './components/demos/Gpt2';
+import annotateIcon from './icons/annotate-14px.svg';
+import otherIcon from './icons/other-14px.svg';
+import parseIcon from './icons/parse-14px.svg';
+import passageIcon from './icons/passage-14px.svg';
+import questionIcon from './icons/question-14px.svg';
 
 // This is the order in which they will appear in the menu
 const modelGroups = [
     {
         label: "Annotate a sentence",
-        icon: "highlight", // TODO: getting new icons from design
+        icon: "highlight",
+        iconSrc: annotateIcon,
         defaultOpen: true,
         models: [
             {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SemanticRoleLabeling},
@@ -31,7 +37,8 @@ const modelGroups = [
     },
     {
         label: "Annotate a passage",
-        icon: "pic-right", // TODO: getting new icons from design
+        icon: "pic-right",
+        iconSrc: passageIcon,
         defaultOpen: true,
         models: [
             {model: "coreference-resolution", name: "Coreference Resolution", component: Coref}
@@ -39,7 +46,8 @@ const modelGroups = [
     },
     {
         label: "Answer a question",
-        icon: "read", // TODO: getting new icons from design
+        icon: "read",
+        iconSrc: questionIcon,
         defaultOpen: true,
         models: [
             {model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension}
@@ -47,7 +55,8 @@ const modelGroups = [
     },
     {
         label: "Semantic parsing",
-        icon: "apartment", // TODO: getting new icons from design
+        icon: "apartment",
+        iconSrc: parseIcon,
         defaultOpen: true,
         models: [
             {model: "wikitables-parser", name: "WikiTableQuestions Semantic Parser", component: WikiTables},
@@ -58,7 +67,8 @@ const modelGroups = [
     },
     {
         label: "Other",
-        icon: "experiment", // TODO: getting new icons from design
+        icon: "experiment",
+        iconSrc: otherIcon,
         defaultOpen: true,
         models: [
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
