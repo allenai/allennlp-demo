@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@allenai/varnish": "^0.3.15",
+    "@allenai/varnish": "0.3.16",
     "antd": "^3.20.0",
     "hierplane": "^0.1.0",
     "lodash": "^4.17.11",
