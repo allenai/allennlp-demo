@@ -38,10 +38,11 @@
 }
 
 .pane__bottom.model__output--empty .placeholder {
-  min-height: 15.625em;
+  min-height: 40em;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 30px;
   align-items: center;
 }
 
