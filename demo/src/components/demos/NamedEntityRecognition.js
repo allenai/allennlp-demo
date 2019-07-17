@@ -11,7 +11,7 @@ import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
 import { truncateText } from '../DemoInput'
-import SaliencyComponent from '../Saliency';
+import { SaliencyComponent, getHeaders } from '../Saliency';
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
@@ -182,34 +182,31 @@ const TokenSpan = ({ token }) => {
     }
 }
 
-const generateSaliencyMaps = (interpretData, words, interpretModel, requestData, relevantTokens) => {
+const generateSaliencyMaps = (interpretData, words, interpretModel, requestData, relevantTokens, interpreterType) => {  
   let saliencyMaps = []
-  if (interpretData === undefined){
-    saliencyMaps.push(
-      <SaliencyComponent interpretData={interpretData} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
+  if (interpretData === undefined || interpretData[interpreterType] == undefined){
+    saliencyMaps.push(      
+      <SaliencyComponent interpretData={interpretData} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={interpreterType}/>
     )
   }
   else {
     let num_grads = relevantTokens.length
-    let indexedInterpretDataList = []
+    let indexedInterpretDataList = []    
     for (let i = 1; i <= num_grads; ++i) {
-      indexedInterpretDataList.push(JSON.parse(JSON.stringify(interpretData)));
-      Object.keys(indexedInterpretDataList[i-1].simple_gradient).forEach(function(itm){
-        if(itm == 'instance_1'){
-          console.log("hi")
+      indexedInterpretDataList.push(JSON.parse(JSON.stringify(interpretData)));      
+      Object.keys(indexedInterpretDataList[i-1][interpreterType]).forEach(function(itm){
+        if (itm == 'instance_' + i.toString()){          
+          indexedInterpretDataList[i-1][interpreterType]['instance_1'] = indexedInterpretDataList[i-1][interpreterType][itm]
         }
-        else if (itm == 'instance_' + i.toString()){
-          indexedInterpretDataList[i-1].simple_gradient['instance_1'] = indexedInterpretDataList[i-1].simple_gradient[itm]
-        }
-        else{
-          delete indexedInterpretDataList[i-1].simple_gradient[itm];
+        else if (itm != 'instance_1'){
+          delete indexedInterpretDataList[i-1][interpreterType][itm];
         }      
       });            
       saliencyMaps.push(
         <div key={i} style={{ display: "flex", flexWrap: "wrap" }}>
           <p><strong>Showing interpretation for</strong></p>
           <TokenSpan key={i} token={relevantTokens[i-1]} />          
-          <SaliencyComponent interpretData={indexedInterpretDataList[i-1]} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>          
+          <SaliencyComponent interpretData={indexedInterpretDataList[i-1]} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={interpreterType} task={title}/>          
         </div>
       )      
       // spacing between saliency maps      
@@ -218,9 +215,26 @@ const generateSaliencyMaps = (interpretData, words, interpretModel, requestData,
           <br />
         </div>
       )
-      console.log(indexedInterpretDataList)
-    }
-    console.log('return')
+    }  
+    let result = [];
+    const [title1, title2] = getHeaders(interpreterType);
+    result.push(
+      <div>
+        <AccordionItem expanded={true}>
+          <AccordionItemTitle>
+              {title1}
+              <div className="accordion__arrow" role="presentation"/>
+          </AccordionItemTitle>
+          <AccordionItemBody>
+              <div className="content">                
+                {title2}
+              </div>              
+              {saliencyMaps}        
+          </AccordionItemBody>
+        </AccordionItem>
+      </div>
+    )
+    return result
   }
 
   return saliencyMaps
@@ -304,7 +318,9 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
       }
     })
 
-    const saliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens)
+    const gradSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, GRAD_INTERPRETER)    
+    const igSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, IG_INTERPRETER)    
+    const sgSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, SG_INTERPRETER)    
 
     var reduced_input_visual = '';
     if (attackData === undefined) {
@@ -321,7 +337,9 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </HighlightContainer>
             <Accordion accordion={false}>
-                {saliencyMap}                                                                          
+                {gradSaliencyMap}
+                {igSaliencyMap}
+                {sgSaliencyMap}
 
                 <AccordionItem expanded={true}>
                 <AccordionItemTitle>
