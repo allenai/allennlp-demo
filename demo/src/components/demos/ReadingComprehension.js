@@ -34,13 +34,6 @@ const description = (
   </span>
   )
 
-const descriptionEllipsed = (
-  <span>
-    Reading comprehension is the task of answering questions about a passage of text to show that
-    the system…
-  </span>
-)
-
 const taskModels = [
   {
     name: "BiDAF (trained on SQuAD)",
@@ -514,5 +507,5 @@ const apiUrlAttack = ({model, attacker, name_of_input_to_attack, name_of_grad_in
   return `${API_ROOT}/attack/${endpoint}/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
 }
 
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, fields, examples, Output}
 export default withRouter(props => <Model {...props} {...modelProps}/>)
