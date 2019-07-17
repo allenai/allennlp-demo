@@ -340,7 +340,6 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
           <HighlightContainer layout="bottom-labels">
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </HighlightContainer>
-<<<<<<< HEAD
             <Accordion accordion={false}>
                 {gradSaliencyMap}
                 {igSaliencyMap}
@@ -362,11 +361,8 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
                       </button>
                 </AccordionItemBody>
               </AccordionItem>
-            </Accordion>
-        </div>
-=======
+            </Accordion>        
         </FormField>
->>>>>>> upstream/master
       </div>
     )
 }
