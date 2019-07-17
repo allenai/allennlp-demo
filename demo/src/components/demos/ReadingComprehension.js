@@ -148,9 +148,9 @@ const SaliencyMaps = ({interpretData, question_tokens, passage_tokens, interpret
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
       </Accordion>
     </OutputField>
   )

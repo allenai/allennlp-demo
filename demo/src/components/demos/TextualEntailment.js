@@ -182,9 +182,9 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
     </div>
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
         <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
         <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
 
