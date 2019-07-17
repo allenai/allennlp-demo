@@ -64,7 +64,7 @@ export default class InputReductionComponent extends React.Component {
                 new_sentence_colorized = " "
             }
             else{
-                var [original_sentence_colorized,new_sentence_colorized] = colorizeTokensForInputReductionUI(inputReductionData["input_reduction"]["original"],inputReductionData["input_reduction"]["final"][0])                
+                var [original_sentence_colorized,new_sentence_colorized] = colorizeTokensForInputReductionUI(inputReductionData["input_reduction"]["original"],inputReductionData["input_reduction"]["final"][0])
             }
 
             return (
@@ -75,7 +75,7 @@ export default class InputReductionComponent extends React.Component {
                             <div className="accordion__arrow" role="presentation"/>
                         </AccordionItemTitle>
                         <AccordionItemBody>
-                            <p> 
+                            <p>
                                 <a href="https://arxiv.org/abs/1804.07781" target="_blank" rel="noopener noreferrer">Input Reduction</a> removes as many words from the input as possible without changing the model's prediction.
                             </p>
                             {new_sentence_colorized !== " " ? <p><strong>Original Input:</strong> {original_sentence_colorized}</p> : <p style={{color: "#7c7c7c"}}>Press "reduce input" to run input reduction.</p>}

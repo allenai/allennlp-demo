@@ -103,7 +103,7 @@ export default class SaliencyComponent extends React.Component {
     // Add indices so we can keep track after sorting
     let indexedTokens = tokensWithWeights.map((obj, idx) => Object.assign({}, obj, {idx}))
     indexedTokens.sort(grad_compare)
-    
+
     if (use_input1){
       const topKTokens = indexedTokens.slice(0, this.state.input1topK)
       return topKTokens.map(obj => obj.idx)
@@ -166,7 +166,7 @@ export default class SaliencyComponent extends React.Component {
     // the tokens highlighted based on their top values
     const input1TokenColorMap = this.colorize(input1TokensWithWeights, input1TopKIdx)
     // the case where there are two inputs (e.g., textual entailment or reading comprehension)
-    if (input2TokensWithWeights !== undefined){ 
+    if (input2TokensWithWeights !== undefined){
         const input2TopKIdx = new Set(this.getTopKIndices(input2TokensWithWeights, false))
         const input2TokenColorMap = this.colorize(input2TokensWithWeights, input2TopKIdx)
         return (

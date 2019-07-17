@@ -25,7 +25,8 @@ import pytz
 
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.predictors import Predictor
-from allennlp.interpret import SimpleGradient, IntegratedGradient, SmoothGradient, InputReduction, Hotflip
+from allennlp.interpret.saliency_interpreters import SimpleGradient, IntegratedGradient, SmoothGradient
+from allennlp.interpret.attackers import InputReduction, Hotflip
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
@@ -120,12 +121,13 @@ def make_app(build_dir: str,
             predictor = demo_model.predictor()
             app.predictors[name] = predictor
             app.max_request_lengths[name] = demo_model.max_request_length
-            
+
             if name in supported_interpret_models:
-                app.attackers[name]["input_reduction"] = InputReduction(predictor)                            
+                app.attackers[name]["input_reduction"] = InputReduction(predictor)
                 if name != 'named-entity-recognition':
                     app.attackers[name]["hotflip"] = Hotflip(predictor)
-            
+                    app.attackers[name]["hotflip"].initialize()
+
                 app.interpreters[name]['simple_gradient'] = SimpleGradient(predictor)
                 app.interpreters[name]['integrated_gradient'] = IntegratedGradient(predictor)
                 app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)
@@ -191,10 +193,10 @@ def make_app(build_dir: str,
     def attack(model_name: str,
                 attacker_name: str,
                 name_of_input_to_attack: str,
-                name_of_grad_input: str) -> Response:                
+                name_of_grad_input: str) -> Response:
         """
         Modify input to change prediction of model
-        """        
+        """
         if request.method == "OPTIONS":
             return Response(response="", status=200)
         lowered_model_name = model_name.lower()
@@ -207,19 +209,19 @@ def make_app(build_dir: str,
         if len(serialized_request) > max_request_length:
             raise ServerError(f"Max request length exceeded for model {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
-        
+
         attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input)
         return jsonify(attack)
 
     @app.route('/interpret/<model_name>/<interpreter_name>', methods=['POST', 'OPTIONS'])
-    def interpret(model_name: str, interpreter_name: str) -> Response:                
+    def interpret(model_name: str, interpreter_name: str) -> Response:
         """
         Interpret prediction of the model
         """
         if request.method == "OPTIONS":
             return Response(response="", status=200)
-        lowered_model_name = model_name.lower()        
-        interpreter = app.interpreters.get(lowered_model_name)[interpreter_name]        
+        lowered_model_name = model_name.lower()
+        interpreter = app.interpreters.get(lowered_model_name)[interpreter_name]
         if interpreter is None:
             raise ServerError("unknown interpreter: {}".format(model_name), status_code=400)
         max_request_length = app.max_request_lengths[lowered_model_name]
@@ -230,7 +232,7 @@ def make_app(build_dir: str,
             raise ServerError(f"Max request length exceeded for interpreter {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
 
-        interpretation = interpreter.saliency_interpret_from_json(data)        
+        interpretation = interpreter.saliency_interpret_from_json(data)
         return jsonify(interpretation)
 
     @app.route('/predict/<model_name>', methods=['POST', 'OPTIONS'])

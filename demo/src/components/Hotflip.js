@@ -45,19 +45,19 @@ const colorizeTokensForHotflipUI = (original_input, flipped_input) => {
 
 export default class HotflipComponent extends React.Component {
     render() {
-        const { hotflipData, hotflipInput, requestDataObject, task, attacker, nameOfInputToAttack, nameOfGradInput } = this.props        
+        const { hotflipData, hotflipInput, requestDataObject, task, attacker, nameOfInputToAttack, nameOfGradInput } = this.props
         const HOTFLIP_ATTACKER = 'hotflip'
         if (attacker === HOTFLIP_ATTACKER){ // if attacker is not INPUT_REDUCTION or other methods
             var original_string_colorized = ''
             var flipped_string_colorized = ''
             let new_prediction = ''
             // enters during initialization
-            if (hotflipData === undefined || hotflipData['hotflip'] === undefined) { 
+            if (hotflipData === undefined || hotflipData['hotflip'] === undefined) {
                 flipped_string_colorized = " ";
             }
             // data is available, display the results of Hotflip
             else{
-                var [original_string_colorized,flipped_string_colorized] = colorizeTokensForHotflipUI(hotflipData["hotflip"]["original"],hotflipData["hotflip"]["final"][0])                
+                var [original_string_colorized,flipped_string_colorized] = colorizeTokensForHotflipUI(hotflipData["hotflip"]["original"],hotflipData["hotflip"]["final"][0])
                 if (task === "Sentiment Analysis") {
                     const [pos, neg] = hotflipData["hotflip"]["outputs"]["probs"]
                     new_prediction = <p><b>Prediction changed to:</b> {pos > neg ? 'Positive' : 'Negative'}</p>
@@ -80,7 +80,7 @@ export default class HotflipComponent extends React.Component {
                     }
                     new_prediction = <p><b>Prediction changed to:</b> {prediction}</p>
                 }
-                else if (task === "Reading Comprehension") {                  
+                else if (task === "Reading Comprehension") {
                     const output = hotflipData["hotflip"]["outputs"];
                     if ('best_span_str' in output){ // BiDAF model
                        new_prediction = <p><b>Prediction changed to:</b> {output['best_span_str']}</p>
@@ -97,7 +97,7 @@ export default class HotflipComponent extends React.Component {
                 }
             }
 
-            if (task === "sentiment"){
+            if (task === "Sentiment Analysis"){
                 return (
                     <div>
                         <AccordionItem expanded={true}>
@@ -106,7 +106,7 @@ export default class HotflipComponent extends React.Component {
                                 <div className="accordion__arrow" role="presentation"/>
                             </AccordionItemTitle>
                             <AccordionItemBody>
-                                <p> 
+                                <p>
                                     <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the word in the Hypothesis with the highest gradient until the prediction changes.
                                 </p>
                                 {flipped_string_colorized !== " " ? <p><strong>Original Input:</strong> {original_string_colorized}</p> : <p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>}

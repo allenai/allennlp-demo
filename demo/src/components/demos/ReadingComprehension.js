@@ -69,7 +69,7 @@ const fields = [
 const Attention = ({passage_question_attention, question_tokens, passage_tokens}) => {
   if(passage_question_attention && question_tokens && passage_tokens) {
     return (
-        <OutputField label="Model internals"> 
+        <OutputField label="Model internals">
           <Accordion accordion={false}>
             <AccordionItem expanded={false}>
               <AccordionItemTitle>
@@ -198,7 +198,7 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
               <OutputField label="Question">
                 {question}
               </OutputField>
-              
+
               <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
               <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
