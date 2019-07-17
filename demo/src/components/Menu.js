@@ -104,10 +104,14 @@ const NarrowSubMenu = styled(AntMenu.SubMenu)`
   &&& {
     margin-bottom: ${({theme}) => theme.spacing.md};
 
-    .ant-menu-submenu-title {
+    div { /* .ant-menu-submenu-title */
       line-height: 1.4em;
       height: initial;
       font-weight: bold;
+
+      img {
+        vertical-align: initial;
+      }
     }
   }
 `;
@@ -117,15 +121,12 @@ const WrappingLink = styled(InternalLink)`
     word-wrap: break-word;
 `;
 
-// TODO: this will eventually be exported from varnish... but needed here now
+// TODO: this will eventually be exported from varnish.
 class SvgIcon extends React.PureComponent {
-  IconImg = styled.img`
-    vertical-align: initial;
-  `;
-
   render() {
-      return (
-        <Icon component={() => <IconImg src={this.props.src} />} />
-      );
+    let {src, ...other} = this.props;
+    return (
+      <Icon {...other} component={() => <img src={src} />} />
+    );
   }
 }
