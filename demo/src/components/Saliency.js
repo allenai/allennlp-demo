@@ -6,6 +6,11 @@ import {
   AccordionItemTitle,
   AccordionItemBody,
   } from 'react-accessible-accordion';
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER
+  } from './InterpretConstants';
 
 const getTokenWeightPairs = (input1Grads, input2Grads, input1Tokens, input2Tokens) => {
   if (input1Grads === undefined){
@@ -116,10 +121,6 @@ export default class SaliencyComponent extends React.Component {
 
   render() {
     const { interpretData, input1Tokens, input2Tokens, interpretModel, requestData, interpreter } = this.props
-    const GRAD_INTERPRETER = 'simple_gradient'
-    const IG_INTERPRETER = 'integrated_gradient'
-    const SG_INTERPRETER = 'smooth_gradient'
-
     let title1 = ''
     let title2 = ''
     if (interpreter === GRAD_INTERPRETER){

@@ -14,17 +14,16 @@ import { truncateText } from '../DemoInput'
 import SaliencyComponent from '../Saliency'
 import InputReductionComponent from '../InputReduction'
 import HotflipComponent from '../Hotflip'
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
 
 const title = "Reading Comprehension"
 
-// The interpreters
-const GRAD_INTERPRETER = 'simple_gradient'
-const IG_INTERPRETER = 'integrated_gradient'
-const SG_INTERPRETER = 'smooth_gradient'
-
-// // The attackers
-const INPUT_REDUCTION_ATTACKER = 'input_reduction'
-const HOTFLIP_ATTACKER = 'hotflip'
 const NAME_OF_INPUT_TO_ATTACK = "question"
 const NAME_OF_GRAD_INPUT = "grad_input_2"
 

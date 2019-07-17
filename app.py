@@ -34,6 +34,7 @@ from server.logging import StackdriverJsonFormatter
 from server.demo_model import DemoModel
 from server.models import load_demo_models
 
+
 logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 logger.setLevel(logging.INFO)
@@ -124,7 +125,7 @@ def make_app(build_dir: str,
 
             if name in supported_interpret_models:
                 app.attackers[name]["input_reduction"] = InputReduction(predictor)
-                if name != 'named-entity-recognition':
+                if name != 'named-entity-recognition': # NER doesn't use Hotflip
                     app.attackers[name]["hotflip"] = Hotflip(predictor)
                     app.attackers[name]["hotflip"].initialize()
 

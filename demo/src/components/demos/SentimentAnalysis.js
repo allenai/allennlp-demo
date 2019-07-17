@@ -7,6 +7,13 @@ import { Accordion } from 'react-accessible-accordion';
 import SaliencyComponent from '../Saliency'
 import InputReductionComponent from '../InputReduction'
 import HotflipComponent from '../Hotflip'
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
 
 // APIs. These link to the functions in app.py
 const apiUrl = () => `${API_ROOT}/predict/sentiment-analysis`
@@ -16,14 +23,6 @@ const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) =
 // title of the page
 const title = "Sentiment Analysis"
 
-// The interpreters
-const GRAD_INTERPRETER = 'simple_gradient'
-const IG_INTERPRETER = 'integrated_gradient'
-const SG_INTERPRETER = 'smooth_gradient'
-
-// The attackers
-const INPUT_REDUCTION_ATTACKER = 'input_reduction'
-const HOTFLIP_ATTACKER = 'hotflip'
 const NAME_OF_INPUT_TO_ATTACK = "tokens"
 const NAME_OF_GRAD_INPUT = "grad_input_1"
 

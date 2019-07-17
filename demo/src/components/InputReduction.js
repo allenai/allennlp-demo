@@ -5,10 +5,11 @@ import {
     AccordionItemBody,
     } from 'react-accessible-accordion';
 import { RedToken, GreenToken, TransparentToken, BlankToken } from './Shared';
+import { INPUT_REDUCTION_ATTACKER } from './InterpretConstants'
 
 // takes in the input before and after input reduction and highlights
-// the words that were removed in a red strikeout. The reduced_input
-// will have a shorter length than the original_input
+// the words that were removed in a red with strikeout. The reduced_input
+// will have a less than or equal to length than the original_input.
 const colorizeTokensForInputReductionUI = (original_input, reduced_input) => {
     let original_string_colorized = []
     let reduced_string_colorized = []
@@ -55,7 +56,6 @@ const colorizeTokensForInputReductionUI = (original_input, reduced_input) => {
 export default class InputReductionComponent extends React.Component {
     render() {
         const { inputReductionData, reduceInput, requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput} = this.props
-        const INPUT_REDUCTION_ATTACKER = 'input_reduction'
         if (attacker === INPUT_REDUCTION_ATTACKER){
             var original_sentence_colorized = '';
             var new_sentence_colorized = '';

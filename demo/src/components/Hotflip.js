@@ -5,6 +5,7 @@ import {
     AccordionItemBody,
     } from 'react-accessible-accordion';
 import { RedToken, GreenToken, TransparentToken } from './Shared';
+import {  HOTFLIP_ATTACKER } from './InterpretConstants'
 
 // takes in the input before and after the hotflip attack and highlights
 // the words that were replaced in red and the new words in green
@@ -45,8 +46,7 @@ const colorizeTokensForHotflipUI = (original_input, flipped_input) => {
 
 export default class HotflipComponent extends React.Component {
     render() {
-        const { hotflipData, hotflipInput, requestDataObject, task, attacker, nameOfInputToAttack, nameOfGradInput } = this.props
-        const HOTFLIP_ATTACKER = 'hotflip'
+        const { hotflipData, hotflipInput, requestDataObject, task, attacker, nameOfInputToAttack, nameOfGradInput } = this.props        
         if (attacker === HOTFLIP_ATTACKER){ // if attacker is not INPUT_REDUCTION or other methods
             var original_string_colorized = ''
             var flipped_string_colorized = ''
