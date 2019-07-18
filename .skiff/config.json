@@ -1,5 +1,6 @@
 {
     "appName": "allennlp-demo",
     "httpPort": 8000,
-    "contact": "allennlp-contact"
+    "contact": "allennlp-contact",
+    "team": "allennlp"
 }
