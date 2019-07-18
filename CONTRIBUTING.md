@@ -18,6 +18,8 @@ Adding a new model for a task that exists in the demos is a one line change of c
 
 2. Modify the line that points to the saved model in `models.json`. For example, we can replace the link to the current textual entailment model `https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2018.02.19.tar.gz` with the path to another archived AllenNLP model `my_model.tar.gz`. Note that if you specify a relative path to the gzip file, the path should start from the root directory of the project (the directory with `app.py` in it). If you run the demo now, you should see your model and the corresponding interpretations and attacks visualized.
 
+3. If you want to add another model option for a task, instead of replacing the existing model, see the NER and reading comprehension demos, where a radio button is added.
+
 ## Creating a Demo for a New Task
 
 If your task is not implemented in the AllenNLP demos, we will need to create the code to run the model predictions, as well as the front-end JavaScript/HTML to display its predictions and interpretations. We will use Sentiment Analysis as a running example.
@@ -27,12 +29,12 @@ Here is a [pull request](https://github.com/allenai/allennlp-demo/commit/149d068
 1. Fork and clone [allennlp-demo](https://github.com/allenai/allennlp-demo) and follow the installation instructions.
 
 2. Add the path to your trained model using a `DemoModel` in `models.json`. For example, we will add 
-```py        
+```json        
         "sentiment-analysis": {
            "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
            "predictor_name": "text_classifier",
            "max_request_length": 1000
-        ),   
+        },   
 ```
 Make sure `text_classifiers` matches the name from your AllenNLP predictor. In our case, the predictor class should have `@Predictor.register('text_classifier')`. 
 
