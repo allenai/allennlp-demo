@@ -1,6 +1,8 @@
 import React from 'react';
-import { API_ROOT } from '../../api-config';
+import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
+
+import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import { Tree } from 'hierplane';
 
@@ -12,9 +14,9 @@ const description = (
       A constituency parse tree breaks a text into sub-phrases, or constituents. Non-terminals in the tree are types of phrases, the terminals are the words in the sentence.
       This demo is an implementation of a minimal neural model for constituency parsing based on an independent scoring of labels and spans described in
     </span>
-    <a href="http://arxiv.org/abs/1805.06556" target="_blank" rel="noopener noreferrer">{' '} Extending a Parser to Distant Domains Using a Few Dozen Partially Annotated Examples (Joshi et al, 2018)</a>
+    <ExternalLink href="http://arxiv.org/abs/1805.06556" target="_blank" rel="noopener">{' '} Extending a Parser to Distant Domains Using a Few Dozen Partially Annotated Examples (Joshi et al, 2018)</ExternalLink>
     <span>
-      . This model uses <a href="https://arxiv.org/abs/1802.05365">ELMo embeddings</a>, which are completely character based and improves single model performance from 92.6 F1 to 94.11 F1 on the Penn Treebank, a 20% relative error reduction.
+      . This model uses <ExternalLink href="https://arxiv.org/abs/1802.05365">ELMo embeddings</ExternalLink>, which are completely character based and improves single model performance from 92.6 F1 to 94.11 F1 on the Penn Treebank, a 20% relative error reduction.
     </span>
   </span>
 );

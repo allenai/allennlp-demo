@@ -74,5 +74,17 @@
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/quarel-parser-zero-2018.12.20.tar.gz",
         "predictor_name": "quarel-parser",
         "max_request_length": 6695
+    },
+    "gpt2": {
+        "type": "gpt2",
+        "archive_file": "https://storage.googleapis.com/allennlp/models/gpt2-345M-dump",
+        "predictor_name": "",
+        "max_request_length": 10000,
+        "memory": "4Gi"
+    },
+    "sentiment-analysis": {
+        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
+        "predictor_name": "text_classifier",
+        "max_request_length": 1000
     }
 }

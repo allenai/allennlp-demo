@@ -28,7 +28,8 @@ from allennlp.predictors import Predictor
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
 from server.logging import StackdriverJsonFormatter
-from server.models import DemoModel, load_demo_models
+from server.demo_model import DemoModel
+from server.models import load_demo_models
 
 
 logging.getLogger("allennlp").setLevel(logging.WARN)
@@ -253,6 +254,8 @@ def make_app(build_dir: str,
             log_blob["outputs"]["document"] = prediction["document"]
         elif model_name == "textual-entailment":
             log_blob["outputs"]["label_probs"] = prediction["label_probs"]
+        elif model_name == "sentiment-analysis":
+            log_blob["outputs"]["probs"] = prediction["probs"]
         elif model_name == "named-entity-recognition":
             log_blob["outputs"]["tags"] = prediction["tags"]
         elif model_name == "semantic-role-labeling":
@@ -335,6 +338,10 @@ def make_app(build_dir: str,
     @app.route('/static/css/<path:path>')
     def static_css_proxy(path: str) -> Response: # pylint: disable=unused-variable
         return send_from_directory(os.path.join(build_dir, 'static/css'), path)
+
+    @app.route('/static/media/<path:path>')
+    def static_media_proxy(path: str) -> Response: # pylint: disable=unused-variable
+        return send_from_directory(os.path.join(build_dir, 'static/media'), path)
 
     return app
 

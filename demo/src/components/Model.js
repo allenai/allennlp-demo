@@ -1,5 +1,7 @@
 import React from 'react'
-import { PaneLeft, PaneRight, PaneTop, PaneBottom } from './Pane'
+import styled from 'styled-components';
+
+import { PaneTop, PaneBottom } from './Pane'
 import DemoInput from './DemoInput'
 
 class Model extends React.Component {
@@ -51,7 +53,7 @@ class Model extends React.Component {
     }
 
     render() {
-        const { title, description, descriptionEllipsed, examples, fields, selectedModel, vertical, Output } = this.props;
+        const { title, description, descriptionEllipsed, examples, fields, selectedModel, Output } = this.props;
         const { requestData, responseData, outputState } = this.state;
 
         const demoInput = <DemoInput selectedModel={selectedModel}
@@ -67,24 +69,20 @@ class Model extends React.Component {
 
         const demoOutput = requestData && responseData ? <Output {...this.state}/> : null
 
-        let className, InputPane, OutputPane
-        if (vertical) {
-          className = "pane model"
-          InputPane = PaneLeft
-          OutputPane = PaneRight
-        } else {
-          className = "pane__horizontal model"
-          InputPane = PaneTop
-          OutputPane = PaneBottom
-        }
-
         return (
-            <div className={className}>
-                <InputPane>{demoInput}</InputPane>
-                <OutputPane outputState={outputState}>{demoOutput}</OutputPane>
-            </div>
+            <Wrapper className="pane__horizontal model">
+                <PaneTop>{demoInput}</PaneTop>
+                <PaneBottom outputState={outputState}>{demoOutput}</PaneBottom>
+            </Wrapper>
         )
     }
 }
+
+export const Wrapper = styled.div`
+  background: ${({theme}) => theme.palette.background.dark};
+  display: block;
+  width: 100%;
+  overflow-y: auto;
+`;
 
 export default Model
