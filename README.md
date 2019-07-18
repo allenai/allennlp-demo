@@ -1,6 +1,6 @@
 # AllenNLP Demo
 
-This repository contains the [AllenNLP demo](https://demo.allennlp.org/reading-comprehension).
+This repository contains the [AllenNLP demo](https://demo.allennlp.org).
 
 ## Development
 
