@@ -80,7 +80,7 @@ def main(demo_dir: str,
     # there is an exception when connecting to the database.
     demo_db = PostgresDemoDatabase.from_environment()
     if demo_db is None:
-        logger.warning("demo db credentials not provided, so not using demo db")
+        logger.warning("database credentials not provided, so not using database (permalinks disabled)")
 
     app = make_app(build_dir=f"{demo_dir}/build", demo_db=demo_db, models=models)
     CORS(app)
