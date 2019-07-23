@@ -1,4 +1,4 @@
-allennlp
+git+ssh://git@github.com/allenai/allennlp.git
 psycopg2-binary
 sentry-sdk==0.7.1
 python-json-logger
