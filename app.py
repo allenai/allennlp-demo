@@ -4,7 +4,7 @@
 A `Flask <http://flask.pocoo.org/>`_ server that serves up our demo.
 """
 from datetime import datetime
-from typing import Dict, Optional, List, Iterable
+from typing import Dict, Optional, List
 import argparse
 import json
 import logging
@@ -12,6 +12,7 @@ import os
 import sys
 import time
 from functools import lru_cache
+from collections import defaultdict
 
 from flask import Flask, request, Response, jsonify, send_file, send_from_directory
 from flask_cors import CORS
@@ -24,6 +25,8 @@ import pytz
 
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.predictors import Predictor
+from allennlp.interpret.saliency_interpreters import SimpleGradient, IntegratedGradient, SmoothGradient
+from allennlp.interpret.attackers import InputReduction, Hotflip
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
@@ -47,6 +50,12 @@ handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 logger.propagate = False
 
+supported_interpret_models = {'named-entity-recognition',
+                              'sentiment-analysis',
+                              'textual-entailment',
+                              'reading-comprehension',
+                              'naqanet-reading-comprehension',
+                              'fine-grained-named-entity-recognition'}
 
 class ServerError(Exception):
     status_code = 400
@@ -70,7 +79,6 @@ def main(demo_dir: str,
          models: Dict[str, DemoModel]) -> None:
     """Run the server programatically"""
     logger.info("Starting a flask server on port %i.", port)
-
     logger.info(f"With models {models}")
 
     if port != 8000:
@@ -86,7 +94,6 @@ def main(demo_dir: str,
     CORS(app)
 
     http_server = WSGIServer(('0.0.0.0', port), app, log=logger, error_log=logger)
-
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", port, port)
     http_server.serve_forever()
 
@@ -105,6 +112,8 @@ def make_app(build_dir: str,
 
     app.predictors = {}
     app.max_request_lengths = {} # requests longer than these will be rejected to prevent OOME
+    app.attackers = defaultdict(dict)
+    app.interpreters = defaultdict(dict)
     app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
 
     for name, demo_model in models.items():
@@ -113,6 +122,16 @@ def make_app(build_dir: str,
             predictor = demo_model.predictor()
             app.predictors[name] = predictor
             app.max_request_lengths[name] = demo_model.max_request_length
+
+            if name in supported_interpret_models:
+                app.attackers[name]["input_reduction"] = InputReduction(predictor)
+                if name != 'named-entity-recognition': # NER doesn't use Hotflip
+                    app.attackers[name]["hotflip"] = Hotflip(predictor)
+                    app.attackers[name]["hotflip"].initialize()
+
+                app.interpreters[name]['simple_gradient'] = SimpleGradient(predictor)
+                app.interpreters[name]['integrated_gradient'] = IntegratedGradient(predictor)
+                app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)
 
     @app.errorhandler(ServerError)
     def handle_invalid_usage(error: ServerError) -> Response:  # pylint: disable=unused-variable
@@ -169,6 +188,53 @@ def make_app(build_dir: str,
                 "requestData": permadata.request_data,
                 "responseData": permadata.response_data
         })
+
+    @app.route('/attack/<model_name>/<attacker_name>/<name_of_input_to_attack>/<name_of_grad_input>',
+     methods=['POST','OPTIONS'])
+    def attack(model_name: str,
+                attacker_name: str,
+                name_of_input_to_attack: str,
+                name_of_grad_input: str) -> Response:
+        """
+        Modify input to change prediction of model
+        """
+        if request.method == "OPTIONS":
+            return Response(response="", status=200)
+        lowered_model_name = model_name.lower()
+        attacker = app.attackers.get(lowered_model_name).get(attacker_name)
+        if attacker is None:
+            raise ServerError("unknown model: {}".format(model_name), status_code=400)
+        max_request_length = app.max_request_lengths[lowered_model_name]
+        data = request.get_json()
+        serialized_request = json.dumps(data)
+        if len(serialized_request) > max_request_length:
+            raise ServerError(f"Max request length exceeded for model {model_name}! " +
+                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+
+        attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input)
+        return jsonify(attack)
+
+    @app.route('/interpret/<model_name>/<interpreter_name>', methods=['POST', 'OPTIONS'])
+    def interpret(model_name: str, interpreter_name: str) -> Response:
+        """
+        Interpret prediction of the model
+        """
+        if request.method == "OPTIONS":
+            return Response(response="", status=200)
+        lowered_model_name = model_name.lower()
+        interpreter = app.interpreters.get(lowered_model_name)[interpreter_name]
+        if interpreter is None:
+            raise ServerError("unknown interpreter: {}".format(model_name), status_code=400)
+        max_request_length = app.max_request_lengths[lowered_model_name]
+
+        data = request.get_json()
+        serialized_request = json.dumps(data)
+        if len(serialized_request) > max_request_length:
+            raise ServerError(f"Max request length exceeded for interpreter {model_name}! " +
+                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+
+        interpretation = interpreter.saliency_interpret_from_json(data)
+        return jsonify(interpretation)
 
     @app.route('/predict/<model_name>', methods=['POST', 'OPTIONS'])
     def predict(model_name: str) -> Response:  # pylint: disable=unused-variable

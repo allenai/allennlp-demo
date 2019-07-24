@@ -11,8 +11,21 @@ import Model from '../Model'
 import OutputField from '../OutputField'
 import { API_ROOT } from '../../api-config';
 import { truncateText } from '../DemoInput'
+import SaliencyComponent from '../Saliency'
+import InputReductionComponent from '../InputReduction'
+import HotflipComponent from '../Hotflip'
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
 
 const title = "Reading Comprehension"
+
+const NAME_OF_INPUT_TO_ATTACK = "question"
+const NAME_OF_GRAD_INPUT = "grad_input_2"
 
 const description = (
   <span>
@@ -124,10 +137,33 @@ const ArithmeticEquation = ({numbers}) => {
   return null;
 }
 
-const AnswerByType = ({requestData, responseData}) => {
+const SaliencyMaps = ({interpretData, question_tokens, passage_tokens, interpretModel, requestData}) => {
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const Attacks = ({attackData, attackModel, requestData}) => {
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const AnswerByType = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   if(requestData && responseData) {
     const { passage, question } = requestData;
-    const { answer } = responseData;
+    const { answer, question_tokens, passage_tokens } = responseData;
     const { answer_type } = answer || {};
 
     switch(answer_type) {
@@ -155,7 +191,10 @@ const AnswerByType = ({requestData, responseData}) => {
                 {question}
               </OutputField>
 
+              <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
+
             </section>
           )
         }
@@ -186,7 +225,10 @@ const AnswerByType = ({requestData, responseData}) => {
                   highlightStyles={spans.map(s => "highlight__answer")}/>
               </OutputField>
 
+              <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
+
             </section>
           )
         }
@@ -214,7 +256,10 @@ const AnswerByType = ({requestData, responseData}) => {
                 {question}
               </OutputField>
 
+              <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
+
             </section>
           )
         }
@@ -245,7 +290,10 @@ const AnswerByType = ({requestData, responseData}) => {
                 {question}
               </OutputField>
 
+              <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
+
             </section>
           )
         }
@@ -260,21 +308,22 @@ const AnswerByType = ({requestData, responseData}) => {
           const tail = passage.slice(start + best_span_str.length);
           return (
             <section>
-              <OutputField label="Answer">
+              <strong>Answer:</strong><br />
                 {best_span_str}
-              </OutputField>
+                <br /><br />
 
-              <OutputField label="Passage Context">
+                <strong>Passage Context:</strong><br />
                 <span>{head}</span>
                 <span className="highlight__answer">{best_span_str}</span>
                 <span>{tail}</span>
-              </OutputField>
+                <br /><br />
 
-              <OutputField label="Question">
-                {question}
-              </OutputField>
+              <strong>Question:</strong><br />  {question} <br /><br />
 
+              <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
+
             </section>
           )
         }
@@ -446,6 +495,17 @@ const apiUrl = ({model}) => {
   return `${API_ROOT}/predict/${endpoint}`
 }
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const apiUrlInterpret = ({model, interpreter}) => {
+  const selectedModel = model || (taskModels[0] && taskModels[0].name);
+  const endpoint = taskEndpoints[selectedModel]
+  return `${API_ROOT}/interpret/${endpoint}/${interpreter}`
+}
 
+const apiUrlAttack = ({model, attacker, name_of_input_to_attack, name_of_grad_input}) => {
+  const selectedModel = model || (taskModels[0] && taskModels[0].name);
+  const endpoint = taskEndpoints[selectedModel]
+  return `${API_ROOT}/attack/${endpoint}/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
+}
+
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, fields, examples, Output}
 export default withRouter(props => <Model {...props} {...modelProps}/>)

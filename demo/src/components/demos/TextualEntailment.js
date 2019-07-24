@@ -15,9 +15,25 @@ import OutputField from '../OutputField'
 
 import '../../css/TeComponent.css';
 
+import SaliencyComponent from '../Saliency'
+import InputReductionComponent from '../InputReduction'
+import HotflipComponent from '../Hotflip'
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
+
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
+const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/textual-entailment/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
+const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/textual-entailment/${interpreter}`
 
 const title = "Textual Entailment"
+
+const NAME_OF_INPUT_TO_ATTACK = "hypothesis"
+const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 const description = (
   <span>
@@ -79,7 +95,7 @@ const judgments = {
   NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
-const Output = ({ responseData }) => {
+const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
   const [entailment, contradiction, neutral] = label_probs
 
@@ -168,8 +184,14 @@ const Output = ({ responseData }) => {
       </table>
     </div>
     </div>
-    <OutputField label=" Model internals">
+    <OutputField>
       <Accordion accordion={false}>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
+        <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+
         <AccordionItem expanded={true}>
           <AccordionItemTitle>
             Premise to Hypothesis Attention
@@ -196,6 +218,7 @@ const Output = ({ responseData }) => {
             <HeatMap colLabels={hypothesis_tokens} rowLabels={premise_tokens} data={p2h_attention} />
           </AccordionItemBody>
         </AccordionItem>
+
       </Accordion>
     </OutputField>
   </div>
@@ -225,6 +248,5 @@ const examples = [
   },
 ]
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
-
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output}
 export default withRouter(props => <Model {...props} {...modelProps}/>)
