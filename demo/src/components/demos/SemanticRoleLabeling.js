@@ -179,7 +179,7 @@ function toHierplaneTrees(response) {
 
 const VisualizationType = {
   TREE: 'Tree',
-  TEXT: 'Text',
+  TEXT: 'Text'
 };
 Object.freeze(VisualizationType);
 
