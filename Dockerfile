@@ -1,6 +1,6 @@
 # This Dockerfile is used to serve the AllenNLP demo.
 
-FROM allennlp/commit:03aa838e078f23e985858bb01b9616ae4fc842a9
+FROM allennlp/commit:417a75727d4604e1da0eda461b03b29a73f0bf50
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /stage/allennlp
@@ -22,8 +22,6 @@ RUN spacy download en_core_web_sm
 
 COPY scripts/ scripts/
 COPY server/models.py server/models.py
-COPY models.json models.json
-COPY models_small.json models_small.json
 
 # Now install and build the demo
 COPY demo/ demo/
@@ -34,6 +32,10 @@ COPY app.py app.py
 COPY server/ server/
 
 RUN pytest tests/
+
+# Copy the model files used as configuration at runtime
+COPY models.json models.json
+COPY models_small.json models_small.json
 
 # Optional argument to set an environment variable with the Git SHA
 ARG SOURCE_COMMIT

@@ -20,11 +20,6 @@
         "predictor_name": "open-information-extraction",
         "max_request_length": 19681
     },
-    "textual-entailment": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2018.02.19.tar.gz",
-        "predictor_name": "textual-entailment",
-        "max_request_length": 13129
-    },
     "coreference-resolution": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/coref-model-2018.02.05.tar.gz",
         "predictor_name": "coreference-resolution",
