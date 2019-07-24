@@ -64,11 +64,11 @@ local hosts = [
     if env == 'prod' then
         config.appName + topLevelDomain
     else
-        config.appName + '.' + env + topLevelDomain,
-    if env == 'prod' then
+        config.appName + '.' + env + topLevelDomain
+/*  ,if env == 'prod' then
         'demo' + canonicalTopLevelDomain
     else
-        'demo' + '.' + env + canonicalTopLevelDomain
+        'demo' + '.' + env + canonicalTopLevelDomain*/
 ];
 
 // Each app gets it's own namespace
