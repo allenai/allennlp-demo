@@ -1,7 +1,7 @@
 {
     "reading-comprehension": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz",
-        "memory": "2Gi",
+        "memory": "3Gi",
         "predictor_name": "machine-comprehension",
         "max_request_length": 311108
     },
@@ -32,6 +32,7 @@
     },
     "fine-grained-named-entity-recognition": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner-model-elmo-2018.12.21.tar.gz",
+        "memory": "2Gi",
         "predictor_name": "sentence-tagger",
         "max_request_length": 22878
     },
