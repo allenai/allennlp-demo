@@ -46,11 +46,6 @@
         "predictor_name": "biaffine-dependency-parser",
         "max_request_length": 5675
     },
-    "wikitables-parser": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2018.09.14.tar.gz",
-        "predictor_name": "wikitables-parser",
-        "max_request_length": 8177
-    },
     "nlvr-parser": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/nlvr-erm-model-2018-12-18-rule-vocabulary-updated.tar.gz",
         "predictor_name": "nlvr-parser",
