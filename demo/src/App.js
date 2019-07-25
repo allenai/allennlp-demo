@@ -23,7 +23,7 @@ import './css/visualization-types.css';
   <App /> Container
 *******************************************************************************/
 
-const DEFAULT_PATH = "/reading-comprehension"
+const DEFAULT_PATH = "/named-entity-recognition"
 
 // The App is just a react-router wrapped around the Demo component.
 const App = () => (
