@@ -45,21 +45,11 @@ const modelGroups = [
         ]
     },
     {
-        label: "Answer a question",
-        icon: "read",
-        iconSrc: questionIcon,
-        defaultOpen: true,
-        models: [
-            {model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension}
-        ]
-    },
-    {
         label: "Semantic parsing",
         icon: "apartment",
         iconSrc: parseIcon,
         defaultOpen: true,
         models: [
-            {model: "wikitables-parser", name: "WikiTableQuestions Semantic Parser", component: WikiTables},
             {model: "nlvr-parser", name: "Cornell NLVR Semantic Parser", component: Nlvr},
             {model: "atis-parser", name: "Text to SQL (ATIS)", component: Atis},
             {model: "quarel-parser-zero", name: "QuaRel Zero", component: QuarelZero}
@@ -71,7 +61,6 @@ const modelGroups = [
         iconSrc: otherIcon,
         defaultOpen: true,
         models: [
-            {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
             {model: "event2mind", name: "Event2Mind", component: Event2Mind},
             {model: "gpt2", name: "Language Modeling", component: Gpt2},
             {model: "user-models", name: "Your model here!"}
