@@ -18,8 +18,6 @@ LABEL com.nvidia.volumes.needed="nvidia_driver"
 
 WORKDIR /stage/allennlp
 
-RUN pip install "git+git://github.com/allenai/allennlp.git@a1476c0414ad1e1412515c53d9e1f27b69039ead"
-
 ENTRYPOINT ["allennlp"]
 LABEL maintainer="allennlp-contact@allenai.org"
 
@@ -34,6 +32,8 @@ RUN pip install psycopg2-binary
 RUN pip install sentry-sdk==0.7.1
 RUN pip install python-json-logger
 RUN pip install pytorch-pretrained-bert
+
+RUN pip install "git+git://github.com/allenai/allennlp.git@9d99e2bc8db2d50f93a1d87addb95a65e3c223b6"
 
 # Download spacy model
 RUN spacy download en_core_web_sm
