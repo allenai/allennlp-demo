@@ -8,9 +8,31 @@ import Model from '../Model'
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight, getHighlightColor } from '../highlight/Highlight';
 
+import OutputField from '../OutputField'
+import { Accordion,
+         AccordionItem,
+         AccordionItemTitle,
+         AccordionItemBody } from 'react-accessible-accordion';
+import { SaliencyComponent, getHeaders } from '../Saliency'
+import InputReductionComponent from '../InputReduction'
+import HotflipComponent from '../Hotflip'
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
+
 const apiUrl = () => `${API_ROOT}/predict/coreference-resolution`
+const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/coreference-resolution/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
+const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/coreference-resolution/${interpreter}`
+
 
 const title = "Co-reference Resolution";
+
+const NAME_OF_INPUT_TO_ATTACK = "text"
+const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 const description = (
   <span>
@@ -44,7 +66,7 @@ const fields = [
 ]
 
 // Helper function for transforming response data into a tree object
-const transformToTree = (tokens, clusters) => {
+export const transformToTree = (tokens, clusters) => {
   // Span tree data transform code courtesy of Michael S.
   function contains(span, index) {
     return index >= span[0] && index <= span[1];
@@ -95,6 +117,68 @@ const transformToTree = (tokens, clusters) => {
   });
 
   return insideClusters[0].contents;
+}
+
+const generateSaliencyMaps = (interpretData, words, interpretModel, requestData, num_clusters, interpreterType) => {  
+  let saliencyMaps = []
+  if (interpretData === undefined || interpretData[interpreterType] == undefined){
+    saliencyMaps.push(      
+      <SaliencyComponent interpretData={interpretData} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={interpreterType}/>
+    )
+  }
+  else {
+    let indexedInterpretDataList = []
+    const num_grads = num_clusters;
+    for (let i = 1; i <= num_grads; ++i) {
+      indexedInterpretDataList.push(JSON.parse(JSON.stringify(interpretData)));
+    }
+    for (let i = 1; i <= num_grads; ++i) {
+      const index = num_grads-i;
+      console.log(index);
+      console.log(indexedInterpretDataList.length);
+      Object.keys(indexedInterpretDataList[index][interpreterType]).forEach(function(itm){
+        if (itm == 'instance_' + (index+1).toString()){          
+          indexedInterpretDataList[index][interpreterType]['instance_1'] = indexedInterpretDataList[index][interpreterType][itm]
+        }
+        else if (itm != 'instance_1'){
+          delete indexedInterpretDataList[index][interpreterType][itm];
+        }      
+      });            
+      saliencyMaps.push(
+        <div key={index} style={{ display: "flex", flexWrap: "wrap" }}>
+          <p><strong>Showing interpretation for cluster {i-1}</strong></p>
+          <SaliencyComponent interpretData={indexedInterpretDataList[index]} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={interpreterType} task={title}/>          
+        </div>
+      )      
+      // spacing between saliency maps      
+      saliencyMaps.push(
+        <div>          
+          <br />
+        </div>
+      )
+    }  
+    let result = [];
+    const [title1, title2] = getHeaders(interpreterType);
+    result.push(
+      <div>
+        <AccordionItem expanded={true}>
+          <AccordionItemTitle>
+              {title1}
+              <div className="accordion__arrow" role="presentation"/>
+          </AccordionItemTitle>
+          <AccordionItemBody>
+              <div className="content">                
+                {title2}
+              </div>              
+              {saliencyMaps}        
+          </AccordionItemBody>
+        </AccordionItem>
+      </div>
+    )
+    return result
+  }
+
+  return saliencyMaps
 }
 
 // Stateful
@@ -155,7 +239,7 @@ class Output extends React.Component {
   render() {
     const { activeIds, activeDepths, isClicking, selectedId } = this.state;
 
-    const { responseData } = this.props
+    const { responseData, requestData, interpretData, interpretModel, attackData, attackModel } = this.props
     const { document, clusters } = responseData
 
     const spanTree = transformToTree(document, clusters);
@@ -188,6 +272,9 @@ class Output extends React.Component {
         )
       );
     }
+    const gradSaliencyMap = generateSaliencyMaps(interpretData, document, interpretModel, requestData, clusters.length, GRAD_INTERPRETER)    
+    const igSaliencyMap = generateSaliencyMaps(interpretData, document, interpretModel, requestData, clusters.length, IG_INTERPRETER)    
+    const sgSaliencyMap = generateSaliencyMaps(interpretData, document, interpretModel, requestData, clusters.length, SG_INTERPRETER)    
 
     return (
       <div className="model__content answer">
@@ -196,6 +283,14 @@ class Output extends React.Component {
             {spanWrapper(spanTree, 0)}
           </HighlightContainer>
         </FormField>
+        <OutputField>
+          <Accordion accordion={false}>
+            {gradSaliencyMap}
+            {igSaliencyMap}
+            {sgSaliencyMap}
+            <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+          </Accordion>
+        </OutputField>
       </div>
     );
   }
@@ -213,6 +308,6 @@ const examples = [
     }
   ]
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

@@ -247,7 +247,7 @@ export class SaliencyComponent extends React.Component {
         )
     }
     // single input case    
-    else if (task === "Named Entity Recognition") {
+    else if (task === "Named Entity Recognition" || task === "Co-reference Resolution") {
         return (
             <div>              
                 <AccordionItem expanded={true}>                
