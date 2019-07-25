@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormField } from './Form';
 import {
     AccordionItem,
     AccordionItemTitle,
@@ -6,6 +7,9 @@ import {
     } from 'react-accessible-accordion';
 import { RedToken, GreenToken, TransparentToken } from './Shared';
 import {  HOTFLIP_ATTACKER } from './InterpretConstants'
+import { transformToTree } from './demos/Coref'
+import HighlightContainer from './highlight/HighlightContainer';
+import { Highlight, getHighlightColor } from './highlight/Highlight';
 
 // takes in the input before and after the hotflip attack and highlights
 // the words that were replaced in red and the new words in green
@@ -45,6 +49,59 @@ const colorizeTokensForHotflipUI = (original_input, flipped_input) => {
 
 
 export default class HotflipComponent extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      selectedCluster: -1,
+      activeIds: [],
+      activeDepths: {ids:[],depths:[]},
+      selectedId: null,
+      isClicking: false
+    };
+
+    this.handleHighlightMouseDown = this.handleHighlightMouseDown.bind(this);
+    this.handleHighlightMouseOver = this.handleHighlightMouseOver.bind(this);
+    this.handleHighlightMouseOut = this.handleHighlightMouseOut.bind(this);
+    this.handleHighlightMouseUp = this.handleHighlightMouseUp.bind(this);
+  }
+
+  handleHighlightMouseDown(id, depth) {
+    let depthTable = this.state.activeDepths;
+    depthTable.ids.push(id);
+    depthTable.depths.push(depth);
+
+    this.setState({
+      selectedId: null,
+      activeIds: [id],
+      activeDepths: depthTable,
+      isClicking: true
+    });
+  }
+
+  handleHighlightMouseUp(id, prevState) {
+    const depthTable = this.state.activeDepths;
+    const deepestIndex = depthTable.depths.indexOf(Math.max(...depthTable.depths));
+
+    this.setState(prevState => ({
+      selectedId: depthTable.ids[deepestIndex],
+      isClicking: false,
+      activeDepths: {ids:[],depths:[]},
+      activeIds: [...prevState.activeIds, id],
+    }));
+  }
+
+  handleHighlightMouseOver(id, prevState) {
+    this.setState(prevState => ({
+      activeIds: [...prevState.activeIds, id],
+    }));
+  }
+
+  handleHighlightMouseOut(id, prevState) {
+    this.setState(prevState => ({
+      activeIds: prevState.activeIds.filter(i => (i === this.state.selectedId)),
+    }));
+  }
+
     render() {
         const { hotflipData, hotflipInput, requestDataObject, task, attacker, nameOfInputToAttack, nameOfGradInput } = this.props        
         if (attacker === HOTFLIP_ATTACKER){ // if attacker is not INPUT_REDUCTION or other methods
@@ -61,6 +118,40 @@ export default class HotflipComponent extends React.Component {
                 if (task === "Sentiment Analysis") {
                     const [pos, neg] = hotflipData["hotflip"]["outputs"]["probs"]
                     new_prediction = <p><b>Prediction changed to:</b> {pos > neg ? 'Positive' : 'Negative'}</p>
+                }
+                else if (task === "Co-reference Resolution") {
+                    // This is the function that calls itself when we recurse over the span tree.
+                    const spanWrapper = (data, depth) => {
+                      return data.map((token, idx) =>
+                        typeof(token) === "object" ? (
+                          <Highlight
+                            key={idx}
+                            activeDepths={this.activeDepths}
+                            activeIds={this.activeIds}
+                            color={getHighlightColor(token.cluster)}
+                            depth={depth}
+                            id={token.cluster}
+                            isClickable={true}
+                            isClicking={this.isClicking}
+                            label={token.cluster}
+                            labelPosition="left"
+                            onMouseDown={this.handleHighlightMouseDown}
+                            onMouseOver={this.handleHighlightMouseOver}
+                            onMouseOut={this.handleHighlightMouseOut}
+                            onMouseUp={this.handleHighlightMouseUp}
+                            selectedId={this.selectedId}>
+                            {/* Call Self */}
+                            {spanWrapper(token.contents, depth + 1)}
+                          </Highlight>
+                        ) : (
+                          <span key={idx}>{token} </span>
+                        )
+                      );
+                    };
+                    [original_string_colorized,flipped_string_colorized] = colorizeTokensForHotflipUI(hotflipData["hotflip"]["original"],hotflipData["hotflip"]["final"][hotflipData["hotflip"]["final"].length-1])
+                    console.log(hotflipData["hotflip"]["final"][hotflipData["hotflip"]["final"].length-1]);
+                    console.log(hotflipData["hotflip"]["outputs"]["clusters"]);
+                    new_prediction = <div className="model__content answer"><b>Prediction changed to:</b><FormField><HighlightContainer isClicking={this.isClicking}>{spanWrapper(transformToTree(hotflipData["hotflip"]["final"][hotflipData["hotflip"]["final"].length-1], hotflipData["hotflip"]["outputs"]["clusters"]), 0)}</HighlightContainer></FormField></div>;
                 }
                 else if (task === "Textual Entailment") {
                     const [entail, contr, neutral] = hotflipData["hotflip"]["outputs"]["label_probs"]
@@ -97,7 +188,7 @@ export default class HotflipComponent extends React.Component {
                 }
             }
 
-            if (task === "Sentiment Analysis"){
+            if (task === "Sentiment Analysis" || task === "Co-reference Resolution"){
                 return (
                     <div>
                         <AccordionItem expanded={true}>
@@ -134,11 +225,11 @@ export default class HotflipComponent extends React.Component {
                                 {flipped_string_colorized !== " " ? <p><strong>Original:</strong> {requestDataObject['premise']}</p> : <p></p>}
                                 {flipped_string_colorized !== " " ? <p><strong>Original:</strong> {original_string_colorized}</p> : <p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>}
                                 {flipped_string_colorized !== " " ? <p><strong>Flipped:</strong> {flipped_string_colorized}</p> : <p></p>}
-                                {new_prediction}
                                 <button type="button" className="btn" style={{margin: "30px 0px"}} onClick={ () => hotflipInput(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }>Flip Words
                                 </button>
                             </AccordionItemBody>
                         </AccordionItem>
+                                {new_prediction}
                     </div>
                 )
             }
