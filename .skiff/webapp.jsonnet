@@ -199,12 +199,10 @@ local ingress = {
             {
                 host: host,
                 http: {
-                    paths: [
-                        path
-                        for path in
+                    paths: std.flattenArrays([
                         [predict_path(model_name), interpret_path(model_name)]
                         for model_name in model_names
-                    ] + [
+                    ]) + [
                         {
                             backend: {
                                 serviceName: fullyQualifiedName,
