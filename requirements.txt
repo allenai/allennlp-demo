@@ -3,3 +3,4 @@ psycopg2-binary
 sentry-sdk==0.7.1
 python-json-logger
 pytorch-pretrained-bert
+git+https://github.com/matt-gardner/pytorch-transformers.git@0a3a636c23d8f6528f2d8e1a340032070cc3bfbe
