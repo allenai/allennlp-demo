@@ -63,7 +63,7 @@
         "memory": "4Gi"
     },
     "masked-lm": {
-        "archive_file": "/Users/sanjays/Documents/allennlp/allennlp/tests/fixtures/masked_language_model/serialization/model.tar.gz",
+        "archive_file": "PATH_TO_MODEL_ARCHIVE",
         "predictor_name": "masked_lm_predictor",
         "max_request_length": 10000,
         "memory": "4Gi"
