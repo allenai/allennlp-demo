@@ -164,6 +164,15 @@ local predict_path(model_name) = {
     },
 };
 
+// Generate the ingress path entry for the given model
+local interpret_path(model_name) = {
+    path: '/interpret/' + model_name,
+    backend: {
+        serviceName: fullyQualifiedName + '-' + model_name,
+        servicePort: config.httpPort
+    },
+};
+
 local ingress = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Ingress',
@@ -191,7 +200,9 @@ local ingress = {
                 host: host,
                 http: {
                     paths: [
-                        predict_path(model_name)
+                        path
+                        for path in
+                        [predict_path(model_name), interpret_path(model_name)]
                         for model_name in model_names
                     ] + [
                         {
