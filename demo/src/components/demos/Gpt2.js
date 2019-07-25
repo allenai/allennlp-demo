@@ -308,13 +308,6 @@ class App extends React.Component {
             </InputOutputColumn>
           </InputOutput>
         </ModelArea>
-        <Footer>
-            Proudly built at the <ExternalLink contrast={true} target="_blank" href="https://allenai.org">Allen Institute for Artificial Intelligence (AI2)</ExternalLink>
-            {' '}using Hugging Face’s <ExternalLink contrast={true} target="_blank" href="https://github.com/huggingface/pytorch-pretrained-BERT" rel="noopener">pytorch-pretrained-BERT</ExternalLink>
-            {' '}library
-            {' '}| <ExternalLink contrast={true} href="https://allenai.org/privacy-policy.html">Privacy Policy</ExternalLink>
-            {' '}| <ExternalLink contrast={true} href="https://allenai.org/terms.html">Terms of Use</ExternalLink>
-          </Footer>
       </Wrapper>
     )
   }
