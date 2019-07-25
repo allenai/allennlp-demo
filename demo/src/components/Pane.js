@@ -50,7 +50,6 @@ class ResultDisplay extends React.Component {
         <div className={`pane__${resultPane} model__output ${outputState !== "received" ? "model__output--empty" : ""}`}>
           <div className="pane__thumb"></div>
           {outputContent}
-          <Footer />
         </div>
       );
     }

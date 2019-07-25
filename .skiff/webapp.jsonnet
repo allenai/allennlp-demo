@@ -64,11 +64,11 @@ local hosts = [
     if env == 'prod' then
         config.appName + topLevelDomain
     else
-        config.appName + '.' + env + topLevelDomain,
-    if env == 'prod' then
+        config.appName + '.' + env + topLevelDomain
+/*  ,if env == 'prod' then
         'demo' + canonicalTopLevelDomain
     else
-        'demo' + '.' + env + canonicalTopLevelDomain
+        'demo' + '.' + env + canonicalTopLevelDomain*/
 ];
 
 // Each app gets it's own namespace
@@ -87,7 +87,8 @@ local fullyQualifiedName = config.appName + '-' + env;
 local labels = {
     app: config.appName,
     env: env,
-    contact: config.contact
+    contact: config.contact,
+    team: config.team
 };
 
 local model_labels(model_name) = labels + {
@@ -163,6 +164,24 @@ local predict_path(model_name) = {
     },
 };
 
+// Generate the ingress path entry for the given model
+local interpret_path(model_name) = {
+    path: '/interpret/' + model_name,
+    backend: {
+        serviceName: fullyQualifiedName + '-' + model_name,
+        servicePort: config.httpPort
+    },
+};
+
+// Generate the ingress path entry for the given model
+local attack_path(model_name) = {
+    path: '/attack/' + model_name,
+    backend: {
+        serviceName: fullyQualifiedName + '-' + model_name,
+        servicePort: config.httpPort
+    },
+};
+
 local ingress = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Ingress',
@@ -189,10 +208,10 @@ local ingress = {
             {
                 host: host,
                 http: {
-                    paths: [
-                        predict_path(model_name)
+                    paths: std.flattenArrays([
+                        [predict_path(model_name), interpret_path(model_name), attack_path(model_name)]
                         for model_name in model_names
-                    ] + [
+                    ]) + [
                         {
                             backend: {
                                 serviceName: fullyQualifiedName,
@@ -306,7 +325,7 @@ local deployment = {
 // We allow each model's JSON to specify how much memory and CPU it needs.
 // If not specified, we fall back to defaults.
 local DEFAULT_CPU = "0.2";
-local DEFAULT_MEMORY = "1Gi";
+local DEFAULT_MEMORY = "4Gi";
 
 local get_cpu(model_name) = if std.objectHas(models[model_name], "cpu") then models[model_name]["cpu"] else DEFAULT_CPU;
 local get_memory(model_name) = if std.objectHas(models[model_name], "memory") then models[model_name]["memory"] else DEFAULT_MEMORY;

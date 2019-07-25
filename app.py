@@ -39,11 +39,6 @@ logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 logger.setLevel(logging.INFO)
 
-if "SENTRY_PYTHON_AUTH" in os.environ:
-    logger.info("Enabling Sentry since SENTRY_PYTHON_AUTH is defined.")
-    import sentry_sdk
-    sentry_sdk.init(os.environ.get("SENTRY_PYTHON_AUTH"))
-
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(StackdriverJsonFormatter())
 handler.setLevel(logging.INFO)
@@ -220,6 +215,7 @@ def make_app(build_dir: str,
         """
         Interpret prediction of the model
         """
+        print("!!!!!!!!!")
         if request.method == "OPTIONS":
             return Response(response="", status=200)
         lowered_model_name = model_name.lower()

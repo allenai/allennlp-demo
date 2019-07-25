@@ -19,7 +19,7 @@ export class MenuBase extends React.Component {
         {...other}
         title={
           <span>
-            <Icon type={modelGroup.icon} />
+            <SvgIcon src={modelGroup.iconSrc} />
             <span>{modelGroup.label}</span>
           </span>
         }>
@@ -75,7 +75,7 @@ const OuterGrid = styled.div`
 const Logo = styled.div`
   z-index: 3;
   padding: ${({theme}) => `1.3125rem ${theme.spacing.xl}`}; /* match position of initial placement of model title in right pane */
-  box-shadow: ${({theme}) => `-${theme.spacing.sm} ${theme.spacing.xxs} ${theme.spacing.md} ${theme.palette.border.main}`};
+  box-shadow: ${({theme}) => `0 ${theme.spacing.md} ${theme.spacing.md} -${theme.spacing.sm} ${theme.palette.border.main}`};
   border-right: ${({theme}) => `1px solid ${theme.palette.border.main}`};
 `;
 
@@ -104,10 +104,14 @@ const NarrowSubMenu = styled(AntMenu.SubMenu)`
   &&& {
     margin-bottom: ${({theme}) => theme.spacing.md};
 
-    .ant-menu-submenu-title {
+    div { /* .ant-menu-submenu-title */
       line-height: 1.4em;
       height: initial;
       font-weight: bold;
+
+      img {
+        vertical-align: initial;
+      }
     }
   }
 `;
@@ -116,3 +120,13 @@ const WrappingLink = styled(InternalLink)`
     white-space: pre-wrap;
     word-wrap: break-word;
 `;
+
+// TODO: this will eventually be exported from varnish.
+class SvgIcon extends React.PureComponent {
+  render() {
+    let {src, ...other} = this.props;
+    return (
+      <Icon {...other} component={() => <img src={src} />} />
+    );
+  }
+}

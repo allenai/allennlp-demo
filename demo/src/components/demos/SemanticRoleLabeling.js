@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExternalLink } from  '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { API_ROOT } from '../../api-config';
 import Model from '../Model'
@@ -182,6 +183,10 @@ const VisualizationType = {
 };
 Object.freeze(VisualizationType);
 
+const NoOutputMessage = styled.div`
+  padding: 2rem;
+`;
+
 // Stateful output component
 class Output extends React.Component {
     constructor(props) {
@@ -196,14 +201,26 @@ class Output extends React.Component {
         const { verbs } = responseData
 
         let viz = null;
-        switch(visualizationType) {
-          case VisualizationType.TEXT:
-            viz = <TextVisualization verbs={verbs} model="srl"/>;
-            break;
-          case VisualizationType.TREE:
-          default:
-            viz = <HierplaneVisualization trees={toHierplaneTrees(responseData)} />
-            break;
+
+        // If there's no verbs, there's no output to display.
+        if (Array.isArray(verbs) && verbs.length > 0) {
+          switch(visualizationType) {
+            case VisualizationType.TEXT:
+              viz = <TextVisualization verbs={verbs} model="srl" />;
+              break;
+            case VisualizationType.TREE:
+            default:
+              viz = <HierplaneVisualization trees={toHierplaneTrees(responseData)} />
+              break;
+          }
+        }
+
+        if (viz == null) {
+          return (
+            <NoOutputMessage>
+              No output. Please revise the sentence and try again.
+            </NoOutputMessage>
+          );
         }
 
         return (
