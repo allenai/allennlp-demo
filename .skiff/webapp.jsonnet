@@ -173,6 +173,15 @@ local interpret_path(model_name) = {
     },
 };
 
+// Generate the ingress path entry for the given model
+local attack_path(model_name) = {
+    path: '/attack/' + model_name,
+    backend: {
+        serviceName: fullyQualifiedName + '-' + model_name,
+        servicePort: config.httpPort
+    },
+};
+
 local ingress = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Ingress',
@@ -200,7 +209,7 @@ local ingress = {
                 host: host,
                 http: {
                     paths: std.flattenArrays([
-                        [predict_path(model_name), interpret_path(model_name)]
+                        [predict_path(model_name), interpret_path(model_name), attack_path(model_name)]
                         for model_name in model_names
                     ]) + [
                         {
