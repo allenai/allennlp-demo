@@ -214,6 +214,7 @@ def make_app(build_dir: str,
         """
         Interpret prediction of the model
         """
+        print("!!!!!!!!!")
         if request.method == "OPTIONS":
             return Response(response="", status=200)
         lowered_model_name = model_name.lower()
