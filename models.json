@@ -63,7 +63,7 @@
         "memory": "4Gi"
     },
     "masked-lm": {
-        "archive_file": "PATH_TO_MODEL_ARCHIVE",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2019.07.25.tar.gz",
         "predictor_name": "masked_lm_predictor",
         "max_request_length": 10000,
         "memory": "4Gi"
