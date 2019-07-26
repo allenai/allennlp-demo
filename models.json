@@ -14,11 +14,6 @@
         "predictor_name": "coreference-resolution",
         "max_request_length": 21097
     },
-    "named-entity-recognition": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/ner-model-2018.12.18.tar.gz",
-        "predictor_name": "sentence-tagger",
-        "max_request_length": 94864
-    },
     "fine-grained-named-entity-recognition": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner-model-elmo-2018.12.21.tar.gz",
         "memory": "4Gi",

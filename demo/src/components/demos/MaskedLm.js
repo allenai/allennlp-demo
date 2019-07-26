@@ -27,13 +27,9 @@ const title = "Masked Language Modeling";
 
 const Wrapper = styled.div`
   color: #232323;
-  flex-grow: 1;
   font-size: 1em;
-  background: ${({theme}) => theme.palette.background.dark};
-
-  @media(max-width: 500px) {
-    margin: 0;
-  }
+  background: #fff;
+  overflow: scroll;
 `
 
 const ModelArea = styled.div`
@@ -198,16 +194,21 @@ class App extends React.Component {
 
   setOutput(evt) {
     const value = evt.target.value
-    const trimmed = trimRight(value);
+    if (value) { // TODO(michaels): I shouldn't need to do this
+      const trimmed = trimRight(value);
 
-    this.setState({
-        output: value,
-        words: null,
-        logits: null,
-        probabilities: null,
-        loading: trimmed.length > 0
-    })
-    this.debouncedChoose()
+      const loading = trimmed.length > 0 && trimmed.includes("[MASK]");
+
+      this.setState({
+          output: value,
+          words: null,
+          logits: null,
+          probabilities: null,
+          loading: loading
+      })
+
+      this.debouncedChoose()
+    }
   }
 
   createRequestId() {
@@ -236,8 +237,6 @@ class App extends React.Component {
   }
 
   choose(choice = undefined, doNotChangeUrl) {
-    this.setState({ loading: true, error: false })
-
     // strip trailing spaces
     const trimmedOutput = trimRight(this.state.output);
     if (trimmedOutput.length === 0) {
@@ -245,19 +244,18 @@ class App extends React.Component {
       return;
     }
 
-    const payload = {
-      sentence: trimmedOutput,
-      next: choice,
-      numsteps: 5,
-      model_name: this.state.model
-    }
+    if (trimmedOutput.includes("[MASK]")) {
+      this.setState({ loading: true, error: false })
 
-    const currentReqId = this.createRequestId();
-    const endpoint = `${API_ROOT}/predict/masked-lm`
+      const payload = {
+        sentence: trimmedOutput,
+        next: choice,
+        numsteps: 5,
+        model_name: this.state.model
+      }
 
-    if ('history' in window && !doNotChangeUrl) {
-      addToUrl(this.state.output, choice);
-    }
+      const currentReqId = this.createRequestId();
+      const endpoint = `${API_ROOT}/predict/masked-lm`
 
     fetch(endpoint, {
       method: "POST",
@@ -274,12 +272,31 @@ class App extends React.Component {
         const output = choice === undefined ? this.state.output : data.output
         this.setState({...data, output, loading: false})
         this.requestData = output;
+      if ('history' in window && !doNotChangeUrl) {
+        addToUrl(this.state.output, choice);
       }
-    })
-    .catch(err => {
-      console.error('Error trying to communicate with the API:', err);
-      this.setState({ error: true, loading: false });
-    });
+
+      fetch(endpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (this.currentRequestId === currentReqId) {
+          // If the user entered text by typing don't overwrite it, as that feels
+          // weird. If they clicked it overwrite it
+          const output = choice === undefined ? this.state.output : data.output
+          this.setState({...data, output, loading: false})
+        }
+      })
+      .catch(err => {
+        console.error('Error trying to communicate with the API:', err);
+        this.setState({ error: true, loading: false });
+      });
+    }
   }
 
   // Temporarily (?) disabled
