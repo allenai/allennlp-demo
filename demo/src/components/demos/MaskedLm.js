@@ -26,7 +26,7 @@ const Wrapper = styled.div`
   color: #232323;
   flex-grow: 1;
   font-size: 1em;
-  background: ${({theme}) => theme.palette.background.dark};
+  background: #fff;
 
   @media(max-width: 500px) {
     margin: 0;
