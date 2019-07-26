@@ -192,16 +192,18 @@ class App extends React.Component {
 
   setOutput(evt) {
     const value = evt.target.value
-    const trimmed = trimRight(value);
+    if (value) { // TODO(michaels): I shouldn't need to do this
+      const trimmed = trimRight(value);
 
-    this.setState({
-        output: value,
-        words: null,
-        logits: null,
-        probabilities: null,
-        loading: trimmed.length > 0
-    })
-    this.debouncedChoose()
+      this.setState({
+          output: value,
+          words: null,
+          logits: null,
+          probabilities: null,
+          loading: trimmed.length > 0
+      })
+      this.debouncedChoose()
+    }
   }
 
   createRequestId() {
