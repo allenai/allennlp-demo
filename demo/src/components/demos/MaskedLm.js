@@ -191,13 +191,16 @@ class App extends React.Component {
     if (value) { // TODO(michaels): I shouldn't need to do this
       const trimmed = trimRight(value);
 
+      const loading = trimmed.length > 0 && trimmed.includes("[MASK]");
+
       this.setState({
           output: value,
           words: null,
           logits: null,
           probabilities: null,
-          loading: trimmed.length > 0
+          loading: loading
       })
+
       this.debouncedChoose()
     }
   }
@@ -228,8 +231,6 @@ class App extends React.Component {
   }
 
   choose(choice = undefined, doNotChangeUrl) {
-    this.setState({ loading: true, error: false })
-
     // strip trailing spaces
     const trimmedOutput = trimRight(this.state.output);
     if (trimmedOutput.length === 0) {
@@ -237,40 +238,44 @@ class App extends React.Component {
       return;
     }
 
-    const payload = {
-      sentence: trimmedOutput,
-      next: choice,
-      numsteps: 5,
-      model_name: this.state.model
-    }
+    if (trimmedOutput.includes("[MASK]")) {
+      this.setState({ loading: true, error: false })
 
-    const currentReqId = this.createRequestId();
-    const endpoint = `${API_ROOT}/predict/masked-lm`
-
-    if ('history' in window && !doNotChangeUrl) {
-      addToUrl(this.state.output, choice);
-    }
-
-    fetch(endpoint, {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload)
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (this.currentRequestId === currentReqId) {
-        // If the user entered text by typing don't overwrite it, as that feels
-        // weird. If they clicked it overwrite it
-        const output = choice === undefined ? this.state.output : data.output
-        this.setState({...data, output, loading: false})
+      const payload = {
+        sentence: trimmedOutput,
+        next: choice,
+        numsteps: 5,
+        model_name: this.state.model
       }
-    })
-    .catch(err => {
-      console.error('Error trying to communicate with the API:', err);
-      this.setState({ error: true, loading: false });
-    });
+
+      const currentReqId = this.createRequestId();
+      const endpoint = `${API_ROOT}/predict/masked-lm`
+
+      if ('history' in window && !doNotChangeUrl) {
+        addToUrl(this.state.output, choice);
+      }
+
+      fetch(endpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (this.currentRequestId === currentReqId) {
+          // If the user entered text by typing don't overwrite it, as that feels
+          // weird. If they clicked it overwrite it
+          const output = choice === undefined ? this.state.output : data.output
+          this.setState({...data, output, loading: false})
+        }
+      })
+      .catch(err => {
+        console.error('Error trying to communicate with the API:', err);
+        this.setState({ error: true, loading: false });
+      });
+    }
   }
 
   // Temporarily (?) disabled
