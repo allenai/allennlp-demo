@@ -28,6 +28,7 @@ from allennlp.predictors import Predictor
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
 from server.logging import StackdriverJsonFormatter
+from server.utils import with_no_cache_headers
 from server.demo_model import DemoModel
 from server.models import load_demo_models
 
@@ -113,6 +114,15 @@ def make_app(build_dir: str,
             predictor = demo_model.predictor()
             app.predictors[name] = predictor
             app.max_request_lengths[name] = demo_model.max_request_length
+
+    # Disable caching for HTML documents and API responses so that clients
+    # always talk to the source (this server).
+    @app.after_request
+    def set_cache_headers(resp: Response) -> Response:
+        if resp.mimetype == "text/html" or resp.mimetype == "application/json":
+            return with_no_cache_headers(resp)
+        else:
+            return resp
 
     @app.errorhandler(ServerError)
     def handle_invalid_usage(error: ServerError) -> Response:  # pylint: disable=unused-variable
