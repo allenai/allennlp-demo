@@ -347,8 +347,8 @@ const formatProbability = prob => {
 const Choices = ({output, logits, words, choose, probabilities}) => {
   if (!words) { return null }
 
-  const lis = words.map((word, idx) => {
-    const prob = formatProbability(probabilities[idx])
+  const lis = words[0].map((word, idx) => {
+    const prob = formatProbability(probabilities[0][idx])
 
     // get rid of CRs
     const cleanWord = word.replace(/\n/g, "↵")
