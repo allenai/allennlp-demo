@@ -29,7 +29,6 @@ const modelGroups = [
         defaultOpen: true,
         models: [
             {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SemanticRoleLabeling},
-            {model: "named-entity-recognition", name: "Named Entity Recognition", component: NamedEntityRecognition},
             {model: "constituency-parsing", name: "Constituency Parsing", component: ConstituencyParser},
             {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParser},
             {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe},
