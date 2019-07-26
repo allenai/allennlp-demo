@@ -32,9 +32,9 @@ RUN pip install psycopg2-binary
 RUN pip install sentry-sdk==0.7.1
 RUN pip install python-json-logger
 RUN pip install pytorch-pretrained-bert
-RUN pip install git+https://github.com/matt-gardner/pytorch-transformers.git@0a3a636c23d8f6528f2d8e1a340032070cc3bfbe
+RUN pip install git+https://github.com/matt-gardner/pytorch-transformers.git@8eceeea4eefdf230df69bcfed8d122b284dff8d9
 
-RUN pip install "git+git://github.com/allenai/allennlp.git@bc7c0a51a3742a3cf380eadab5ee46574f505175"
+RUN pip install "git+git://github.com/allenai/allennlp.git@259d2554ecca6b8a87cd950e21a03a4fabe2574b"
 
 # Download spacy model
 RUN spacy download en_core_web_sm
