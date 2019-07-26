@@ -377,8 +377,12 @@ class App extends React.Component {
       }).then((response) => {
         return response.json();
       }).then((json) => {
-        const stateUpdate = { ...this.state }
-        stateUpdate['interpretData'] = Object.assign({}, { [interpreter]: json }, stateUpdate['interpretData'])
+        var stateUpdate = {
+            ...this.state,
+            interpretData: {
+              [interpreter]: json
+            }
+        };
         this.setState(stateUpdate)
       })
     }
@@ -395,8 +399,12 @@ class App extends React.Component {
       }).then((response) => {
         return response.json();
       }).then((json) => {
-        const stateUpdate = { ...this.state }
-        stateUpdate['attackData'] = Object.assign({}, { [attacker]: json }, stateUpdate['attackData'])
+        var stateUpdate = {
+            ...this.state,
+            attackData: {
+              [attacker]: json
+            }
+        };
         this.setState(stateUpdate)
       })
     }
