@@ -192,7 +192,7 @@ export default class HotflipComponent extends React.Component {
                 }
             }
 
-            if (task === "Sentiment Analysis" || task === "Co-reference Resolution" || task === "Masked Language Modeling"){
+            if (task === "Sentiment Analysis" || task === "Co-reference Resolution" || task === "Masked Language Modeling" || task === "Language Modeling"){
                 return (
                     <div>
                         <AccordionItem expanded={true}>
