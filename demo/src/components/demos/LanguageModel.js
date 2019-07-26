@@ -274,8 +274,8 @@ class App extends React.Component {
         const output = choice === undefined ? this.state.output : data.output
         this.setState({...data, output, loading: false})
         this.requestData = output;
-        console.log("data")
-        console.log(data)
+        // console.log("data")
+        // console.log(data)
       }
     })
     .catch(err => {
@@ -299,11 +299,12 @@ class App extends React.Component {
     // const { responseData, requestData, interpretData, interpretModel, attackData, attackModel } = this.props
     var requestData = {"sentence": this.state.output};
     var interpretData = this.state.interpretData;
-    console.log(requestData);
-    console.log(interpretData);
-    console.log(this.props);
+    // console.log(requestData);
+    // console.log(interpretData);
+    // console.log(this.props);
     var tokens = [];
     if (this.state.tokens === undefined) {
+        console.log(this.state);
         tokens = [];
     }
     else {
@@ -363,9 +364,9 @@ class App extends React.Component {
     
     interpretModel(inputs, interpreter) {
       // const { apiUrlInterpret } = this.props
-      console.log(inputs);
-      console.log(apiUrlInterpret);
-      console.log(interpreter);
+      // console.log(inputs);
+      // console.log(apiUrlInterpret);
+      // console.log(interpreter);
       fetch(apiUrlInterpret(Object.assign(inputs, {interpreter})), {
         method: 'POST',
         headers: {
@@ -416,8 +417,7 @@ const Choices = ({output, index, logits, words, choose, probabilities}) => {
     const prob = formatProbability(probabilities[idx])
 
     // get rid of CRs
-    console.log(word)
-    const cleanWord = word.replace(/\n/g, "↵")
+    const cleanWord = word.replace(/\n/g, "↵").replace("/Ġ/g"," ")
 
     return (
       <ListItem key={`${idx}-${cleanWord}`}>
