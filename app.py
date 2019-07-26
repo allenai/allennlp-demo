@@ -123,7 +123,7 @@ def make_app(build_dir: str,
 
             if name in supported_interpret_models:
                 app.attackers[name]["input_reduction"] = InputReduction(predictor)
-                if name != 'named-entity-recognition' and name != 'masked-lm': # NER doesn't use Hotflip
+                if name != 'named-entity-recognition' and name != 'masked-lm' and name != 'next-token-lm': # NER doesn't use Hotflip
                     app.attackers[name]["hotflip"] = Hotflip(predictor)
                     app.attackers[name]["hotflip"].initialize()
 
@@ -187,13 +187,12 @@ def make_app(build_dir: str,
                 "responseData": permadata.response_data
         })
 
-    @app.route('/attack/<model_name>/<attacker_name>/<name_of_input_to_attack>/<name_of_grad_input>/<target_label>',
+    @app.route('/attack/<model_name>/<attacker_name>/<name_of_input_to_attack>/<name_of_grad_input>',
      methods=['POST','OPTIONS'])
     def attack(model_name: str,
                 attacker_name: str,
                 name_of_input_to_attack: str,
-                name_of_grad_input: str,
-                target_label: str = None) -> Response:
+                name_of_grad_input: str) -> Response:
         """
         Modify input to change prediction of model
         """
@@ -210,7 +209,33 @@ def make_app(build_dir: str,
             raise ServerError(f"Max request length exceeded for model {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
 
-        attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input, target_label)
+        attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input)
+        return jsonify(attack)
+
+    @app.route('/targeted_attack/<model_name>/<attacker_name>/<name_of_input_to_attack>/<name_of_grad_input>/<target_label>/<target>/<target_word>',
+     methods=['POST','OPTIONS'])
+    def targeted_attack(model_name: str,
+                attacker_name: str,
+                name_of_input_to_attack: str,
+                name_of_grad_input: str,
+                target: str,
+                target_word: str) -> Response:
+        """
+        Modify input to change prediction of model
+        """
+        if request.method == "OPTIONS":
+            return Response(response="", status=200)
+        lowered_model_name = model_name.lower()
+        attacker = app.attackers.get(lowered_model_name).get(attacker_name)
+        if attacker is None:
+            raise ServerError("unknown model: {}".format(model_name), status_code=400)
+        max_request_length = app.max_request_lengths[lowered_model_name]
+        data = request.get_json()
+        serialized_request = json.dumps(data)
+        if len(serialized_request) > max_request_length:
+            raise ServerError(f"Max request length exceeded for model {model_name}! " +
+                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+        attack = attacker.targeted_attack_from_json(data, name_of_input_to_attack, name_of_grad_input, target, target_word)
         return jsonify(attack)
 
     @app.route('/interpret/<model_name>/<interpreter_name>', methods=['POST', 'OPTIONS'])
@@ -218,7 +243,6 @@ def make_app(build_dir: str,
         """
         Interpret prediction of the model
         """
-        print("!!!!!!!!!")
         if request.method == "OPTIONS":
             return Response(response="", status=200)
         lowered_model_name = model_name.lower()

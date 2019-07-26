@@ -221,7 +221,7 @@ export class SaliencyComponent extends React.Component {
       )
     }
     // single input case    
-    else if (task === "Sentiment Analysis" || task === "Masked Language Modeling" || task === undefined) {
+    else if (task === "Sentiment Analysis" || task === "Masked Language Modeling" || task === "Language Modeling" || task === undefined) {
         return (
             <div>
                 <AccordionItem expanded={true}>

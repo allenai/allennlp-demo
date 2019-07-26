@@ -46,7 +46,7 @@
     },
     "next-token-lm": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/gpt2-next-word-lm-2019.07.25.tar.gz",
-        "predictor_name": "next-token-lm",
+        "predictor_name": "next_token_lm",
         "max_request_length": 10000,
         "memory": "4Gi"
     },
