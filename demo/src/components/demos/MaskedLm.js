@@ -257,6 +257,10 @@ class App extends React.Component {
       const currentReqId = this.createRequestId();
       const endpoint = `${API_ROOT}/predict/masked-lm`
 
+      if ('history' in window && !doNotChangeUrl) {
+        addToUrl(this.state.output, choice);
+      }
+
     fetch(endpoint, {
       method: "POST",
       headers: {
@@ -272,30 +276,12 @@ class App extends React.Component {
         const output = choice === undefined ? this.state.output : data.output
         this.setState({...data, output, loading: false})
         this.requestData = output;
-      if ('history' in window && !doNotChangeUrl) {
-        addToUrl(this.state.output, choice);
       }
-
-      fetch(endpoint, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (this.currentRequestId === currentReqId) {
-          // If the user entered text by typing don't overwrite it, as that feels
-          // weird. If they clicked it overwrite it
-          const output = choice === undefined ? this.state.output : data.output
-          this.setState({...data, output, loading: false})
-        }
-      })
-      .catch(err => {
-        console.error('Error trying to communicate with the API:', err);
-        this.setState({ error: true, loading: false });
-      });
+    })
+    .catch(err => {
+      console.error('Error trying to communicate with the API:', err);
+      this.setState({ error: true, loading: false });
+    });
     }
   }
 
