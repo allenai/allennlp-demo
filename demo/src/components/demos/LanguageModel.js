@@ -301,6 +301,7 @@ class App extends React.Component {
     // const { responseData, requestData, interpretData, interpretModel, attackData, attackModel } = this.props
     var requestData = {"sentence": this.state.output};
     var interpretData = this.state.interpretData;
+    var attackData = this.state.attackData;
     // console.log(requestData);
     // console.log(interpretData);
     // console.log(this.props);
@@ -358,7 +359,7 @@ class App extends React.Component {
           <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
           <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
           <SaliencyComponent interpretData={interpretData} input1Tokens={tokens} interpretModel = {this.interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
-          <HotflipComponent hotflipData={this.attackData} hotflipInput={this.attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+          <HotflipComponent hotflipData={attackData} hotflipInput={this.attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
       </Accordion>
     </Wrapper>
     )
