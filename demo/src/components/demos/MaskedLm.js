@@ -9,6 +9,7 @@ import { Accordion } from 'react-accessible-accordion';
 import SaliencyComponent from '../Saliency'
 import InputReductionComponent from '../InputReduction'
 import HotflipComponent from '../Hotflip'
+import Model from '../Model'
 import { FormField, FormLabel, FormTextArea } from '../Form';
 import { API_ROOT } from '../../api-config';
 import {
@@ -21,6 +22,8 @@ import {
 const apiUrl = () => `${API_ROOT}/predict/masked-lm`
 const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/masked-lm/${interpreter}`
 const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/masked-lm/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
+
+const title = "Masked Language Modeling";
 
 const Wrapper = styled.div`
   color: #232323;
@@ -138,8 +141,6 @@ const Token = styled.span`
 
 const DEFAULT = "Joel is";
 
-const title = "Sentiment Analysis"
-
 function addToUrl(output, choice) {
   if ('history' in window) {
     window.history.pushState(null, null, '?text=' + encodeURIComponent(output + (choice || '')))
@@ -172,6 +173,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
 
+    const { requestData, responseData, interpretData, attackData } = props;
     this.currentRequestId = 0;
 
     this.state = {
@@ -181,13 +183,17 @@ class App extends React.Component {
       probabilities: null,
       loading: false,
       error: false,
-      model: DEFAULT_MODEL
+      model: DEFAULT_MODEL,
+      interpretData: interpretData,
+      attackData: attackData
     }
 
     this.choose = this.choose.bind(this)
     this.debouncedChoose = _.debounce(this.choose, 1000)
     this.setOutput = this.setOutput.bind(this)
     this.runOnEnter = this.runOnEnter.bind(this)
+    this.interpretModel = this.interpretModel.bind(this)
+    this.attackModel = this.attackModel.bind(this)
   }
 
   setOutput(evt) {
@@ -267,6 +273,7 @@ class App extends React.Component {
         // weird. If they clicked it overwrite it
         const output = choice === undefined ? this.state.output : data.output
         this.setState({...data, output, loading: false})
+        this.requestData = output;
       }
     })
     .catch(err => {
@@ -286,11 +293,27 @@ class App extends React.Component {
 
   render() {
 
-    const { responseData, requestData, interpretData, interpretModel, attackData, attackModel } = this.props
-    var t = requestData;
-    // const tokens = t['sentence'].split(' '); // this model expects space-separated inputs
-    const tokens = ["bah", "bah", "black", "sheep"];
+    // const { responseData, requestData, interpretData, interpretModel, attackData, attackModel } = this.props
+    var requestData = {"sentence": this.state.output};
+    var interpretData = this.state.interpretData;
+    console.log(requestData);
+    console.log(interpretData);
+    console.log(this.props);
+    var tokens = [];
+    if (this.state.tokens === undefined) {
+        tokens = [];
+    }
+    else {
+        if (Array.isArray(this.state.tokens[0])) {
+            tokens = this.state.tokens[0];
+        }
+        else {
+            tokens = this.state.tokens;
+        }
+        console.log(this.state);
+    }
     return (
+        <div>
         <Wrapper classname="model">
         <ModelArea className="model__content answer">
           <h2><span>Language Modeling</span></h2>
@@ -326,16 +349,54 @@ class App extends React.Component {
             </InputOutputColumn>
           </InputOutput>
         </ModelArea>
-    <OutputField>
-      <Accordion accordion={false}>
-          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
-          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
-          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
-      </Accordion>
-    </OutputField>
     </Wrapper>
+      <Accordion accordion={false}>
+          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
+          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
+          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens} interpretModel = {this.interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
+      </Accordion>
+    </div>
     )
   }
+    
+    interpretModel(inputs, interpreter) {
+      // const { apiUrlInterpret } = this.props
+      console.log(inputs);
+      console.log(apiUrlInterpret);
+      console.log(interpreter);
+      fetch(apiUrlInterpret(Object.assign(inputs, {interpreter})), {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(inputs)
+      }).then((response) => {
+        return response.json();
+      }).then((json) => {
+        const stateUpdate = { ...this.state }
+        stateUpdate['interpretData'] = Object.assign({}, { [interpreter]: json }, stateUpdate['interpretData'])
+        this.setState(stateUpdate)
+      })
+    }
+
+    attackModel(inputs, attacker, name_of_input_to_attack, name_of_grad_input) {
+      // const { apiUrlAttack } = this.props
+      fetch(apiUrlAttack(Object.assign(inputs, {attacker}, {name_of_input_to_attack}, {name_of_grad_input})), {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(inputs)
+      }).then((response) => {
+        return response.json();
+      }).then((json) => {
+        const stateUpdate = { ...this.state }
+        stateUpdate['attackData'] = Object.assign({}, { [attacker]: json }, stateUpdate['attackData'])
+        this.setState(stateUpdate)
+      })
+    }
 }
 
 
@@ -388,6 +449,6 @@ const Choices = ({output, logits, words, choose, probabilities}) => {
   )
 }
 
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, Choices, App}
+const modelProps = {};
 
 export default withRouter(props => <App {...props} {...modelProps}/>)
