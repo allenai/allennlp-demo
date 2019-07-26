@@ -55,10 +55,9 @@
         "predictor_name": "quarel-parser",
         "max_request_length": 6695
     },
-    "gpt2": {
-        "type": "gpt2",
+    "next-token-lm": {
         "archive_file": "https://storage.googleapis.com/allennlp/models/gpt2-345M-dump",
-        "predictor_name": "",
+        "predictor_name": "next-token-lm",
         "max_request_length": 10000,
         "memory": "4Gi"
     },
