@@ -119,7 +119,7 @@ export default class HotflipComponent extends React.Component {
                     const [pos, neg] = hotflipData["hotflip"]["outputs"]["probs"]
                     new_prediction = <p><b>Prediction changed to:</b> {pos > neg ? 'Positive' : 'Negative'}</p>
                 }
-                else if (task === "Masked Language Modeling") {
+                else if (task === "Masked Language Modeling" || task === "Language Modeling") {
                     console.log(hotflipData);
                     new_prediction = <p><b>Prediction changed to:</b> {hotflipData["hotflip"]["outputs"]["words"][0][0]}</p>
                 }

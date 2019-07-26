@@ -23,6 +23,8 @@ const apiUrl = () => `${API_ROOT}/predict/next-token-lm`
 const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/next-token-lm/${interpreter}`
 const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/next-token-lm/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
 
+const NAME_OF_INPUT_TO_ATTACK = "tokens"
+const NAME_OF_GRAD_INPUT = "grad_input_1"
 const title = "Language Modeling";
 
 const Wrapper = styled.div`
@@ -304,7 +306,6 @@ class App extends React.Component {
     // console.log(this.props);
     var tokens = [];
     if (this.state.tokens === undefined) {
-        console.log(this.state);
         tokens = [];
     }
     else {
@@ -357,6 +358,7 @@ class App extends React.Component {
           <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
           <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
           <SaliencyComponent interpretData={interpretData} input1Tokens={tokens} interpretModel = {this.interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
+          <HotflipComponent hotflipData={this.attackData} hotflipInput={this.attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
       </Accordion>
     </Wrapper>
     )
