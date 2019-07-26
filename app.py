@@ -51,7 +51,9 @@ supported_interpret_models = {'named-entity-recognition',
                               'textual-entailment',
                               'reading-comprehension',
                               'naqanet-reading-comprehension',
-                              'fine-grained-named-entity-recognition'}
+                              'fine-grained-named-entity-recognition',
+                              'masked-lm',
+                              'next-token-lm'}
 
 class ServerError(Exception):
     status_code = 400
@@ -121,7 +123,7 @@ def make_app(build_dir: str,
 
             if name in supported_interpret_models:
                 app.attackers[name]["input_reduction"] = InputReduction(predictor)
-                if name != 'named-entity-recognition': # NER doesn't use Hotflip
+                if name != 'named-entity-recognition' and name != 'masked-lm': # NER doesn't use Hotflip
                     app.attackers[name]["hotflip"] = Hotflip(predictor)
                     app.attackers[name]["hotflip"].initialize()
 
@@ -185,12 +187,13 @@ def make_app(build_dir: str,
                 "responseData": permadata.response_data
         })
 
-    @app.route('/attack/<model_name>/<attacker_name>/<name_of_input_to_attack>/<name_of_grad_input>',
+    @app.route('/attack/<model_name>/<attacker_name>/<name_of_input_to_attack>/<name_of_grad_input>/<target_label>',
      methods=['POST','OPTIONS'])
     def attack(model_name: str,
                 attacker_name: str,
                 name_of_input_to_attack: str,
-                name_of_grad_input: str) -> Response:
+                name_of_grad_input: str,
+                target_label: str = None) -> Response:
         """
         Modify input to change prediction of model
         """
@@ -207,7 +210,7 @@ def make_app(build_dir: str,
             raise ServerError(f"Max request length exceeded for model {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
 
-        attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input)
+        attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input, target_label)
         return jsonify(attack)
 
     @app.route('/interpret/<model_name>/<interpreter_name>', methods=['POST', 'OPTIONS'])
@@ -219,6 +222,7 @@ def make_app(build_dir: str,
         if request.method == "OPTIONS":
             return Response(response="", status=200)
         lowered_model_name = model_name.lower()
+        print(app.interpreters)
         interpreter = app.interpreters.get(lowered_model_name)[interpreter_name]
         if interpreter is None:
             raise ServerError("unknown interpreter: {}".format(model_name), status_code=400)
