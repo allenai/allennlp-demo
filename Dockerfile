@@ -34,7 +34,7 @@ RUN pip install python-json-logger
 RUN pip install pytorch-pretrained-bert
 RUN pip install git+https://github.com/matt-gardner/pytorch-transformers.git@8eceeea4eefdf230df69bcfed8d122b284dff8d9
 
-RUN pip install "git+git://github.com/allenai/allennlp.git@5d79ab24320691902072e2869b3deb4d7e30a334"
+RUN pip install "git+git://github.com/allenai/allennlp.git@ef2581adafbb8a5aa8c8eb57c6d16dd1d36f0236"
 
 # Download spacy model
 RUN spacy download en_core_web_sm
