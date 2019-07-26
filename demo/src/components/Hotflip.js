@@ -119,6 +119,10 @@ export default class HotflipComponent extends React.Component {
                     const [pos, neg] = hotflipData["hotflip"]["outputs"]["probs"]
                     new_prediction = <p><b>Prediction changed to:</b> {pos > neg ? 'Positive' : 'Negative'}</p>
                 }
+                else if (task === "Masked Language Modeling") {
+                    console.log(hotflipData);
+                    new_prediction = <p><b>Prediction changed to:</b> {hotflipData["hotflip"]["outputs"]["words"][0][0]}</p>
+                }
                 else if (task === "Co-reference Resolution") {
                     // This is the function that calls itself when we recurse over the span tree.
                     const spanWrapper = (data, depth) => {
@@ -188,7 +192,7 @@ export default class HotflipComponent extends React.Component {
                 }
             }
 
-            if (task === "Sentiment Analysis" || task === "Co-reference Resolution"){
+            if (task === "Sentiment Analysis" || task === "Co-reference Resolution" || task === "Masked Language Modeling"){
                 return (
                     <div>
                         <AccordionItem expanded={true}>

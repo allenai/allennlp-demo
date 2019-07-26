@@ -123,7 +123,9 @@ def make_app(build_dir: str,
 
             if name in supported_interpret_models:
                 app.attackers[name]["input_reduction"] = InputReduction(predictor)
-                if name != 'named-entity-recognition' and name != 'masked-lm' and name != 'next-token-lm': # NER doesn't use Hotflip
+                if name == 'masked-lm':
+                    app.attackers[name]["hotflip"] = Hotflip(predictor, 'bert')
+                elif name != 'named-entity-recognition' and name != 'next-token-lm': # NER doesn't use Hotflip
                     app.attackers[name]["hotflip"] = Hotflip(predictor)
                     app.attackers[name]["hotflip"].initialize()
 
