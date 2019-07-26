@@ -342,8 +342,19 @@ class App extends React.Component {
                 ) : null}
             </InputOutputColumn>
             <InputOutputColumn>
-              <FormLabel>Top Predictions:</FormLabel>
+              <FormLabel>Mask 1 Predictions:</FormLabel>
               <Choices output={this.state.output}
+                      index={0}
+                      choose={this.choose}
+                      logits={this.state.logits}
+                      words={this.state.words}
+                      probabilities={this.state.probabilities}
+                      hidden={this.state.loading}/>
+            </InputOutputColumn>
+            <InputOutputColumn>
+              <FormLabel>Mask 2 Predictions:</FormLabel>
+              <Choices output={this.state.output}
+                      index={1}
                       choose={this.choose}
                       logits={this.state.logits}
                       words={this.state.words}
@@ -408,11 +419,13 @@ const formatProbability = prob => {
   return `${prob.toFixed(1)}%`
 }
 
-const Choices = ({output, logits, words, choose, probabilities}) => {
+const Choices = ({output, index, logits, words, choose, probabilities}) => {
   if (!words) { return null }
+  if (words.length <= index) { return null }
+  if (probabilities.length <= index) { return null }
 
-  const lis = words[0].map((word, idx) => {
-    const prob = formatProbability(probabilities[0][idx])
+  const lis = words[index].map((word, idx) => {
+    const prob = formatProbability(probabilities[index][idx])
 
     // get rid of CRs
     const cleanWord = word.replace(/\n/g, "↵")
