@@ -32,6 +32,10 @@ export const getHeaders = (interpreter) => {
 
 
 const getTokenWeightPairs = (input1Grads, input2Grads, input1Tokens, input2Tokens) => {
+  console.log(input1Grads);
+  console.log(input1Tokens);
+  console.log(input2Grads);
+  console.log(input2Tokens);
   if (input1Grads === undefined){    
     const input1TokensWithWeights = input1Tokens.map((token, idx) => {
       let weight = input2Grads[idx]
@@ -147,7 +151,7 @@ export class SaliencyComponent extends React.Component {
     let input1TokensWithWeights = []
     let input2TokensWithWeights = []
     // if the simple_gradient field is not undefined (there is data), and we are loading the GRAD_INTERPRETER UI
-    if (simple_gradient && interpreter === GRAD_INTERPRETER) {      
+    if (simple_gradient && interpreter === GRAD_INTERPRETER) {
       const { instance_1 } = simple_gradient
       const { grad_input_1, grad_input_2 } = instance_1
       const tokensWithWeights = getTokenWeightPairs(grad_input_2, grad_input_1, input1Tokens, input2Tokens)
@@ -217,7 +221,7 @@ export class SaliencyComponent extends React.Component {
       )
     }
     // single input case    
-    else if (task === "Sentiment Analysis" || task === undefined) {
+    else if (task === "Sentiment Analysis" || task === "Masked Language Modeling" || task === undefined) {
         return (
             <div>
                 <AccordionItem expanded={true}>
