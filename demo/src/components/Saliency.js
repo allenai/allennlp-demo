@@ -32,10 +32,6 @@ export const getHeaders = (interpreter) => {
 
 
 const getTokenWeightPairs = (input1Grads, input2Grads, input1Tokens, input2Tokens) => {
-  console.log(input1Grads);
-  console.log(input1Tokens);
-  console.log(input2Grads);
-  console.log(input2Tokens);
   if (input1Grads === undefined){    
     const input1TokensWithWeights = input1Tokens.map((token, idx) => {
       let weight = input2Grads[idx]
@@ -144,7 +140,6 @@ export class SaliencyComponent extends React.Component {
 
   render() {
     const { interpretData, input1Tokens, input2Tokens, interpretModel, requestData, interpreter, task } = this.props
-    
     const [title1, title2] = getHeaders(interpreter)    
     const { simple_gradient, integrated_gradient, smooth_gradient } = interpretData ? interpretData : {[GRAD_INTERPRETER]: undefined, [IG_INTERPRETER]: undefined, [SG_INTERPRETER]: undefined}
 
