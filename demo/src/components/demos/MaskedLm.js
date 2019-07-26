@@ -316,7 +316,6 @@ class App extends React.Component {
         console.log(this.state);
     }
     return (
-        <div>
         <Wrapper classname="model">
         <ModelArea className="model__content answer">
           <h2><span>Language Modeling</span></h2>
@@ -352,13 +351,12 @@ class App extends React.Component {
             </InputOutputColumn>
           </InputOutput>
         </ModelArea>
-    </Wrapper>
       <Accordion accordion={false}>
           <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
           <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
           <SaliencyComponent interpretData={interpretData} input1Tokens={tokens} interpretModel = {this.interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
       </Accordion>
-    </div>
+    </Wrapper>
     )
   }
     
