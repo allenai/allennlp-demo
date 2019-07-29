@@ -1,38 +1,13 @@
 {
-    "semantic-role-labeling": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2019.06.17.tar.gz",
-        "predictor_name": "semantic-role-labeling",
-        "max_request_length": 4590
-    },
-    "open-information-extraction": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/openie-model.2018-08-20.tar.gz",
-        "predictor_name": "open-information-extraction",
-        "max_request_length": 19681
-    },
     "coreference-resolution": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/coref-model-2018.02.05.tar.gz",
         "predictor_name": "coreference-resolution",
         "max_request_length": 21097
     },
-    "constituency-parsing": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2018.03.14.tar.gz",
-        "predictor_name": "constituency-parser",
-        "max_request_length": 2236
-    },
-    "dependency-parsing": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz",
-        "predictor_name": "biaffine-dependency-parser",
-        "max_request_length": 5675
-    },
     "nlvr-parser": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/nlvr-erm-model-2018-12-18-rule-vocabulary-updated.tar.gz",
         "predictor_name": "nlvr-parser",
         "max_request_length": 1136
-    },
-    "event2mind": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/event2mind-2018.10.26.tar.gz",
-        "predictor_name": "event2mind",
-        "max_request_length": 11643
     },
     "atis-parser": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/atis-parser-2018.11.10.tar.gz",

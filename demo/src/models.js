@@ -28,10 +28,6 @@ const modelGroups = [
         iconSrc: annotateIcon,
         defaultOpen: true,
         models: [
-            {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SemanticRoleLabeling},
-            {model: "constituency-parsing", name: "Constituency Parsing", component: ConstituencyParser},
-            {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParser},
-            {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe},
             {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis}
         ]
     },
@@ -61,7 +57,6 @@ const modelGroups = [
         iconSrc: otherIcon,
         defaultOpen: true,
         models: [
-            {model: "event2mind", name: "Event2Mind", component: Event2Mind},
             {model: "next-token-lm", name: "Language Modeling", component: LanguageModel},
             {model: "masked-lm", name: "Masked Language Modeling", component: MaskedLm},
             {model: "user-models", name: "Your model here!"}
