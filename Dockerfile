@@ -5,9 +5,6 @@ LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /stage/allennlp
 
-# Install Java.
-RUN apt-get update --fix-missing && apt-get install -y openjdk-8-jre
-
 # Install npm early so layer is cached when mucking with the demo
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
 
