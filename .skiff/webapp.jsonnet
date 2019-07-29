@@ -332,7 +332,7 @@ local model_deployment(model_name) = {
             spec: {
                 containers: [
                     {
-                        name: "model",
+                        name: model_name,
                         image: image,
                         args: [ '--model', model_name ],
                         readinessProbe: readinessProbe,

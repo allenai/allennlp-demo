@@ -11,19 +11,15 @@ RUN apt-get update --fix-missing && apt-get install -y openjdk-8-jre
 # Install npm early so layer is cached when mucking with the demo
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
 
-# Install postgres binary
-RUN pip install psycopg2-binary
-RUN pip install sentry-sdk==0.7.1
-RUN pip install python-json-logger
-RUN pip install pytorch-pretrained-bert
+# Install python dependencies
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
 # Download spacy model
 RUN spacy download en_core_web_sm
 
 COPY scripts/ scripts/
 COPY server/models.py server/models.py
-COPY models.json models.json
-COPY models_small.json models_small.json
 
 # Now install and build the demo
 COPY demo/ demo/
@@ -34,6 +30,10 @@ COPY app.py app.py
 COPY server/ server/
 
 RUN pytest tests/
+
+# Copy the configuration files used at runtime
+COPY models.json models.json
+COPY models_small.json models_small.json
 
 # Optional argument to set an environment variable with the Git SHA
 ARG SOURCE_COMMIT

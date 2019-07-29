@@ -28,6 +28,7 @@ from allennlp.predictors import Predictor
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
 from server.logging import StackdriverJsonFormatter
+from server.utils import with_no_cache_headers
 from server.demo_model import DemoModel
 from server.models import load_demo_models
 
@@ -35,11 +36,6 @@ from server.models import load_demo_models
 logging.getLogger("allennlp").setLevel(logging.WARN)
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 logger.setLevel(logging.INFO)
-
-if "SENTRY_PYTHON_AUTH" in os.environ:
-    logger.info("Enabling Sentry since SENTRY_PYTHON_AUTH is defined.")
-    import sentry_sdk
-    sentry_sdk.init(os.environ.get("SENTRY_PYTHON_AUTH"))
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(StackdriverJsonFormatter())
@@ -80,7 +76,7 @@ def main(demo_dir: str,
     # there is an exception when connecting to the database.
     demo_db = PostgresDemoDatabase.from_environment()
     if demo_db is None:
-        logger.warning("demo db credentials not provided, so not using demo db")
+        logger.warning("database credentials not provided, so not using database (permalinks disabled)")
 
     app = make_app(build_dir=f"{demo_dir}/build", demo_db=demo_db, models=models)
     CORS(app)
@@ -113,6 +109,15 @@ def make_app(build_dir: str,
             predictor = demo_model.predictor()
             app.predictors[name] = predictor
             app.max_request_lengths[name] = demo_model.max_request_length
+
+    # Disable caching for HTML documents and API responses so that clients
+    # always talk to the source (this server).
+    @app.after_request
+    def set_cache_headers(resp: Response) -> Response:
+        if resp.mimetype == "text/html" or resp.mimetype == "application/json":
+            return with_no_cache_headers(resp)
+        else:
+            return resp
 
     @app.errorhandler(ServerError)
     def handle_invalid_usage(error: ServerError) -> Response:  # pylint: disable=unused-variable
@@ -329,7 +334,7 @@ def make_app(build_dir: str,
             # Send the index.html page back to the client as a catch-all, since
             # we're an SPA and JavaScript acts to handle routes the server
             # doesn't.
-            return app.send_static_file('index.html')
+            return send_file(os.path.join(build_dir, 'index.html'))
 
     @app.route('/static/js/<path:path>')
     def static_js_proxy(path: str) -> Response: # pylint: disable=unused-variable

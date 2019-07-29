@@ -1,5 +1,3 @@
-allennlp
 psycopg2-binary
-sentry-sdk==0.7.1
 python-json-logger
 pytorch-pretrained-bert
