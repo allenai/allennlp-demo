@@ -198,8 +198,7 @@ local ingress = {
                             backend: {
                                 serviceName: fullyQualifiedName,
                                 servicePort: config.httpPort
-                            },
-                            path: '/.*'
+                            }
                         }
                     ]
                 }
