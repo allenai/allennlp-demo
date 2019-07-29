@@ -1,6 +1,9 @@
 import React from 'react';
-import { API_ROOT } from '../../api-config';
+import { ExternalLink } from  '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
+import styled from 'styled-components';
+
+import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
@@ -15,9 +18,9 @@ const description = (
         The AllenNLP toolkit provides the following SRL visualization, which can be used for any SRL model in AllenNLP.
         This page demonstrates a reimplementation of
       </span>
-      <a href="https://www.semanticscholar.org/paper/Deep-Semantic-Role-Labeling-What-Works-and-What-s-He-Lee/a3ccff7ad63c2805078b34b8514fa9eab80d38e9" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM model (He et al, 2017)</a>
+      <ExternalLink href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener">{' '} a BERT based model (Shi et al, 2019)</ExternalLink>
       <span>
-        , which is currently state of the art for PropBank SRL (Newswire sentences).
+        with some modifications (no additional parameters apart from a linear classification layer), which is currently the state of the art single model for English PropBank SRL (Newswire sentences). It achieves 86.49 test F1 on the Ontonotes 5.0 dataset.
       </span>
     </span>
   );
@@ -180,6 +183,10 @@ const VisualizationType = {
 };
 Object.freeze(VisualizationType);
 
+const NoOutputMessage = styled.div`
+  padding: 2rem;
+`;
+
 // Stateful output component
 class Output extends React.Component {
     constructor(props) {
@@ -194,14 +201,26 @@ class Output extends React.Component {
         const { verbs } = responseData
 
         let viz = null;
-        switch(visualizationType) {
-          case VisualizationType.TEXT:
-            viz = <TextVisualization verbs={verbs} model="srl"/>;
-            break;
-          case VisualizationType.TREE:
-          default:
-            viz = <HierplaneVisualization trees={toHierplaneTrees(responseData)} />
-            break;
+
+        // If there's no verbs, there's no output to display.
+        if (Array.isArray(verbs) && verbs.length > 0) {
+          switch(visualizationType) {
+            case VisualizationType.TEXT:
+              viz = <TextVisualization verbs={verbs} model="srl" />;
+              break;
+            case VisualizationType.TREE:
+            default:
+              viz = <HierplaneVisualization trees={toHierplaneTrees(responseData)} />
+              break;
+          }
+        }
+
+        if (viz == null) {
+          return (
+            <NoOutputMessage>
+              No output. Please revise the sentence and try again.
+            </NoOutputMessage>
+          );
         }
 
         return (

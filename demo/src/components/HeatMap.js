@@ -11,6 +11,8 @@ import '../css/HeatMap.css';
                               corresponds to a table cell / heatmap intensity value
     colLabels: string[]     * List of table header labels describing each column
     rowLabels: string[]     * List of table header labels describing each row
+    includeSlider: bool     * Whether to include a slider to filter out values below a threshold
+    showAllCols: bool       * Whether to always show all columns with the slider
     color: string           * Heatmap color (optional, default = "blue", see supportedColors below)
     normalization: string   * Sets normalization type (optional). Supported types:
 
@@ -138,7 +140,8 @@ export default class HeatMap extends React.Component {
     }
     return (
       <div className="heatmap-container">
-        {this.state.minFilterOpacity!==this.state.maxFilterOpacity && <div className="slide_container">
+        {this.props.includeSlider && this.state.minFilterOpacity!==this.state.maxFilterOpacity &&
+        <div className="slide_container">
           <input
             type="range"
             min={this.state.minFilterOpacity}
@@ -160,7 +163,7 @@ export default class HeatMap extends React.Component {
                     <tbody>
                       <tr data-row="header">
                         {colLabels.map((colLabel, colIndex) => (
-                          this.state.showColAt[colIndex] &&
+                          (this.props.showAllCols || this.state.showColAt[colIndex]) &&
                           <th className={`heatmap__label${colIndex === activeCol ? " heatmap__col-label-cursor" : ""}`}
                             key={`${colLabel}_${colIndex}`}
                             onMouseOver={() => this.handleMouseOver(null, colIndex)}
@@ -204,7 +207,7 @@ export default class HeatMap extends React.Component {
                         this.state.showRowAt[rowIndex] &&
                         <tr className="heatmap__row" key={`${rowLabel}_${rowIndex}`} data-row={rowIndex}>
                           {colLabels.map((colLabel, colIndex) => (
-                            this.state.showColAt[colIndex] &&
+                            (this.props.showAllCols || this.state.showColAt[colIndex]) &&
                             <td key={`${colLabel}_${colIndex}_${rowLabel}_${rowIndex}`}
                               className="heatmap__cell"
                               style={{backgroundColor: `rgba(${supportedColors[color].join(",")},${opacity[rowIndex][colIndex]})`}}

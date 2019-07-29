@@ -1,6 +1,9 @@
 import React from 'react';
-import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
+import { ExternalLink } from '@allenai/varnish/components';
+
+import { FormField } from '../Form';
+import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight, getHighlightColor } from '../highlight/Highlight';
@@ -16,13 +19,13 @@ const description = (
     in a text. It is an important step for a lot of higher level NLP tasks that involve natural
     language understanding such as document summarization, question answering, and information extraction.
     </span>
-    <a href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener noreferrer">{' '} End-to-end Neural Coreference Resolution ( Lee et al, 2017) {' '}</a>
+    <ExternalLink href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener">{' '} End-to-end Neural Coreference Resolution ( Lee et al, 2017) {' '}</ExternalLink>
     <span>
     is a neural model which considers all possible spans in the document as potential mentions and
     learns distributions over possible anteceedents for each span, using aggressive, learnt
     pruning strategies to retain computational efficiency. It achieved state-of-the-art accuracies on
     </span>
-    <a href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener noreferrer">{' '} the Ontonotes 5.0 dataset {' '}</a>
+    <ExternalLink href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener">{' '} the Ontonotes 5.0 dataset {' '}</ExternalLink>
     <span>
     in early 2017.
     </span>
@@ -187,12 +190,12 @@ class Output extends React.Component {
     }
 
     return (
-      <div className="model__content">
-        <div className="form__field">
+      <div className="model__content answer">
+        <FormField>
           <HighlightContainer isClicking={isClicking}>
             {spanWrapper(spanTree, 0)}
           </HighlightContainer>
-        </div>
+        </FormField>
       </div>
     );
   }

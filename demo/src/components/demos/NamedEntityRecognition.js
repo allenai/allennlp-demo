@@ -1,10 +1,13 @@
 import React from 'react';
-import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
+import { ExternalLink } from '@allenai/varnish/components';
+
+import { FormField } from '../Form';
+import { API_ROOT } from '../../api-config';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
-import { truncate } from '../DemoInput'
+import { truncateText } from '../DemoInput'
 
 // LOC, PER, ORG, MISC
 
@@ -17,23 +20,23 @@ const description = (
         (people, locations, organizations, and miscellaneous)
         in the input text. This model is the "baseline" model described in
     </span>
-    <a href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc" target="_blank" rel="noopener noreferrer">
+    <ExternalLink href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc" target="_blank" rel="noopener">
       {' '} Peters, Ammar, Bhagavatula, and Power 2017 {' '}
-    </a>
+    </ExternalLink>
     <span>
       .  It uses a Gated Recurrent Unit (GRU) character encoder as well as a GRU phrase encoder,
       and it starts with pretrained
     </span>
-    <a href = "https://nlp.stanford.edu/projects/glove/" target="_blank" rel="noopener noreferrer">{' '} GloVe vectors {' '}</a>
+    <ExternalLink href = "https://nlp.stanford.edu/projects/glove/" target="_blank" rel="noopener">{' '} GloVe vectors {' '}</ExternalLink>
     <span>
       for its token embeddings. It was trained on the
     </span>
-    <a href = "https://www.clips.uantwerpen.be/conll2003/ner/" target="_blank" rel="noopener noreferrer">{' '} CoNLL-2003 {' '}</a>
+    <ExternalLink href = "https://www.clips.uantwerpen.be/conll2003/ner/" target="_blank" rel="noopener">{' '} CoNLL-2003 {' '}</ExternalLink>
     <span>
       NER dataset. It is not state of the art on that task, but it&#39;s not terrible either.
       (This is also the model constructed in our
     </span>
-    <a href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/walk_through_allennlp/creating_a_model.md" target="_blank" rel="noopener noreferrer">{' '}Creating a Model{' '}</a>
+    <ExternalLink href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/walk_through_allennlp/creating_a_model.md" target="_blank" rel="noopener">{' '}Creating a Model{' '}</ExternalLink>
     <span>
       tutorial.)
     </span>
@@ -46,16 +49,26 @@ const descriptionEllipsed = (
   </span>
 )
 
-const nerModels = ["ner", "fine-grained-ner"]
-const nerEndpoints = {
-    "ner": "named-entity-recognition",
-    "fine-grained-ner": "fine-grained-named-entity-recognition"
-  };
+const taskModels = [
+  {
+    name: "elmo-ner",
+    desc: "Reimplementation of the NER model described in 'Deep<br/>contextualized word representations' by Peters, et. al."
+  },
+  {
+    name: "fine-grained-ner",
+    desc: "This Model identifies a broad range of 16 semantic types in the input text.<br/>This model is a reimplementation of Lample (2016) and uses a biLSTM<br/>with a CRF layer, character embeddings and ELMo embeddings. It was<br/>trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2."
+  }
+]
+
+const taskEndpoints = {
+  "elmo-ner": "named-entity-recognition",
+  "fine-grained-ner": "fine-grained-named-entity-recognition"
+};
 
 const fields = [
-    {name: "model", label: "Model", type: "SELECT", options: nerModels, optional: true},
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
-     placeholder: `E.g. "John likes and Bill hates ice cream."`}
+     placeholder: `E.g. "John likes and Bill hates ice cream."`},
+    {name: "model", label: "Model", type: "RADIO", options: taskModels, optional: true}
 ]
 
 const TokenSpan = ({ token }) => {
@@ -210,11 +223,11 @@ const Output = ({ responseData }) => {
 
     return (
       <div className="model__content model__content--ner-output">
-        <div className="form__field">
+        <FormField>
           <HighlightContainer layout="bottom-labels">
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </HighlightContainer>
-        </div>
+        </FormField>
       </div>
     )
 }
@@ -226,11 +239,11 @@ const examples = [
     "My preferred candidate is Cary Moon, but she won't be the next mayor of Seattle.",
     "If you like Paul McCartney you should listen to the first Wings album.",
     "When I told John that I wanted to move to Alaska, he warned me that I'd have trouble finding a Starbucks there."
-  ].map(sentence => ({sentence, snippet: truncate(sentence)}))
+  ].map(sentence => ({sentence, snippet: truncateText(sentence)}))
 
 const apiUrl = ({model}) => {
-    const selectedModel = model || nerModels[0]
-    const endpoint = nerEndpoints[selectedModel]
+    const selectedModel = model || (taskModels[0] && taskModels[0].name);
+    const endpoint = taskEndpoints[selectedModel]
     return `${API_ROOT}/predict/${endpoint}`
 }
 

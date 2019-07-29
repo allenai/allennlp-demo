@@ -13,11 +13,6 @@
   min-height: 34.375em;
 }
 
-.pane__horizontal {
-  display: block;
-  width: 100%;
-}
-
 .pane__left,
 .pane__right,
 .pane__top,
@@ -43,10 +38,11 @@
 }
 
 .pane__bottom.model__output--empty .placeholder {
-  min-height: 250px;
+  min-height: 40em;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 30px;
   align-items: center;
 }
 

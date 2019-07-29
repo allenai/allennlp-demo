@@ -1,15 +1,18 @@
 import React from 'react';
-import { API_ROOT } from '../../api-config';
+import { ExternalLink } from  '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
-import HeatMap from '../HeatMap'
-import Model from '../Model'
-import OutputField from '../OutputField'
 import {
   Accordion,
   AccordionItem,
   AccordionItemTitle,
   AccordionItemBody,
   } from 'react-accessible-accordion';
+
+import { API_ROOT } from '../../api-config';
+import HeatMap from '../HeatMap'
+import Model from '../Model'
+import OutputField from '../OutputField'
+
 import '../../css/TeComponent.css';
 
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
@@ -24,14 +27,14 @@ const description = (
     which can be run for any TE model you develop.
     This page demonstrates a reimplementation of
     </span>
-    <a href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27" target="_blanke" rel="noopener noreferrer">{' '} the decomposable attention model (Parikh et al, 2017) {' '}</a>
+    <ExternalLink href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27" target="_blanke" rel="noopener">{' '} the decomposable attention model (Parikh et al, 2017) {' '}</ExternalLink>
     <span>
     , which was state of the art for
     </span>
-    <a href = "https://nlp.stanford.edu/projects/snli/" target="_blank" rel="noopener noreferrer">{' '} the SNLI benchmark {' '}</a>
+    <ExternalLink href = "https://nlp.stanford.edu/projects/snli/" target="_blank" rel="noopener">{' '} the SNLI benchmark {' '}</ExternalLink>
     <span>
     (short sentences about visual scenes) in 2016.
-    Rather than pre-trained Glove vectors, this model uses <a href="https://arxiv.org/abs/1802.05365">ELMo embeddings</a>, which are completely character based and improve performance by 2%
+    Rather than pre-trained Glove vectors, this model uses <ExternalLink href="https://arxiv.org/abs/1802.05365">ELMo embeddings</ExternalLink>, which are completely character based and improve performance by 2%
     </span>
   </span>
   );
@@ -134,7 +137,7 @@ const Output = ({ responseData }) => {
   const y = (c / (a + b + c))
 
   return (
-  <div className="model__content">
+  <div className="model__content answer">
     <OutputField label="Summary">
     {summaryText}
     </OutputField>
@@ -167,7 +170,7 @@ const Output = ({ responseData }) => {
     </div>
     <OutputField label=" Model internals">
       <Accordion accordion={false}>
-        <AccordionItem>
+        <AccordionItem expanded={true}>
           <AccordionItemTitle>
             Premise to Hypothesis Attention
             <div className="accordion__arrow" role="presentation"/>

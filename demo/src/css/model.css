@@ -2,12 +2,8 @@
   background: #fff;
 }
 
-.model__output.model__output--empty {
-  background: 0 0;
-}
-
 .model__content {
-  padding: 0.875em 2.5em;
+  padding: 0.6em 2em 0.875em 2em;
   margin: auto;
   -webkit-transition: padding .2s ease, margin .2s ease;
   transition: padding .2s ease, margin .2s ease;
@@ -61,10 +57,14 @@
     margin: 0;
 }
 
+.model__content.answer {
+  padding-top: 0.9em;
+}
+
 @media screen and (max-height:800px) {
   .model__content {
-    padding-top: 1.2vh;
-    padding-bottom: 1.2vh;
+    padding-top: 0.15em;
+    padding-bottom: 0.4em;
   }
 
   .model__content__summary {

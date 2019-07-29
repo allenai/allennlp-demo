@@ -1,5 +1,12 @@
+from typing import Dict, List
+import json
+
 from allennlp.predictors import Predictor
 from allennlp.models.archival import load_archive
+
+from server.demo_model import DemoModel
+from server.gpt2 import Gpt2DemoModel
+
 # This maps from the name of the task
 # to the ``DemoModel`` indicating the location of the trained model
 # and the type of the ``Predictor``.  This is necessary, as you might
@@ -7,78 +14,39 @@ from allennlp.models.archival import load_archive
 # that have the same ``Predictor`` wrapper. The corresponding model
 # will be served at the `/predict/<name-of-task>` API endpoint.
 
-class DemoModel:
-    """
-    A demo model is determined by both an archive file
-    (representing the trained model)
-    and a choice of predictor
-    """
-    def __init__(self, archive_file: str, predictor_name: str) -> None:
-        self.archive_file = archive_file
-        self.predictor_name = predictor_name
+def load_demo_models(models_file: str,
+                     task_names: List[str] = None,
+                     model_names_only: bool = False) -> Dict[str, DemoModel]:
+    with open(models_file) as f:
+        blob = json.load(f)
 
-    def predictor(self) -> Predictor:
-        archive = load_archive(self.archive_file)
-        return Predictor.from_archive(archive, self.predictor_name)
+    # If no task names specified, load all of them
+    task_names = task_names or blob.keys()
 
-# pylint: disable=line-too-long
-MODELS = {
-        'machine-comprehension': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz',
-                'machine-comprehension'
-        ),
-        'semantic-role-labeling': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/srl-model-2018.05.25.tar.gz',
-                'semantic-role-labeling'
-        ),
-        'open-information-extraction': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz',
-                'open-information-extraction'
-        ),
-        'textual-entailment': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz',
-                'textual-entailment'
-        ),
-        'coreference-resolution': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz',
-                'coreference-resolution'
-        ),
-        'named-entity-recognition': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz',  # pylint: disable=line-too-long
-                'sentence-tagger'
-        ),
-        'fine-grained-named-entity-recognition': DemoModel(
-           'https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.12.21.tar.gz',  # pylint: disable=line-too-long
-           'sentence-tagger'
-        ),
-        'constituency-parsing': DemoModel(
-                'https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz',
-                'constituency-parser'
-        ),
-        'dependency-parsing': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz',
-                'biaffine-dependency-parser'
-        ),
-        'wikitables-parser': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/wikitables-model-2018.09.14.tar.gz',
-                'wikitables-parser'
-        ),
-        'nlvr-parser': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/nlvr-erm-model-2018-12-18.tar.gz',
-                'nlvr-parser'
-        ),
-        'event2mind': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/event2mind-2018.10.26.tar.gz',
-                'event2mind'
-        ),
-        'atis-parser': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/atis-parser-2018.11.10.tar.gz',
-                 'atis-parser'
-        ),
-        'quarel-parser-zero': DemoModel(
-            'https://s3-us-west-2.amazonaws.com/allennlp/models/quarel-parser-zero-2018.12.20.tar.gz',  # pylint: disable=line-too-long
-                 'quarel-parser'
+    # No models, so return None for everything
+    if model_names_only:
+        return {task_name: None for task_name in task_names}
 
+    # Otherwise
+    demo_models = {}
+
+    for task_name in task_names:
+        model = blob[task_name]
+        model_type = model.get("type", "allennlp")
+
+        # If ever we introduce additional model types,
+        # we'll need to add corresponding logic here.
+        if model_type == "allennlp":
+            load = DemoModel
+        elif model_type == "gpt2":
+            load = Gpt2DemoModel
+        else:
+            raise ValueError(f"unknown model type: {model_type}")
+
+        demo_models[task_name] = load(
+                    archive_file=model["archive_file"],
+                    predictor_name=model["predictor_name"],
+                    max_request_length=model["max_request_length"]
         )
-}
-# pylint: enable=line-too-long
+
+    return demo_models
