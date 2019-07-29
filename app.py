@@ -320,17 +320,6 @@ def make_app(build_dir: str,
         app.add_url_rule(f"/{model_name}/<permalink>", view_func=return_page)
 
 
-    @app.route('/', defaults={ 'path': '' })
-    @app.route('/<path:path>')
-    def static_proxy(path: str) -> Response: # pylint: disable=unused-variable
-        if os.path.isfile(os.path.join(build_dir, path)):
-            return send_from_directory(build_dir, path)
-        else:
-            # Send the index.html page back to the client as a catch-all, since
-            # we're an SPA and JavaScript acts to handle routes the server
-            # doesn't.
-            return app.send_static_file('index.html')
-
     @app.route('/static/js/<path:path>')
     def static_js_proxy(path: str) -> Response: # pylint: disable=unused-variable
         return send_from_directory(os.path.join(build_dir, 'static/js'), path)
@@ -342,6 +331,14 @@ def make_app(build_dir: str,
     @app.route('/static/media/<path:path>')
     def static_media_proxy(path: str) -> Response: # pylint: disable=unused-variable
         return send_from_directory(os.path.join(build_dir, 'static/media'), path)
+
+    @app.route('/<path:path>')
+    def static_proxy(path: str) -> Response: # pylint: disable=unused-variable
+        # Send the index.html page back to the client as a catch-all, since
+        # we're an SPA and JavaScript acts to handle routes the server
+        # doesn't.
+        return send_file(os.path.join(build_dir, 'index.html'))
+
 
     return app
 
