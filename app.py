@@ -329,7 +329,7 @@ def make_app(build_dir: str,
             # Send the index.html page back to the client as a catch-all, since
             # we're an SPA and JavaScript acts to handle routes the server
             # doesn't.
-            return app.send_static_file('index.html')
+            return send_file(os.path.join(build_dir, 'index.html'))
 
     @app.route('/static/js/<path:path>')
     def static_js_proxy(path: str) -> Response: # pylint: disable=unused-variable
