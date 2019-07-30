@@ -2,7 +2,7 @@ import React from 'react'
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Footer, ExternalLink } from '@allenai/varnish/components';
+import { Footer, ExternalLink, Body } from '@allenai/varnish/components';
 
 import { FormField, FormLabel, FormTextArea } from '../Form';
 import { API_ROOT } from '../../api-config';
@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   color: #232323;
   flex-grow: 1;
   font-size: 1em;
-  background: ${({theme}) => theme.palette.background.dark};
+  background: ${({theme}) => theme.palette.background.light};
 
   @media(max-width: 500px) {
     margin: 0;
@@ -309,12 +309,14 @@ class App extends React.Component {
           </InputOutput>
         </ModelArea>
         <Footer>
+          <Body>
             Proudly built at the <ExternalLink contrast={true} target="_blank" href="https://allenai.org">Allen Institute for Artificial Intelligence (AI2)</ExternalLink>
             {' '}using Hugging Face’s <ExternalLink contrast={true} target="_blank" href="https://github.com/huggingface/pytorch-pretrained-BERT" rel="noopener">pytorch-pretrained-BERT</ExternalLink>
             {' '}library
             {' '}| <ExternalLink contrast={true} href="https://allenai.org/privacy-policy.html">Privacy Policy</ExternalLink>
             {' '}| <ExternalLink contrast={true} href="https://allenai.org/terms.html">Terms of Use</ExternalLink>
-          </Footer>
+          </Body>
+        </Footer>
       </Wrapper>
     )
   }
