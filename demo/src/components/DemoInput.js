@@ -1,15 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Select } from '@allenai/varnish/components'
-import { Icon, Select as AntSelect, Radio } from 'antd';
+import {
+    Button,
+    Select,
+    Icon,
+    Radio,
+    RadioGroup,
+    SelectOption,
+    SelectOptGroup
+} from '@allenai/varnish/components'
 
 import BeamSearch from './BeamSearch'
 import { Tooltip } from './Shared'
 import ModelIntro from './ModelIntro'
 import '../css/Button.css'
 import { FormField, FormLabel, FormInput, FormTextArea, FormSelect } from './Form';
-
-const { Option, OptGroup } = AntSelect;
 
 const PATTERN_NON_WORD_CHAR = /\W/;
 const PATTERN_WORD_CHAR = /\w/;
@@ -198,7 +203,7 @@ class DemoInput extends React.Component {
                                 disabled={outputState === "working"}>
                             {
                                 field.options.map((value) => (
-                                    <Option key={value} value={value}>{value}</Option>
+                                    <SelectOption key={value} value={value}>{value}</SelectOption>
                                 ))
                             }
                         </FormSelect>
@@ -220,19 +225,20 @@ class DemoInput extends React.Component {
                 case "RADIO":
                     input = (
                         // If we have no value for this select, use the first option.
-                        <Radio.Group
+                        <RadioGroup
+                            vertical={true}
                             name={inputId}
                             value={this.state[field.name] || (field.options[0] && field.options[0].name)}
                             onChange={this.handleRadioChange(field.name)}
                             disabled={outputState === "working"}>
                             {
                                 field.options.map((opt) => (
-                                    <BlockRadio key={opt.name} value={opt.name}>
+                                    <Radio key={opt.name} value={opt.name}>
                                         <span data-tip={opt.desc}> {opt.name} </span>
-                                    </BlockRadio>
+                                    </Radio>
                                 ))
                             }
-                      </Radio.Group>
+                      </RadioGroup>
                     )
                     break
                 default:
@@ -257,7 +263,7 @@ class DemoInput extends React.Component {
 
 
         return (
-            <div className="model__content answer">
+            <div className="model__content">
                 <ModelIntro title={title} description={description} descriptionEllipsed={descriptionEllipsed}/>
                 <FormInstructions>
                     <span>Enter text or</span>
@@ -266,9 +272,9 @@ class DemoInput extends React.Component {
                         disabled={outputState === "working"}
                         onChange={this.handleExampleChange}
                         defaultValue="-1">
-                        <Option value="-1">Choose an example...</Option>
+                        <SelectOption value="-1">Choose an example...</SelectOption>
                         {this.normalizedExamples.map((exampleInfo, groupIndex) => {
-                            return OptionGroup(exampleInfo, groupIndex, fields)
+                            return SelectOptionGroup(exampleInfo, groupIndex, fields)
                         })}
                     </Select>
                 </FormInstructions>
@@ -287,10 +293,6 @@ class DemoInput extends React.Component {
         )
     }
 }
-
-const BlockRadio = styled(Radio)`
-  display: block;
-`;
 
 const FormInstructions = styled.div`
   margin: ${({theme}) => `${theme.spacing.md} 0 ${theme.spacing.md}`};
@@ -316,16 +318,16 @@ const RunButtonArea = styled.div`
   }
 `;
 
-function OptionGroup(exampleInfo, groupIndex, fields) {
+function SelectOptionGroup(exampleInfo, groupIndex, fields) {
   const exampleType = exampleInfo[0]
   const examples = exampleInfo[1]
   if (!exampleType || exampleType === DEFAULT_OPTION_GROUP) {
       return RenderOptions(examples, groupIndex, fields)
   } else {
       return (
-          <OptGroup label={exampleType}>
+          <SelectOptGroup label={exampleType}>
               {RenderOptions(examples, groupIndex, fields)}
-          </OptGroup>
+          </SelectOptGroup>
       )
   }
 }
@@ -334,7 +336,7 @@ function RenderOptions(examples, groupIndex, fields) {
     return examples.map((example, exampleIndex) => {
         const encodedName = encodeExampleName(groupIndex, exampleIndex)
         return (
-            <Option value={encodedName} key={encodedName}>{makeSnippet(example, fields)}</Option>
+            <SelectOption value={encodedName} key={encodedName}>{makeSnippet(example, fields)}</SelectOption>
         )
     })
 }
