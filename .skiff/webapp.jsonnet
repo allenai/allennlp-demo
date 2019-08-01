@@ -176,7 +176,8 @@ local ingress = {
             'kubernetes.io/ingress.class': 'nginx',
             'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
             'nginx.ingress.kubernetes.io/enable-cors': 'false',
-            'nginx.ingress.kubernetes.io/use-regex': 'true'
+            'nginx.ingress.kubernetes.io/use-regex': 'true',
+            'apps.allenai.org/build': std.extVar('buildId')
         }
     },
     spec: {
