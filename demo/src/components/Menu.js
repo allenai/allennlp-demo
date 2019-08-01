@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Menu as AntMenu, Icon } from 'antd';
-import { InternalLink } from '@allenai/varnish/components';
+import { Menu as AntMenu } from 'antd';
+import { InternalLink, ImgIcon } from '@allenai/varnish/components';
 
 import allenNlpLogo from './allennlp_logo.svg';
 import { modelGroups } from '../models'
@@ -19,7 +19,7 @@ export class MenuBase extends React.Component {
         {...other}
         title={
           <span>
-            <SvgIcon src={modelGroup.iconSrc} />
+            <ImgIcon src={modelGroup.iconSrc} />
             <span>{modelGroup.label}</span>
           </span>
         }>
@@ -120,13 +120,3 @@ const WrappingLink = styled(InternalLink)`
     white-space: pre-wrap;
     word-wrap: break-word;
 `;
-
-// TODO: this will eventually be exported from varnish.
-class SvgIcon extends React.PureComponent {
-  render() {
-    let {src, ...other} = this.props;
-    return (
-      <Icon {...other} component={() => <img src={src} />} />
-    );
-  }
-}
