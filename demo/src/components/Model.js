@@ -42,10 +42,11 @@ class Model extends React.Component {
         // We'll pass the request and response data along as part of the location object
         // so that the `Demo` component can use them to re-render.
         const location = {
-          pathname: newPath,
-          state: { requestData: inputs, responseData: json }
+          pathname: newPath
         }
-        this.props.history.push(location);
+        this.props.history.push(location)
+        // requestData, responseData
+        this.props.updateData(inputs, json)
       }).catch((error) => {
         this.setState({outputState: "error"});
         console.error(error);

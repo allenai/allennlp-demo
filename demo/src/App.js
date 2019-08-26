@@ -59,17 +59,7 @@ class Demo extends React.Component {
       this.setState({requestData: null, responseData: null})
     }
 
-    // Our components will be using history.push to change the location,
-    // and they will be attaching any `requestData` and `responseData` updates
-    // to the location object. That means we need to listen for location changes
-    // and update our state accordingly.
-    props.history.listen((location, action) => {
-      const { state } = location;
-      if (state) {
-        const { requestData, responseData } = state;
-        this.setState({requestData, responseData})
-      }
-    });
+    this.updateData = (requestData, responseData) => this.setState({requestData, responseData})
   }
 
   // We also need to update the state whenever we receive new props from React router.
@@ -115,7 +105,7 @@ class Demo extends React.Component {
         return (<WaitingForPermalink/>)
       } else if (modelComponents[selectedModel]) {
           // This is a model we know the component for, so render it.
-          return React.createElement(modelComponents[selectedModel], {requestData, responseData, selectedModel})
+          return React.createElement(modelComponents[selectedModel], {requestData, responseData, selectedModel, updateData: this.updateData})
       } else if (selectedModel === "user-models") {
         const modelRequest = "User Contributed Models"
         const modelDescription = (
