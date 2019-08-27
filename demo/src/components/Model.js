@@ -11,9 +11,7 @@ class Model extends React.Component {
       const { requestData, responseData } = props;
 
       this.state = {
-        outputState: responseData ? "received" : "empty", // valid values: "working", "empty", "received", "error"
-        requestData: requestData,
-        responseData: responseData
+        outputState: responseData ? "received" : "empty" // valid values: "working", "empty", "received", "error"
       };
 
       this.runModel = this.runModel.bind(this)
@@ -44,9 +42,21 @@ class Model extends React.Component {
         const location = {
           pathname: newPath
         }
+
         this.props.updateData(inputs, json)
-        this.props.history.push(location)
+        //
         // requestData, responseData
+
+        if (window.frameElement) {
+          // Based on http://www.awongcm.io/blog/2018/11/25/using-iframes-api-to-toggle-client-side-routing-of-react-router-for-legacy-web-apps/
+          window.frameElement.ownerDocument.defaultView.history.pushState({}, '', newPath)
+        } else {
+          // This is not in an iframe, so just push the location
+          this.props.history.push(location)
+        }
+
+        this.setState({outputState: "received"})
+
       }).catch((error) => {
         this.setState({outputState: "error"});
         console.error(error);
@@ -54,8 +64,9 @@ class Model extends React.Component {
     }
 
     render() {
-        const { title, description, descriptionEllipsed, examples, fields, selectedModel, Output } = this.props;
-        const { requestData, responseData, outputState } = this.state;
+
+        const { title, description, descriptionEllipsed, examples, fields, selectedModel, Output, requestData, responseData } = this.props;
+        const { outputState } = this.state;
 
         const demoInput = <DemoInput selectedModel={selectedModel}
                                      title={title}
@@ -68,7 +79,8 @@ class Model extends React.Component {
                                      outputState={outputState}
                                      runModel={this.runModel}/>
 
-        const demoOutput = requestData && responseData ? <Output {...this.state}/> : null
+        const outputProps = {...this.state, requestData, responseData}
+        const demoOutput = requestData && responseData ? <Output {...outputProps}/> : null
 
         return (
             <Wrapper className="pane__horizontal model">

@@ -79,7 +79,7 @@ const modelGroups = [
     }
 ]
 
-// Create mapping model => component
+// Create mappings model => component
 let modelComponents = {}
 modelGroups.forEach((mg) => mg.models.forEach(({model, component}) => modelComponents[model] = component));
 

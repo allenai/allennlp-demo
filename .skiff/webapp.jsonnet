@@ -312,6 +312,7 @@ local DEFAULT_MEMORY = "1Gi";
 
 local get_cpu(model_name) = if std.objectHas(models[model_name], "cpu") then models[model_name]["cpu"] else DEFAULT_CPU;
 local get_memory(model_name) = if std.objectHas(models[model_name], "memory") then models[model_name]["memory"] else DEFAULT_MEMORY;
+local get_image(model_name) = if std.objectHas(models[model_name], "image") then models[model_name]["image"] else image;
 
 local model_deployment(model_name) = {
     apiVersion: 'extensions/v1beta1',
@@ -334,7 +335,7 @@ local model_deployment(model_name) = {
                 containers: [
                     {
                         name: model_name,
-                        image: image,
+                        image: get_image(model_name),
                         args: [ '--model', model_name ],
                         readinessProbe: readinessProbe,
                         resources: {

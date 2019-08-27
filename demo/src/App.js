@@ -42,32 +42,32 @@ const App = () => (
   </ThemeProvider>
 )
 
+// This is the top-level demo component.
+// It handles the chrome for header and menus,
+// and it renders the specific task in an iframe.
 const Demo = (props) => {
-  const [requestData, setRequestData] = useState(null)
-  const [responseData, setResponseData] = useState(null)
-
-  const clearData = () => {
-    setRequestData(null)
-    setResponseData(null)
-  }
-
-  const updateData = (requestData, responseData) => {
-    setRequestData(requestData)
-    setResponseData(responseData)
-  }
-
   const { model } = props.match.params
 
   return (
     <React.Fragment>
       <Header alwaysVisible={true} />
       <div className="pane-container">
-        <Menu selectedModel={model} clearData={clearData}/>
-        <SingleTaskDemo {...props} requestData={requestData} responseData={responseData} updateData={updateData}/>
+        <Menu selectedModel={model} clearData={() => {}}/>
+        <SingleTaskFrame {...props}/>
       </div>
     </React.Fragment>
   )
 }
+
+// Load the task in an iframe
+const SingleTaskFrame = (props) => {
+  const { model, slug } = props.match.params
+  const maybeSlug = slug ? `/${slug}` : ''
+  const url = `/task/${model}${maybeSlug}`
+
+  return <iframe src={url} style={{width: "100%"}}/>
+}
+
 
 class SingleTaskDemo extends React.Component {
   constructor(props) {
@@ -78,7 +78,9 @@ class SingleTaskDemo extends React.Component {
 
     this.state = {
       slug,
-      selectedModel: model
+      selectedModel: model,
+      requestData: null,
+      responseData: null
     }
   }
 
@@ -108,7 +110,7 @@ class SingleTaskDemo extends React.Component {
         return response.json();
       }).then((json) => {
         const { requestData, responseData } = json;
-        this.props.updateData({requestData, responseData});
+        this.setState({requestData, responseData});
       }).catch((error) => {
         this.setState({outputState: "error"});
         console.error(error);
@@ -117,8 +119,8 @@ class SingleTaskDemo extends React.Component {
   }
 
   render() {
-    const { slug, selectedModel } = this.state;
-    const { requestData, responseData, updateData } = this.props
+    const { slug, selectedModel, requestData, responseData } = this.state;
+    const updateData = (requestData, responseData) => this.setState({requestData, responseData})
 
     if (slug && !responseData) {
       // We're still waiting for permalink data, so just return the placeholder component.
