@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@allenai/varnish/theme';
 import { Header, ExternalLink } from '@allenai/varnish/components';
 
@@ -30,36 +30,57 @@ const App = () => (
   <ThemeProvider>
     <Router>
         <BlockOverflow>
-          <Route exact path="/" render={() => (
-            <Redirect to={DEFAULT_PATH}/>
-          )}/>
-          <Route path="/:model/:slug?" component={Demo}/>
+          <Switch>
+            <Route exact path="/" render={() => (
+              <Redirect to={DEFAULT_PATH}/>
+            )}/>
+            <Route path="/nochrome/:model/:slug?"
+                   render={(routeProps) => <Demo {...routeProps}/>}/>
+            <Route path="/:model/:slug?" component={DemoChrome}/>
+          </Switch>
         </BlockOverflow>
     </Router>
   </ThemeProvider>
 )
+
+const DemoChrome = (props) => {
+  const [requestData, setRequestData] = useState(null)
+  const [responseData, setResponseData] = useState(null)
+
+  const clearData = () => {
+    setRequestData(null)
+    setResponseData(null)
+  }
+
+  const updateData = (requestData, responseData) => {
+    setRequestData(requestData)
+    setResponseData(responseData)
+  }
+
+  const { model } = props.match.params
+
+  return (
+    <React.Fragment>
+      <Header alwaysVisible={true} />
+      <div className="pane-container">
+        <Menu selectedModel={model} clearData={clearData}/>
+        <Demo {...props} requestData={requestData} responseData={responseData} updateData={updateData}/>
+      </div>
+    </React.Fragment>
+  )
+}
 
 class Demo extends React.Component {
   constructor(props) {
     super(props);
 
     // React router supplies us with a model name and (possibly) a slug.
-    const { model, slug } = props.match.params;
+    const { model, slug } = props.match.params
 
     this.state = {
-      slug: slug,
-      selectedModel: model,
-      requestData: null,
-      responseData: null,
-    };
-
-    // We'll need to pass this to the Header component so that it can clear
-    // out the data when you switch from one model to another.
-    this.clearData = () => {
-      this.setState({requestData: null, responseData: null})
+      slug,
+      selectedModel: model
     }
-
-    this.updateData = (requestData, responseData) => this.setState({requestData, responseData})
   }
 
   // We also need to update the state whenever we receive new props from React router.
@@ -88,7 +109,7 @@ class Demo extends React.Component {
         return response.json();
       }).then((json) => {
         const { requestData, responseData } = json;
-        this.setState({requestData, responseData});
+        this.props.updateData({requestData, responseData});
       }).catch((error) => {
         this.setState({outputState: "error"});
         console.error(error);
@@ -97,7 +118,8 @@ class Demo extends React.Component {
   }
 
   render() {
-    const { slug, selectedModel, requestData, responseData } = this.state;
+    const { slug, selectedModel } = this.state;
+    const { requestData, responseData, updateData } = this.props
 
     const ModelComponent = () => {
       if (slug && !responseData) {
@@ -105,7 +127,7 @@ class Demo extends React.Component {
         return (<WaitingForPermalink/>)
       } else if (modelComponents[selectedModel]) {
           // This is a model we know the component for, so render it.
-          return React.createElement(modelComponents[selectedModel], {requestData, responseData, selectedModel, updateData: this.updateData})
+          return React.createElement(modelComponents[selectedModel], {requestData, responseData, selectedModel, updateData})
       } else if (selectedModel === "user-models") {
         const modelRequest = "User Contributed Models"
         const modelDescription = (
@@ -135,17 +157,7 @@ class Demo extends React.Component {
       }
     }
 
-    return (
-      <React.Fragment>
-        <Header alwaysVisible={true} />
-        <div className="pane-container">
-          <Menu
-            selectedModel={selectedModel}
-            clearData={this.clearData}/>
-          <ModelComponent />
-        </div>
-      </React.Fragment>
-    );
+    return <ModelComponent/>
   }
 }
 

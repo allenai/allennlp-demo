@@ -44,9 +44,9 @@ class Model extends React.Component {
         const location = {
           pathname: newPath
         }
+        this.props.updateData(inputs, json)
         this.props.history.push(location)
         // requestData, responseData
-        this.props.updateData(inputs, json)
       }).catch((error) => {
         this.setState({outputState: "error"});
         console.error(error);
