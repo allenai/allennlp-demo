@@ -155,8 +155,9 @@ local cloudsql_volumes = [
     }
 ];
 
-// Generate the ingress path entry for the given model
-local predict_path(model_name) = {
+// The backend for each model is served at /predict/{model_name} (in its own service)
+// so we need to generate an ingress path entry that points that path to that service.
+local backend_path(model_name) = {
     path: '/predict/' + model_name,
     backend: {
         serviceName: fullyQualifiedName + '-' + model_name,
@@ -164,14 +165,28 @@ local predict_path(model_name) = {
     },
 };
 
-// Generate the ingress path entry for the given model
-local task_path(model_name) = {
+//
+local permadata_path(model_name) = {
+    path: '/permadata/' + model_name,
+    backend: {
+        serviceName: fullyQualifiedName + '-' + model_name,
+        servicePort: config.httpPort
+    },
+};
+
+// The (chromeless) front-end for each model is served at /task/{model_name} (in its own service)
+// so we need to generate an ingress path entry that points that path to that service.
+// TODO: allow the front-end and the back-end to be different services?
+local frontend_path(model_name) = {
+    // Ugly regex because there might be a permalink or there might not
     path: '/task/' + model_name + "(/[.*])?",
     backend: {
         serviceName: fullyQualifiedName + '-' + model_name,
         servicePort: config.httpPort
     },
 };
+
+
 
 
 local ingress = {
@@ -202,10 +217,10 @@ local ingress = {
                 host: host,
                 http: {
                     paths: [
-                        predict_path(model_name)
+                        backend_path(model_name)
                         for model_name in model_names
                     ] + [
-                        task_path(model_name)
+                        frontend_path(model_name)
                         for model_name in model_names
                     ] + [
                         {

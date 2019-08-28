@@ -136,8 +136,8 @@ def make_app(build_dir: str,
     def index() -> Response: # pylint: disable=unused-variable
         return send_file(os.path.join(build_dir, 'index.html'))
 
-    @app.route('/permadata', methods=['POST', 'OPTIONS'])
-    def permadata() -> Response:  # pylint: disable=unused-variable
+    @app.route('/permadata/<model_name>', methods=['POST', 'OPTIONS'])
+    def permadata(model_name: str) -> Response:  # pylint: disable=unused-variable
         """
         If the user requests a permalink, the front end will POST here with the payload
             { slug: slug }

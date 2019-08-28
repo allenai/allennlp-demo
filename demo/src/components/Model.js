@@ -8,7 +8,7 @@ class Model extends React.Component {
     constructor(props) {
       super(props);
 
-      const { requestData, responseData } = props;
+      const { responseData } = props;
 
       this.state = {
         outputState: responseData ? "received" : "empty" // valid values: "working", "empty", "received", "error"

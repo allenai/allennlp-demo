@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@allenai/varnish/theme';
@@ -65,7 +65,7 @@ const SingleTaskFrame = (props) => {
   const maybeSlug = slug ? `/${slug}` : ''
   const url = `/task/${model}${maybeSlug}`
 
-  return <iframe src={url} style={{width: "100%"}}/>
+  return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%"}}/>
 }
 
 
@@ -94,12 +94,13 @@ class SingleTaskDemo extends React.Component {
   // for a permalink.
   componentDidMount() {
     const { slug, responseData } = this.state;
+    const { model } = this.props.match.params
 
     // If this is a permalink and we don't yet have the data for it...
     if (slug && !responseData) {
       // Make an ajax call to get the permadata,
       // and then use it to update the state.
-      fetch(`${API_ROOT}/permadata`, {
+      fetch(`${API_ROOT}/permadata/${model}`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
