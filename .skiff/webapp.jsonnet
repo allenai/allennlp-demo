@@ -164,6 +164,16 @@ local predict_path(model_name) = {
     },
 };
 
+// Generate the ingress path entry for the given model
+local task_path(model_name) = {
+    path: '/task/' + model_name + "(/[.*])?",
+    backend: {
+        serviceName: fullyQualifiedName + '-' + model_name,
+        servicePort: config.httpPort
+    },
+};
+
+
 local ingress = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Ingress',
@@ -193,6 +203,9 @@ local ingress = {
                 http: {
                     paths: [
                         predict_path(model_name)
+                        for model_name in model_names
+                    ] + [
+                        task_path(model_name)
                         for model_name in model_names
                     ] + [
                         {
@@ -312,6 +325,10 @@ local DEFAULT_MEMORY = "1Gi";
 
 local get_cpu(model_name) = if std.objectHas(models[model_name], "cpu") then models[model_name]["cpu"] else DEFAULT_CPU;
 local get_memory(model_name) = if std.objectHas(models[model_name], "memory") then models[model_name]["memory"] else DEFAULT_MEMORY;
+
+// A model can specify its own docker image. It needs to run a server on config.port
+// that serves up the model at /predict/{model_name}
+// and that serves up the front-end at /task/{model_name}
 local get_image(model_name) = if std.objectHas(models[model_name], "image") then models[model_name]["image"] else image;
 
 local model_deployment(model_name) = {
