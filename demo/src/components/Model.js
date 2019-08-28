@@ -2,7 +2,9 @@ import React from 'react'
 import styled from 'styled-components';
 
 import { PaneTop, PaneBottom } from './Pane'
+import ModelIntro from './ModelIntro';
 import DemoInput from './DemoInput'
+import { Tabs } from "antd";
 
 class Model extends React.Component {
     constructor(props) {
@@ -53,13 +55,10 @@ class Model extends React.Component {
     }
 
     render() {
-        const { title, description, descriptionEllipsed, examples, fields, selectedModel, Output } = this.props;
+        const { title, description, descriptionEllipsed, examples, fields, selectedModel, Output, usage } = this.props;
         const { requestData, responseData, outputState } = this.state;
 
         const demoInput = <DemoInput selectedModel={selectedModel}
-                                     title={title}
-                                     description={description}
-                                     descriptionEllipsed={descriptionEllipsed}
                                      examples={examples}
                                      fields={fields}
                                      inputState={requestData}
@@ -69,9 +68,28 @@ class Model extends React.Component {
 
         const demoOutput = requestData && responseData ? <Output {...this.state}/> : null
 
+        const tabs = [ demoInput, usage ].filter(tabContent => tabContent !== undefined);
+
         return (
             <Wrapper className="pane__horizontal model">
-                <PaneTop>{demoInput}</PaneTop>
+                <PaneTop>
+                  <div className="model__content">
+                    <ModelIntro
+                      title={title}
+                      description={description}
+                      descriptionEllipsed={descriptionEllipsed}/>
+                    {tabs.length > 1 ? (
+                      <Tabs defaultActiveKey="demo">
+                        <Tabs.TabPane tab="Demo" key="demo">
+                          {demoInput}
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Usage" key="usage">
+                          {usage}
+                        </Tabs.TabPane>
+                      </Tabs>
+                    ) : demoInput}
+                  </div>
+                </PaneTop>
                 <PaneBottom outputState={outputState}>{demoOutput}</PaneBottom>
             </Wrapper>
         )
