@@ -223,6 +223,9 @@ local ingress = {
                         frontend_path(model_name)
                         for model_name in model_names
                     ] + [
+                        permadata_path(model_name)
+                        for model_name in model_names
+                    ] + [
                         {
                             backend: {
                                 serviceName: fullyQualifiedName,
