@@ -8,6 +8,7 @@ import Model from '../Model'
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight, getHighlightColor } from '../highlight/Highlight';
 import { UsageSection } from '../UsageSection';
+import { UsageHeader } from '../UsageHeader';
 import { CodeSnippet } from '../CodeSnippet';
 
 const apiUrl = () => `${API_ROOT}/predict/coreference-resolution`
@@ -218,13 +219,13 @@ const examples = [
 const usage = (
   <React.Fragment>
     <UsageSection>
-      <h3>Prediction</h3>
-      <h5>On the command line (bash):</h5>
+      <UsageHeader>Prediction</UsageHeader>
+      <strong>On the command line (bash):</strong>
       <CodeSnippet language="bash">
         {`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
 allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz -`}
       </CodeSnippet>
-      <h5>As a library (Python):</h5>
+      <strong>As a library (Python):</strong>
       <CodeSnippet language="python">
         {`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
@@ -234,7 +235,7 @@ predictor.predict(
       </CodeSnippet>
     </UsageSection>
     <UsageSection>
-      <h3>Evaluation</h3>
+      <UsageHeader>Evaluation</UsageHeader>
       <p>
         The Coreference model was evaluated on the CoNLL 2012 dataset.
         Unfortunately we cannot release this data due to licensing restrictions by the LDC.
@@ -243,7 +244,7 @@ predictor.predict(
       </p>
     </UsageSection>
     <UsageSection>
-      <h3>Training</h3>
+      <UsageHeader>Training</UsageHeader>
       <p>
         The Coreference model was evaluated on the CoNLL 2012 dataset.
         Unfortunately we cannot release this data due to licensing restrictions by the LDC.

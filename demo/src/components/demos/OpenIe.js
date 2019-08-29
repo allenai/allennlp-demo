@@ -7,6 +7,7 @@ import Model from '../Model'
 import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
 import { UsageSection } from '../UsageSection';
+import { UsageHeader } from '../UsageHeader';
 import { CodeSnippet } from '../CodeSnippet';
 
 const title = "Open Information Extraction";
@@ -254,13 +255,13 @@ const apiUrl = () => `${API_ROOT}/predict/open-information-extraction`
 const usage = (
   <React.Fragment>
     <UsageSection>
-      <h3>Prediction</h3>
-      <h5>On the command line (bash):</h5>
+      <UsageHeader>Prediction</UsageHeader>
+      <strong>On the command line (bash):</strong>
       <CodeSnippet language="bash">
           {`echo '{"sentence": "John decided to run for office next month."}' | \\
 allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz - --predictor=open-information-extraction`}
       </CodeSnippet>
-      <h5>As a library (Python):</h5>
+      <strong>As a library (Python):</strong>
       <CodeSnippet language="python">
           {`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz")
@@ -270,7 +271,7 @@ predictor.predict(
       </CodeSnippet>
     </UsageSection>
     <UsageSection>
-      <h3>Evaluation</h3>
+      <UsageHeader>Evaluation</UsageHeader>
       <p>
         The Open Information extractor was evaluated on the OIE2016 corpus.
         Unfortunately we cannot release this data due to licensing restrictions by the LDC.
@@ -279,7 +280,7 @@ predictor.predict(
       </p>
     </UsageSection>
     <UsageSection>
-      <h3>Training</h3>
+      <UsageHeader>Training</UsageHeader>
       <p>
         The Open Information extractor was evaluated on the OIE2016 corpus.
         Unfortunately we cannot release this data due to licensing restrictions by the LDC.

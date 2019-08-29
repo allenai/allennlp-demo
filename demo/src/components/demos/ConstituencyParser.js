@@ -6,6 +6,7 @@ import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import { Tree } from 'hierplane';
 import { UsageSection } from '../UsageSection';
+import { UsageHeader } from '../UsageHeader';
 import { CodeSnippet } from '../CodeSnippet';
 
 const title = "Constituency Parsing";
@@ -62,13 +63,13 @@ const apiUrl = () => `${API_ROOT}/predict/constituency-parsing`
 const usage = (
   <React.Fragment>
     <UsageSection>
-      <h3>Prediction</h3>
-      <h5>On the command line (bash):</h5>
+      <UsageHeader>Prediction</UsageHeader>
+      <strong>On the command line (bash):</strong>
       <CodeSnippet language="bash">
         {`echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
 allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz -`}
       </CodeSnippet>
-      <h5>As a library (Python):</h5>
+      <strong>As a library (Python):</strong>
       <CodeSnippet language="python">
         {`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/elmo-constituency-parser-2018.03.14.tar.gz")
@@ -78,14 +79,14 @@ predictor.predict(
       </CodeSnippet>
     </UsageSection>
     <UsageSection>
-      <h3>Evaluation</h3>
+      <UsageHeader>Evaluation</UsageHeader>
       <p>
         The NER model was evaluated on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
         dataset. Unfortunately we cannot release this data due to licensing restrictions.
       </p>
     </UsageSection>
     <UsageSection>
-      <h3>Training</h3>
+      <UsageHeader>Training</UsageHeader>
       <p>
         The NER model was trained on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset. Unfortunately we cannot release this data due to licensing restrictions.
       </p>
