@@ -9,7 +9,8 @@ import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight, getHighlightColor } from '../highlight/Highlight';
 import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
-import { CodeSnippet } from '../CodeSnippet';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 const apiUrl = () => `${API_ROOT}/predict/coreference-resolution`
 
@@ -221,14 +222,22 @@ const usage = (
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
-      <CodeSnippet language="bash" code={`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz -`} />
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
+  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz -`} />
+        </SyntaxHighlight>
+      </UsageCode>
       <strong>As a library (Python):</strong>
-      <CodeSnippet language="python" code={`from allennlp.predictors.predictor import Predictor
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
 predictor.predict(
   document="The woman reading a newspaper sat on the bench with her dog."
-)`} />
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
     </UsageSection>
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>

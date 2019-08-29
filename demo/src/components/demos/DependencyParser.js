@@ -7,7 +7,9 @@ import Model from '../Model'
 import { Tree } from 'hierplane';
 import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
-import { CodeSnippet } from '../CodeSnippet';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
+
 
 const title = "Dependency Parsing";
 
@@ -65,14 +67,22 @@ const usage = (
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
-      <CodeSnippet language="bash" code={`echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz -`} />
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
+  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz -`} />
+        </SyntaxHighlight>
+      </UsageCode>
       <strong>As a library (Python):</strong>
-      <CodeSnippet language="python" code={`from allennlp.predictors.predictor import Predictor
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz")
 predictor.predict(
   sentence="If I bring 10 dollars tomorrow, can you buy me lunch?"
-)`} />
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
     </UsageSection>
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>

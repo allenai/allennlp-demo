@@ -9,7 +9,8 @@ import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
 import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
-import { CodeSnippet } from '../CodeSnippet';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 const title = "Semantic Role Labeling"
 
@@ -268,14 +269,22 @@ const usage = (
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
-      <CodeSnippet language="bash" code={`echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz -`} />
+      <UsageCode>
+          <SyntaxHighlight language="bash">
+          {`echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
+  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz -`}
+        </SyntaxHighlight>
+      </UsageCode>
       <strong>As a library (Python):</strong>
-      <CodeSnippet language="python" code={`from allennlp.predictors.predictor import Predictor
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz")
 predictor.predict(
   sentence="Did Uriah honestly think he could beat the game in under three hours?"
-)`} />
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
     </UsageSection>
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>

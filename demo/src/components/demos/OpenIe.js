@@ -8,7 +8,8 @@ import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
 import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
-import { CodeSnippet } from '../CodeSnippet';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 const title = "Open Information Extraction";
 
@@ -257,14 +258,22 @@ const usage = (
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
-      <CodeSnippet language="bash" code={`echo '{"sentence": "John decided to run for office next month."}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz - --predictor=open-information-extraction`} />
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{"sentence": "John decided to run for office next month."}' | \\
+  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz - --predictor=open-information-extraction`} />
+        </SyntaxHighlight>
+      </UsageCode>
       <strong>As a library (Python):</strong>
-      <CodeSnippet language="python" code={`from allennlp.predictors.predictor import Predictor
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz")
 predictor.predict(
   sentence="John decided to run for office next month."
 )`} />
+        </SyntaxHighlight>
+      </UsageCode>
     </UsageSection>
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>
