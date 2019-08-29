@@ -12,6 +12,8 @@ import { API_ROOT } from '../../api-config';
 import HeatMap from '../HeatMap'
 import Model from '../Model'
 import OutputField from '../OutputField'
+import { UsageSection } from '../UsageSection';
+import { CodeSnippet } from '../CodeSnippet';
 
 import '../../css/TeComponent.css';
 
@@ -225,6 +227,44 @@ const examples = [
   },
 ]
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <h3>Prediction</h3>
+      <h5>On the command line (bash):</h5>
+      <CodeSnippet language="bash">
+        {`echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz -`}
+      </CodeSnippet>
+      <h5>As a library (Python):</h5>
+      <CodeSnippet language="python">
+        {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz")
+predictor.predict(
+  hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
+  premise="Two women are wandering along the shore drinking iced tea."
+)`}
+      </CodeSnippet>
+    </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <CodeSnippet langauge="bash">
+        {`allennlp evaluate \\
+  https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz \\
+  https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`}
+      </CodeSnippet>
+      <p>
+      </p>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <CodeSnippet langauge="bash">
+        allennlp train training_config/decomposable_attention.jsonnet -s output_path
+      </CodeSnippet>
+    </UsageSection>
+  </React.Fragment>
+)
+
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

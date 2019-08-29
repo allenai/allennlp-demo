@@ -7,6 +7,8 @@ import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
+import { UsageSection } from '../UsageSection';
+import { CodeSnippet } from '../CodeSnippet';
 
 const title = "Semantic Role Labeling"
 
@@ -260,6 +262,41 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <h3>Prediction</h3>
+      <h5>On the command line (bash):</h5>
+      <CodeSnippet language="bash">
+        {`echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz -`}
+      </CodeSnippet>
+      <h5>As a library (Python):</h5>
+      <CodeSnippet language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz")
+predictor.predict(
+  sentence="Did Uriah honestly think he could beat the game in under three hours?"
+)`}
+      </CodeSnippet>
+    </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <p>
+        The NER model was evaluated on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
+        dataset. Unfortunately we cannot release this data due to licensing restrictions.
+      </p>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <p>
+        The NER model was trained on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset. Unfortunately we cannot release this data due to licensing restrictions.
+      </p>
+    </UsageSection>
+  </React.Fragment>
+)
+
+
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

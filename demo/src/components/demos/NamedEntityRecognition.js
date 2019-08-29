@@ -261,7 +261,7 @@ const usage = (
       </CodeSnippet>
       <h5>As a library (Python):</h5>
       <CodeSnippet language="python">
-          {`from allennlp.predictors.predictor import Predictor
+        {`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz")
 predictor.predict(
   sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"

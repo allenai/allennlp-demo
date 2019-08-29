@@ -7,6 +7,8 @@ import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight, getHighlightColor } from '../highlight/Highlight';
+import { UsageSection } from '../UsageSection';
+import { CodeSnippet } from '../CodeSnippet';
 
 const apiUrl = () => `${API_ROOT}/predict/coreference-resolution`
 
@@ -213,6 +215,45 @@ const examples = [
     }
   ]
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <h3>Prediction</h3>
+      <h5>On the command line (bash):</h5>
+      <CodeSnippet language="bash">
+        {`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz -`}
+      </CodeSnippet>
+      <h5>As a library (Python):</h5>
+      <CodeSnippet language="python">
+        {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
+predictor.predict(
+  document="The woman reading a newspaper sat on the bench with her dog."
+)`}
+      </CodeSnippet>
+    </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <p>
+        The Coreference model was evaluated on the CoNLL 2012 dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        To compile the data in the right format for evaluating the Coreference model, please see scripts/compile_coref_data.sh.
+        This script requires the Ontonotes 5.0 dataset, available on <a href="https://catalog.ldc.upenn.edu/ldc2013t19">the LDC website</a>.
+      </p>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <p>
+        The Coreference model was evaluated on the CoNLL 2012 dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        To compile the data in the right format for evaluating the Coreference model, please see scripts/compile_coref_data.sh.
+        This script requires the Ontonotes 5.0 dataset, available on <a href="https://catalog.ldc.upenn.edu/ldc2013t19">the LDC website</a>.
+      </p>
+    </UsageSection>
+  </React.Fragment>
+)
+
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

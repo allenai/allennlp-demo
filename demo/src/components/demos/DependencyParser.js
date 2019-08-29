@@ -5,6 +5,8 @@ import { withRouter } from 'react-router-dom';
 import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import { Tree } from 'hierplane';
+import { UsageSection } from '../UsageSection';
+import { CodeSnippet } from '../CodeSnippet';
 
 const title = "Dependency Parsing";
 
@@ -57,6 +59,43 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/dependency-parsing`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <h3>Prediction</h3>
+      <h5>On the command line (bash):</h5>
+      <CodeSnippet language="bash">
+        {`echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz -`}
+      </CodeSnippet>
+      <h5>As a library (Python):</h5>
+      <CodeSnippet language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz")
+predictor.predict(
+  sentence="If I bring 10 dollars tomorrow, can you buy me lunch?"
+)`}
+      </CodeSnippet>
+    </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <p>
+        The dependency parser was evaluated on the Penn Tree Bank dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can download the PTB data from <a href="https://catalog.ldc.upenn.edu/ldc99t42">the LDC website</a>.
+      </p>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <p>
+        The dependency parser was evaluated on the Penn Tree Bank dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can download the PTB data from <a href="https://catalog.ldc.upenn.edu/ldc99t42">the LDC website</a>.
+      </p>
+    </UsageSection>
+  </React.Fragment>
+)
+
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
