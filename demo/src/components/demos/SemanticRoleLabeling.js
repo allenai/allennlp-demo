@@ -289,14 +289,18 @@ predictor.predict(
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>
       <p>
-        The NER model was evaluated on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
-        dataset. Unfortunately we cannot release this data due to licensing restrictions.
+        The SRL model was evaluated on the CoNLL 2012 dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can put together evaluation data yourself by following the CoNLL 2012 <a href="http://conll.cemantix.org/2012/data.html">instructions for working with the data</a>.
       </p>
     </UsageSection>
     <UsageSection>
       <UsageHeader>Training</UsageHeader>
       <p>
-        The NER model was trained on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset. Unfortunately we cannot release this data due to licensing restrictions.
+        The SRL model was evaluated on the CoNLL 2012 dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can put together evaluation data yourself by following the CoNLL 2012 instructions for working with the data.
+        Once you have compiled the dataset, you can use the configuration file at <a href="https://github.com/allenai/allennlp/blob/master/training_config/semantic_role_labeler.jsonnet">training_config/semantic_role_labeler.jsonnet</a> to train.
       </p>
     </UsageSection>
   </React.Fragment>

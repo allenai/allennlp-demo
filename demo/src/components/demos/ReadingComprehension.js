@@ -11,6 +11,8 @@ import Model from '../Model'
 import OutputField from '../OutputField'
 import { API_ROOT } from '../../api-config';
 import { truncateText } from '../DemoInput'
+import { UsageSection } from '../UsageSection';
+import { CodeSnippet } from '../CodeSnippet';
 
 const title = "Reading Comprehension"
 
@@ -446,6 +448,42 @@ const apiUrl = ({model}) => {
   return `${API_ROOT}/predict/${endpoint}`
 }
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <h3>Prediction</h3>
+      <h5>On the command line (bash):</h5>
+      <CodeSnippet language="bash">
+        {`echo '{"passage": "The Matrix is a 1999 science fiction action film written and directed by The Wachowskis, starring Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.", "question": "Who stars in The Matrix?"}' | \\
+allennlp predict https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz -`}
+      </CodeSnippet>
+      <h5>As a library (Python):</h5>
+      <CodeSnippet language="python">
+        {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz")
+predictor.predict(
+  passage="The Matrix is a 1999 science fiction action film written and directed by The Wachowskis, starring Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+  question="Who stars in The Matrix?"
+)`}
+      </CodeSnippet>
+    </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <CodeSnippet language="python">
+        {`allennlp evaluate \\
+  https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz \\
+  https://s3-us-west-2.amazonaws.com/allennlp/datasets/squad/squad-dev-v1.1.json`}
+      </CodeSnippet>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <CodeSnippet language="python">
+        allennlp train training_config/bidaf.jsonnet -s output_path
+      </CodeSnippet>
+    </UsageSection>
+  </React.Fragment>
+)
+
+const modelProps = {apiUrl, title, description, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

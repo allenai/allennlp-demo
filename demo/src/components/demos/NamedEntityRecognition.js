@@ -259,8 +259,7 @@ const usage = (
       <UsageCode>
         <SyntaxHighlight language="bash">
           {`echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
-  allennlp predict \\
-  https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz -`}
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz -`}
         </SyntaxHighlight>
       </UsageCode>
       <strong>As a library (Python):</strong>

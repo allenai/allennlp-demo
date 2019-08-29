@@ -86,14 +86,17 @@ predictor.predict(
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>
       <p>
-        The NER model was evaluated on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
-        dataset. Unfortunately we cannot release this data due to licensing restrictions.
+        The constituency parser was evaluated on the Penn Tree Bank dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can download the PTB data from <a href="https://catalog.ldc.upenn.edu/ldc99t42">the LDC website</a>.
       </p>
     </UsageSection>
     <UsageSection>
       <UsageHeader>Training</UsageHeader>
       <p>
-        The NER model was trained on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset. Unfortunately we cannot release this data due to licensing restrictions.
+        The constituency parser was evaluated on the Penn Tree Bank dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can download the PTB data from <a href="https://catalog.ldc.upenn.edu/ldc99t42">the LDC website</a>.
       </p>
     </UsageSection>
   </React.Fragment>
