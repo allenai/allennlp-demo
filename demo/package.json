@@ -8,6 +8,7 @@
     "hierplane": "^0.1.0",
     "lodash": "^4.17.11",
     "npm": "6.1.0",
+    "prism-react-renderer": "^0.1.7",
     "react": "^16.8.6",
     "react-accessible-accordion": "2.4.5",
     "react-app-rewire-styled-components": "3.0.2",
@@ -15,7 +16,6 @@
     "react-dom": "^16.8.6",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.0.3",
-    "react-syntax-highlighter": "^8.0.1",
     "react-tooltip": "3.8.4",
     "react-vis": "^1.11.6",
     "styled-components": "^4.3.2"

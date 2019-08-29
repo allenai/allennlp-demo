@@ -221,18 +221,14 @@ const usage = (
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
-      <CodeSnippet language="bash">
-        {`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz -`}
-      </CodeSnippet>
+      <CodeSnippet language="bash" code={`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz -`} />
       <strong>As a library (Python):</strong>
-      <CodeSnippet language="python">
-        {`from allennlp.predictors.predictor import Predictor
+      <CodeSnippet language="python" code={`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
 predictor.predict(
   document="The woman reading a newspaper sat on the bench with her dog."
-)`}
-      </CodeSnippet>
+)`} />
     </UsageSection>
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>

@@ -1,10 +1,10 @@
 import React from 'react'
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 
 import { PaneTop, PaneBottom } from './Pane'
 import ModelIntro from './ModelIntro';
 import DemoInput from './DemoInput'
-import { Tabs } from "antd";
+import { Tabs } from 'antd';
 
 class Model extends React.Component {
     constructor(props) {
@@ -72,6 +72,7 @@ class Model extends React.Component {
 
         return (
             <Wrapper className="pane__horizontal model">
+                <TabFontFix />
                 <PaneTop>
                   <div className="model__content">
                     <ModelIntro
@@ -79,7 +80,7 @@ class Model extends React.Component {
                       description={description}
                       descriptionEllipsed={descriptionEllipsed}/>
                     {tabs.length > 1 ? (
-                      <Tabs defaultActiveKey="demo">
+                      <Tabs defaultActiveKey="demo" animated={false}>
                         <Tabs.TabPane tab="Demo" key="demo">
                           {demoInput}
                         </Tabs.TabPane>
@@ -95,6 +96,13 @@ class Model extends React.Component {
         )
     }
 }
+
+const TabFontFix = createGlobalStyle`
+  .ant-tabs,
+  .ant-tabs-nav-container {
+    font-size: inherit !important;
+  }
+`;
 
 export const Wrapper = styled.div`
   background: ${({theme}) => theme.palette.background.light};

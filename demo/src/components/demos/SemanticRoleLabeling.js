@@ -268,18 +268,14 @@ const usage = (
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
-      <CodeSnippet language="bash">
-        {`echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz -`}
-      </CodeSnippet>
+      <CodeSnippet language="bash" code={`echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz -`} />
       <strong>As a library (Python):</strong>
-      <CodeSnippet language="python">
-          {`from allennlp.predictors.predictor import Predictor
+      <CodeSnippet language="python" code={`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz")
 predictor.predict(
   sentence="Did Uriah honestly think he could beat the game in under three hours?"
-)`}
-      </CodeSnippet>
+)`} />
     </UsageSection>
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>

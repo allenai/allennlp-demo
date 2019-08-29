@@ -255,19 +255,15 @@ const usage = (
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
-      <CodeSnippet language="bash">
-        {`echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
+      <CodeSnippet language="bash" code={`echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
     allennlp predict \\
-    https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz -`}
-      </CodeSnippet>
+    https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz -`} />
       <strong>As a library (Python):</strong>
-      <CodeSnippet language="python">
-        {`from allennlp.predictors.predictor import Predictor
+      <CodeSnippet language="python" code={`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz")
 predictor.predict(
   sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"
-)`}
-      </CodeSnippet>
+)`} />
     </UsageSection>
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>

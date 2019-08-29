@@ -65,18 +65,14 @@ const usage = (
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
-      <CodeSnippet language="bash">
-        {`echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz -`}
-      </CodeSnippet>
+      <CodeSnippet language="bash" code={`echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz -`} />
       <strong>As a library (Python):</strong>
-      <CodeSnippet language="python">
-          {`from allennlp.predictors.predictor import Predictor
+      <CodeSnippet language="python" code={`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz")
 predictor.predict(
   sentence="If I bring 10 dollars tomorrow, can you buy me lunch?"
-)`}
-      </CodeSnippet>
+)`} />
     </UsageSection>
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>

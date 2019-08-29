@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-export const UsageHeader = styled.h3`
-    font-size: 1rem;
-    line-height: 1.2;
+import { FormLabel } from './Form';
+
+export const UsageHeader = styled(FormLabel)`
+    margin: 0 0 ${({ theme }) => theme.spacing.xs};
 `;

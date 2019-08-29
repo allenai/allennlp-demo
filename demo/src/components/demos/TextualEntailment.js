@@ -233,35 +233,27 @@ const usage = (
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
-      <CodeSnippet language="bash">
-        {`echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz -`}
-      </CodeSnippet>
+      <CodeSnippet language="bash" code={`echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz -`} />
       <strong>As a library (Python):</strong>
-      <CodeSnippet language="python">
-        {`from allennlp.predictors.predictor import Predictor
+      <CodeSnippet language="python" code={`from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz")
 predictor.predict(
   hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
   premise="Two women are wandering along the shore drinking iced tea."
-)`}
-      </CodeSnippet>
+)`} />
     </UsageSection>
     <UsageSection>
       <UsageHeader>Evaluation</UsageHeader>
-      <CodeSnippet langauge="bash">
-        {`allennlp evaluate \\
+      <CodeSnippet language="bash" code={`allennlp evaluate \\
   https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz \\
-  https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`}
-      </CodeSnippet>
+  https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`} />
       <p>
       </p>
     </UsageSection>
     <UsageSection>
       <UsageHeader>Training</UsageHeader>
-      <CodeSnippet langauge="bash">
-        allennlp train training_config/decomposable_attention.jsonnet -s output_path
-      </CodeSnippet>
+      <CodeSnippet language="bash" code="allennlp train training_config/decomposable_attention.jsonnet -s output_path" />
     </UsageSection>
   </React.Fragment>
 )
