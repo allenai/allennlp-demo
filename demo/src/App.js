@@ -66,7 +66,7 @@ const SingleTaskFrame = (props) => {
   const maybeSlug = slug ? `/${slug}` : ''
   const url = `/task/${model}${maybeSlug}${search}`
 
-  return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%"}}/>
+  return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%", borderWidth: 0}}/>
 }
 
 
