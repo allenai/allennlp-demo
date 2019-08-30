@@ -63,7 +63,7 @@ const Demo = (props) => {
 const SingleTaskFrame = (props) => {
   const { model, slug } = props.match.params
   const maybeSlug = slug ? `/${slug}` : ''
-  const url = `/task/${model}${maybeSlug}`
+  const url = `/task/${model}${maybeSlug}?iframe=true`
 
   return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%"}}/>
 }
