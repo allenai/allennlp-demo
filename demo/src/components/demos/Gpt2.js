@@ -124,7 +124,10 @@ const Token = styled.span`
 const DEFAULT = "Joel is";
 
 function addToUrl(output, choice) {
-  if ('history' in window) {
+  if (window.frameElement) {
+    // Based on http://www.awongcm.io/blog/2018/11/25/using-iframes-api-to-toggle-client-side-routing-of-react-router-for-legacy-web-apps/
+    window.frameElement.ownerDocument.defaultView.history.pushState(null, null, '?text=' + encodeURIComponent(output + (choice || '')))
+  } else if ('history' in window) {
     window.history.pushState(null, null, '?text=' + encodeURIComponent(output + (choice || '')))
   }
 }
