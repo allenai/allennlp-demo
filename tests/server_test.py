@@ -256,7 +256,7 @@ class TestFlask(AllenNlpTestCase):
         assert "slug" not in result
 
         # With permalinks not enabled, a post to the /permadata endpoint should be a 400.
-        response = self.client.post("/permadata", data="""{"slug": "someslug"}""")
+        response = self.client.post("/permadata/counting", data="""{"slug": "someslug"}""")
         assert response.status_code == 400
 
     def test_permalinks_work(self):
@@ -279,10 +279,10 @@ class TestFlask(AllenNlpTestCase):
         slug = result.get("slug")
         assert slug is not None
 
-        response = post("/permadata", data={"slug": "not the right slug"})
+        response = post("/permadata/counting", data={"slug": "not the right slug"})
         assert response.status_code == 400
 
-        response = post("/permadata", data={"slug": slug})
+        response = post("/permadata/counting", data={"slug": slug})
         assert response.status_code == 200
         result2 = json.loads(response.get_data())
         assert set(result2.keys()) == {"modelName", "requestData", "responseData"}
@@ -311,7 +311,7 @@ class TestFlask(AllenNlpTestCase):
         # in the database for subsequent analysis.
         slug = app.int_to_slug(0)
 
-        response = post("/permadata", data={"slug": slug})
+        response = post("/permadata/counting", data={"slug": slug})
         assert response.status_code == 200
         result = json.loads(response.get_data())
         assert set(result.keys()) == {"modelName", "requestData", "responseData"}

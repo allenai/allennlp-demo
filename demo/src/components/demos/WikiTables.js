@@ -23,10 +23,8 @@ const description = (
       parsing model on the
       <ExternalLink href="https://nlp.stanford.edu/software/sempre/wikitable/">{' '}WikiTableQuestions</ExternalLink> dataset.
       The model is a re-implementation of the parser in the
-      <ExternalLink href="https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a">
-      {' '}EMNLP 2017 paper by Krishnamurthy, Dasigi and Gardner</ExternalLink>, which achieved state-of-the-art results
-      on this dataset at the time.  This model is still a proof-of-concept of what you can do with
-      semantic parsing in AllenNLP and its performance is not state-of-the-art (this model gets somewhere around 37-40% accuracy).
+      <ExternalLink href="https://www.semanticscholar.org/paper/Iterative-Search-for-Weakly-Supervised-Semantic-Dasigi-Gardner/af17ccbdae4cbd1b67d6ab359615c8000f8fb66f">
+      {' '}NAACL 2019 paper by Dasigi, Gardner, Murty, Zettlemoyer, and Hovy</ExternalLink>.
     </span>
   </span>
 );
@@ -92,7 +90,7 @@ const Output = ({ responseData }) => {
 
         <OutputField label="Logical Form" suppressSummary="true">
           <SyntaxHighlight language="lisp">
-              {logical_form.split('fb:').join('').split('.').join('-')}
+              {logical_form[0].toString()}
           </SyntaxHighlight>
         </OutputField>
 
@@ -156,6 +154,17 @@ const Output = ({ responseData }) => {
 
 const examples = [
     {
+      table: "#\tEvent Year\tSeason\tFlag bearer\n" +
+             "7\t2012\tSummer\tEle Opeloge\n" +
+             "6\t2008\tSummer\tEle Opeloge\n" +
+             "5\t2004\tSummer\tUati Maposua\n" +
+             "4\t2000\tSummer\tPauga Lalau\n" +
+             "3\t1996\tSummer\tBob Gasio\n" +
+             "2\t1988\tSummer\tHenry Smith\n" +
+             "1\t1984\tSummer\tApelu Ioane",
+      question: "How many years were held in summer?\n",
+    },
+    {
       table: "Season\tLevel\tDivision\tSection\tPosition\tMovements\n" +
              "1993\tTier 3\tDivision 2\tÖstra Svealand\t1st\tPromoted\n" +
              "1994\tTier 2\tDivision 1\tNorra\t11th\tRelegation Playoffs\n" +
@@ -173,17 +182,6 @@ const examples = [
              "2006*\tTier 3\tDivision 1\tNorra\t5th\t\n" +
              "2007\tTier 3\tDivision 1\tSödra\t14th\tRelegated",
       question: "What is the only season with the 1st position?",
-    },
-    {
-      table: "#\tEvent Year\tSeason\tFlag bearer\n" +
-             "7\t2012\tSummer\tEle Opeloge\n" +
-             "6\t2008\tSummer\tEle Opeloge\n" +
-             "5\t2004\tSummer\tUati Maposua\n" +
-             "4\t2000\tSummer\tPauga Lalau\n" +
-             "3\t1996\tSummer\tBob Gasio\n" +
-             "2\t1988\tSummer\tHenry Smith\n" +
-             "1\t1984\tSummer\tApelu Ioane",
-      question: "How many years were held in summer?\n",
     },
 ];
 

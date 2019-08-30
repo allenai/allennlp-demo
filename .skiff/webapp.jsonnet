@@ -155,14 +155,40 @@ local cloudsql_volumes = [
     }
 ];
 
-// Generate the ingress path entry for the given model
-local predict_path(model_name) = {
+// The backend for each model is served at /predict/{model_name} (in its own service)
+// so we need to generate an ingress path entry that points that path to that service.
+local backend_path(model_name) = {
     path: '/predict/' + model_name,
     backend: {
         serviceName: fullyQualifiedName + '-' + model_name,
         servicePort: config.httpPort
     },
 };
+
+// We also want to pass through the permadata/ requests to each model,
+// because different models might handle them in different ways (or not at all).
+local permadata_path(model_name) = {
+    path: '/permadata/' + model_name,
+    backend: {
+        serviceName: fullyQualifiedName + '-' + model_name,
+        servicePort: config.httpPort
+    },
+};
+
+// The (chromeless) front-end for each model is served at /task/{model_name} (in its own service)
+// so we need to generate an ingress path entry that points that path to that service.
+// TODO: allow the front-end and the back-end to be different services?
+local frontend_path(model_name) = {
+    // Ugly regex because there might be a permalink or there might not
+    path: '/task/' + model_name + "(/[.*])?",
+    backend: {
+        serviceName: fullyQualifiedName + '-' + model_name,
+        servicePort: config.httpPort
+    },
+};
+
+
+
 
 local ingress = {
     apiVersion: 'extensions/v1beta1',
@@ -192,7 +218,13 @@ local ingress = {
                 host: host,
                 http: {
                     paths: [
-                        predict_path(model_name)
+                        backend_path(model_name)
+                        for model_name in model_names
+                    ] + [
+                        frontend_path(model_name)
+                        for model_name in model_names
+                    ] + [
+                        permadata_path(model_name)
                         for model_name in model_names
                     ] + [
                         {
@@ -313,6 +345,12 @@ local DEFAULT_MEMORY = "1Gi";
 local get_cpu(model_name) = if std.objectHas(models[model_name], "cpu") then models[model_name]["cpu"] else DEFAULT_CPU;
 local get_memory(model_name) = if std.objectHas(models[model_name], "memory") then models[model_name]["memory"] else DEFAULT_MEMORY;
 
+// A model can specify its own docker image. It needs to run a server on config.port
+// that serves up the model at /predict/{model_name}
+// and that serves up the front-end at /task/{model_name}
+// and that (optionally) serves up permalinks at /permadata/{model_name},
+local get_image(model_name) = if std.objectHas(models[model_name], "image") then models[model_name]["image"] else image;
+
 local model_deployment(model_name) = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Deployment',
@@ -334,7 +372,7 @@ local model_deployment(model_name) = {
                 containers: [
                     {
                         name: model_name,
-                        image: image,
+                        image: get_image(model_name),
                         args: [ '--model', model_name ],
                         readinessProbe: readinessProbe,
                         resources: {
