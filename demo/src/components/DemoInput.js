@@ -12,7 +12,6 @@ import {
 
 import BeamSearch from './BeamSearch'
 import { Tooltip } from './Shared'
-import ModelIntro from './ModelIntro'
 import '../css/Button.css'
 import { FormField, FormLabel, FormInput, FormTextArea, FormSelect } from './Form';
 
@@ -155,7 +154,7 @@ class DemoInput extends React.Component {
     }
 
     render() {
-        const { title, description, descriptionEllipsed, fields, selectedModel, outputState, responseData, inputState } = this.props
+        const { fields, selectedModel, outputState, responseData, inputState } = this.props
 
         // Only enable running the model if every required field has a value.
         const canRun = fields.every(field => field.optional || this.state[field.name])
@@ -263,8 +262,7 @@ class DemoInput extends React.Component {
 
 
         return (
-            <div className="model__content">
-                <ModelIntro title={title} description={description} descriptionEllipsed={descriptionEllipsed}/>
+            <React.Fragment>
                 <FormInstructions>
                     <span>Enter text or</span>
                     <Select
@@ -289,7 +287,7 @@ class DemoInput extends React.Component {
                 </RunButtonArea>
                 {inputOutputs}
                 <Tooltip multiline/>
-            </div>
+            </React.Fragment>
         )
     }
 }

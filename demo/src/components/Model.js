@@ -1,8 +1,10 @@
 import React from 'react'
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 
 import { PaneTop, PaneBottom } from './Pane'
+import ModelIntro from './ModelIntro';
 import DemoInput from './DemoInput'
+import { Tabs } from 'antd';
 
 class Model extends React.Component {
     constructor(props) {
@@ -64,14 +66,10 @@ class Model extends React.Component {
     }
 
     render() {
-
-        const { title, description, descriptionEllipsed, examples, fields, selectedModel, Output, requestData, responseData } = this.props;
+        const { title, description, descriptionEllipsed, examples, fields, selectedModel, Output, requestData, responseData, usage } = this.props;
         const { outputState } = this.state;
 
         const demoInput = <DemoInput selectedModel={selectedModel}
-                                     title={title}
-                                     description={description}
-                                     descriptionEllipsed={descriptionEllipsed}
                                      examples={examples}
                                      fields={fields}
                                      inputState={requestData}
@@ -82,14 +80,41 @@ class Model extends React.Component {
         const outputProps = {...this.state, requestData, responseData}
         const demoOutput = requestData && responseData ? <Output {...outputProps}/> : null
 
+        const tabs = [ demoInput, usage ].filter(tabContent => tabContent !== undefined);
+
         return (
             <Wrapper className="pane__horizontal model">
-                <PaneTop>{demoInput}</PaneTop>
+                <TabFontFix />
+                <PaneTop>
+                  <div className="model__content">
+                    <ModelIntro
+                      title={title}
+                      description={description}
+                      descriptionEllipsed={descriptionEllipsed}/>
+                    {tabs.length > 1 ? (
+                      <Tabs defaultActiveKey="demo" animated={false}>
+                        <Tabs.TabPane tab="Demo" key="demo">
+                          {demoInput}
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Usage" key="usage">
+                          {usage}
+                        </Tabs.TabPane>
+                      </Tabs>
+                    ) : demoInput}
+                  </div>
+                </PaneTop>
                 <PaneBottom outputState={outputState}>{demoOutput}</PaneBottom>
             </Wrapper>
         )
     }
 }
+
+const TabFontFix = createGlobalStyle`
+  .ant-tabs,
+  .ant-tabs-nav-container {
+    font-size: inherit !important;
+  }
+`;
 
 export const Wrapper = styled.div`
   background: ${({theme}) => theme.palette.background.light};

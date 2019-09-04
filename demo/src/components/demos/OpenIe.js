@@ -6,6 +6,10 @@ import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
+import { UsageSection } from '../UsageSection';
+import { UsageHeader } from '../UsageHeader';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 const title = "Open Information Extraction";
 
@@ -188,7 +192,7 @@ const VisualizationType = {
 };
 Object.freeze(VisualizationType);
 
-// Stateful output compoennt
+// Stateful output component
 class Output extends React.Component {
     constructor(props) {
         super(props);
@@ -249,6 +253,48 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/open-information-extraction`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <UsageHeader>Prediction</UsageHeader>
+      <strong>On the command line (bash):</strong>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{"sentence": "John decided to run for office next month."}' | \\
+  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz - --predictor=open-information-extraction`} />
+        </SyntaxHighlight>
+      </UsageCode>
+      <strong>As a library (Python):</strong>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz")
+predictor.predict(
+  sentence="John decided to run for office next month."
+)`} />
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <UsageHeader>Evaluation</UsageHeader>
+      <p>
+        The Open Information extractor was evaluated on the OIE2016 corpus.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can get the data on <a href="https://github.com/gabrielStanovsky/oie-benchmark">the corpus homepage</a>.
+
+      </p>
+    </UsageSection>
+    <UsageSection>
+      <UsageHeader>Training</UsageHeader>
+      <p>
+        The Open Information extractor was evaluated on the OIE2016 corpus.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can get the data on <a href="https://github.com/gabrielStanovsky/oie-benchmark">the corpus homepage</a>.
+      </p>
+    </UsageSection>
+  </React.Fragment>
+)
+
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

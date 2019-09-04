@@ -16,7 +16,7 @@
     "react-proptypes": "1.0.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "2.0.3",
-    "react-syntax-highlighter": "8.0.1",
+    "react-syntax-highlighter": "^11.0.2",
     "react-tooltip": "3.8.4",
     "react-vis": "^1.11.6",
     "styled-components": "^4.3.2"

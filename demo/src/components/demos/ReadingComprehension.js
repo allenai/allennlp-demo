@@ -11,6 +11,10 @@ import Model from '../Model'
 import OutputField from '../OutputField'
 import { API_ROOT } from '../../api-config';
 import { truncateText } from '../DemoInput'
+import { UsageSection } from '../UsageSection';
+import { UsageHeader } from '../UsageHeader'
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 const title = "Reading Comprehension"
 
@@ -446,6 +450,50 @@ const apiUrl = ({model}) => {
   return `${API_ROOT}/predict/${endpoint}`
 }
 
-const modelProps = {apiUrl, title, description, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <h3>Prediction</h3>
+      <h5>On the command line (bash):</h5>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{"passage": "The Matrix is a 1999 science fiction action film written and directed by The Wachowskis, starring Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.", "question": "Who stars in The Matrix?"}' | \\
+allennlp predict https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz -`}
+        </SyntaxHighlight>
+      </UsageCode>
+      <h5>As a library (Python):</h5>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz")
+predictor.predict(
+  passage="The Matrix is a 1999 science fiction action film written and directed by The Wachowskis, starring Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
+  question="Who stars in The Matrix?"
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`allennlp evaluate \\
+  https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz \\
+  https://s3-us-west-2.amazonaws.com/allennlp/datasets/squad/squad-dev-v1.1.json`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          allennlp train training_config/bidaf.jsonnet -s output_path
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+  </React.Fragment>
+)
+
+const modelProps = {apiUrl, title, description, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

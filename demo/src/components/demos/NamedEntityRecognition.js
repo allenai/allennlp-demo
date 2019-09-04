@@ -8,6 +8,10 @@ import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
 import { truncateText } from '../DemoInput'
+import { UsageSection } from '../UsageSection';
+import { UsageHeader } from '../UsageHeader';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 // LOC, PER, ORG, MISC
 
@@ -247,6 +251,44 @@ const apiUrl = ({model}) => {
     return `${API_ROOT}/predict/${endpoint}`
 }
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <UsageHeader>Prediction</UsageHeader>
+      <strong>On the command line (bash):</strong>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz -`}
+        </SyntaxHighlight>
+      </UsageCode>
+      <strong>As a library (Python):</strong>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz")
+predictor.predict(
+  sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <UsageHeader>Evaluation</UsageHeader>
+      <p>
+        The NER model was evaluated on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
+        dataset. Unfortunately we cannot release this data due to licensing restrictions.
+      </p>
+    </UsageSection>
+    <UsageSection>
+      <UsageHeader>Training</UsageHeader>
+      <p>
+        The NER model was trained on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset. Unfortunately we cannot release this data due to licensing restrictions.
+      </p>
+    </UsageSection>
+  </React.Fragment>
+)
+
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

@@ -7,6 +7,10 @@ import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
+import { UsageSection } from '../UsageSection';
+import { UsageHeader } from '../UsageHeader';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 const title = "Semantic Role Labeling"
 
@@ -260,6 +264,49 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <UsageHeader>Prediction</UsageHeader>
+      <strong>On the command line (bash):</strong>
+      <UsageCode>
+          <SyntaxHighlight language="bash">
+          {`echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
+  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz -`}
+        </SyntaxHighlight>
+      </UsageCode>
+      <strong>As a library (Python):</strong>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz")
+predictor.predict(
+  sentence="Did Uriah honestly think he could beat the game in under three hours?"
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <UsageHeader>Evaluation</UsageHeader>
+      <p>
+        The SRL model was evaluated on the CoNLL 2012 dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can put together evaluation data yourself by following the CoNLL 2012 <a href="http://conll.cemantix.org/2012/data.html">instructions for working with the data</a>.
+      </p>
+    </UsageSection>
+    <UsageSection>
+      <UsageHeader>Training</UsageHeader>
+      <p>
+        The SRL model was evaluated on the CoNLL 2012 dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        You can put together evaluation data yourself by following the CoNLL 2012 instructions for working with the data.
+        Once you have compiled the dataset, you can use the configuration file at <a href="https://github.com/allenai/allennlp/blob/master/training_config/semantic_role_labeler.jsonnet">training_config/semantic_role_labeler.jsonnet</a> to train.
+      </p>
+    </UsageSection>
+  </React.Fragment>
+)
+
+
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
