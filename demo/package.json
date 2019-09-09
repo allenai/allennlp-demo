@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "@allenai/varnish": "^0.3.19",
+    "ajv": "^6.10.0",
     "antd": "^3.20.0",
+    "colormap": "^2.3.1",
     "hierplane": "^0.1.0",
     "lodash": "^4.17.11",
     "npm": "6.1.0",
