@@ -153,6 +153,23 @@ const SaliencyMaps = ({interpretData, question_tokens, passage_tokens, interpret
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
+  if (attackData && "hotflip" in attackData) {
+    const output = attackData["hotflip"]["outputs"];
+    var new_prediction = '';
+    if ('best_span_str' in output) { // BiDAF model
+      new_prediction = output['best_span_str'];
+    }
+    else if ('answer' in output) { // NAQANet model
+      const ans_type = output["answer"]["answer_type"];
+      if (ans_type === "count") {
+        new_prediction = output['answer']['count'];
+      }
+      else {
+        new_prediction = output['answer']['value'];
+      }
+    }
+    attackData["hotflip"]["new_prediction"] = new_prediction;
+  }
   return (
     <OutputField>
       <Accordion accordion={false}>

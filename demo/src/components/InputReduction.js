@@ -8,7 +8,7 @@ import { RedToken, TransparentToken, BlankToken } from './Shared';
 import { INPUT_REDUCTION_ATTACKER } from './InterpretConstants'
 
 // takes in the input before and after input reduction and highlights
-// the words that were removed in a red with strikeout. The reduced_input
+// the words that were removed in red with strikeout. The reduced_input
 // will have a less than or equal to length than the original_input.
 const colorizeTokensForInputReductionUI = (original_input, reduced_input) => {
     let original_string_colorized = []
@@ -50,23 +50,42 @@ const colorizeTokensForInputReductionUI = (original_input, reduced_input) => {
             }
         }
     }
-    return [original_string_colorized,reduced_string_colorized]
+    return [original_string_colorized, reduced_string_colorized]
 }
 
 export default class InputReductionComponent extends React.Component {
     render() {
         const { inputReductionData, reduceInput, requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput} = this.props
-        if (attacker === INPUT_REDUCTION_ATTACKER){
-            var original_sentence_colorized = '';
-            var new_sentence_colorized = '';
+        if (attacker === INPUT_REDUCTION_ATTACKER) {
+            var original_sentence = '';
+            var new_sentence = '';
+            var no_reduction = false;
             // called on initialization
-            if (inputReductionData === undefined || inputReductionData['input_reduction'] === undefined){
-                new_sentence_colorized = " "
+            if (inputReductionData === undefined || inputReductionData['input_reduction'] === undefined) {
+                new_sentence = " "
+            } else {
+                original_sentence = inputReductionData["input_reduction"]["original"];
+                new_sentence = inputReductionData["input_reduction"]["final"][0];
+                no_reduction = JSON.stringify(original_sentence) === JSON.stringify(new_sentence);
+                [original_sentence, new_sentence] = colorizeTokensForInputReductionUI(original_sentence, new_sentence);
             }
-            else{
-                [original_sentence_colorized,new_sentence_colorized] = colorizeTokensForInputReductionUI(inputReductionData["input_reduction"]["original"],
-                                                                                                         inputReductionData["input_reduction"]["final"][0])
-            }
+            const run_button = <button
+                                 type="button"
+                                 className="btn"
+                                 style={{margin: "30px 0px"}}
+                                 onClick={ () => reduceInput(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }
+                                >
+                                  Reduce Input
+                               </button>
+            const display_text = new_sentence === " " ?
+              <div><p style={{color: "#7c7c7c"}}>Press "reduce input" to run input reduction.</p>{run_button}</div>
+            :
+              <div>
+                <p><strong>Original Input:</strong> {original_sentence}</p>
+                <p><strong>Reduced Input:</strong> {new_sentence}</p>
+                {no_reduction ? <p>(No reduction was possible)</p> : <p></p>}
+              </div>
+
 
             return (
                 <div>
@@ -77,11 +96,10 @@ export default class InputReductionComponent extends React.Component {
                         </AccordionItemTitle>
                         <AccordionItemBody>
                             <p>
-                                <a href="https://arxiv.org/abs/1804.07781" target="_blank" rel="noopener noreferrer">Input Reduction</a> removes as many words from the input as possible without changing the model's prediction.
+                                <a href="https://arxiv.org/abs/1804.07781" target="_blank" rel="noopener noreferrer">Input Reduction</a>
+                                removes as many words from the input as possible without changing the model's prediction.
                             </p>
-                            {new_sentence_colorized !== " " ? <p><strong>Original Input:</strong> {original_sentence_colorized}</p> : <p style={{color: "#7c7c7c"}}>Press "reduce input" to run input reduction.</p>}
-                            {new_sentence_colorized !== " " ? <p><strong>Reduced Input:</strong> {new_sentence_colorized}</p> : <p></p>}
-                            <button type="button" className="btn" style={{margin: "30px 0px"}} onClick={ () => reduceInput(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }> Reduce Input </button>
+                            {display_text}
                         </AccordionItemBody>
                     </AccordionItem>
                 </div>
