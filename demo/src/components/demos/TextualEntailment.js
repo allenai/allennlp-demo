@@ -19,9 +19,25 @@ import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 import '../../css/TeComponent.css';
 
+import SaliencyComponent from '../Saliency'
+import InputReductionComponent from '../InputReduction'
+import HotflipComponent from '../Hotflip'
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
+
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
+const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/textual-entailment/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
+const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/textual-entailment/${interpreter}`
 
 const title = "Textual Entailment"
+
+const NAME_OF_INPUT_TO_ATTACK = "hypothesis"
+const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 const description = (
   <span>
@@ -83,7 +99,38 @@ const judgments = {
   NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
-const Output = ({ responseData }) => {
+const Attacks = ({attackData, attackModel, requestData}) => {
+  if (attackData && "hotflip" in attackData) {
+    const [entail, contr, neutral] = attackData["hotflip"]["outputs"]["label_probs"]
+    var prediction = '';
+    if (entail > contr) {
+        if (entail > neutral) {
+            prediction = "Entailment"
+        } else {
+            prediction = "Neutral"
+        }
+    } else {
+        if (contr > neutral) {
+            prediction = "Contradiction"
+        } else {
+            prediction = "Neutral"
+        }
+    }
+    attackData["hotflip"]["new_prediction"] = prediction;
+    attackData["hotflip"]["context"] = <p><strong>Premise:</strong> {requestData['premise']}</p>
+  }
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+
+const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
   const [entailment, contradiction, neutral] = label_probs
 
@@ -172,9 +219,14 @@ const Output = ({ responseData }) => {
       </table>
     </div>
     </div>
-    <OutputField label=" Model internals">
+    <OutputField>
       <Accordion accordion={false}>
-        <AccordionItem expanded={true}>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
+        <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+
+        <AccordionItem>
           <AccordionItemTitle>
             Premise to Hypothesis Attention
             <div className="accordion__arrow" role="presentation"/>
@@ -273,6 +325,6 @@ predictor.predict(
   </React.Fragment>
 )
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

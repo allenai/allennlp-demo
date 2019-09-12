@@ -172,13 +172,13 @@ export class SaliencyComponent extends React.Component {
     const input1TopKIdx = new Set(this.getTopKIndices(input1TokensWithWeights, true))
     // the tokens highlighted based on their top values
     const input1TokenColorMap = this.colorize(input1TokensWithWeights, input1TopKIdx)
+
     // the case where there are two inputs (e.g., textual entailment or reading comprehension)
     if (task === "Textual Entailment" || task === "Reading Comprehension"){
         const input2TopKIdx = new Set(this.getTopKIndices(input2TokensWithWeights, false))
         const input2TokenColorMap = this.colorize(input2TokensWithWeights, input2TopKIdx)
         return (
-            <div>
-                <AccordionItem expanded={true}>
+                <AccordionItem>
                     <AccordionItemTitle>
                         {title1}
                         <div className="accordion__arrow" role="presentation"/>
@@ -212,14 +212,12 @@ export class SaliencyComponent extends React.Component {
             </button>
           </AccordionItemBody>
         </AccordionItem>
-      </div>
       )
     }
     // single input case
     else if (task === "Sentiment Analysis" || task === "Masked Language Modeling" || task === "Language Modeling" || task === undefined) {
         return (
-            <div>
-                <AccordionItem expanded={true}>
+                <AccordionItem>
                     <AccordionItemTitle>
                         {title1}
                         <div className="accordion__arrow" role="presentation"/>
@@ -242,14 +240,12 @@ export class SaliencyComponent extends React.Component {
                     </button>
                     </AccordionItemBody>
                 </AccordionItem>
-            </div>
         )
     }
     // single input case
     else if (task === "Named Entity Recognition" || task === "Co-reference Resolution") {
         return (
-            <div>
-                <AccordionItem expanded={true}>
+                <AccordionItem>
                     <AccordionItemBody>
                         <div>
                           {input1TokenColorMap}
@@ -257,7 +253,6 @@ export class SaliencyComponent extends React.Component {
                         </div>
                     </AccordionItemBody>
                 </AccordionItem>
-            </div>
         )
     }
   }

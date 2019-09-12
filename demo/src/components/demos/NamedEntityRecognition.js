@@ -13,9 +13,26 @@ import { UsageHeader } from '../UsageHeader';
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
-// LOC, PER, ORG, MISC
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemTitle,
+  AccordionItemBody,
+} from 'react-accessible-accordion';
+import { SaliencyComponent, getHeaders } from '../Saliency';
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
 
+// LOC, PER, ORG, MISC
 const title = "Named Entity Recognition";
+
+const NAME_OF_INPUT_TO_ATTACK = 'tokens'
+const NAME_OF_GRAD_INPUT = 'grad_input_1'
 
 const description = (
   <span>
@@ -173,7 +190,82 @@ const TokenSpan = ({ token }) => {
     }
 }
 
-const Output = ({ responseData }) => {
+const generateSaliencyMaps = (interpretData, words, interpretModel, requestData, relevantTokens, interpreterType) => {
+  let saliencyMaps = []
+  if (interpretData === undefined || interpretData[interpreterType] == undefined){
+    saliencyMaps.push(
+      <SaliencyComponent interpretData={interpretData} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={interpreterType}/>
+    )
+  }
+  else {
+    let num_grads = relevantTokens.length
+    let indexedInterpretDataList = []
+    for (let i = 1; i <= num_grads; ++i) {
+      indexedInterpretDataList.push(JSON.parse(JSON.stringify(interpretData)));
+      Object.keys(indexedInterpretDataList[i-1][interpreterType]).forEach(function(itm){
+        if (itm == 'instance_' + i.toString()){
+          indexedInterpretDataList[i-1][interpreterType]['instance_1'] = indexedInterpretDataList[i-1][interpreterType][itm]
+        }
+        else if (itm != 'instance_1'){
+          delete indexedInterpretDataList[i-1][interpreterType][itm];
+        }
+      });
+      saliencyMaps.push(
+        <div key={i} style={{ display: "flex", flexWrap: "wrap" }}>
+          <p><strong>Showing interpretation for</strong></p>
+          <TokenSpan key={i} token={relevantTokens[i-1]} />
+          <SaliencyComponent interpretData={indexedInterpretDataList[i-1]} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={interpreterType} task={title}/>
+        </div>
+      )
+      // spacing between saliency maps
+      saliencyMaps.push(
+        <div>
+          <br />
+        </div>
+      )
+    }
+    let result = [];
+    const [title1, title2] = getHeaders(interpreterType);
+    result.push(
+      <div>
+        <AccordionItem>
+          <AccordionItemTitle>
+              {title1}
+              <div className="accordion__arrow" role="presentation"/>
+          </AccordionItemTitle>
+          <AccordionItemBody>
+              <div className="content">
+                {title2}
+              </div>
+              {saliencyMaps}
+          </AccordionItemBody>
+        </AccordionItem>
+      </div>
+    )
+    return result
+  }
+
+  return saliencyMaps
+}
+
+// generates the visualization for input reduction. For NER, this visualization
+// is different because we have multiple model outputs (each precicted entity tag)
+const generateInputReductionUI = (attackData, relevantTokens) => {
+    let reducedInputs = []
+    for (let idx = 0; idx < attackData["input_reduction"]["final"].length; idx++){
+      reducedInputs.push(
+        <div key={idx} style={{ display: "flex", flexWrap: "wrap" }}>
+          <strong>Reduced input for</strong>
+          <TokenSpan key={idx} token={relevantTokens[idx]} />
+          <strong>:</strong> <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> {attackData["input_reduction"]["final"][idx].join(" ")}
+          <br />
+        </div>
+      )
+    }
+    return reducedInputs
+}
+
+const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
     const { words, tags } = responseData
 
     // "B" = "Beginning" (first token in a sequence of tokens comprising an entity)
@@ -225,18 +317,61 @@ const Output = ({ responseData }) => {
       }
     });
 
+    let relevantTokens = []
+    formattedTokens.forEach(token => {
+      if (token.entity !== null) {
+        relevantTokens.push(token)
+      }
+    })
+
+    const gradSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, GRAD_INTERPRETER)
+    const igSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, IG_INTERPRETER)
+    const sgSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, SG_INTERPRETER)
+
+    var reduced_input_visual = '';
+    if (attackData === undefined) {
+      reduced_input_visual = " "
+    }
+    else{
+      reduced_input_visual = generateInputReductionUI(attackData, relevantTokens)
+    }
+
+    const run_button = <button type="button"
+                         className="btn"
+                         style={{margin: "30px 0px"}}
+                         onClick={ () => attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT) }
+                       >Reduce Input
+                       </button>
+
     return (
       <div className="model__content model__content--ner-output">
         <FormField>
           <HighlightContainer layout="bottom-labels">
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </HighlightContainer>
+            <Accordion accordion={false}>
+                {gradSaliencyMap}
+                {igSaliencyMap}
+                {sgSaliencyMap}
+
+                <AccordionItem>
+                <AccordionItemTitle>
+                Input Reduction
+                  <div className="accordion__arrow" role="presentation"/>
+                </AccordionItemTitle>
+                <AccordionItemBody>
+                  <p> <a href="https://arxiv.org/abs/1804.07781" target="_blank" rel="noopener noreferrer">Input Reduction</a> removes as many words from the input as possible without changing the model's prediction.</p>
+                  {reduced_input_visual !== " " ? <p>{reduced_input_visual}</p> : <div><p style={{color: "#7c7c7c"}}>Press "reduce input" to run Input Reduction.</p> {run_button}</div>}
+                </AccordionItemBody>
+              </AccordionItem>
+            </Accordion>
         </FormField>
       </div>
     )
 }
 
 const examples = [
+    "This shirt was bought at Grandpa Joe's.",
     "AllenNLP is a PyTorch-based natural language processing library developed at the Allen Institute for Artificial Intelligence in Seattle.",
     "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?",
     "Michael Jordan is a professor at Berkeley.",
@@ -289,6 +424,17 @@ predictor.predict(
   </React.Fragment>
 )
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const apiUrlInterpret = ({model, interpreter}) => {
+  const selectedModel = model || (taskModels[0] && taskModels[0].name);
+  const endpoint = taskEndpoints[selectedModel]
+  return `${API_ROOT}/interpret/${endpoint}/${interpreter}`
+}
+
+const apiUrlAttack = ({model, attacker, name_of_input_to_attack, name_of_grad_input}) => {
+  const selectedModel = model || (taskModels[0] && taskModels[0].name);
+  const endpoint = taskEndpoints[selectedModel]
+  return `${API_ROOT}/attack/${endpoint}/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
+}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output}

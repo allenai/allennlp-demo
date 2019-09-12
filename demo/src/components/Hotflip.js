@@ -100,11 +100,12 @@ export default class HotflipComponent extends React.Component {
   }
 
     render() {
-        const { hotflipData, hotflipInput, requestDataObject, task, attacker, nameOfInputToAttack, nameOfGradInput } = this.props
+        const { hotflipData, hotflipInput, requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput } = this.props
         if (attacker === HOTFLIP_ATTACKER){ // if attacker is not INPUT_REDUCTION or other methods
             var original_string = ''
             var flipped_string = ''
-            let new_prediction = ''
+            var new_prediction = ''
+            var context = " ";
             // enters during initialization
             if (hotflipData === undefined || hotflipData['hotflip'] === undefined) {
                 flipped_string = " ";
@@ -113,80 +114,42 @@ export default class HotflipComponent extends React.Component {
             else {
                 [original_string, flipped_string] = colorizeTokensForHotflipUI(hotflipData["hotflip"]["original"],
                                                                                hotflipData["hotflip"]["final"][0])
-                new_prediction = <p><b>Prediction changed to:</b> {hotflipData["hotflip"]["new_prediction"]}</p>
-                if (task === "Sentiment Analysis") {
-                    const [pos, neg] = hotflipData["hotflip"]["outputs"]["probs"]
-                    new_prediction = <p><b>Prediction changed to:</b> {pos > neg ? 'Positive' : 'Negative'}</p>
-                }
-                else if (task === "Masked Language Modeling" || task === "Language Modeling") {
-                    console.log(hotflipData);
-                    new_prediction = <p><b>Prediction changed to:</b> {hotflipData["hotflip"]["outputs"]["words"][0][0]}</p>
-                }
-                else if (task === "Textual Entailment") {
-                    const [entail, contr, neutral] = hotflipData["hotflip"]["outputs"]["label_probs"]
-                    let prediction = ''
-                    if (entail > contr) {
-                        if (entail > neutral) {
-                            prediction = "Entailment"
-                        } else {
-                            prediction = "Neutral"
-                        }
-                    } else {
-                        if (contr > neutral) {
-                            prediction = "Contradiction"
-                        } else {
-                            prediction = "Neutral"
-                        }
-                    }
-                    new_prediction = <p><b>Prediction changed to:</b> {prediction}</p>
-                }
+                new_prediction = hotflipData["hotflip"]["new_prediction"]
+                context = hotflipData["hotflip"]["context"]
             }
+            const run_button = <button
+                                 type="button"
+                                 className="btn"
+                                 style={{margin: "30px 0px"}}
+                                 onClick={ () => hotflipInput(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }
+                                >
+                                  Flip Words
+                               </button>
 
-            if (task === "Sentiment Analysis" || task === "Co-reference Resolution" || task === "Masked Language Modeling" || task === "Language Modeling"){
-                return (
-                    <div>
-                        <AccordionItem expanded={true}>
-                            <AccordionItemTitle>
-                                HotFlip Attack
-                                <div className="accordion__arrow" role="presentation"/>
-                            </AccordionItemTitle>
-                            <AccordionItemBody>
-                                <p>
-                                    <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the word in the Hypothesis with the highest gradient until the prediction changes.
-                                </p>
-                                {flipped_string !== " " ? <p><strong>Original Input:</strong> {original_string}</p> : <p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>}
-                                {flipped_string !== " " ? <p><strong>Flipped Input:</strong> {flipped_string}</p> : <p></p>}
-                                {new_prediction}
-                                <button type="button" className="btn" style={{margin: "30px 0px"}} onClick={ () => hotflipInput(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }>Flip Words
-                                </button>
-                            </AccordionItemBody>
-                        </AccordionItem>
-                    </div>
-                )
-            }
-            else {
-                return (
-                    <div>
-                        <AccordionItem expanded={true}>
-                            <AccordionItemTitle>
-                                HotFlip Attack
-                                <div className="accordion__arrow" role="presentation"/>
-                            </AccordionItemTitle>
-                            <AccordionItemBody>
-                                <p>
-                                    <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words to change the model's prediction. We iteratively flip the word  with the highest gradient until the prediction changes.
-                                </p>
-                                {flipped_string !== " " ? <p><strong>Original:</strong> {requestDataObject['premise']}</p> : <p></p>}
-                                {flipped_string !== " " ? <p><strong>Original:</strong> {original_string}</p> : <p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>}
-                                {flipped_string !== " " ? <p><strong>Flipped:</strong> {flipped_string}</p> : <p></p>}
-                                <button type="button" className="btn" style={{margin: "30px 0px"}} onClick={ () => hotflipInput(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }>Flip Words
-                                </button>
-                            </AccordionItemBody>
-                        </AccordionItem>
-                                {new_prediction}
-                    </div>
-                )
-            }
+            const display_text = flipped_string === " " ?
+              <div><p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>{run_button}</div>
+            :
+              <div>
+                {context !== " " ? context : ""}
+                <p><strong>Original Input:</strong> {original_string}</p>
+                <p><strong>Flipped Input:</strong> {flipped_string}</p>
+                <p><b>Prediction changed to:</b> {new_prediction}</p>
+              </div>
+
+            return (
+                <AccordionItem>
+                    <AccordionItemTitle>
+                        HotFlip Attack
+                        <div className="accordion__arrow" role="presentation"/>
+                    </AccordionItemTitle>
+                    <AccordionItemBody>
+                        <p>
+                            <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the input word with the highest gradient until the prediction changes.
+                        </p>
+                        {display_text}
+                    </AccordionItemBody>
+                </AccordionItem>
+            )
         }
     }
 }
