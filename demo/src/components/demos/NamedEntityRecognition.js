@@ -14,13 +14,8 @@ import { UsageHeader } from '../UsageHeader';
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemTitle,
-  AccordionItemBody,
-} from 'react-accessible-accordion';
-import { SaliencyComponent, getHeaders } from '../Saliency';
+import { Accordion } from 'react-accessible-accordion';
+import { SaliencyComponent } from '../Saliency';
 import InputReductionComponent from '../InputReduction'
 import {
   GRAD_INTERPRETER,
