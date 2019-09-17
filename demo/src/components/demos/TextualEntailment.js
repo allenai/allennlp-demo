@@ -31,8 +31,8 @@ import {
 } from '../InterpretConstants'
 
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
-const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/textual-entailment/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
-const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/textual-entailment/${interpreter}`
+const apiUrlAttack = () => `${API_ROOT}/attack/textual-entailment`
+const apiUrlInterpret = () => `${API_ROOT}/interpret/textual-entailment`
 
 const title = "Textual Entailment"
 
@@ -99,39 +99,39 @@ const judgments = {
   NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
-const get_grad_data = ({ grad_input_1, grad_input_2 }) => {
+const getGradData = ({ grad_input_1, grad_input_2 }) => {
   // Not sure why, but it appears that the order of the gradients is reversed for these.
   return [grad_input_2, grad_input_1];
 }
 
 const SaliencyMaps = ({interpretData, premise_tokens, hypothesis_tokens, interpretModel, requestData}) => {
-  var simple_grad_data = undefined;
-  var integrated_grad_data = undefined;
-  var smooth_grad_data = undefined;
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
   if (interpretData) {
-    simple_grad_data = GRAD_INTERPRETER in interpretData ? get_grad_data(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
-    integrated_grad_data = IG_INTERPRETER in interpretData ? get_grad_data(interpretData[IG_INTERPRETER]['instance_1']) : undefined
-    smooth_grad_data = SG_INTERPRETER in interpretData ? get_grad_data(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
   }
   const inputTokens = [premise_tokens, hypothesis_tokens];
   const inputHeaders = [<p><strong>Premise:</strong></p>, <p><strong>Hypothesis:</strong></p>];
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyComponent interpretData={simple_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
-        <SaliencyComponent interpretData={integrated_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
-        <SaliencyComponent interpretData={smooth_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
       </Accordion>
     </OutputField>
   )
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
-  var hotflip_data = undefined;
+  let hotflipData = undefined;
   if (attackData && "hotflip" in attackData) {
-    hotflip_data = attackData["hotflip"];
-    const [entail, contr, neutral] = hotflip_data["outputs"]["label_probs"]
-    var prediction = '';
+    hotflipData = attackData["hotflip"];
+    const [entail, contr, neutral] = hotflipData["outputs"]["label_probs"]
+    let prediction = '';
     if (entail > contr) {
         if (entail > neutral) {
             prediction = "Entailment"
@@ -145,23 +145,23 @@ const Attacks = ({attackData, attackModel, requestData}) => {
             prediction = "Neutral"
         }
     }
-    hotflip_data["new_prediction"] = prediction;
-    hotflip_data["context"] = <p><strong>Premise:</strong> {requestData['premise']}</p>
+    hotflipData["new_prediction"] = prediction;
+    hotflipData["context"] = <p><strong>Premise:</strong> {requestData['premise']}</p>
   }
-  var reduced_input = undefined;
+  let reducedInput = undefined;
   if (attackData && "input_reduction" in attackData) {
-    const reduction_data = attackData["input_reduction"];
-    reduced_input = {
-      original: reduction_data["original"],
+    const reductionData = attackData["input_reduction"];
+    reducedInput = {
+      original: reductionData["original"],
       context: <p><strong>Premise:</strong> {requestData['premise']}</p>,
-      reduced: [reduction_data["final"][0]]
+      reduced: [reductionData["final"][0]]
     };
   }
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <InputReductionComponent reducedInput={reduced_input} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
-        <HotflipComponent hotflipData={hotflip_data} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
       </Accordion>
     </OutputField>
   )

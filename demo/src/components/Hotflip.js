@@ -6,42 +6,40 @@ import {
     } from 'react-accessible-accordion';
 import { RedToken, GreenToken, TransparentToken } from './Shared';
 import {  HOTFLIP_ATTACKER } from './InterpretConstants'
-//import { transformToTree } from './demos/Coref'
 
 // takes in the input before and after the hotflip attack and highlights
 // the words that were replaced in red and the new words in green
-const colorizeTokensForHotflipUI = (original_input, flipped_input) => {
-    let original_string_colorized = []
-    let flipped_string_colorized = []
-    for (let idx = 0; idx < original_input.length; idx++) {
+const colorizeTokensForHotflipUI = (originalInput, flippedInput) => {
+    let originalStringColorized = []
+    let flippedStringColorized = []
+    for (let idx = 0; idx < originalInput.length; idx++) {
         // if not equal, then add red and green tokens to show a flip
-        if (original_input[idx] !== flipped_input[idx]){
-            original_string_colorized.push(
+        if (originalInput[idx] !== flippedInput[idx]){
+            originalStringColorized.push(
                 <RedToken key={idx}>
-                    {original_input[idx]}
+                    {originalInput[idx]}
                 </RedToken>
             )
-            flipped_string_colorized.push(
+            flippedStringColorized.push(
                 <GreenToken key={idx}>
-                    {flipped_input[idx]}
+                    {flippedInput[idx]}
                 </GreenToken>
             )
-        }
+        } else {
         // use transparent background for tokens that are not flipped
-        else{
-            original_string_colorized.push(
+            originalStringColorized.push(
                 <TransparentToken key={idx}>
-                    {original_input[idx]}
+                    {originalInput[idx]}
                 </TransparentToken>
             )
-            flipped_string_colorized.push(
+            flippedStringColorized.push(
                 <TransparentToken key={idx}>
-                    {flipped_input[idx]}
+                    {flippedInput[idx]}
                 </TransparentToken>
             )
         }
     }
-    return [original_string_colorized, flipped_string_colorized]
+    return [originalStringColorized, flippedStringColorized]
 }
 
 
@@ -102,38 +100,38 @@ export default class HotflipComponent extends React.Component {
     render() {
         const { hotflipData, hotflipFunction, requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput } = this.props
         if (attacker === HOTFLIP_ATTACKER){ // if attacker is not INPUT_REDUCTION or other methods
-            var original_string = ''
-            var flipped_string = ''
-            var new_prediction = ''
-            var context = " ";
+            let originalString = ''
+            let flippedString = ''
+            let newPrediction = ''
+            let context = " ";
             // enters during initialization
             if (hotflipData === undefined) {
-                flipped_string = " ";
+                flippedString = " ";
             }
             // data is available, display the results of Hotflip
             else {
-                [original_string, flipped_string] = colorizeTokensForHotflipUI(hotflipData["original"],
-                                                                               hotflipData["final"][0])
-                new_prediction = hotflipData["new_prediction"]
+                [originalString, flippedString] = colorizeTokensForHotflipUI(hotflipData["original"],
+                                                                             hotflipData["final"][0])
+                newPrediction = hotflipData["new_prediction"]
                 context = hotflipData["context"]
             }
-            const run_button = <button
-                                 type="button"
-                                 className="btn"
-                                 style={{margin: "30px 0px"}}
-                                 onClick={ () => hotflipFunction(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }
-                                >
-                                  Flip Words
-                               </button>
+            const runButton = <button
+                                type="button"
+                                className="btn"
+                                style={{margin: "30px 0px"}}
+                                onClick={ () => hotflipFunction(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }
+                               >
+                                 Flip Words
+                              </button>
 
-            const display_text = flipped_string === " " ?
-              <div><p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>{run_button}</div>
+            const displayText = flippedString === " " ?
+              <div><p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>{runButton}</div>
             :
               <div>
                 {context !== " " ? context : ""}
-                <p><strong>Original Input:</strong> {original_string}</p>
-                <p><strong>Flipped Input:</strong> {flipped_string}</p>
-                <p><b>Prediction changed to:</b> {new_prediction}</p>
+                <p><strong>Original Input:</strong> {originalString}</p>
+                <p><strong>Flipped Input:</strong> {flippedString}</p>
+                <p><b>Prediction changed to:</b> {newPrediction}</p>
               </div>
 
             return (
@@ -146,7 +144,7 @@ export default class HotflipComponent extends React.Component {
                         <p>
                             <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the input word with the highest gradient until the prediction changes.
                         </p>
-                        {display_text}
+                        {displayText}
                     </AccordionItemBody>
                 </AccordionItem>
             )

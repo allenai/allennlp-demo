@@ -204,83 +204,6 @@ def make_app(build_dir: str,
                 "responseData": permadata.response_data
         })
 
-    @app.route('/attack/<model_name>/<attacker_name>/<name_of_input_to_attack>/<name_of_grad_input>',
-     methods=['POST','OPTIONS'])
-    def attack(model_name: str,
-                attacker_name: str,
-                name_of_input_to_attack: str,
-                name_of_grad_input: str) -> Response:
-        """
-        Modify input to change prediction of model
-        """
-        if request.method == "OPTIONS":
-            return Response(response="", status=200)
-        lowered_model_name = model_name.lower()
-        attacker = app.attackers.get(lowered_model_name).get(attacker_name)
-        if attacker is None:
-            raise ServerError("unknown model: {}".format(model_name), status_code=400)
-        max_request_length = app.max_request_lengths[lowered_model_name]
-        data = request.get_json()
-        serialized_request = json.dumps(data)
-        if len(serialized_request) > max_request_length:
-            raise ServerError(f"Max request length exceeded for model {model_name}! " +
-                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
-
-        attack = attacker.attack_from_json(data, name_of_input_to_attack, name_of_grad_input)
-        return jsonify(attack)
-
-    @app.route('/targeted_attack/<model_name>/<attacker_name>/<name_of_input_to_attack>/<name_of_grad_input>/<target>',
-     methods=['POST','OPTIONS'])
-    def targeted_attack(model_name: str,
-                        attacker_name: str,
-                        name_of_input_to_attack: str,
-                        name_of_grad_input: str,
-                        target: str) -> Response:
-        """
-        Modify input to change prediction of model
-        """
-        if request.method == "OPTIONS":
-            return Response(response="", status=200)
-        lowered_model_name = model_name.lower()
-        attacker = app.attackers.get(lowered_model_name).get(attacker_name)
-        if attacker is None:
-            raise ServerError("unknown model: {}".format(model_name), status_code=400)
-        max_request_length = app.max_request_lengths[lowered_model_name]
-        data = request.get_json()
-        serialized_request = json.dumps(data)
-        if len(serialized_request) > max_request_length:
-            raise ServerError(f"Max request length exceeded for model {model_name}! " +
-                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
-        attack = attacker.targeted_attack_from_json(data,
-                                                    name_of_input_to_attack,
-                                                    name_of_grad_input,
-                                                    ignore_tokens=["[MASK]", "[CLS]", "[SEP]"],
-                                                    target=[target])
-        return jsonify(attack)
-
-    @app.route('/interpret/<model_name>/<interpreter_name>', methods=['POST', 'OPTIONS'])
-    def interpret(model_name: str, interpreter_name: str) -> Response:
-        """
-        Interpret prediction of the model
-        """
-        if request.method == "OPTIONS":
-            return Response(response="", status=200)
-        lowered_model_name = model_name.lower()
-        print(app.interpreters)
-        interpreter = app.interpreters.get(lowered_model_name)[interpreter_name]
-        if interpreter is None:
-            raise ServerError("unknown interpreter: {}".format(model_name), status_code=400)
-        max_request_length = app.max_request_lengths[lowered_model_name]
-
-        data = request.get_json()
-        serialized_request = json.dumps(data)
-        if len(serialized_request) > max_request_length:
-            raise ServerError(f"Max request length exceeded for interpreter {model_name}! " +
-                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
-
-        interpretation = interpreter.saliency_interpret_from_json(data)
-        return jsonify(interpretation)
-
     @app.route('/predict/<model_name>', methods=['POST', 'OPTIONS'])
     def predict(model_name: str) -> Response:  # pylint: disable=unused-variable
         """make a prediction using the specified model and return the results"""
@@ -397,6 +320,69 @@ def make_app(build_dir: str,
         logger.info("prediction: %s", json.dumps(log_blob))
 
         return jsonify(prediction)
+
+    @app.route('/attack/<model_name>', methods=['POST','OPTIONS'])
+    def attack(model_name: str) -> Response:
+        """
+        Modify input to change prediction of model
+        """
+        if request.method == "OPTIONS":
+            return Response(response="", status=200)
+        lowered_model_name = model_name.lower()
+
+        data = request.get_json()
+        attacker_name = data.pop("attacker")
+        input_field_to_attack = data.pop("inputToAttack")
+        grad_input_field = data.pop("gradInput")
+        target = data.pop("target", None)
+
+        model_attackers = app.attackers.get(lowered_model_name)
+        if model_attackers is None:
+            raise ServerError("unknown model: {}".format(model_name), status_code=400)
+        attacker = model_attackers.get(attacker_name)
+        if attacker is None:
+            raise ServerError("unknown attacker for model: {} {}".format(attacker_name, model_name), status_code=400)
+
+        max_request_length = app.max_request_lengths[lowered_model_name]
+        serialized_request = json.dumps(data)
+        if len(serialized_request) > max_request_length:
+            raise ServerError(f"Max request length exceeded for model {model_name}! " +
+                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+
+        attack = attacker.attack_from_json(inputs=data,
+                                           input_field_to_attack=input_field_to_attack,
+                                           grad_input_field=grad_input_field,
+                                           target=target)
+        return jsonify(attack)
+
+    @app.route('/interpret/<model_name>', methods=['POST', 'OPTIONS'])
+    def interpret(model_name: str) -> Response:
+        """
+        Interpret prediction of the model
+        """
+        if request.method == "OPTIONS":
+            return Response(response="", status=200)
+        lowered_model_name = model_name.lower()
+
+        data = request.get_json()
+        interpreter_name = data.pop("interpreter")
+
+        model_interpreters = app.interpreters.get(lowered_model_name)
+        if model_interpreters is None:
+            raise ServerError("no interpreters for model: {}".format(model_name), status_code=400)
+        interpreter = model_interpreters.get(interpreter_name)
+        if interpreter is None:
+            raise ServerError("unknown interpreter for model: {} {}".format(interpreter_name, model_name), status_code=400)
+
+        max_request_length = app.max_request_lengths[lowered_model_name]
+
+        serialized_request = json.dumps(data)
+        if len(serialized_request) > max_request_length:
+            raise ServerError(f"Max request length exceeded for interpreter {model_name}! " +
+                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+
+        interpretation = interpreter.saliency_interpret_from_json(data)
+        return jsonify(interpretation)
 
     @app.route('/models')
     def list_models() -> Response:  # pylint: disable=unused-variable

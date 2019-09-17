@@ -17,8 +17,8 @@ import {
 
 // APIs. These link to the functions in app.py
 const apiUrl = () => `${API_ROOT}/predict/sentiment-analysis`
-const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/sentiment-analysis/${interpreter}`
-const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/sentiment-analysis/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
+const apiUrlInterpret = () => `${API_ROOT}/interpret/sentiment-analysis`
+const apiUrlAttack = () => `${API_ROOT}/attack/sentiment-analysis`
 
 // title of the page
 const title = "Sentiment Analysis"
@@ -40,49 +40,49 @@ const fields = [
    placeholder: 'E.g. "amazing movie"'}
 ]
 
-const get_grad_data = ({ grad_input_1, grad_input_2 }) => {
+const getGradData = ({ grad_input_1 }) => {
   return [grad_input_1];
 }
 
 const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
-  var simple_grad_data = undefined;
-  var integrated_grad_data = undefined;
-  var smooth_grad_data = undefined;
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
   if (interpretData) {
-    simple_grad_data = GRAD_INTERPRETER in interpretData ? get_grad_data(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
-    integrated_grad_data = IG_INTERPRETER in interpretData ? get_grad_data(interpretData[IG_INTERPRETER]['instance_1']) : undefined
-    smooth_grad_data = SG_INTERPRETER in interpretData ? get_grad_data(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
   }
   const inputTokens = [tokens];
   const inputHeaders = [<p><strong>Sentence:</strong></p>];
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyComponent interpretData={simple_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
-        <SaliencyComponent interpretData={integrated_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
-        <SaliencyComponent interpretData={smooth_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
       </Accordion>
     </OutputField>
   )
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
-  var hotflip_data = undefined;
+  let hotflipData = undefined;
   if (attackData && "hotflip" in attackData) {
-    hotflip_data = attackData["hotflip"];
-    const [pos, neg] = hotflip_data["outputs"]["probs"]
-    hotflip_data["new_prediction"] = pos > neg ? 'Positive' : 'Negative'
+    hotflipData = attackData["hotflip"];
+    const [pos, neg] = hotflipData["outputs"]["probs"]
+    hotflipData["new_prediction"] = pos > neg ? 'Positive' : 'Negative'
   }
-  var reduced_input = undefined;
+  let reducedInput = undefined;
   if (attackData && "input_reduction" in attackData) {
-    const reduction_data = attackData["input_reduction"];
-    reduced_input = {original: reduction_data["original"], reduced: [reduction_data["final"][0]]};
+    const reductionData = attackData["input_reduction"];
+    reducedInput = {original: reductionData["original"], reduced: [reductionData["final"][0]]};
   }
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <InputReductionComponent reducedInput={reduced_input} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
-        <HotflipComponent hotflipData={hotflip_data} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
       </Accordion>
     </OutputField>
   )
@@ -93,7 +93,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const [positiveClassProbability, negativeClassProbability] = responseData['probs']
   const prediction = negativeClassProbability < positiveClassProbability ? "Positive" : "Negative"
 
-  var t = requestData;
+  let t = requestData;
   const tokens = t['sentence'].split(' '); // this model expects space-separated inputs
 
   // The "Answer" output field has the models predictions. The other output fields are the

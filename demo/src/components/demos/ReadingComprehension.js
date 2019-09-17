@@ -140,63 +140,63 @@ const ArithmeticEquation = ({numbers}) => {
   return null;
 }
 
-const get_grad_data = ({ grad_input_1, grad_input_2 }) => {
+const getGradData = ({ grad_input_1, grad_input_2 }) => {
   // Not sure why, but it appears that the order of the gradients is reversed for these.
   return [grad_input_2, grad_input_1];
 }
 
 const SaliencyMaps = ({interpretData, question_tokens, passage_tokens, interpretModel, requestData}) => {
-  var simple_grad_data = undefined;
-  var integrated_grad_data = undefined;
-  var smooth_grad_data = undefined;
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
   if (interpretData) {
-    simple_grad_data = GRAD_INTERPRETER in interpretData ? get_grad_data(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
-    integrated_grad_data = IG_INTERPRETER in interpretData ? get_grad_data(interpretData[IG_INTERPRETER]['instance_1']) : undefined
-    smooth_grad_data = SG_INTERPRETER in interpretData ? get_grad_data(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
   }
   const inputTokens = [question_tokens, passage_tokens];
   const inputHeaders = [<p><strong>Question:</strong></p>, <p><strong>Passage:</strong></p>];
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyComponent interpretData={simple_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
-        <SaliencyComponent interpretData={integrated_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
-        <SaliencyComponent interpretData={smooth_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
       </Accordion>
     </OutputField>
   )
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
-  var hotflip_data = undefined;
+  let hotflipData = undefined;
   if (attackData && "hotflip" in attackData) {
-    hotflip_data = attackData["hotflip"];
-    const output = hotflip_data["outputs"];
-    var new_prediction = '';
+    hotflipData = attackData["hotflip"];
+    const output = hotflipData["outputs"];
+    let newPrediction = '';
     if ('best_span_str' in output) { // BiDAF model
-      new_prediction = output['best_span_str'];
+      newPrediction = output['best_span_str'];
     }
     else if ('answer' in output) { // NAQANet model
-      const ans_type = output["answer"]["answer_type"];
-      if (ans_type === "count") {
-        new_prediction = output['answer']['count'];
+      const answerType = output["answer"]["answer_type"];
+      if (answerType === "count") {
+        newPrediction = output['answer']['count'];
       }
       else {
-        new_prediction = output['answer']['value'];
+        newPrediction = output['answer']['value'];
       }
     }
-    hotflip_data["new_prediction"] = new_prediction;
+    hotflipData["new_prediction"] = newPrediction;
   }
-  var reduced_input = undefined;
+  let reducedInput = undefined;
   if (attackData && "input_reduction" in attackData) {
-    const reduction_data = attackData["input_reduction"];
-    reduced_input = {original: reduction_data["original"], reduced: [reduction_data["final"][0]]};
+    const reductionData = attackData["input_reduction"];
+    reducedInput = {original: reductionData["original"], reduced: [reductionData["final"][0]]};
   }
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <InputReductionComponent reducedInput={reduced_input} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
-        <HotflipComponent hotflipData={hotflip_data} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
       </Accordion>
     </OutputField>
   )
@@ -528,22 +528,23 @@ const examples = [
 
 ]
 
+
+const getUrl = (model, apiCall) => {
+    const selectedModel = model || (taskModels[0] && taskModels[0].name);
+    const endpoint = taskEndpoints[selectedModel]
+    return `${API_ROOT}/${apiCall}/${endpoint}`
+}
+
 const apiUrl = ({model}) => {
-  const selectedModel = model || (taskModels[0] && taskModels[0].name);
-  const endpoint = taskEndpoints[selectedModel]
-  return `${API_ROOT}/predict/${endpoint}`
+    return getUrl(model, "predict")
 }
 
-const apiUrlInterpret = ({model, interpreter}) => {
-  const selectedModel = model || (taskModels[0] && taskModels[0].name);
-  const endpoint = taskEndpoints[selectedModel]
-  return `${API_ROOT}/interpret/${endpoint}/${interpreter}`
+const apiUrlInterpret = ({model}) => {
+    return getUrl(model, "interpret")
 }
 
-const apiUrlAttack = ({model, attacker, name_of_input_to_attack, name_of_grad_input}) => {
-  const selectedModel = model || (taskModels[0] && taskModels[0].name);
-  const endpoint = taskEndpoints[selectedModel]
-  return `${API_ROOT}/attack/${endpoint}/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
+const apiUrlAttack = ({model}) => {
+    return getUrl(model, "attack")
 }
 
 const usage = (

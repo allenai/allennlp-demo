@@ -186,23 +186,23 @@ const TokenSpan = ({ token }) => {
     }
 }
 
-const get_grad_data = (instances, num_grads) => {
+const getGradData = (instances, numGrads) => {
   const grads = [];
-  for (var i = 1; i <= num_grads; i++) {
+  for (let i = 1; i <= numGrads; i++) {
       grads.push(instances['instance_' + i.toString()].grad_input_1)
   }
   return grads;
 }
 
 const SaliencyMaps = ({interpretData, tokens, relevantTokens, interpretModel, requestData}) => {
-  var simple_grad_data = undefined;
-  var integrated_grad_data = undefined;
-  var smooth_grad_data = undefined;
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
   if (interpretData) {
-    const num_grads = relevantTokens.length;
-    simple_grad_data = GRAD_INTERPRETER in interpretData ? get_grad_data(interpretData[GRAD_INTERPRETER], num_grads) : undefined
-    integrated_grad_data = IG_INTERPRETER in interpretData ? get_grad_data(interpretData[IG_INTERPRETER], num_grads) : undefined
-    smooth_grad_data = SG_INTERPRETER in interpretData ? get_grad_data(interpretData[SG_INTERPRETER], num_grads) : undefined
+    const numGrads = relevantTokens.length;
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER], numGrads) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER], numGrads) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER], numGrads) : undefined
   }
   const inputTokens = [];
   const inputHeaders = [];
@@ -218,19 +218,19 @@ const SaliencyMaps = ({interpretData, tokens, relevantTokens, interpretModel, re
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyComponent interpretData={simple_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
-        <SaliencyComponent interpretData={integrated_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
-        <SaliencyComponent interpretData={smooth_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
       </Accordion>
     </OutputField>
   )
 }
 
 const Attacks = ({attackData, attackModel, requestData, relevantTokens}) => {
-  var reduced_input = undefined;
+  let reducedInput = undefined;
   if (attackData && "input_reduction" in attackData) {
-    const reduction_data = attackData["input_reduction"];
-    const formatted_reduced = reduction_data["final"].map((reduced, index) =>
+    const reductionData = attackData["input_reduction"];
+    const formattedReduced = reductionData["final"].map((reduced, index) =>
       <p key={index} style={{ display: "flex", flexWrap: "wrap" }}>
         <strong>Reduced input for</strong>
         <TokenSpan key={index} token={relevantTokens[index]} />
@@ -238,12 +238,12 @@ const Attacks = ({attackData, attackModel, requestData, relevantTokens}) => {
         <br />
       </p>
     );
-    reduced_input = {original: reduction_data["original"].join(" "), formatted_reduced: formatted_reduced}
+    reducedInput = {original: reductionData["original"].join(" "), formattedReduced: formattedReduced}
   }
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <InputReductionComponent reducedInput={reduced_input} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
       </Accordion>
     </OutputField>
   )
@@ -324,7 +324,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
 }
 
 const examples = [
-    "This shirt was bought at Grandpa Joe's.",
+    "This shirt was bought at Grandpa Joe's in downtown Deep Learning.",
     "AllenNLP is a PyTorch-based natural language processing library developed at the Allen Institute for Artificial Intelligence in Seattle.",
     "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?",
     "Michael Jordan is a professor at Berkeley.",
@@ -333,10 +333,22 @@ const examples = [
     "When I told John that I wanted to move to Alaska, he warned me that I'd have trouble finding a Starbucks there."
   ].map(sentence => ({sentence, snippet: truncateText(sentence)}))
 
-const apiUrl = ({model}) => {
+const getUrl = (model, apiCall) => {
     const selectedModel = model || (taskModels[0] && taskModels[0].name);
     const endpoint = taskEndpoints[selectedModel]
-    return `${API_ROOT}/predict/${endpoint}`
+    return `${API_ROOT}/${apiCall}/${endpoint}`
+}
+
+const apiUrl = ({model}) => {
+    return getUrl(model, "predict")
+}
+
+const apiUrlInterpret = ({model}) => {
+    return getUrl(model, "interpret")
+}
+
+const apiUrlAttack = ({model}) => {
+    return getUrl(model, "attack")
 }
 
 const usage = (
@@ -376,18 +388,6 @@ predictor.predict(
     </UsageSection>
   </React.Fragment>
 )
-
-const apiUrlInterpret = ({model, interpreter}) => {
-  const selectedModel = model || (taskModels[0] && taskModels[0].name);
-  const endpoint = taskEndpoints[selectedModel]
-  return `${API_ROOT}/interpret/${endpoint}/${interpreter}`
-}
-
-const apiUrlAttack = ({model, attacker, name_of_input_to_attack, name_of_grad_input}) => {
-  const selectedModel = model || (taskModels[0] && taskModels[0].name);
-  const endpoint = taskEndpoints[selectedModel]
-  return `${API_ROOT}/attack/${endpoint}/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
-}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
 const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}

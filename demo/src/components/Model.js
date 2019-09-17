@@ -73,36 +73,44 @@ class Model extends React.Component {
 
     interpretModel(inputs, interpreter) {
       const { apiUrlInterpret } = this.props
-      fetch(apiUrlInterpret(Object.assign(inputs, {interpreter})), {
+      fetch(apiUrlInterpret(inputs), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(inputs)
+        body: JSON.stringify({...inputs, ...{interpreter}})
       }).then((response) => {
         return response.json();
       }).then((json) => {
         const stateUpdate = { ...this.state }
-        stateUpdate['interpretData'] = Object.assign({}, { [interpreter]: json }, stateUpdate['interpretData'])
+        console.log(stateUpdate)
+        stateUpdate['interpretData'] = {...stateUpdate['interpretData'], [interpreter]: json}
+        console.log(stateUpdate)
+        console.log(stateUpdate['interpretData'])
         this.setState(stateUpdate)
       })
     }
 
-    attackModel(inputs, attacker, name_of_input_to_attack, name_of_grad_input) {
+    attackModel(inputs, attacker, inputToAttack, gradInput, target) {
+      const attackInputs = {...{attacker}, ...{inputToAttack}, ...{gradInput}}
+      if (target !== undefined) {
+        attackInputs['target'] = target
+      }
+
       const { apiUrlAttack } = this.props
-      fetch(apiUrlAttack(Object.assign(inputs, {attacker}, {name_of_input_to_attack}, {name_of_grad_input})), {
+      fetch(apiUrlAttack(inputs), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(inputs)
+        body: JSON.stringify({...inputs, ...attackInputs})
       }).then((response) => {
         return response.json();
       }).then((json) => {
         const stateUpdate = { ...this.state }
-        stateUpdate['attackData'] = Object.assign({}, { [attacker]: json }, stateUpdate['attackData'])
+        stateUpdate['attackData'] = {...stateUpdate['attackData'], [attacker]: json}
         this.setState(stateUpdate)
       })
     }
