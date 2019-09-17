@@ -7,6 +7,7 @@ import { API_ROOT } from '../../api-config';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
+import OutputField from '../OutputField'
 import { truncateText } from '../DemoInput'
 import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
@@ -20,12 +21,12 @@ import {
   AccordionItemBody,
 } from 'react-accessible-accordion';
 import { SaliencyComponent, getHeaders } from '../Saliency';
+import InputReductionComponent from '../InputReduction'
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
   SG_INTERPRETER,
-  INPUT_REDUCTION_ATTACKER,
-  HOTFLIP_ATTACKER
+  INPUT_REDUCTION_ATTACKER
 } from '../InterpretConstants'
 
 // LOC, PER, ORG, MISC
@@ -192,7 +193,7 @@ const TokenSpan = ({ token }) => {
 
 const generateSaliencyMaps = (interpretData, words, interpretModel, requestData, relevantTokens, interpreterType) => {
   let saliencyMaps = []
-  if (interpretData === undefined || interpretData[interpreterType] == undefined){
+  if (interpretData === undefined || interpretData[interpreterType] === undefined){
     saliencyMaps.push(
       <SaliencyComponent interpretData={interpretData} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={interpreterType}/>
     )
@@ -203,10 +204,10 @@ const generateSaliencyMaps = (interpretData, words, interpretModel, requestData,
     for (let i = 1; i <= num_grads; ++i) {
       indexedInterpretDataList.push(JSON.parse(JSON.stringify(interpretData)));
       Object.keys(indexedInterpretDataList[i-1][interpreterType]).forEach(function(itm){
-        if (itm == 'instance_' + i.toString()){
+        if (itm === 'instance_' + i.toString()){
           indexedInterpretDataList[i-1][interpreterType]['instance_1'] = indexedInterpretDataList[i-1][interpreterType][itm]
         }
-        else if (itm != 'instance_1'){
+        else if (itm !== 'instance_1'){
           delete indexedInterpretDataList[i-1][interpreterType][itm];
         }
       });
@@ -248,21 +249,27 @@ const generateSaliencyMaps = (interpretData, words, interpretModel, requestData,
   return saliencyMaps
 }
 
-// generates the visualization for input reduction. For NER, this visualization
-// is different because we have multiple model outputs (each precicted entity tag)
-const generateInputReductionUI = (attackData, relevantTokens) => {
-    let reducedInputs = []
-    for (let idx = 0; idx < attackData["input_reduction"]["final"].length; idx++){
-      reducedInputs.push(
-        <div key={idx} style={{ display: "flex", flexWrap: "wrap" }}>
-          <strong>Reduced input for</strong>
-          <TokenSpan key={idx} token={relevantTokens[idx]} />
-          <strong>:</strong> <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> {attackData["input_reduction"]["final"][idx].join(" ")}
-          <br />
-        </div>
-      )
-    }
-    return reducedInputs
+const Attacks = ({attackData, attackModel, requestData, relevantTokens}) => {
+  var reduced_input = undefined;
+  if (attackData && "input_reduction" in attackData) {
+    const reduction_data = attackData["input_reduction"];
+    const formatted_reduced = reduction_data["final"].map((reduced, index) =>
+      <p key={index} style={{ display: "flex", flexWrap: "wrap" }}>
+        <strong>Reduced input for</strong>
+        <TokenSpan key={index} token={relevantTokens[index]} />
+        <strong>:</strong> <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> {reduced.join(" ")}
+        <br />
+      </p>
+    );
+    reduced_input = {original: reduction_data["original"].join(" "), formatted_reduced: formatted_reduced}
+  }
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <InputReductionComponent reducedInput={reduced_input} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+      </Accordion>
+    </OutputField>
+  )
 }
 
 const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
@@ -328,21 +335,6 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
     const igSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, IG_INTERPRETER)
     const sgSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, SG_INTERPRETER)
 
-    var reduced_input_visual = '';
-    if (attackData === undefined) {
-      reduced_input_visual = " "
-    }
-    else{
-      reduced_input_visual = generateInputReductionUI(attackData, relevantTokens)
-    }
-
-    const run_button = <button type="button"
-                         className="btn"
-                         style={{margin: "30px 0px"}}
-                         onClick={ () => attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT) }
-                       >Reduce Input
-                       </button>
-
     return (
       <div className="model__content model__content--ner-output">
         <FormField>
@@ -354,16 +346,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
                 {igSaliencyMap}
                 {sgSaliencyMap}
 
-                <AccordionItem>
-                <AccordionItemTitle>
-                Input Reduction
-                  <div className="accordion__arrow" role="presentation"/>
-                </AccordionItemTitle>
-                <AccordionItemBody>
-                  <p> <a href="https://arxiv.org/abs/1804.07781" target="_blank" rel="noopener noreferrer">Input Reduction</a> removes as many words from the input as possible without changing the model's prediction.</p>
-                  {reduced_input_visual !== " " ? <p>{reduced_input_visual}</p> : <div><p style={{color: "#7c7c7c"}}>Press "reduce input" to run Input Reduction.</p> {run_button}</div>}
-                </AccordionItemBody>
-              </AccordionItem>
+            <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData} relevantTokens={relevantTokens}/>
             </Accordion>
         </FormField>
       </div>
@@ -437,4 +420,4 @@ const apiUrlAttack = ({model, attacker, name_of_input_to_attack, name_of_grad_in
 }
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}

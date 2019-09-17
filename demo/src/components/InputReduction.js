@@ -55,54 +55,69 @@ const colorizeTokensForInputReductionUI = (original_input, reduced_input) => {
 
 export default class InputReductionComponent extends React.Component {
     render() {
-        const { inputReductionData, reduceInput, requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput} = this.props
+        const { reduceFunction, requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput, reducedInput} = this.props
         if (attacker === INPUT_REDUCTION_ATTACKER) {
-            var original_sentence = '';
-            var new_sentence = '';
-            var no_reduction = false;
-            // called on initialization
-            if (inputReductionData === undefined || inputReductionData['input_reduction'] === undefined) {
-                new_sentence = " "
-            } else {
-                original_sentence = inputReductionData["input_reduction"]["original"];
-                new_sentence = inputReductionData["input_reduction"]["final"][0];
-                no_reduction = JSON.stringify(original_sentence) === JSON.stringify(new_sentence);
-                [original_sentence, new_sentence] = colorizeTokensForInputReductionUI(original_sentence, new_sentence);
-            }
             const run_button = <button
                                  type="button"
                                  className="btn"
                                  style={{margin: "30px 0px"}}
-                                 onClick={ () => reduceInput(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }
+                                 onClick={ () => reduceFunction(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }
                                 >
                                   Reduce Input
                                </button>
-            const display_text = new_sentence === " " ?
-              <div><p style={{color: "#7c7c7c"}}>Press "reduce input" to run input reduction.</p>{run_button}</div>
-            :
-              <div>
-                <p><strong>Original Input:</strong> {original_sentence}</p>
-                <p><strong>Reduced Input:</strong> {new_sentence}</p>
-                {no_reduction ? <p>(No reduction was possible)</p> : <p></p>}
-              </div>
 
+            var display_text = '';
+            if (reducedInput === undefined) {
+                display_text = <div><p style={{color: "#7c7c7c"}}>Press "reduce input" to run input reduction.</p>{run_button}</div>
+            } else {
+                // There are a number of ways to tweak the output of this component:
+                // (1) you can provide a context, which shows up on top, e.g., for displaying the
+                // premise for SNLI.
+                // (2) you can format the original input and the reduced input yourself, to
+                // customize the display for, e.g., NER.
+                const original = reducedInput["original"];
+                const formatted_original = reducedInput["formatted_original"];
+                var internal_text = [];
+                if ("context" in reducedInput) {
+                    internal_text.push(reducedInput["context"]);
+                }
+                if (formatted_original !== undefined) {
+                    internal_text.push(formatted_original);
+                }
+                if ("formatted_reduced" in reducedInput) {
+                    if (formatted_original === undefined) {
+                        internal_text.push(<p><strong>Original Input:</strong> {original}</p>)
+                    }
+                    reducedInput["formatted_reduced"].forEach(formatted_reduced => {
+                        internal_text.push(formatted_reduced);
+                    })
+                } else {
+                    reducedInput["reduced"].forEach(reduced => {
+                        const no_reduction = JSON.stringify(original) === JSON.stringify(reduced);
+                        const [original_colored, reduced_colored] = colorizeTokensForInputReductionUI(original, reduced);
+                        if (formatted_original === undefined) {
+                            internal_text.push(<p><strong>Original Input:</strong> {original_colored}</p>)
+                        }
+                        internal_text.push(<p><strong>Reduced Input:</strong> {reduced_colored}</p>)
+                        internal_text.push(no_reduction ? <p>(No reduction was possible)</p> : <p></p>)
+                    })
+                }
+                display_text = <div>{internal_text}</div>
+            }
 
             return (
-                <div>
-                    <AccordionItem expanded={true}>
-                        <AccordionItemTitle>
-                            Input Reduction
-                            <div className="accordion__arrow" role="presentation"/>
-                        </AccordionItemTitle>
-                        <AccordionItemBody>
-                            <p>
-                                <a href="https://arxiv.org/abs/1804.07781" target="_blank" rel="noopener noreferrer">Input Reduction</a>
-                                removes as many words from the input as possible without changing the model's prediction.
-                            </p>
-                            {display_text}
-                        </AccordionItemBody>
-                    </AccordionItem>
-                </div>
+                <AccordionItem>
+                    <AccordionItemTitle>
+                        Input Reduction
+                        <div className="accordion__arrow" role="presentation"/>
+                    </AccordionItemTitle>
+                    <AccordionItemBody>
+                        <p>
+                            <a href="https://arxiv.org/abs/1804.07781" target="_blank" rel="noopener noreferrer">Input Reduction</a> removes as many words from the input as possible without changing the model's prediction.
+                        </p>
+                        {display_text}
+                    </AccordionItemBody>
+                </AccordionItem>
             )
         }
     }

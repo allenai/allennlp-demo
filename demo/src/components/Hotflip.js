@@ -100,28 +100,28 @@ export default class HotflipComponent extends React.Component {
   }
 
     render() {
-        const { hotflipData, hotflipInput, requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput } = this.props
+        const { hotflipData, hotflipFunction, requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput } = this.props
         if (attacker === HOTFLIP_ATTACKER){ // if attacker is not INPUT_REDUCTION or other methods
             var original_string = ''
             var flipped_string = ''
             var new_prediction = ''
             var context = " ";
             // enters during initialization
-            if (hotflipData === undefined || hotflipData['hotflip'] === undefined) {
+            if (hotflipData === undefined) {
                 flipped_string = " ";
             }
             // data is available, display the results of Hotflip
             else {
-                [original_string, flipped_string] = colorizeTokensForHotflipUI(hotflipData["hotflip"]["original"],
-                                                                               hotflipData["hotflip"]["final"][0])
-                new_prediction = hotflipData["hotflip"]["new_prediction"]
-                context = hotflipData["hotflip"]["context"]
+                [original_string, flipped_string] = colorizeTokensForHotflipUI(hotflipData["original"],
+                                                                               hotflipData["final"][0])
+                new_prediction = hotflipData["new_prediction"]
+                context = hotflipData["context"]
             }
             const run_button = <button
                                  type="button"
                                  className="btn"
                                  style={{margin: "30px 0px"}}
-                                 onClick={ () => hotflipInput(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }
+                                 onClick={ () => hotflipFunction(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }
                                 >
                                   Flip Words
                                </button>

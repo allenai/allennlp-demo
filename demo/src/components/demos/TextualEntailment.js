@@ -99,9 +99,38 @@ const judgments = {
   NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
+const get_grad_data = ({ grad_input_1, grad_input_2 }) => {
+  // Not sure why, but it appears that the order of the gradients is reversed for these.
+  return [grad_input_2, grad_input_1];
+}
+
+const SaliencyMaps = ({interpretData, premise_tokens, hypothesis_tokens, interpretModel, requestData}) => {
+  var simple_grad_data = undefined;
+  var integrated_grad_data = undefined;
+  var smooth_grad_data = undefined;
+  if (interpretData) {
+    simple_grad_data = GRAD_INTERPRETER in interpretData ? get_grad_data(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integrated_grad_data = IG_INTERPRETER in interpretData ? get_grad_data(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smooth_grad_data = SG_INTERPRETER in interpretData ? get_grad_data(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+  }
+  const inputTokens = [premise_tokens, hypothesis_tokens];
+  const inputHeaders = [<p><strong>Premise:</strong></p>, <p><strong>Hypothesis:</strong></p>];
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simple_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integrated_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smooth_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
 const Attacks = ({attackData, attackModel, requestData}) => {
+  var hotflip_data = undefined;
   if (attackData && "hotflip" in attackData) {
-    const [entail, contr, neutral] = attackData["hotflip"]["outputs"]["label_probs"]
+    hotflip_data = attackData["hotflip"];
+    const [entail, contr, neutral] = hotflip_data["outputs"]["label_probs"]
     var prediction = '';
     if (entail > contr) {
         if (entail > neutral) {
@@ -116,14 +145,23 @@ const Attacks = ({attackData, attackModel, requestData}) => {
             prediction = "Neutral"
         }
     }
-    attackData["hotflip"]["new_prediction"] = prediction;
-    attackData["hotflip"]["context"] = <p><strong>Premise:</strong> {requestData['premise']}</p>
+    hotflip_data["new_prediction"] = prediction;
+    hotflip_data["context"] = <p><strong>Premise:</strong> {requestData['premise']}</p>
+  }
+  var reduced_input = undefined;
+  if (attackData && "input_reduction" in attackData) {
+    const reduction_data = attackData["input_reduction"];
+    reduced_input = {
+      original: reduction_data["original"],
+      context: <p><strong>Premise:</strong> {requestData['premise']}</p>,
+      reduced: [reduction_data["final"][0]]
+    };
   }
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
-        <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <InputReductionComponent reducedInput={reduced_input} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={hotflip_data} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
       </Accordion>
     </OutputField>
   )
@@ -221,10 +259,8 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
     </div>
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={premise_tokens} input2Tokens={hypothesis_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
-        <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+        <SaliencyMaps interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel={interpretModel} requestData={requestData} />
+        <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
 
         <AccordionItem>
           <AccordionItemTitle>

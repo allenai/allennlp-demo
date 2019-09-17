@@ -140,21 +140,38 @@ const ArithmeticEquation = ({numbers}) => {
   return null;
 }
 
+const get_grad_data = ({ grad_input_1, grad_input_2 }) => {
+  // Not sure why, but it appears that the order of the gradients is reversed for these.
+  return [grad_input_2, grad_input_1];
+}
+
 const SaliencyMaps = ({interpretData, question_tokens, passage_tokens, interpretModel, requestData}) => {
+  var simple_grad_data = undefined;
+  var integrated_grad_data = undefined;
+  var smooth_grad_data = undefined;
+  if (interpretData) {
+    simple_grad_data = GRAD_INTERPRETER in interpretData ? get_grad_data(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integrated_grad_data = IG_INTERPRETER in interpretData ? get_grad_data(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smooth_grad_data = SG_INTERPRETER in interpretData ? get_grad_data(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+  }
+  const inputTokens = [question_tokens, passage_tokens];
+  const inputHeaders = [<p><strong>Question:</strong></p>, <p><strong>Passage:</strong></p>];
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
-        <SaliencyComponent interpretData={interpretData} input1Tokens={question_tokens} input2Tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
+        <SaliencyComponent interpretData={simple_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integrated_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smooth_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
       </Accordion>
     </OutputField>
   )
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
+  var hotflip_data = undefined;
   if (attackData && "hotflip" in attackData) {
-    const output = attackData["hotflip"]["outputs"];
+    hotflip_data = attackData["hotflip"];
+    const output = hotflip_data["outputs"];
     var new_prediction = '';
     if ('best_span_str' in output) { // BiDAF model
       new_prediction = output['best_span_str'];
@@ -168,13 +185,18 @@ const Attacks = ({attackData, attackModel, requestData}) => {
         new_prediction = output['answer']['value'];
       }
     }
-    attackData["hotflip"]["new_prediction"] = new_prediction;
+    hotflip_data["new_prediction"] = new_prediction;
+  }
+  var reduced_input = undefined;
+  if (attackData && "input_reduction" in attackData) {
+    const reduction_data = attackData["input_reduction"];
+    reduced_input = {original: reduction_data["original"], reduced: [reduction_data["final"][0]]};
   }
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <InputReductionComponent inputReductionData={attackData} reduceInput={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
-        <HotflipComponent hotflipData={attackData} hotflipInput={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <InputReductionComponent reducedInput={reduced_input} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={hotflip_data} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
       </Accordion>
     </OutputField>
   )
@@ -211,8 +233,8 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
                 {question}
               </OutputField>
 
-              <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel = {interpretModel} requestData = {requestData}/>
-              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+              <SaliencyMaps interpretData={interpretData} question_tokens={question_tokens} passage_tokens={passage_tokens} interpretModel={interpretModel} requestData={requestData}/>
+              <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
               <Attention {...responseData}/>
             </section>
           )
