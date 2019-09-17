@@ -125,9 +125,6 @@ export class SaliencyComponent extends React.Component {
     } else {
       const saliency_maps = [];
       for (var i = 0; i < inputTokens.length; i++) {
-        console.log(interpretData);
-        console.log(inputTokens);
-        console.log(inputHeaders);
         const grads = interpretData[i];
         const tokens = inputTokens[i];
         const header = inputHeaders[i];

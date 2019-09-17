@@ -199,7 +199,6 @@ const SaliencyMaps = ({interpretData, tokens, relevantTokens, interpretModel, re
   var integrated_grad_data = undefined;
   var smooth_grad_data = undefined;
   if (interpretData) {
-    console.log(interpretData);
     const num_grads = relevantTokens.length;
     simple_grad_data = GRAD_INTERPRETER in interpretData ? get_grad_data(interpretData[GRAD_INTERPRETER], num_grads) : undefined
     integrated_grad_data = IG_INTERPRETER in interpretData ? get_grad_data(interpretData[IG_INTERPRETER], num_grads) : undefined
