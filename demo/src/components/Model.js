@@ -28,7 +28,7 @@ class Model extends React.Component {
     runModel(inputs) {
       const { selectedModel, apiUrl } = this.props
 
-      this.setState({outputState: "working"});
+      this.setState({outputState: "working", interpretData: undefined, attackData: undefined});
 
       fetch(apiUrl(inputs), {
         method: 'POST',

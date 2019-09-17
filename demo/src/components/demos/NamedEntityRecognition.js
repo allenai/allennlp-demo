@@ -191,62 +191,45 @@ const TokenSpan = ({ token }) => {
     }
 }
 
-const generateSaliencyMaps = (interpretData, words, interpretModel, requestData, relevantTokens, interpreterType) => {
-  let saliencyMaps = []
-  if (interpretData === undefined || interpretData[interpreterType] === undefined){
-    saliencyMaps.push(
-      <SaliencyComponent interpretData={interpretData} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={interpreterType}/>
-    )
+const get_grad_data = (instances, num_grads) => {
+  const grads = [];
+  for (var i = 1; i <= num_grads; i++) {
+      grads.push(instances['instance_' + i.toString()].grad_input_1)
   }
-  else {
-    let num_grads = relevantTokens.length
-    let indexedInterpretDataList = []
-    for (let i = 1; i <= num_grads; ++i) {
-      indexedInterpretDataList.push(JSON.parse(JSON.stringify(interpretData)));
-      Object.keys(indexedInterpretDataList[i-1][interpreterType]).forEach(function(itm){
-        if (itm === 'instance_' + i.toString()){
-          indexedInterpretDataList[i-1][interpreterType]['instance_1'] = indexedInterpretDataList[i-1][interpreterType][itm]
-        }
-        else if (itm !== 'instance_1'){
-          delete indexedInterpretDataList[i-1][interpreterType][itm];
-        }
-      });
-      saliencyMaps.push(
-        <div key={i} style={{ display: "flex", flexWrap: "wrap" }}>
-          <p><strong>Showing interpretation for</strong></p>
-          <TokenSpan key={i} token={relevantTokens[i-1]} />
-          <SaliencyComponent interpretData={indexedInterpretDataList[i-1]} input1Tokens={words} interpretModel = {interpretModel} requestData = {requestData} interpreter={interpreterType} task={title}/>
-        </div>
-      )
-      // spacing between saliency maps
-      saliencyMaps.push(
-        <div>
-          <br />
-        </div>
-      )
-    }
-    let result = [];
-    const [title1, title2] = getHeaders(interpreterType);
-    result.push(
-      <div>
-        <AccordionItem>
-          <AccordionItemTitle>
-              {title1}
-              <div className="accordion__arrow" role="presentation"/>
-          </AccordionItemTitle>
-          <AccordionItemBody>
-              <div className="content">
-                {title2}
-              </div>
-              {saliencyMaps}
-          </AccordionItemBody>
-        </AccordionItem>
-      </div>
-    )
-    return result
-  }
+  return grads;
+}
 
-  return saliencyMaps
+const SaliencyMaps = ({interpretData, tokens, relevantTokens, interpretModel, requestData}) => {
+  var simple_grad_data = undefined;
+  var integrated_grad_data = undefined;
+  var smooth_grad_data = undefined;
+  if (interpretData) {
+    console.log(interpretData);
+    const num_grads = relevantTokens.length;
+    simple_grad_data = GRAD_INTERPRETER in interpretData ? get_grad_data(interpretData[GRAD_INTERPRETER], num_grads) : undefined
+    integrated_grad_data = IG_INTERPRETER in interpretData ? get_grad_data(interpretData[IG_INTERPRETER], num_grads) : undefined
+    smooth_grad_data = SG_INTERPRETER in interpretData ? get_grad_data(interpretData[SG_INTERPRETER], num_grads) : undefined
+  }
+  const inputTokens = [];
+  const inputHeaders = [];
+  relevantTokens.forEach((token, index) => {
+    inputTokens.push(tokens);
+    inputHeaders.push(
+        <div key={index} style={{ display: "flex", flexWrap: "wrap" }}>
+          <p><strong>Interpretation for</strong></p>
+          <TokenSpan key={index} token={token} />
+        </div>
+    );
+  });
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simple_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integrated_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smooth_grad_data} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
 }
 
 const Attacks = ({attackData, attackModel, requestData, relevantTokens}) => {
@@ -331,10 +314,6 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
       }
     })
 
-    const gradSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, GRAD_INTERPRETER)
-    const igSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, IG_INTERPRETER)
-    const sgSaliencyMap = generateSaliencyMaps(interpretData, words, interpretModel, requestData, relevantTokens, SG_INTERPRETER)
-
     return (
       <div className="model__content model__content--ner-output">
         <FormField>
@@ -342,11 +321,8 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </HighlightContainer>
             <Accordion accordion={false}>
-                {gradSaliencyMap}
-                {igSaliencyMap}
-                {sgSaliencyMap}
-
-            <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData} relevantTokens={relevantTokens}/>
+              <SaliencyMaps interpretData={interpretData} tokens={words} relevantTokens={relevantTokens} interpretModel={interpretModel} requestData={requestData}/>
+              <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData} relevantTokens={relevantTokens}/>
             </Accordion>
         </FormField>
       </div>

@@ -41,7 +41,6 @@ const fields = [
 ]
 
 const get_grad_data = ({ grad_input_1, grad_input_2 }) => {
-  // Not sure why, but it appears that the order of the gradients is reversed for these.
   return [grad_input_1];
 }
 
