@@ -21,9 +21,8 @@ import {
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
 const apiUrl = () => `${API_ROOT}/predict/masked-lm`
-const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/masked-lm/${interpreter}`
-const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/masked-lm/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
-const apiUrlTargetedAttack = ({attacker, name_of_input_to_attack, name_of_grad_input, target_word}) => `${API_ROOT}/targeted_attack/masked-lm/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}/${target_word}`
+const apiUrlInterpret = () => `${API_ROOT}/interpret/masked-lm`
+const apiUrlAttack = () => `${API_ROOT}/attack/masked-lm`
 const NAME_OF_INPUT_TO_ATTACK = "tokens"
 const NAME_OF_GRAD_INPUT = "grad_input_1"
 
@@ -139,7 +138,7 @@ const Token = styled.span`
   font-weight: 600;
 `
 
-const DEFAULT = "Joel is";
+const DEFAULT = "The doctor ran to the emergency room to see [MASK] patient.";
 
 function addToUrl(output, choice) {
   if ('history' in window) {
@@ -162,18 +161,57 @@ const DEFAULT_MODEL = "345M"
 
 const description = (
   <span>
-Enter some initial text with a "[MASK]" token and the model will generate the most likely words to substitute for "[MASK]".
-You can click on one of those words to choose it and continue or just keep typing.
-Click the left arrow at the bottom to undo your last choice.
+Enter some initial text with at least one "[MASK]" token and the model will generate the most likely words to substitute for "[MASK]".
   </span>
 )
+
+const getGradData = ({ grad_input_1 }) => {
+  return [grad_input_1];
+}
+
+const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
+  if (interpretData) {
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+  }
+  const inputTokens = [tokens];
+  const inputHeaders = [<p><strong>Sentence:</strong></p>];
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const Attacks = ({attackData, attackModel, requestData}) => {
+  let hotflipData = undefined;
+  if (attackData && attackData.hotflip) {
+    hotflipData = attackData["hotflip"];
+    hotflipData["new_prediction"] = hotflipData["outputs"]["words"][0][0];
+  }
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} targeted={true}/>
+      </Accordion>
+    </OutputField>
+  )
+}
 
 class App extends React.Component {
 
   constructor(props) {
     super(props)
 
-    const { requestData, responseData, interpretData, attackData, targetedAttackData } = props;
+    const { requestData, responseData } = props;
     this.currentRequestId = 0;
 
     this.state = {
@@ -184,9 +222,8 @@ class App extends React.Component {
       loading: false,
       error: false,
       model: DEFAULT_MODEL,
-      interpretData: interpretData,
-      attackData: attackData,
-      targetedAttackData: targetedAttackData
+      interpretData: null,
+      attackData: null,
     }
 
     this.choose = this.choose.bind(this)
@@ -195,7 +232,6 @@ class App extends React.Component {
     this.runOnEnter = this.runOnEnter.bind(this)
     this.interpretModel = this.interpretModel.bind(this)
     this.attackModel = this.attackModel.bind(this)
-    this.attackModelTargeted = this.attackModelTargeted.bind(this)
   }
 
   setOutput(evt) {
@@ -210,6 +246,8 @@ class App extends React.Component {
           words: null,
           logits: null,
           probabilities: null,
+          interpretData: null,
+          attackData: null,
           loading: loading
       })
 
@@ -301,32 +339,38 @@ class App extends React.Component {
   }
 
   render() {
-
-    // const { responseData, requestData, interpretData, interpretModel, attackData, attackModel } = this.props
-    var requestData = {"sentence": this.state.output};
-    var interpretData = this.state.interpretData;
-    var attackData = this.state.attackData;
-    var targetedAttackData = this.state.targetedAttackData;
-    console.log(requestData);
-    console.log(interpretData);
-    console.log(this.props);
-    var tokens = [];
-    if (this.state.tokens === undefined) {
-        tokens = [];
-    }
-    else {
+    let requestData = {"sentence": this.state.output};
+    let interpretData = this.state.interpretData;
+    let attackData = this.state.attackData;
+    let tokens = [];
+    if (this.state.tokens !== undefined) {
         if (Array.isArray(this.state.tokens[0])) {
             tokens = this.state.tokens[0];
         }
         else {
             tokens = this.state.tokens;
         }
-        console.log(this.state);
+    }
+    const maskOutputs = [];
+    if (this.state.words !== null) {
+      this.state.words.forEach((wordList, index) => {
+        maskOutputs.push(
+          <InputOutputColumn key={index}>
+            <FormLabel>Mask {index + 1} Predictions:</FormLabel>
+            <Choices output={this.state.output}
+                     index={index}
+                     logits={this.state.logits}
+                     words={this.state.words}
+                     probabilities={this.state.probabilities}
+                     hidden={this.state.loading}/>
+          </InputOutputColumn>
+        );
+      });
     }
     return (
         <Wrapper classname="model">
         <ModelArea className="model__content answer">
-          <h2><span>Language Modeling</span></h2>
+          <h2><span>{title}</span></h2>
           <p><span>{description}</span></p>
 
           <InputOutput>
@@ -348,107 +392,55 @@ class App extends React.Component {
                   </Error>
                 ) : null}
             </InputOutputColumn>
-            <InputOutputColumn>
-              <FormLabel>Mask 1 Predictions:</FormLabel>
-              <Choices output={this.state.output}
-                      index={0}
-                      choose={this.choose}
-                      logits={this.state.logits}
-                      words={this.state.words}
-                      probabilities={this.state.probabilities}
-                      hidden={this.state.loading}/>
-            </InputOutputColumn>
-            <InputOutputColumn>
-              <FormLabel>Mask 2 Predictions:</FormLabel>
-              <Choices output={this.state.output}
-                      index={1}
-                      choose={this.choose}
-                      logits={this.state.logits}
-                      words={this.state.words}
-                      probabilities={this.state.probabilities}
-                      hidden={this.state.loading}/>
-            </InputOutputColumn>
+            {maskOutputs}
           </InputOutput>
         </ModelArea>
       <Accordion accordion={false}>
-          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
-          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
-          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens} interpretModel = {this.interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
-          <HotflipComponent hotflipData={attackData} hotflipInput={this.attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
-          <TargetedHotflipComponent hotflipData={targetedAttackData} hotflipInput={this.attackModelTargeted} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <SaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
+        <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
       </Accordion>
     </Wrapper>
     )
   }
 
-    interpretModel(inputs, interpreter) {
-      // const { apiUrlInterpret } = this.props
-      console.log(inputs);
-      console.log(apiUrlInterpret);
-      console.log(interpreter);
-      fetch(apiUrlInterpret(Object.assign(inputs, {interpreter})), {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(inputs)
-      }).then((response) => {
-        console.log('line 391');
-        return response.json();
-      }).then((json) => {
-        var stateUpdate = {
-            ...this.state,
-            interpretData: {
-              [interpreter]: json
-            }
-        };
-        this.setState(stateUpdate)
-      })
+  interpretModel = (inputs, interpreter) => () => {
+    fetch(apiUrlInterpret(inputs), {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({...inputs, ...{interpreter}})
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      const stateUpdate = { ...this.state }
+      stateUpdate['interpretData'] = {...stateUpdate['interpretData'], [interpreter]: json}
+      this.setState(stateUpdate)
+    })
+  }
+
+  attackModel = (inputs, attacker, inputToAttack, gradInput) => ({target}) => {
+    const attackInputs = {...{attacker}, ...{inputToAttack}, ...{gradInput}}
+    if (target !== undefined) {
+      attackInputs['target'] = {words: [[target]]}
     }
 
-    attackModel(inputs, attacker, name_of_input_to_attack, name_of_grad_input) {
-      // const { apiUrlAttack } = this.props
-      fetch(apiUrlAttack(Object.assign(inputs, {attacker}, {name_of_input_to_attack}, {name_of_grad_input})), {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(inputs)
-      }).then((response) => {
-        return response.json();
-      }).then((json) => {
-        var stateUpdate = {
-            ...this.state,
-            attackData: {
-              [attacker]: json
-            }
-        };
-        this.setState(stateUpdate)
-      })
-    }
-
-    attackModelTargeted(inputs, attacker, name_of_input_to_attack, name_of_grad_input, form_inputs) {
-      console.log(form_inputs)
-      const { target_word } = form_inputs
-      console.log(target_word)
-      // const { apiUrlAttack } = this.props
-      fetch(apiUrlTargetedAttack(Object.assign(inputs, {attacker}, {name_of_input_to_attack}, {name_of_grad_input}, {target_word})), {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(inputs)
-      }).then((response) => {
-        return response.json();
-      }).then((json) => {
-        const stateUpdate = { ...this.state }
-        stateUpdate['targetedAttackData'] = Object.assign({}, { [attacker]: json }, stateUpdate['targetedAttackData'])
-        this.setState(stateUpdate)
-      })
-    }
+    fetch(apiUrlAttack(inputs), {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({...inputs, ...attackInputs})
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      const stateUpdate = { ...this.state }
+      stateUpdate['attackData'] = {...stateUpdate['attackData'], [attacker]: json}
+      this.setState(stateUpdate)
+    })
+  }
 }
 
 
@@ -457,7 +449,7 @@ const formatProbability = prob => {
   return `${prob.toFixed(1)}%`
 }
 
-const Choices = ({output, index, logits, words, choose, probabilities}) => {
+const Choices = ({output, index, logits, words, probabilities}) => {
   if (!words) { return null }
   if (words.length <= index) { return null }
   if (probabilities.length <= index) { return null }
@@ -470,7 +462,7 @@ const Choices = ({output, index, logits, words, choose, probabilities}) => {
 
     return (
       <ListItem key={`${idx}-${cleanWord}`}>
-        <ChoiceItem onClick={() => choose(word)}>
+        <ChoiceItem>
           <Probability>{prob}</Probability>
           {' '}
           <Token>{cleanWord}</Token>
@@ -479,26 +471,9 @@ const Choices = ({output, index, logits, words, choose, probabilities}) => {
     )
   })
 
-  const goBack = () => {
-    window.history.back();
-  }
-
-  const goBackItem = (
-    <ListItem key="go-back">
-      {'history' in window ? (
-        <UndoButton onClick={goBack}>
-          <Probability>←</Probability>
-          {' '}
-          <Token>Undo</Token>
-        </UndoButton>
-      ) : null}
-    </ListItem>
-  )
-
   return (
     <ChoiceList>
       {lis}
-      {goBackItem}
     </ChoiceList>
   )
 }

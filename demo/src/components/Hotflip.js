@@ -99,7 +99,8 @@ export default class HotflipComponent extends React.Component {
   }
 
   updateTargetWord(e) {
-    this.setState({target: e.target.value});
+    const value = e.target.value === '' ? undefined : e.target.value
+    this.setState({target: value});
   }
 
   render() {
@@ -131,14 +132,19 @@ export default class HotflipComponent extends React.Component {
     const target = targeted === undefined ?
       " "
     :
-      <p> Change prediction to: <FormInput type="text" onChange={ this.updateTargetWord }/> </p>
+      <p> Change prediction to (leave blank to allow any change): <FormInput type="text" onChange={ this.updateTargetWord }/> </p>
 
-    const displayText = flippedString === " " ?
+    const buttonDisplay = (flippedString !== " " && targeted === undefined) ?
+      " "
+    :
       <div>
         <p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>
         {target}
         {runButton}
       </div>
+
+    const flippedDisplay = (flippedString === " ") ?
+      ""
     :
       <div>
         {context !== " " ? context : ""}
@@ -157,7 +163,8 @@ export default class HotflipComponent extends React.Component {
                 <p>
                     <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the input word with the highest gradient until the prediction changes.
                 </p>
-                {displayText}
+                {flippedDisplay}
+                {buttonDisplay}
             </AccordionItemBody>
         </AccordionItem>
     )

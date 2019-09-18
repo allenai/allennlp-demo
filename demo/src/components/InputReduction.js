@@ -5,7 +5,6 @@ import {
     AccordionItemBody,
     } from 'react-accessible-accordion';
 import { RedToken, TransparentToken, BlankToken } from './Shared';
-import { INPUT_REDUCTION_ATTACKER } from './InterpretConstants'
 
 // takes in the input before and after input reduction and highlights
 // the words that were removed in red with strikeout. The reducedInput
