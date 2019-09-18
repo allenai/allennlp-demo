@@ -105,14 +105,14 @@ export class SaliencyComponent extends React.Component {
   }
 
   render() {
-    const { interpretData, inputTokens, inputHeaders, interpretModel, requestData, interpreter } = this.props
+    const { interpretData, inputTokens, inputHeaders, interpretModel, interpreter } = this.props
     const [title, description] = getHeaders(interpreter)
 
     const runButton = <button
                         type="button"
                         className="btn"
                         style={{margin: "30px 0px"}}
-                        onClick={() => interpretModel(requestData, interpreter)}
+                        onClick={() => interpretModel()}
                        >
                          Interpret Prediction
                       </button>

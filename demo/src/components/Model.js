@@ -71,7 +71,7 @@ class Model extends React.Component {
       });
     }
 
-    interpretModel(inputs, interpreter) {
+    interpretModel = (inputs, interpreter) => () => {
       const { apiUrlInterpret } = this.props
       fetch(apiUrlInterpret(inputs), {
         method: 'POST',
@@ -84,15 +84,12 @@ class Model extends React.Component {
         return response.json();
       }).then((json) => {
         const stateUpdate = { ...this.state }
-        console.log(stateUpdate)
         stateUpdate['interpretData'] = {...stateUpdate['interpretData'], [interpreter]: json}
-        console.log(stateUpdate)
-        console.log(stateUpdate['interpretData'])
         this.setState(stateUpdate)
       })
     }
 
-    attackModel(inputs, attacker, inputToAttack, gradInput, target) {
+    attackModel = (inputs, attacker, inputToAttack, gradInput) => ({target}) => {
       const attackInputs = {...{attacker}, ...{inputToAttack}, ...{gradInput}}
       if (target !== undefined) {
         attackInputs['target'] = target
