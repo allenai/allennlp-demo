@@ -124,13 +124,12 @@ Also make sure to import your component at the top of the file.
 
 You can find more information about the front end creation at the bottom of the README.
 
-# Adding a New Interpretation Method
+## Adding a New Interpretation Method
 
 Here we describe the steps to add a new interpretation/attack method to AllenNLP, as well as how to create the corresponding front-end visualization.
 
 We will walk through adding the [SmoothGrad](https://arxiv.org/abs/1706.03825) gradient-based interpretation method from scratch. We will first modify the [AllenNLP repo](https://github.com/allenai/allennlp) to create the interpretation method. Then, we will  modify the [AllenNLP Demo](https://github.com/allenai/allennlp-demo) repo to create the front-end visualization.
 
-## Instructions
 1. Fork and clone [AllenNLP](https://github.com/allenai/allennlp#installing-from-source) and install it from source using `pip install --editable`, so that the library is editable.
 
 2. The interpretations live inside `allennlp/allennlp/interpret`. Create a new file for your interpretation method inside that folder, e.g., `allennlp/allennlp/interpret/saliency_interpreters/smooth_gradient.py`. Now, implement the code for your interpretation method. In SmoothGrad's case, we average the over many noisy versions of the input. As a guide, you can copy another method's code (e.g., Integrated Gradient at `allennlp/allennlp/interpret/saliency_interpreters/integrated_gradient.py`) and modify it accordingly. The general structure for the file is:
@@ -164,7 +163,7 @@ You can see the final code for SmoothGrad [here](https://github.com/allenai/alle
 6. Add the call to the reusable visaulization component in the demo front-end. For example, SmoothGrad is implemented alongside Integrated Gradients in the `SaliencyMaps` constant inside `allennlp-demo/demo/src/components/demos/SentimentAnalysis.js`. Now you are done! Start the demo, and look inside Sentiment Analysis for the SmoothGrad visualizations.
 
 
-### More Information on the Front End
+## More Information on the Front End
 
 __Step 0: Some Conventions__
 
