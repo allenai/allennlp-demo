@@ -40,8 +40,8 @@ const fields = [
    placeholder: 'E.g. "amazing movie"'}
 ]
 
-const getGradData = ({ grad_input_1 }) => {
-  return [grad_input_1];
+const getGradData = ({ grad_input_1: gradInput1 }) => {
+  return [gradInput1];
 }
 
 const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
