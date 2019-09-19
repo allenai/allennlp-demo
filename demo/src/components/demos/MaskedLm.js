@@ -9,7 +9,6 @@ import { Accordion } from 'react-accessible-accordion';
 import SaliencyComponent from '../Saliency'
 import InputReductionComponent from '../InputReduction'
 import HotflipComponent from '../Hotflip'
-import TargetedHotflipComponent from '../TargetedHotflip'
 import Model from '../Model'
 import { FormField, FormLabel, FormTextArea } from '../Form';
 import { API_ROOT } from '../../api-config';
