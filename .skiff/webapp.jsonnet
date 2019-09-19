@@ -155,38 +155,19 @@ local cloudsql_volumes = [
     }
 ];
 
-// The backend for each model is served at /predict/{model_name} (in its own service)
-// so we need to generate an ingress path entry that points that path to that service.
-local backend_path(model_name) = {
-    path: '/predict/' + model_name,
+// Each model typically has its own service running that handles several different endpoints
+// (/predict, /permadata, /task, /attack, etc.).  This is a convenience function that will route
+// all of those endpoints to the model service, instead of the main frontend.
+// TODO(mattg): we might want to change this some day so that all model backend services start with
+// /model/[model-name], so that we only have to have one route per backend, instead of this mess of
+// registering every endpoint separately.
+local model_path(model_name, endpoint, url_extra='') = {
+    path: '/' + endpoint + '/' + model_name + url_extra,
     backend: {
         serviceName: fullyQualifiedName + '-' + model_name,
         servicePort: config.httpPort
     },
 };
-
-// We also want to pass through the permadata/ requests to each model,
-// because different models might handle them in different ways (or not at all).
-local permadata_path(model_name) = {
-    path: '/permadata/' + model_name,
-    backend: {
-        serviceName: fullyQualifiedName + '-' + model_name,
-        servicePort: config.httpPort
-    },
-};
-
-// The (chromeless) front-end for each model is served at /task/{model_name} (in its own service)
-// so we need to generate an ingress path entry that points that path to that service.
-// TODO: allow the front-end and the back-end to be different services?
-local frontend_path(model_name) = {
-    // Ugly regex because there might be a permalink or there might not
-    path: '/task/' + model_name + "(/[.*])?",
-    backend: {
-        serviceName: fullyQualifiedName + '-' + model_name,
-        servicePort: config.httpPort
-    },
-};
-
 
 
 
@@ -218,13 +199,33 @@ local ingress = {
                 host: host,
                 http: {
                     paths: [
-                        backend_path(model_name)
+                        // The backend for each model is served at /predict/{model_name} (in its
+                        // own service) so we need to generate an ingress path entry that points
+                        // that path to that service.
+                        model_path(model_name, 'predict')
                         for model_name in model_names
                     ] + [
-                        frontend_path(model_name)
+                        // Attacking is handled by the model backend.
+                        model_path(model_name, 'attack')
                         for model_name in model_names
                     ] + [
-                        permadata_path(model_name)
+                        // Interpreting is handled by the model backend.
+                        model_path(model_name, 'interpret')
+                        for model_name in model_names
+                    ] + [
+                        // The (chromeless) frontend for each model is served at /task/{model_name}
+                        // (in its own service) so we need to generate an ingress path entry that
+                        // points that path to that service.
+                        // The extra bit on the url is because this will sometimes have permadata
+                        // on it also.
+                        // TODO: allow the frontend and the backend to be different services?
+                        model_path(model_name, 'task', "(/[.*])?")
+                        for model_name in model_names
+                    ] + [
+                        // We also want to pass through the permadata/ requests to each model,
+                        // because different models might handle them in different ways (or not at
+                        // all).
+                        model_path(model_name, 'permadata')
                         for model_name in model_names
                     ] + [
                         {
