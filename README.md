@@ -164,36 +164,6 @@ You can see the final code for SmoothGrad [here](https://github.com/allenai/alle
 6. Add the call to the reusable visaulization component in the demo front-end. For example, SmoothGrad is implemented alongside Integrated Gradients in the `SaliencyMaps` constant inside `allennlp-demo/demo/src/components/demos/SentimentAnalysis.js`. Now you are done! Start the demo, and look inside Sentiment Analysis for the SmoothGrad visualizations.
 
 
-## Creating a Demo for a New Task
-
-If your task is not implemented in the AllenNLP demos, we will need to create the code to run the model predictions, as well as the front-end JavaScript/HTML to display its predictions and interpretations. We will use Sentiment Analysis as a running example.
-
-Here is a [pull request](https://github.com/allenai/allennlp-demo/commit/149d068ccb970d93c1eaf93618a5b16c08cd6582) that implements the below steps. Feel free to follow that code as a guide.
-
-1. Fork and clone [allennlp-demo](https://github.com/allenai/allennlp-demo) and follow the installation instructions.
-
-2. Add the path to your trained model using a `DemoModel` in `models.json`. For example, we will add 
-```json        
-        "sentiment-analysis": {
-           "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
-           "predictor_name": "text_classifier",
-           "max_request_length": 1000
-        },   
-```
-Make sure `text_classifiers` matches the name from your AllenNLP predictor. In our case, the predictor class should have `@Predictor.register('text_classifier')`. 
-
-3. In `app.py` consider adding logging of your model's outputs. Search for `log_blob` in the `predict` route for an example of how to do this.
-
-4. The backend is now set up. Now let's create the front end for your model. Add your model under its associated category in the `modelGroups` object in `demo/src/models.js`. 
-```
-{model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis}
-```
-Also make sure to import your component at the top of the file.
-
-5. Create a new JavaScript file for your model in `demo/src/components/demo`. The JavaScript follows a basic template that can be copied from other files. See the [Sentiment Analysis front end](https://github.com/allenai/allennlp-demo/blob/149d068ccb970d93c1eaf93618a5b16c08cd6582/demo/src/components/demos/SentimentAnalysis.js) for an example template.
-
-You can find more information about the front end creation below.
-
 ### More Information on the Front End
 
 __Step 0: Some Conventions__
