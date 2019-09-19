@@ -12,6 +12,7 @@ import os
 import sys
 import time
 from functools import lru_cache
+from collections import defaultdict
 
 from flask import Flask, request, Response, jsonify, send_file, send_from_directory
 from flask_cors import CORS
@@ -24,6 +25,8 @@ import pytz
 
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.predictors import Predictor
+from allennlp.interpret.saliency_interpreters import SimpleGradient, IntegratedGradient, SmoothGradient
+from allennlp.interpret.attackers import InputReduction, Hotflip
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
@@ -42,6 +45,16 @@ handler.setFormatter(StackdriverJsonFormatter())
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 logger.propagate = False
+
+supported_interpret_models = {'named-entity-recognition',
+                              'coreference-resolution',
+                              'sentiment-analysis',
+                              'textual-entailment',
+                              'reading-comprehension',
+                              'naqanet-reading-comprehension',
+                              'fine-grained-named-entity-recognition',
+                              'masked-lm',
+                              'next-token-lm'}
 
 
 class ServerError(Exception):
@@ -101,6 +114,8 @@ def make_app(build_dir: str,
 
     app.predictors = {}
     app.max_request_lengths = {} # requests longer than these will be rejected to prevent OOME
+    app.attackers = defaultdict(dict)
+    app.interpreters = defaultdict(dict)
     app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
 
     for name, demo_model in models.items():
@@ -109,6 +124,20 @@ def make_app(build_dir: str,
             predictor = demo_model.predictor()
             app.predictors[name] = predictor
             app.max_request_lengths[name] = demo_model.max_request_length
+
+            if name in supported_interpret_models:
+                app.attackers[name]["input_reduction"] = InputReduction(predictor)
+                if name == 'masked-lm':
+                    app.attackers[name]["hotflip"] = Hotflip(predictor, 'bert')
+                elif name == "next-token-lm":
+                    app.attackers[name]["hotflip"] = Hotflip(predictor, 'gpt2')
+                elif name != 'named-entity-recognition': # NER doesn't use Hotflip
+                    app.attackers[name]["hotflip"] = Hotflip(predictor)
+                    app.attackers[name]["hotflip"].initialize()
+
+                app.interpreters[name]['simple_gradient'] = SimpleGradient(predictor)
+                app.interpreters[name]['integrated_gradient'] = IntegratedGradient(predictor)
+                app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)
 
     # Disable caching for HTML documents and API responses so that clients
     # always talk to the source (this server).
@@ -291,6 +320,69 @@ def make_app(build_dir: str,
         logger.info("prediction: %s", json.dumps(log_blob))
 
         return jsonify(prediction)
+
+    @app.route('/attack/<model_name>', methods=['POST','OPTIONS'])
+    def attack(model_name: str) -> Response:
+        """
+        Modify input to change prediction of model
+        """
+        if request.method == "OPTIONS":
+            return Response(response="", status=200)
+        lowered_model_name = model_name.lower()
+
+        data = request.get_json()
+        attacker_name = data.pop("attacker")
+        input_field_to_attack = data.pop("inputToAttack")
+        grad_input_field = data.pop("gradInput")
+        target = data.pop("target", None)
+
+        model_attackers = app.attackers.get(lowered_model_name)
+        if model_attackers is None:
+            raise ServerError("unknown model: {}".format(model_name), status_code=400)
+        attacker = model_attackers.get(attacker_name)
+        if attacker is None:
+            raise ServerError("unknown attacker for model: {} {}".format(attacker_name, model_name), status_code=400)
+
+        max_request_length = app.max_request_lengths[lowered_model_name]
+        serialized_request = json.dumps(data)
+        if len(serialized_request) > max_request_length:
+            raise ServerError(f"Max request length exceeded for model {model_name}! " +
+                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+
+        attack = attacker.attack_from_json(inputs=data,
+                                           input_field_to_attack=input_field_to_attack,
+                                           grad_input_field=grad_input_field,
+                                           target=target)
+        return jsonify(attack)
+
+    @app.route('/interpret/<model_name>', methods=['POST', 'OPTIONS'])
+    def interpret(model_name: str) -> Response:
+        """
+        Interpret prediction of the model
+        """
+        if request.method == "OPTIONS":
+            return Response(response="", status=200)
+        lowered_model_name = model_name.lower()
+
+        data = request.get_json()
+        interpreter_name = data.pop("interpreter")
+
+        model_interpreters = app.interpreters.get(lowered_model_name)
+        if model_interpreters is None:
+            raise ServerError("no interpreters for model: {}".format(model_name), status_code=400)
+        interpreter = model_interpreters.get(interpreter_name)
+        if interpreter is None:
+            raise ServerError("unknown interpreter for model: {} {}".format(interpreter_name, model_name), status_code=400)
+
+        max_request_length = app.max_request_lengths[lowered_model_name]
+
+        serialized_request = json.dumps(data)
+        if len(serialized_request) > max_request_length:
+            raise ServerError(f"Max request length exceeded for interpreter {model_name}! " +
+                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+
+        interpretation = interpreter.saliency_interpret_from_json(data)
+        return jsonify(interpretation)
 
     @app.route('/models')
     def list_models() -> Response:  # pylint: disable=unused-variable

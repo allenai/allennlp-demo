@@ -10,19 +10,25 @@ class Model extends React.Component {
     constructor(props) {
       super(props);
 
-      const { responseData } = props;
+      const { requestData, responseData, interpretData, attackData } = props;
 
       this.state = {
-        outputState: responseData ? "received" : "empty" // valid values: "working", "empty", "received", "error"
+        outputState: responseData ? "received" : "empty", // valid values: "working", "empty", "received", "error"
+        requestData: requestData,
+        responseData: responseData,
+        interpretData: interpretData,
+        attackData: attackData
       };
 
       this.runModel = this.runModel.bind(this)
+      this.interpretModel = this.interpretModel.bind(this)
+      this.attackModel = this.attackModel.bind(this)
     }
 
     runModel(inputs) {
       const { selectedModel, apiUrl } = this.props
 
-      this.setState({outputState: "working"});
+      this.setState({outputState: "working", interpretData: undefined, attackData: undefined});
 
       fetch(apiUrl(inputs), {
         method: 'POST',
@@ -65,6 +71,50 @@ class Model extends React.Component {
       });
     }
 
+    interpretModel(inputs, interpreter) {
+      const { apiUrlInterpret } = this.props
+      fetch(apiUrlInterpret(inputs), {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...inputs, ...{interpreter}})
+      }).then((response) => {
+        return response.json();
+      }).then((json) => {
+        const stateUpdate = { ...this.state }
+        console.log(stateUpdate)
+        stateUpdate['interpretData'] = {...stateUpdate['interpretData'], [interpreter]: json}
+        console.log(stateUpdate)
+        console.log(stateUpdate['interpretData'])
+        this.setState(stateUpdate)
+      })
+    }
+
+    attackModel(inputs, attacker, inputToAttack, gradInput, target) {
+      const attackInputs = {...{attacker}, ...{inputToAttack}, ...{gradInput}}
+      if (target !== undefined) {
+        attackInputs['target'] = target
+      }
+
+      const { apiUrlAttack } = this.props
+      fetch(apiUrlAttack(inputs), {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...inputs, ...attackInputs})
+      }).then((response) => {
+        return response.json();
+      }).then((json) => {
+        const stateUpdate = { ...this.state }
+        stateUpdate['attackData'] = {...stateUpdate['attackData'], [attacker]: json}
+        this.setState(stateUpdate)
+      })
+    }
+
     render() {
         const { title, description, descriptionEllipsed, examples, fields, selectedModel, Output, requestData, responseData, usage } = this.props;
         const { outputState } = this.state;
@@ -78,7 +128,7 @@ class Model extends React.Component {
                                      runModel={this.runModel}/>
 
         const outputProps = {...this.state, requestData, responseData}
-        const demoOutput = requestData && responseData ? <Output {...outputProps}/> : null
+        const demoOutput = requestData && responseData ? <Output {...outputProps} interpretModel={this.interpretModel} attackModel={this.attackModel}/> : null
 
         const tabs = [ demoInput, usage ].filter(tabContent => tabContent !== undefined);
 

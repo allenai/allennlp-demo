@@ -7,15 +7,28 @@ import { API_ROOT } from '../../api-config';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
+import OutputField from '../OutputField'
 import { truncateText } from '../DemoInput'
 import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
-// LOC, PER, ORG, MISC
+import { Accordion } from 'react-accessible-accordion';
+import { SaliencyComponent } from '../Saliency';
+import InputReductionComponent from '../InputReduction'
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER
+} from '../InterpretConstants'
 
+// LOC, PER, ORG, MISC
 const title = "Named Entity Recognition";
+
+const NAME_OF_INPUT_TO_ATTACK = 'tokens'
+const NAME_OF_GRAD_INPUT = 'grad_input_1'
 
 const description = (
   <span>
@@ -173,7 +186,70 @@ const TokenSpan = ({ token }) => {
     }
 }
 
-const Output = ({ responseData }) => {
+const getGradData = (instances, numGrads) => {
+  const grads = [];
+  for (let i = 1; i <= numGrads; i++) {
+      grads.push(instances['instance_' + i.toString()].grad_input_1)
+  }
+  return grads;
+}
+
+const SaliencyMaps = ({interpretData, tokens, relevantTokens, interpretModel, requestData}) => {
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
+  if (interpretData) {
+    const numGrads = relevantTokens.length;
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER], numGrads) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER], numGrads) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER], numGrads) : undefined
+  }
+  const inputTokens = [];
+  const inputHeaders = [];
+  relevantTokens.forEach((token, index) => {
+    inputTokens.push(tokens);
+    inputHeaders.push(
+        <div key={index} style={{ display: "flex", flexWrap: "wrap" }}>
+          <p><strong>Interpretation for</strong></p>
+          <TokenSpan key={index} token={token} />
+        </div>
+    );
+  });
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const Attacks = ({attackData, attackModel, requestData, relevantTokens}) => {
+  let reducedInput = undefined;
+  if (attackData && "input_reduction" in attackData) {
+    const reductionData = attackData["input_reduction"];
+    const formattedReduced = reductionData["final"].map((reduced, index) =>
+      <p key={index} style={{ display: "flex", flexWrap: "wrap" }}>
+        <strong>Reduced input for</strong>
+        <TokenSpan key={index} token={relevantTokens[index]} />
+        <strong>:</strong> <span>&nbsp;&nbsp;&nbsp;&nbsp;</span> {reduced.join(" ")}
+        <br />
+      </p>
+    );
+    reducedInput = {original: reductionData["original"].join(" "), formattedReduced: formattedReduced}
+  }
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
     const { words, tags } = responseData
 
     // "B" = "Beginning" (first token in a sequence of tokens comprising an entity)
@@ -225,18 +301,30 @@ const Output = ({ responseData }) => {
       }
     });
 
+    let relevantTokens = []
+    formattedTokens.forEach(token => {
+      if (token.entity !== null) {
+        relevantTokens.push(token)
+      }
+    })
+
     return (
       <div className="model__content model__content--ner-output">
         <FormField>
           <HighlightContainer layout="bottom-labels">
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </HighlightContainer>
+            <Accordion accordion={false}>
+              <SaliencyMaps interpretData={interpretData} tokens={words} relevantTokens={relevantTokens} interpretModel={interpretModel} requestData={requestData}/>
+              <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData} relevantTokens={relevantTokens}/>
+            </Accordion>
         </FormField>
       </div>
     )
 }
 
 const examples = [
+    "This shirt was bought at Grandpa Joe's in downtown Deep Learning.",
     "AllenNLP is a PyTorch-based natural language processing library developed at the Allen Institute for Artificial Intelligence in Seattle.",
     "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?",
     "Michael Jordan is a professor at Berkeley.",
@@ -245,10 +333,22 @@ const examples = [
     "When I told John that I wanted to move to Alaska, he warned me that I'd have trouble finding a Starbucks there."
   ].map(sentence => ({sentence, snippet: truncateText(sentence)}))
 
-const apiUrl = ({model}) => {
+const getUrl = (model, apiCall) => {
     const selectedModel = model || (taskModels[0] && taskModels[0].name);
     const endpoint = taskEndpoints[selectedModel]
-    return `${API_ROOT}/predict/${endpoint}`
+    return `${API_ROOT}/${apiCall}/${endpoint}`
+}
+
+const apiUrl = ({model}) => {
+    return getUrl(model, "predict")
+}
+
+const apiUrlInterpret = ({model}) => {
+    return getUrl(model, "interpret")
+}
+
+const apiUrlAttack = ({model}) => {
+    return getUrl(model, "attack")
 }
 
 const usage = (
@@ -289,6 +389,5 @@ predictor.predict(
   </React.Fragment>
 )
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
-
 export default withRouter(props => <Model {...props} {...modelProps}/>)
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}

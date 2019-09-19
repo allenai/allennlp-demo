@@ -12,11 +12,23 @@ import OutputField from '../OutputField'
 import { API_ROOT } from '../../api-config';
 import { truncateText } from '../DemoInput'
 import { UsageSection } from '../UsageSection';
-import { UsageHeader } from '../UsageHeader'
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
+import SaliencyComponent from '../Saliency'
+import InputReductionComponent from '../InputReduction'
+import HotflipComponent from '../Hotflip'
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
 
 const title = "Reading Comprehension"
+
+const NAME_OF_INPUT_TO_ATTACK = "question"
+const NAME_OF_GRAD_INPUT = "grad_input_2"
 
 const description = (
   <span>
@@ -128,13 +140,75 @@ const ArithmeticEquation = ({numbers}) => {
   return null;
 }
 
-const AnswerByType = ({requestData, responseData}) => {
+const getGradData = ({ grad_input_1: gradInput1, grad_input_2: gradInput2 }) => {
+  // Not sure why, but it appears that the order of the gradients is reversed for these.
+  return [gradInput2, gradInput1];
+}
+
+const SaliencyMaps = ({interpretData, questionTokens, passageTokens, interpretModel, requestData}) => {
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
+  if (interpretData) {
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+  }
+  const inputTokens = [questionTokens, passageTokens];
+  const inputHeaders = [<p><strong>Question:</strong></p>, <p><strong>Passage:</strong></p>];
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const Attacks = ({attackData, attackModel, requestData}) => {
+  let hotflipData = undefined;
+  if (attackData && "hotflip" in attackData) {
+    hotflipData = attackData["hotflip"];
+    const output = hotflipData["outputs"];
+    let newPrediction = '';
+    if ('best_span_str' in output) { // BiDAF model
+      newPrediction = output['best_span_str'];
+    }
+    else if ('answer' in output) { // NAQANet model
+      const answerType = output["answer"]["answer_type"];
+      if (answerType === "count") {
+        newPrediction = output['answer']['count'];
+      }
+      else {
+        newPrediction = output['answer']['value'];
+      }
+    }
+    hotflipData["new_prediction"] = newPrediction;
+  }
+  let reducedInput = undefined;
+  if (attackData && "input_reduction" in attackData) {
+    const reductionData = attackData["input_reduction"];
+    reducedInput = {original: reductionData["original"], reduced: [reductionData["final"][0]]};
+  }
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const AnswerByType = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   if(requestData && responseData) {
     const { passage, question } = requestData;
-    const { answer } = responseData;
-    const { answer_type } = answer || {};
+    const { answer, question_tokens: questionTokens, passage_tokens: passageTokens } = responseData;
+    const { answer_type: answerType } = answer || {};
 
-    switch(answer_type) {
+    switch(answerType) {
       case "passage_span": {
         const { spans, value } = answer || {};
         if(question && passage && spans && value) {
@@ -159,6 +233,8 @@ const AnswerByType = ({requestData, responseData}) => {
                 {question}
               </OutputField>
 
+              <SaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel={interpretModel} requestData={requestData}/>
+              <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
               <Attention {...responseData}/>
             </section>
           )
@@ -190,6 +266,8 @@ const AnswerByType = ({requestData, responseData}) => {
                   highlightStyles={spans.map(s => "highlight__answer")}/>
               </OutputField>
 
+              <SaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel = {interpretModel} requestData = {requestData}/>
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
             </section>
           )
@@ -218,6 +296,8 @@ const AnswerByType = ({requestData, responseData}) => {
                 {question}
               </OutputField>
 
+              <SaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel = {interpretModel} requestData = {requestData}/>
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
             </section>
           )
@@ -249,6 +329,8 @@ const AnswerByType = ({requestData, responseData}) => {
                 {question}
               </OutputField>
 
+              <SaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel = {interpretModel} requestData = {requestData}/>
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
             </section>
           )
@@ -257,20 +339,20 @@ const AnswerByType = ({requestData, responseData}) => {
       }
 
       default: { // old best_span_str path used by BiDAF model
-        const { best_span_str } = responseData;
-        if(question && passage && best_span_str) {
-          const start = passage.indexOf(best_span_str);
+        const { best_span_str: bestSpanStr } = responseData;
+        if(question && passage && bestSpanStr) {
+          const start = passage.indexOf(bestSpanStr);
           const head = passage.slice(0, start);
-          const tail = passage.slice(start + best_span_str.length);
+          const tail = passage.slice(start + bestSpanStr.length);
           return (
             <section>
               <OutputField label="Answer">
-                {best_span_str}
+                {bestSpanStr}
               </OutputField>
 
               <OutputField label="Passage Context">
                 <span>{head}</span>
-                <span className="highlight__answer">{best_span_str}</span>
+                <span className="highlight__answer">{bestSpanStr}</span>
                 <span>{tail}</span>
               </OutputField>
 
@@ -278,6 +360,8 @@ const AnswerByType = ({requestData, responseData}) => {
                 {question}
               </OutputField>
 
+              <SaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel = {interpretModel} requestData = {requestData}/>
+              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
               <Attention {...responseData}/>
             </section>
           )
@@ -444,10 +528,23 @@ const examples = [
 
 ]
 
+
+const getUrl = (model, apiCall) => {
+    const selectedModel = model || (taskModels[0] && taskModels[0].name);
+    const endpoint = taskEndpoints[selectedModel]
+    return `${API_ROOT}/${apiCall}/${endpoint}`
+}
+
 const apiUrl = ({model}) => {
-  const selectedModel = model || (taskModels[0] && taskModels[0].name);
-  const endpoint = taskEndpoints[selectedModel]
-  return `${API_ROOT}/predict/${endpoint}`
+    return getUrl(model, "predict")
+}
+
+const apiUrlInterpret = ({model}) => {
+    return getUrl(model, "interpret")
+}
+
+const apiUrlAttack = ({model}) => {
+    return getUrl(model, "attack")
 }
 
 const usage = (
@@ -494,6 +591,6 @@ predictor.predict(
   </React.Fragment>
 )
 
-const modelProps = {apiUrl, title, description, fields, examples, Output, usage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

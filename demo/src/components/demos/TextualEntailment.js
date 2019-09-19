@@ -19,9 +19,25 @@ import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 import '../../css/TeComponent.css';
 
+import SaliencyComponent from '../Saliency'
+import InputReductionComponent from '../InputReduction'
+import HotflipComponent from '../Hotflip'
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  INPUT_REDUCTION_ATTACKER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
+
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
+const apiUrlAttack = () => `${API_ROOT}/attack/textual-entailment`
+const apiUrlInterpret = () => `${API_ROOT}/interpret/textual-entailment`
 
 const title = "Textual Entailment"
+
+const NAME_OF_INPUT_TO_ATTACK = "hypothesis"
+const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 const description = (
   <span>
@@ -83,7 +99,76 @@ const judgments = {
   NEUTRAL: <span>there is <strong>no correlation</strong> between the premise and hypothesis</span>
 }
 
-const Output = ({ responseData }) => {
+const getGradData = ({ grad_input_1, grad_input_2 }) => {
+  // Not sure why, but it appears that the order of the gradients is reversed for these.
+  return [grad_input_2, grad_input_1];
+}
+
+const SaliencyMaps = ({interpretData, premise_tokens, hypothesis_tokens, interpretModel, requestData}) => {
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
+  if (interpretData) {
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+  }
+  const inputTokens = [premise_tokens, hypothesis_tokens];
+  const inputHeaders = [<p><strong>Premise:</strong></p>, <p><strong>Hypothesis:</strong></p>];
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const Attacks = ({attackData, attackModel, requestData}) => {
+  let hotflipData = undefined;
+  if (attackData && "hotflip" in attackData) {
+    hotflipData = attackData["hotflip"];
+    const [entail, contr, neutral] = hotflipData["outputs"]["label_probs"]
+    let prediction = '';
+    if (entail > contr) {
+        if (entail > neutral) {
+            prediction = "Entailment"
+        } else {
+            prediction = "Neutral"
+        }
+    } else {
+        if (contr > neutral) {
+            prediction = "Contradiction"
+        } else {
+            prediction = "Neutral"
+        }
+    }
+    hotflipData["new_prediction"] = prediction;
+    hotflipData["context"] = <p><strong>Premise:</strong> {requestData['premise']}</p>
+  }
+  let reducedInput = undefined;
+  if (attackData && "input_reduction" in attackData) {
+    const reductionData = attackData["input_reduction"];
+    reducedInput = {
+      original: reductionData["original"],
+      context: <p><strong>Premise:</strong> {requestData['premise']}</p>,
+      reduced: [reductionData["final"][0]]
+    };
+  }
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel} requestDataObject={requestData} attacker={INPUT_REDUCTION_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel} requestDataObject={requestData} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+
+const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   const { label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens } = responseData
   const [entailment, contradiction, neutral] = label_probs
 
@@ -172,9 +257,12 @@ const Output = ({ responseData }) => {
       </table>
     </div>
     </div>
-    <OutputField label=" Model internals">
+    <OutputField>
       <Accordion accordion={false}>
-        <AccordionItem expanded={true}>
+        <SaliencyMaps interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel={interpretModel} requestData={requestData} />
+        <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
+
+        <AccordionItem>
           <AccordionItemTitle>
             Premise to Hypothesis Attention
             <div className="accordion__arrow" role="presentation"/>
@@ -273,6 +361,6 @@ predictor.predict(
   </React.Fragment>
 )
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
