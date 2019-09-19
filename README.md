@@ -76,7 +76,7 @@ Note that the `run` process may get killed prematurely if there is insufficient 
 
 The following describes the steps to add a new [AllenNLP](https://github.com/allenai/allennlp) model to the online [AllenNLP demo](https://demo.allennlp.org).
 
-To begin, we assume you have an AllenNLP model with the code for the model in `allennlp/models/`. First, create an AllenNLP Predictor for your model in `allennlp/predictors`. A good template to start with would be the [Sentiment Analysis predictor](https://github.com/allenai/allennlp/blob/master/allennlp/predictors/text_classifier.py).
+We assume you already have an AllenNLP model with the code for the model in `allennlp/models/`. To begin, create an AllenNLP Predictor for your model in `allennlp/predictors`. A good template to start with would be the [Sentiment Analysis predictor](https://github.com/allenai/allennlp/blob/master/allennlp/predictors/text_classifier.py).
 
 With the predictor set up, we will now consider two possible scenarios: 
 
@@ -86,19 +86,19 @@ With the predictor set up, we will now consider two possible scenarios:
 
 ### Adding a New Model for an Existing Task
 
-Adding a new model for a task that exists in the demos is a one line change of code: 
+It should only you to change a single line of code to add a new model for a task that already exists in the demos.
 
 1. Fork and clone [allennlp-demo](https://github.com/allenai/allennlp-demo) and follow the installation instructions.
 
-2. Modify the line that points to the saved model in `models.json`. For example, we can replace the link to the current textual entailment model `https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2018.02.19.tar.gz` with the path to another archived AllenNLP model `my_model.tar.gz`. Note that if you specify a relative path to the gzip file, the path should start from the root directory of the project (the directory with `app.py` in it). If you run the demo now, you should see your model and the corresponding interpretations and attacks visualized.
+2. Modify the line that points to the saved model in `models.json`. For example, we can replace the link to the current textual entailment model `https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2018.02.19.tar.gz` with the path to another archived AllenNLP model `my_model.tar.gz` (where `my_model.tar.gz` is the model to interpret). Note that if you specify a relative path to the gzip file, the path should start from the root directory of the project (the directory with `app.py` in it). If you start the demo, you should see your model and the corresponding interpretation and attack visualizations.
 
-3. If you want to add another model option for a task, instead of replacing the existing model, see the NER and reading comprehension demos, where a radio button is added.
+3. If you want to add a model as an additional option (e.g., for side-by-side comparisons), you can add a radio button to toggle between models instead of replacing the existing model. See the NER and reading comprehension demos for an example.
 
-### Creating a Demo for a New Task
+### Creating a demo for a new task
 
-If your task is not implemented in the AllenNLP demos, we will need to create the code to run the model predictions, as well as the front-end JavaScript/HTML to display its predictions and interpretations. We will use Sentiment Analysis as a running example.
+If your task is not implemented in the AllenNLP demos, we will need to create code to query the model, as well as the create the front-end JavaScript/HTML to display the predictions, interpretations, and attacks. We will use Sentiment Analysis as a running example.
 
-Here is a [pull request](https://github.com/allenai/allennlp-demo/commit/149d068ccb970d93c1eaf93618a5b16c08cd6582) that implements the below steps. Feel free to follow that code as a guide.
+Here is a [pull request](https://github.com/allenai/allennlp-demo/commit/149d068ccb970d93c1eaf93618a5b16c08cd6582) that implements the below steps. Feel free to follow that PR as a guide.
 
 1. Fork and clone [allennlp-demo](https://github.com/allenai/allennlp-demo) and follow the installation instructions.
 
@@ -110,9 +110,9 @@ Here is a [pull request](https://github.com/allenai/allennlp-demo/commit/149d068
            "max_request_length": 1000
         },   
 ```
-Make sure `text_classifiers` matches the name from your AllenNLP predictor. In our case, the predictor class should have `@Predictor.register('text_classifier')`. 
+Make sure `text_classifier` matches the name from your AllenNLP predictor. In our case, the predictor class should have `@Predictor.register('text_classifier')` at the top.
 
-3. In `app.py` consider adding logging of your model's outputs. Search for `log_blob` in the `predict` route for an example of how to do this.
+3. In `app.py` consider adding a log of your model's outputs. Search for `log_blob` in the `predict` function for an example of how to do this.
 
 4. The backend is now set up. Now let's create the front end for your model. Add your model under its associated category in the `modelGroups` object in `demo/src/models.js`. 
 ```
@@ -120,9 +120,49 @@ Make sure `text_classifiers` matches the name from your AllenNLP predictor. In o
 ```
 Also make sure to import your component at the top of the file.
 
-5. Create a new JavaScript file for your model in `demo/src/components/demo`. The JavaScript follows a basic template that can be copied from other files. See the [Sentiment Analysis front end](https://github.com/allenai/allennlp-demo/blob/149d068ccb970d93c1eaf93618a5b16c08cd6582/demo/src/components/demos/SentimentAnalysis.js) for an example template.
+5. Create a new JavaScript file for your model in `demo/src/components/demos`. The JavaScript follows a basic template that can be copied from other files. See the [Sentiment Analysis front end](https://github.com/allenai/allennlp-demo/blob/149d068ccb970d93c1eaf93618a5b16c08cd6582/demo/src/components/demos/SentimentAnalysis.js) for an example template.
 
-You can find more information about the front end creation below.
+You can find more information about the front end creation at the bottom of the README.
+
+# Adding a New Interpretation Method
+
+Here we describe the steps to add a new interpretation/attack method to AllenNLP, as well as how to create the corresponding front-end visualization.
+
+We will walk through adding the [SmoothGrad](https://arxiv.org/abs/1706.03825) gradient-based interpretation method from scratch. We will first modify the [AllenNLP repo](https://github.com/allenai/allennlp) to create the interpretation method. Then, we will  modify the [AllenNLP Demo](https://github.com/allenai/allennlp-demo) repo to create the front-end visualization.
+
+## Instructions
+1. Fork and clone [AllenNLP](https://github.com/allenai/allennlp#installing-from-source) and install it from source using `pip install --editable`, so that the library is editable.
+
+2. The interpretations live inside `allennlp/allennlp/interpret`. Create a new file for your interpretation method inside that folder, e.g., `allennlp/allennlp/interpret/saliency_interpreters/smooth_gradient.py`. Now, implement the code for your interpretation method. In SmoothGrad's case, we average the over many noisy versions of the input. As a guide, you can copy another method's code (e.g., Integrated Gradient at `allennlp/allennlp/interpret/saliency_interpreters/integrated_gradient.py`) and modify it accordingly. The general structure for the file is:
+
+```py
+from allennlp.interpret.saliency_interpreters.saliency_interpreter import SaliencyInterpreter
+from allennlp.common.util import JsonDict
+# include any other imports you may need here
+
+@SaliencyInterpreter.register('your-interpretation-method')
+class MyFavoriteInterpreter(SaliencyInterpreter):
+    def __init__(self, predictor: Predictor) -> None:
+        super().__init__(predictor)
+        # local variables here
+
+    def saliency_interpret_from_json(self, inputs: JsonDict) -> JsonDict:
+    # ** implement your interpretation technique here **
+
+```
+You can see the final code for SmoothGrad [here](https://github.com/allenai/allennlp/blob/master/allennlp/interpret/saliency_interpreters/smooth_gradient.py).
+
+3. Add your new class to the `__init__.py` file in  `allennlp/allennlp/interpret/saliency_interpreters/__init__.py`. In our case we add the line `from allennlp.interpret.saliency_interpreters.smooth_gradient import SmoothGradient
+`. 
+
+4. You are done with the interpretation method! Let's move on to the front-end visualizations. We will demonstrate how to add SmoothGrad to the Sentiment Analysis demo. First, fork and clone the [AllenNLP Demo repo](https://github.com/allenai/allennlp-demo).
+
+5. In `app.py`, import SmoothGradient at the top: `from allennlp.interpret.saliency_interpreters import SmoothGradient. Then, register the Interpreter for Smoothgrad in `make_app()`: add `app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)` at the bottom of the function.
+
+6. Add your interpretation method's name to `allennlp-demo/demo/src/components/InterpretConstants.js`. And add a header title for your method here `allennlp-demo/demo/src/components/Saliency.js`. 
+
+6. Add the call to the reusable visaulization component in the demo front-end. For example, SmoothGrad is implemented alongside Integrated Gradients in the `SaliencyMaps` constant inside `allennlp-demo/demo/src/components/demos/SentimentAnalysis.js`. Now you are done! Start the demo, and look inside Sentiment Analysis for the SmoothGrad visualizations.
+
 
 ### More Information on the Front End
 
