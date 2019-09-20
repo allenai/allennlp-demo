@@ -7,21 +7,18 @@ import { Footer, ExternalLink } from '@allenai/varnish/components';
 import OutputField from '../OutputField'
 import { Accordion } from 'react-accessible-accordion';
 import SaliencyComponent from '../Saliency'
-import InputReductionComponent from '../InputReduction'
 import HotflipComponent from '../Hotflip'
-import Model from '../Model'
 import { FormField, FormLabel, FormTextArea } from '../Form';
 import { API_ROOT } from '../../api-config';
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
   SG_INTERPRETER,
-  INPUT_REDUCTION_ATTACKER,
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
 const apiUrl = () => `${API_ROOT}/predict/next-token-lm`
-const apiUrlInterpret = ({interpreter}) => `${API_ROOT}/interpret/next-token-lm/${interpreter}`
-const apiUrlAttack = ({attacker, name_of_input_to_attack, name_of_grad_input}) => `${API_ROOT}/attack/next-token-lm/${attacker}/${name_of_input_to_attack}/${name_of_grad_input}`
+const apiUrlInterpret = () => `${API_ROOT}/interpret/next-token-lm`
+const apiUrlAttack = () => `${API_ROOT}/attack/next-token-lm`
 
 const NAME_OF_INPUT_TO_ATTACK = "tokens"
 const NAME_OF_GRAD_INPUT = "grad_input_1"
@@ -29,9 +26,14 @@ const title = "Language Modeling";
 
 const Wrapper = styled.div`
   color: #232323;
+  flex-grow: 1;
   font-size: 1em;
-  background: #fff;
+  background: ${({theme}) => theme.palette.background.light};
   overflow: scroll;
+
+  @media(max-width: 500px) {
+    margin: 0;
+  }
 `
 
 const ModelArea = styled.div`
@@ -140,7 +142,10 @@ const Token = styled.span`
 const DEFAULT = "Joel is";
 
 function addToUrl(output, choice) {
-  if ('history' in window) {
+  if (window.frameElement) {
+    // Based on http://www.awongcm.io/blog/2018/11/25/using-iframes-api-to-toggle-client-side-routing-of-react-router-for-legacy-web-apps/
+    window.frameElement.ownerDocument.defaultView.history.pushState(null, null, '?text=' + encodeURIComponent(output + (choice || '')))
+  } else if ('history' in window) {
     window.history.pushState(null, null, '?text=' + encodeURIComponent(output + (choice || '')))
   }
 }
@@ -160,16 +165,61 @@ const DEFAULT_MODEL = "345M"
 
 const description = (
   <span>
-Enter some initial text and the model will generate the most likely next word.
+This demonstration uses the public 345M
+parameter <ExternalLink href="https://github.com/openai/gpt-2" target="_blank" rel="noopener">OpenAI GPT-2</ExternalLink> language model
+to generate sentences.<br /><br />
+Enter some initial text and the model will generate the most likely next words.
+You can click on one of those words to choose it and continue or just keep typing.
+Click the left arrow at the bottom to undo your last choice.
   </span>
 )
+
+const getGradData = ({ grad_input_1 }) => {
+  return [grad_input_1];
+}
+
+const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
+  if (interpretData) {
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+  }
+  const inputTokens = [tokens];
+  const inputHeaders = [<p><strong>Sentence:</strong></p>];
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const Attacks = ({attackData, attackModel, requestData}) => {
+  let hotflipData = undefined;
+  if (attackData && attackData.hotflip) {
+    hotflipData = attackData["hotflip"];
+    hotflipData["new_prediction"] = hotflipData["outputs"]["words"][0][0];
+  }
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+      </Accordion>
+    </OutputField>
+  )
+}
 
 class App extends React.Component {
 
   constructor(props) {
     super(props)
 
-    const { requestData, responseData, interpretData, attackData } = props;
     this.currentRequestId = 0;
 
     this.state = {
@@ -180,8 +230,8 @@ class App extends React.Component {
       loading: false,
       error: false,
       model: DEFAULT_MODEL,
-      interpretData: interpretData,
-      attackData: attackData
+      interpretData: null,
+      attackData: null
     }
 
     this.choose = this.choose.bind(this)
@@ -204,6 +254,8 @@ class App extends React.Component {
           words: null,
           logits: null,
           probabilities: null,
+          interpretData: null,
+          attackData: null,
           loading: loading
       })
 
@@ -244,24 +296,22 @@ class App extends React.Component {
       return;
     }
 
-    else {
-      this.setState({ loading: true, error: false })
+    this.setState({ loading: true, error: false })
 
-      const payload = {
-        sentence: trimmedOutput,
-        next: choice,
-        numsteps: 5,
-        model_name: this.state.model
-      }
+    const payload = {
+      sentence: trimmedOutput,
+      next: choice,
+      numsteps: 5,
+      model_name: this.state.model
+    }
 
-      const currentReqId = this.createRequestId();
-      const endpoint = `${API_ROOT}/predict/next-token-lm`
+    const currentReqId = this.createRequestId();
 
-      if ('history' in window && !doNotChangeUrl) {
-        addToUrl(this.state.output, choice);
-      }
+    if ('history' in window && !doNotChangeUrl) {
+      addToUrl(this.state.output, choice);
+    }
 
-    fetch(endpoint, {
+    fetch(apiUrl, {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
@@ -276,15 +326,12 @@ class App extends React.Component {
         const output = choice === undefined ? this.state.output : data.output
         this.setState({...data, output, loading: false})
         this.requestData = output;
-        // console.log("data")
-        // console.log(data)
       }
     })
     .catch(err => {
       console.error('Error trying to communicate with the API:', err);
       this.setState({ error: true, loading: false });
     });
-    }
   }
 
   // Temporarily (?) disabled
@@ -298,14 +345,10 @@ class App extends React.Component {
 
   render() {
 
-    // const { responseData, requestData, interpretData, interpretModel, attackData, attackModel } = this.props
-    var requestData = {"sentence": this.state.output};
-    var interpretData = this.state.interpretData;
-    var attackData = this.state.attackData;
-    // console.log(requestData);
-    // console.log(interpretData);
-    // console.log(this.props);
-    var tokens = [];
+    let requestData = {"sentence": this.state.output};
+    let interpretData = this.state.interpretData;
+    let attackData = this.state.attackData;
+    let tokens = [];
     if (this.state.tokens === undefined) {
         tokens = [];
     }
@@ -316,12 +359,11 @@ class App extends React.Component {
         else {
             tokens = this.state.tokens;
         }
-        console.log(this.state);
     }
     return (
-        <Wrapper classname="model">
+      <Wrapper classname="model">
         <ModelArea className="model__content answer">
-          <h2><span>Language Modeling</span></h2>
+          <h2><span>{title}</span></h2>
           <p><span>{description}</span></p>
 
           <InputOutput>
@@ -356,61 +398,51 @@ class App extends React.Component {
           </InputOutput>
         </ModelArea>
       <Accordion accordion={false}>
-          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={GRAD_INTERPRETER} task={title}/>
-          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens}  interpretModel = {this.interpretModel} requestData = {requestData} interpreter={IG_INTERPRETER} task={title}/>
-          <SaliencyComponent interpretData={interpretData} input1Tokens={tokens} interpretModel = {this.interpretModel} requestData = {requestData} interpreter={SG_INTERPRETER} task={title}/>
-          <HotflipComponent hotflipData={attackData} hotflipInput={this.attackModel} requestDataObject={requestData} task={title} attacker={HOTFLIP_ATTACKER} nameOfInputToAttack={NAME_OF_INPUT_TO_ATTACK} nameOfGradInput={NAME_OF_GRAD_INPUT}/>
+        <SaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
+        <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
       </Accordion>
     </Wrapper>
     )
   }
 
-    interpretModel(inputs, interpreter) {
-      // const { apiUrlInterpret } = this.props
-      // console.log(inputs);
-      // console.log(apiUrlInterpret);
-      // console.log(interpreter);
-      fetch(apiUrlInterpret(Object.assign(inputs, {interpreter})), {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(inputs)
-      }).then((response) => {
-        return response.json();
-      }).then((json) => {
-        var stateUpdate = {
-            ...this.state,
-            interpretData: {
-              [interpreter]: json
-            }
-        };
-        this.setState(stateUpdate)
-      })
+  interpretModel = (inputs, interpreter) => () => {
+    fetch(apiUrlInterpret(inputs), {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({...inputs, ...{interpreter}})
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      const stateUpdate = { ...this.state }
+      stateUpdate['interpretData'] = {...stateUpdate['interpretData'], [interpreter]: json}
+      this.setState(stateUpdate)
+    })
+  }
+
+  attackModel = (inputs, attacker, inputToAttack, gradInput) => ({target}) => {
+    const attackInputs = {...{attacker}, ...{inputToAttack}, ...{gradInput}}
+    if (target !== undefined) {
+      attackInputs['target'] = {words: [[target]]}
     }
 
-    attackModel(inputs, attacker, name_of_input_to_attack, name_of_grad_input) {
-      // const { apiUrlAttack } = this.props
-      fetch(apiUrlAttack(Object.assign(inputs, {attacker}, {name_of_input_to_attack}, {name_of_grad_input})), {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(inputs)
-      }).then((response) => {
-        return response.json();
-      }).then((json) => {
-        var stateUpdate = {
-            ...this.state,
-            attackData: {
-              [attacker]: json
-            }
-        };
-        this.setState(stateUpdate)
-      })
-    }
+    fetch(apiUrlAttack(inputs), {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({...inputs, ...attackInputs})
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      const stateUpdate = { ...this.state }
+      stateUpdate['attackData'] = {...stateUpdate['attackData'], [attacker]: json}
+      this.setState(stateUpdate)
+    })
+  }
 }
 
 
@@ -465,6 +497,6 @@ const Choices = ({output, index, logits, words, choose, probabilities}) => {
   )
 }
 
-const modelProps = {};
+const modelProps = {}
 
 export default withRouter(props => <App {...props} {...modelProps}/>)

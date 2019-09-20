@@ -7,21 +7,19 @@ import { Footer, ExternalLink } from '@allenai/varnish/components';
 import OutputField from '../OutputField'
 import { Accordion } from 'react-accessible-accordion';
 import SaliencyComponent from '../Saliency'
-import InputReductionComponent from '../InputReduction'
 import HotflipComponent from '../Hotflip'
-import Model from '../Model'
 import { FormField, FormLabel, FormTextArea } from '../Form';
 import { API_ROOT } from '../../api-config';
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
   SG_INTERPRETER,
-  INPUT_REDUCTION_ATTACKER,
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
 const apiUrl = () => `${API_ROOT}/predict/masked-lm`
 const apiUrlInterpret = () => `${API_ROOT}/interpret/masked-lm`
 const apiUrlAttack = () => `${API_ROOT}/attack/masked-lm`
+
 const NAME_OF_INPUT_TO_ATTACK = "tokens"
 const NAME_OF_GRAD_INPUT = "grad_input_1"
 
@@ -120,11 +118,6 @@ const ChoiceItem = styled.button`
   border-bottom: ${({theme}) => `2px solid ${theme.palette.common.transparent}`};
 `
 
-const UndoButton = styled(ChoiceItem)`
-  color: #8c9296;
-  margin-bottom: ${({theme}) => theme.spacing.xl};
-`
-
 const Probability = styled.span`
   color: #8c9296;
   margin-right: ${({theme}) => theme.spacing.xs};
@@ -210,7 +203,6 @@ class App extends React.Component {
   constructor(props) {
     super(props)
 
-    const { requestData, responseData } = props;
     this.currentRequestId = 0;
 
     this.state = {
@@ -298,13 +290,12 @@ class App extends React.Component {
       }
 
       const currentReqId = this.createRequestId();
-      const endpoint = `${API_ROOT}/predict/masked-lm`
 
       if ('history' in window && !doNotChangeUrl) {
         addToUrl(this.state.output, choice);
       }
 
-    fetch(endpoint, {
+    fetch(apiUrl, {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
@@ -367,7 +358,7 @@ class App extends React.Component {
       });
     }
     return (
-        <Wrapper classname="model">
+      <Wrapper classname="model">
         <ModelArea className="model__content answer">
           <h2><span>{title}</span></h2>
           <p><span>{description}</span></p>
