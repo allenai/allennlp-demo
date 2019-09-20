@@ -311,7 +311,7 @@ class App extends React.Component {
       addToUrl(this.state.output, choice);
     }
 
-    fetch(apiUrl, {
+    fetch(apiUrl(), {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
