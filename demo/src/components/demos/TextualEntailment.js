@@ -127,6 +127,11 @@ const SaliencyMaps = ({interpretData, premise_tokens, hypothesis_tokens, interpr
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
+  /*
+   * NOTE(mattg): Hotflip doesn't work with the default SNLI model, which uses only EMLo as input
+   * and thus doesn't have a vocabulary to use for hotflip.  So I'm temporarily disabling this.  I
+   * don't want to remove the code, though, because whenever we update the SNLI model to use
+   * RoBERTa or whatever we'll want to add this back.
   let hotflipData = undefined;
   if (attackData && "hotflip" in attackData) {
     hotflipData = attackData["hotflip"];
@@ -148,6 +153,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     hotflipData["new_prediction"] = prediction;
     hotflipData["context"] = <p><strong>Premise:</strong> {requestData['premise']}</p>
   }
+  */
   let reducedInput = undefined;
   if (attackData && "input_reduction" in attackData) {
     const reductionData = attackData["input_reduction"];
@@ -161,10 +167,11 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     <OutputField>
       <Accordion accordion={false}>
         <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
-        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
       </Accordion>
     </OutputField>
   )
+  // NOTE(mattg): see note above.  This should go right below the input reduction component.
+  //<HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
 }
 
 
