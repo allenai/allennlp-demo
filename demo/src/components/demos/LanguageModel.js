@@ -290,25 +290,26 @@ class App extends React.Component {
 
   choose(choice = undefined, doNotChangeUrl) {
     // strip trailing spaces
-    const trimmedOutput = trimRight(this.state.output);
-    if (trimmedOutput.length === 0) {
+    const textAreaText = this.state.output;
+    if (trimRight(textAreaText).length === 0) {
       this.setState({ loading: false });
       return;
     }
 
     this.setState({ loading: true, error: false })
+    // TODO(mattg): this doesn't actually send the newline token to the model in the right way.
+    // I'm not sure how to fix that.
+    const cleanedChoice = choice === undefined ? undefined : choice.replace(/↵/g, '\n');
 
+    const sentence = choice === undefined ? textAreaText : textAreaText + cleanedChoice
     const payload = {
-      sentence: trimmedOutput,
-      next: choice,
-      numsteps: 5,
-      model_name: this.state.model
+      sentence: sentence
     }
 
     const currentReqId = this.createRequestId();
 
     if ('history' in window && !doNotChangeUrl) {
-      addToUrl(this.state.output, choice);
+      addToUrl(this.state.output, cleanedChoice);
     }
 
     fetch(apiUrl(), {
@@ -324,7 +325,7 @@ class App extends React.Component {
         // If the user entered text by typing don't overwrite it, as that feels
         // weird. If they clicked it overwrite it
         const output = choice === undefined ? this.state.output : data.output
-        this.setState({...data, output, loading: false})
+        this.setState({...data, output: sentence, loading: false})
         this.requestData = output;
       }
     })
@@ -460,11 +461,11 @@ const Choices = ({output, index, logits, words, choose, probabilities}) => {
     const prob = formatProbability(probabilities[idx])
 
     // get rid of CRs
-    const cleanWord = word.replace(/\n/g, "↵").replace("/Ġ/g"," ")
+    const cleanWord = word.replace(/\n/g, "↵").replace(/Ġ/g, " ").replace(/Ċ/g, "↵")
 
     return (
       <ListItem key={`${idx}-${cleanWord}`}>
-        <ChoiceItem onClick={() => choose(word)}>
+        <ChoiceItem onClick={() => choose(cleanWord)}>
           <Probability>{prob}</Probability>
           {' '}
           <Token>{cleanWord}</Token>

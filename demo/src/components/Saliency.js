@@ -112,7 +112,7 @@ export class SaliencyComponent extends React.Component {
                         type="button"
                         className="btn"
                         style={{margin: "30px 0px"}}
-                        onClick={() => interpretModel()}
+                        onClick={interpretModel}
                        >
                          Interpret Prediction
                       </button>
