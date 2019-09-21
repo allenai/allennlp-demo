@@ -2,16 +2,34 @@ import React from 'react'
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Footer, ExternalLink, Body } from '@allenai/varnish/components';
+import { Footer, ExternalLink } from '@allenai/varnish/components';
 
+import OutputField from '../OutputField'
+import { Accordion } from 'react-accessible-accordion';
+import SaliencyComponent from '../Saliency'
+import HotflipComponent from '../Hotflip'
 import { FormField, FormLabel, FormTextArea } from '../Form';
 import { API_ROOT } from '../../api-config';
+import {
+  GRAD_INTERPRETER,
+  IG_INTERPRETER,
+  SG_INTERPRETER,
+  HOTFLIP_ATTACKER
+} from '../InterpretConstants'
+const apiUrl = () => `${API_ROOT}/predict/next-token-lm`
+const apiUrlInterpret = () => `${API_ROOT}/interpret/next-token-lm`
+const apiUrlAttack = () => `${API_ROOT}/attack/next-token-lm`
+
+const NAME_OF_INPUT_TO_ATTACK = "tokens"
+const NAME_OF_GRAD_INPUT = "grad_input_1"
+const title = "Language Modeling";
 
 const Wrapper = styled.div`
   color: #232323;
   flex-grow: 1;
   font-size: 1em;
   background: ${({theme}) => theme.palette.background.light};
+  overflow: scroll;
 
   @media(max-width: 500px) {
     margin: 0;
@@ -156,6 +174,47 @@ Click the left arrow at the bottom to undo your last choice.
   </span>
 )
 
+const getGradData = ({ grad_input_1 }) => {
+  return [grad_input_1];
+}
+
+const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
+  let simpleGradData = undefined;
+  let integratedGradData = undefined;
+  let smoothGradData = undefined;
+  if (interpretData) {
+    simpleGradData = GRAD_INTERPRETER in interpretData ? getGradData(interpretData[GRAD_INTERPRETER]['instance_1']) : undefined
+    integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
+    smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
+  }
+  const inputTokens = [tokens];
+  const inputHeaders = [<p><strong>Sentence:</strong></p>];
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
+const Attacks = ({attackData, attackModel, requestData}) => {
+  let hotflipData = undefined;
+  if (attackData && attackData.hotflip) {
+    hotflipData = attackData["hotflip"];
+    hotflipData["new_prediction"] = hotflipData["outputs"]["words"][0][0];
+  }
+  return (
+    <OutputField>
+      <Accordion accordion={false}>
+        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+      </Accordion>
+    </OutputField>
+  )
+}
+
 class App extends React.Component {
 
   constructor(props) {
@@ -170,27 +229,38 @@ class App extends React.Component {
       probabilities: null,
       loading: false,
       error: false,
-      model: DEFAULT_MODEL
+      model: DEFAULT_MODEL,
+      interpretData: null,
+      attackData: null
     }
 
     this.choose = this.choose.bind(this)
     this.debouncedChoose = _.debounce(this.choose, 1000)
     this.setOutput = this.setOutput.bind(this)
     this.runOnEnter = this.runOnEnter.bind(this)
+    this.interpretModel = this.interpretModel.bind(this)
+    this.attackModel = this.attackModel.bind(this)
   }
 
   setOutput(evt) {
     const value = evt.target.value
-    const trimmed = trimRight(value);
+    if (value) { // TODO(michaels): I shouldn't need to do this
+      const trimmed = trimRight(value);
 
-    this.setState({
-        output: value,
-        words: null,
-        logits: null,
-        probabilities: null,
-        loading: trimmed.length > 0
-    })
-    this.debouncedChoose()
+      const loading = trimmed.length > 0;
+
+      this.setState({
+          output: value,
+          words: null,
+          logits: null,
+          probabilities: null,
+          interpretData: null,
+          attackData: null,
+          loading: loading
+      })
+
+      this.debouncedChoose()
+    }
   }
 
   createRequestId() {
@@ -219,30 +289,30 @@ class App extends React.Component {
   }
 
   choose(choice = undefined, doNotChangeUrl) {
-    this.setState({ loading: true, error: false })
-
     // strip trailing spaces
-    const trimmedOutput = trimRight(this.state.output);
-    if (trimmedOutput.length === 0) {
+    const textAreaText = this.state.output;
+    if (trimRight(textAreaText).length === 0) {
       this.setState({ loading: false });
       return;
     }
 
+    this.setState({ loading: true, error: false })
+    // TODO(mattg): this doesn't actually send the newline token to the model in the right way.
+    // I'm not sure how to fix that.
+    const cleanedChoice = choice === undefined ? undefined : choice.replace(/↵/g, '\n');
+
+    const sentence = choice === undefined ? textAreaText : textAreaText + cleanedChoice
     const payload = {
-      previous: trimmedOutput,
-      next: choice,
-      numsteps: 5,
-      model_name: this.state.model
+      sentence: sentence
     }
 
     const currentReqId = this.createRequestId();
-    const endpoint = `${API_ROOT}/predict/gpt2`
 
     if ('history' in window && !doNotChangeUrl) {
-      addToUrl(this.state.output, choice);
+      addToUrl(this.state.output, cleanedChoice);
     }
 
-    fetch(endpoint, {
+    fetch(apiUrl(), {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
@@ -255,7 +325,8 @@ class App extends React.Component {
         // If the user entered text by typing don't overwrite it, as that feels
         // weird. If they clicked it overwrite it
         const output = choice === undefined ? this.state.output : data.output
-        this.setState({...data, output, loading: false})
+        this.setState({...data, output: sentence, loading: false})
+        this.requestData = output;
       }
     })
     .catch(err => {
@@ -275,10 +346,25 @@ class App extends React.Component {
 
   render() {
 
+    let requestData = {"sentence": this.state.output};
+    let interpretData = this.state.interpretData;
+    let attackData = this.state.attackData;
+    let tokens = [];
+    if (this.state.tokens === undefined) {
+        tokens = [];
+    }
+    else {
+        if (Array.isArray(this.state.tokens[0])) {
+            tokens = this.state.tokens[0];
+        }
+        else {
+            tokens = this.state.tokens;
+        }
+    }
     return (
-      <Wrapper className="model">
+      <Wrapper classname="model">
         <ModelArea className="model__content answer">
-          <h2><span>Language Modeling</span></h2>
+          <h2><span>{title}</span></h2>
           <p><span>{description}</span></p>
 
           <InputOutput>
@@ -301,8 +387,9 @@ class App extends React.Component {
                 ) : null}
             </InputOutputColumn>
             <InputOutputColumn>
-              <FormLabel>Options:</FormLabel>
+              <FormLabel>Predictions:</FormLabel>
               <Choices output={this.state.output}
+                      index={0}
                       choose={this.choose}
                       logits={this.state.logits}
                       words={this.state.words}
@@ -311,17 +398,51 @@ class App extends React.Component {
             </InputOutputColumn>
           </InputOutput>
         </ModelArea>
-        <Footer>
-          <Body>
-            Proudly built at the <ExternalLink contrast={true} target="_blank" href="https://allenai.org">Allen Institute for Artificial Intelligence (AI2)</ExternalLink>
-            {' '}using Hugging Face’s <ExternalLink contrast={true} target="_blank" href="https://github.com/huggingface/pytorch-pretrained-BERT" rel="noopener">pytorch-pretrained-BERT</ExternalLink>
-            {' '}library
-            {' '}| <ExternalLink contrast={true} href="https://allenai.org/privacy-policy.html">Privacy Policy</ExternalLink>
-            {' '}| <ExternalLink contrast={true} href="https://allenai.org/terms.html">Terms of Use</ExternalLink>
-          </Body>
-        </Footer>
-      </Wrapper>
+      <Accordion accordion={false}>
+        <SaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
+        <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
+      </Accordion>
+    </Wrapper>
     )
+  }
+
+  interpretModel = (inputs, interpreter) => () => {
+    fetch(apiUrlInterpret(inputs), {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({...inputs, ...{interpreter}})
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      const stateUpdate = { ...this.state }
+      stateUpdate['interpretData'] = {...stateUpdate['interpretData'], [interpreter]: json}
+      this.setState(stateUpdate)
+    })
+  }
+
+  attackModel = (inputs, attacker, inputToAttack, gradInput) => ({target}) => {
+    const attackInputs = {...{attacker}, ...{inputToAttack}, ...{gradInput}}
+    if (target !== undefined) {
+      attackInputs['target'] = {words: [[target]]}
+    }
+
+    fetch(apiUrlAttack(inputs), {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({...inputs, ...attackInputs})
+    }).then((response) => {
+      return response.json();
+    }).then((json) => {
+      const stateUpdate = { ...this.state }
+      stateUpdate['attackData'] = {...stateUpdate['attackData'], [attacker]: json}
+      this.setState(stateUpdate)
+    })
   }
 }
 
@@ -331,18 +452,20 @@ const formatProbability = prob => {
   return `${prob.toFixed(1)}%`
 }
 
-const Choices = ({output, logits, words, choose, probabilities}) => {
+const Choices = ({output, index, logits, words, choose, probabilities}) => {
   if (!words) { return null }
+  if (words.length <= index) { return null }
+  if (probabilities.length <= index) { return null }
 
-  const lis = words.map((word, idx) => {
+  const lis = words[index].map((word, idx) => {
     const prob = formatProbability(probabilities[idx])
 
     // get rid of CRs
-    const cleanWord = word.replace(/\n/g, "↵")
+    const cleanWord = word.replace(/\n/g, "↵").replace(/Ġ/g, " ").replace(/Ċ/g, "↵")
 
     return (
       <ListItem key={`${idx}-${cleanWord}`}>
-        <ChoiceItem onClick={() => choose(word)}>
+        <ChoiceItem onClick={() => choose(cleanWord)}>
           <Probability>{prob}</Probability>
           {' '}
           <Token>{cleanWord}</Token>

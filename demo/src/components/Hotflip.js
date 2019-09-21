@@ -1,11 +1,11 @@
 import React from 'react';
+import { FormInput } from './Form';
 import {
     AccordionItem,
     AccordionItemTitle,
     AccordionItemBody,
     } from 'react-accessible-accordion';
 import { RedToken, GreenToken, TransparentToken } from './Shared';
-import {  HOTFLIP_ATTACKER } from './InterpretConstants'
 
 // takes in the input before and after the hotflip attack and highlights
 // the words that were replaced in red and the new words in green
@@ -54,6 +54,7 @@ export default class HotflipComponent extends React.Component {
       isClicking: false
     };
 
+    this.updateTargetWord = this.updateTargetWord.bind(this);
     this.handleHighlightMouseDown = this.handleHighlightMouseDown.bind(this);
     this.handleHighlightMouseOver = this.handleHighlightMouseOver.bind(this);
     this.handleHighlightMouseOut = this.handleHighlightMouseOut.bind(this);
@@ -97,57 +98,75 @@ export default class HotflipComponent extends React.Component {
     }));
   }
 
-    render() {
-        const { hotflipData, hotflipFunction, requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput } = this.props
-        if (attacker === HOTFLIP_ATTACKER){ // if attacker is not INPUT_REDUCTION or other methods
-            let originalString = ''
-            let flippedString = ''
-            let newPrediction = ''
-            let context = " ";
-            // enters during initialization
-            if (hotflipData === undefined) {
-                flippedString = " ";
-            }
-            // data is available, display the results of Hotflip
-            else {
-                [originalString, flippedString] = colorizeTokensForHotflipUI(hotflipData["original"],
-                                                                             hotflipData["final"][0])
-                newPrediction = hotflipData["new_prediction"]
-                context = hotflipData["context"]
-            }
-            const runButton = <button
-                                type="button"
-                                className="btn"
-                                style={{margin: "30px 0px"}}
-                                onClick={ () => hotflipFunction(requestDataObject, attacker, nameOfInputToAttack, nameOfGradInput) }
-                               >
-                                 Flip Words
-                              </button>
+  updateTargetWord(e) {
+    const value = e.target.value === '' ? undefined : e.target.value
+    this.setState({target: value});
+  }
 
-            const displayText = flippedString === " " ?
-              <div><p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>{runButton}</div>
-            :
-              <div>
-                {context !== " " ? context : ""}
-                <p><strong>Original Input:</strong> {originalString}</p>
-                <p><strong>Flipped Input:</strong> {flippedString}</p>
-                <p><b>Prediction changed to:</b> {newPrediction}</p>
-              </div>
-
-            return (
-                <AccordionItem>
-                    <AccordionItemTitle>
-                        HotFlip Attack
-                        <div className="accordion__arrow" role="presentation"/>
-                    </AccordionItemTitle>
-                    <AccordionItemBody>
-                        <p>
-                            <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the input word with the highest gradient until the prediction changes.
-                        </p>
-                        {displayText}
-                    </AccordionItemBody>
-                </AccordionItem>
-            )
-        }
+  render() {
+    const { hotflipData, hotflipFunction, targeted } = this.props
+    let originalString = ''
+    let flippedString = ''
+    let newPrediction = ''
+    let context = " ";
+    // enters during initialization
+    if (hotflipData === undefined) {
+        flippedString = " ";
     }
+    // data is available, display the results of Hotflip
+    else {
+        [originalString, flippedString] = colorizeTokensForHotflipUI(hotflipData["original"],
+                                                                     hotflipData["final"][0])
+        newPrediction = hotflipData["new_prediction"]
+        context = hotflipData["context"]
+    }
+    const runButton = <button
+                        type="button"
+                        className="btn"
+                        style={{margin: "30px 0px"}}
+                        onClick={ () => hotflipFunction(this.state) }
+                       >
+                         Flip Words
+                      </button>
+
+    const target = targeted === undefined ?
+      " "
+    :
+      <p> Change prediction to (leave blank to allow any change): <FormInput type="text" onChange={ this.updateTargetWord }/> </p>
+
+    const buttonDisplay = (flippedString !== " " && targeted === undefined) ?
+      " "
+    :
+      <div>
+        <p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>
+        {target}
+        {runButton}
+      </div>
+
+    const flippedDisplay = (flippedString === " ") ?
+      ""
+    :
+      <div>
+        {context !== " " ? context : ""}
+        <p><strong>Original Input:</strong> {originalString}</p>
+        <p><strong>Flipped Input:</strong> {flippedString}</p>
+        <p><b>Prediction changed to:</b> {newPrediction}</p>
+      </div>
+
+    return (
+        <AccordionItem>
+            <AccordionItemTitle>
+                HotFlip Attack
+                <div className="accordion__arrow" role="presentation"/>
+            </AccordionItemTitle>
+            <AccordionItemBody>
+                <p>
+                    <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the input word with the highest gradient until the prediction changes.
+                </p>
+                {flippedDisplay}
+                {buttonDisplay}
+            </AccordionItemBody>
+        </AccordionItem>
+    )
+  }
 }

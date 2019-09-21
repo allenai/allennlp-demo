@@ -47,7 +47,6 @@ logger.addHandler(handler)
 logger.propagate = False
 
 supported_interpret_models = {'named-entity-recognition',
-                              'coreference-resolution',
                               'sentiment-analysis',
                               'textual-entailment',
                               'reading-comprehension',
@@ -131,7 +130,14 @@ def make_app(build_dir: str,
                     app.attackers[name]["hotflip"] = Hotflip(predictor, 'bert')
                 elif name == "next-token-lm":
                     app.attackers[name]["hotflip"] = Hotflip(predictor, 'gpt2')
-                elif name != 'named-entity-recognition': # NER doesn't use Hotflip
+                elif 'named-entity-recognition' in name:
+                    # We haven't implemented hotflip for NER.
+                    continue
+                elif name == 'textual-entailment':
+                    # The SNLI model only has ELMo embeddings, which don't work with hotflip on
+                    # their own.
+                    continue
+                else:
                     app.attackers[name]["hotflip"] = Hotflip(predictor)
                     app.attackers[name]["hotflip"].initialize()
 

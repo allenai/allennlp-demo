@@ -12,7 +12,8 @@ import WikiTables from './components/demos/WikiTables';
 import Nlvr from './components/demos/Nlvr';
 import Atis from './components/demos/Atis';
 import QuarelZero from './components/demos/QuarelZero';
-import Gpt2 from './components/demos/Gpt2';
+import LanguageModel from './components/demos/LanguageModel';
+import MaskedLm from './components/demos/MaskedLm';
 import annotateIcon from './icons/annotate-14px.svg';
 import otherIcon from './icons/other-14px.svg';
 import parseIcon from './icons/parse-14px.svg';
@@ -73,13 +74,14 @@ const modelGroups = [
         models: [
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
             {model: "event2mind", name: "Event2Mind", component: Event2Mind},
-            {model: "gpt2", name: "Language Modeling", component: Gpt2},
+            {model: "next-token-lm", name: "Language Modeling", component: LanguageModel},
+            {model: "masked-lm", name: "Masked Language Modeling", component: MaskedLm},
             {model: "user-models", name: "Your model here!"}
         ]
     }
 ]
 
-// Create mappings model => component
+// Create mapping from model to component
 let modelComponents = {}
 modelGroups.forEach((mg) => mg.models.forEach(({model, component}) => modelComponents[model] = component));
 
