@@ -153,7 +153,7 @@ const DEFAULT_MODEL = "345M"
 
 const description = (
   <span>
-Enter some initial text with at least one "[MASK]" token and the model will generate the most likely words to substitute for "[MASK]".
+Enter text with one or more "[MASK]" tokens and <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener noreferrer">BERT</a> will generate the most likely token to substitute for each "[MASK]".
   </span>
 )
 
