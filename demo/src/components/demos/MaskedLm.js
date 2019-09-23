@@ -107,8 +107,8 @@ const ChoiceList = styled.ul`
 `
 
 const ChoiceItem = styled.button`
-  color: #2085bc;
-  cursor: pointer;
+  color: black;
+  cursor: auto;
   background: transparent;
   display: inline-flex;
   align-items: center;
