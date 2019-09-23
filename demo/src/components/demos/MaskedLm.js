@@ -172,8 +172,9 @@ const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
   }
   const inputTokens = [tokens];
   const inputHeaders = [<p><strong>Sentence:</strong></p>];
+  const interpretationHeader = Interpretations <i><a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer" style="padding-left:1em;font-weight:100">What is this?</a></i>
   return (
-    <OutputField>
+    <OutputField label={interpretationHeader}>
       <Accordion accordion={false}>
         <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
         <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
