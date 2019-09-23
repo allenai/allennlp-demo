@@ -138,7 +138,7 @@ export class SaliencyComponent extends React.Component {
             {colorMap}
             <Tooltip /> <input type="range" min={0} max={colorMap.length} step="1" value={k} className="slider" onChange={this.handleInputTopKChange(i)} style={{ padding: "0px", margin: "10px 0px" }} />
             <br/>
-            <span style={{ color: "#72BCFF" }}>Visualizing the top {k} words.</span>
+            <span style={{ color: "#72BCFF" }}>Visualizing the top {k} most important words.</span>
             <br />
             <br />
           </div>
