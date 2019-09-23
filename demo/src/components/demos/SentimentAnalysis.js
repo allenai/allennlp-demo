@@ -95,7 +95,8 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
 
   let t = requestData;
   const tokens = t['sentence'].split(' '); // this model expects space-separated inputs
-
+  const interpretationHeader = Interpretations <i><a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer" style="padding-left:1em;font-weight:100">What is this?</a></i>
+  
   // The "Answer" output field has the models predictions. The other output fields are the
   // reusable HTML/JavaScript for the interpretation methods.
   return (
@@ -104,7 +105,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
         {prediction}
       </OutputField>
 
-    <OutputField>
+    <OutputField label={interpretationHeader}>
       <Accordion accordion={false}>
           <SaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={interpretModel} requestData={requestData}/>
           <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
