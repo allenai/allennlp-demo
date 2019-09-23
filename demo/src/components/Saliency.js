@@ -144,6 +144,7 @@ export class SaliencyComponent extends React.Component {
           </div>
         )
         saliencyMaps.push(saliencyMap);
+        saliencyMaps.reverse(); // list of interpretations (only used by NER currently) are in the opposite order.
       }
       displayText = <div>{saliencyMaps}</div>
     }
