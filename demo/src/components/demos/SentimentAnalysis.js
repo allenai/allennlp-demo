@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import Model from '../Model'
 import OutputField from '../OutputField'
 import { Accordion } from 'react-accessible-accordion';
-import SaliencyComponent from '../Saliency'
+import SaliencyMaps from '../Saliency'
 import InputReductionComponent from '../InputReduction'
 import HotflipComponent from '../Hotflip'
 import {
@@ -44,7 +44,7 @@ const getGradData = ({ grad_input_1: gradInput1 }) => {
   return [gradInput1];
 }
 
-const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
+const MySaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
   let simpleGradData = undefined;
   let integratedGradData = undefined;
   let smoothGradData = undefined;
@@ -55,15 +55,8 @@ const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
   }
   const inputTokens = [tokens];
   const inputHeaders = [<p><strong>Sentence:</strong></p>];
-  return (
-    <OutputField>
-      <Accordion accordion={false}>
-        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
-        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
-        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
-      </Accordion>
-    </OutputField>
-  )
+  const allInterpretData = {simple: simpleGradData, ig: integratedGradData, sg: smoothGradData};
+  return <SaliencyMaps interpretData={allInterpretData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} />
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
@@ -95,8 +88,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
 
   let t = requestData;
   const tokens = t['sentence'].split(' '); // this model expects space-separated inputs
-  const interpretationHeader = Interpretations <i><a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer" style="padding-left:1em;font-weight:100">What is this?</a></i>
-  
+
   // The "Answer" output field has the models predictions. The other output fields are the
   // reusable HTML/JavaScript for the interpretation methods.
   return (
@@ -105,9 +97,9 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
         {prediction}
       </OutputField>
 
-    <OutputField label={interpretationHeader}>
+    <OutputField>
       <Accordion accordion={false}>
-          <SaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={interpretModel} requestData={requestData}/>
+          <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={interpretModel} requestData={requestData}/>
           <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
       </Accordion>
     </OutputField>

@@ -6,7 +6,7 @@ import { Footer, ExternalLink } from '@allenai/varnish/components';
 
 import OutputField from '../OutputField'
 import { Accordion } from 'react-accessible-accordion';
-import SaliencyComponent from '../Saliency'
+import SaliencyMaps from '../Saliency'
 import HotflipComponent from '../Hotflip'
 import { FormField, FormLabel, FormTextArea } from '../Form';
 import { API_ROOT } from '../../api-config';
@@ -178,7 +178,7 @@ const getGradData = ({ grad_input_1 }) => {
   return [grad_input_1];
 }
 
-const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
+const MySaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
   let simpleGradData = undefined;
   let integratedGradData = undefined;
   let smoothGradData = undefined;
@@ -187,18 +187,19 @@ const SaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
     integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
     smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
   }
-  const inputTokens = [tokens];
+  const inputTokens = [tokens.map((token, index) => {
+    token = token.replace(/Ċ/g, "↵");
+    if (token[0] == 'Ġ') {
+      return token.replace(/Ġ/g, " ");
+    } else if (index != 0 && token != "↵") {
+      return '##' + token;
+    } else {
+      return token;
+    }
+  })];
   const inputHeaders = [<p><strong>Sentence:</strong></p>];
-  const interpretationHeader = Interpretations <i><a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer" style="padding-left:1em;font-weight:100">What is this?</a></i>
-  return (
-    <OutputField label={interpretationHeader}>
-      <Accordion accordion={false}>
-        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
-        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
-        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
-      </Accordion>
-    </OutputField>
-  )
+  const allInterpretData = {simple: simpleGradData, ig: integratedGradData, sg: smoothGradData};
+  return <SaliencyMaps interpretData={allInterpretData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} />
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
@@ -400,7 +401,7 @@ class App extends React.Component {
           </InputOutput>
         </ModelArea>
       <Accordion accordion={false}>
-        <SaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
+        <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
         <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
       </Accordion>
     </Wrapper>

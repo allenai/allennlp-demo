@@ -1,7 +1,9 @@
 import React from 'react'
 import colormap from 'colormap'
 import { Tooltip, ColorizedToken } from './Shared';
+import OutputField from './OutputField'
 import {
+  Accordion,
   AccordionItem,
   AccordionItemTitle,
   AccordionItemBody,
@@ -35,6 +37,22 @@ const getTokenWeightPairs = (grads, tokens) => {
     // We do 1 - weight because the colormap is inverted
     return { token, weight: 1 - weight }
   })
+}
+
+export const SaliencyMaps = ({interpretData, inputTokens, inputHeaders, interpretModel, requestData}) => {
+  const simpleGradData = interpretData.simple;
+  const integratedGradData = interpretData.ig;
+  const smoothGradData = interpretData.sg;
+  const interpretationHeader = <>Saliency Maps <i><a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer" style={{paddingLeft: `1em`, fontWeight:100}}>What is this?</a></i></>
+  return (
+    <OutputField label={interpretationHeader}>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
 }
 
 export class SaliencyComponent extends React.Component {
@@ -166,4 +184,4 @@ export class SaliencyComponent extends React.Component {
   }
 }
 
-export default SaliencyComponent
+export default SaliencyMaps
