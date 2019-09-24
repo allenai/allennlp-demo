@@ -19,7 +19,7 @@ import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 import '../../css/TeComponent.css';
 
-import SaliencyComponent from '../Saliency'
+import SaliencyMaps from '../Saliency'
 import InputReductionComponent from '../InputReduction'
 import HotflipComponent from '../Hotflip'
 import {
@@ -104,7 +104,7 @@ const getGradData = ({ grad_input_1, grad_input_2 }) => {
   return [grad_input_2, grad_input_1];
 }
 
-const SaliencyMaps = ({interpretData, premise_tokens, hypothesis_tokens, interpretModel, requestData}) => {
+const MySaliencyMaps = ({interpretData, premise_tokens, hypothesis_tokens, interpretModel, requestData}) => {
   let simpleGradData = undefined;
   let integratedGradData = undefined;
   let smoothGradData = undefined;
@@ -115,15 +115,8 @@ const SaliencyMaps = ({interpretData, premise_tokens, hypothesis_tokens, interpr
   }
   const inputTokens = [premise_tokens, hypothesis_tokens];
   const inputHeaders = [<p><strong>Premise:</strong></p>, <p><strong>Hypothesis:</strong></p>];
-  return (
-    <OutputField>
-      <Accordion accordion={false}>
-        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
-        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
-        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
-      </Accordion>
-    </OutputField>
-  )
+  const allInterpretData = {simple: simpleGradData, ig: integratedGradData, sg: smoothGradData};
+  return <SaliencyMaps interpretData={allInterpretData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} />
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
@@ -266,7 +259,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
     </div>
     <OutputField>
       <Accordion accordion={false}>
-        <SaliencyMaps interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel={interpretModel} requestData={requestData} />
+        <MySaliencyMaps interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel={interpretModel} requestData={requestData} />
         <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
 
         <AccordionItem>

@@ -131,13 +131,25 @@ class SingleTaskDemo extends React.Component {
         // This is a model we know the component for, so render it.
         return React.createElement(modelComponents[selectedModel], {requestData, responseData, selectedModel, updateData})
     } else if (selectedModel === "user-models") {
+     const developLocallyHeader = "Developing Locally"
+     const developLocallyDescription = (
+          <span>
+            <span>
+              It's possible to run this demo locally with your own model (e.g., to visualize or interpret its predictions). See
+            </span>
+            <ExternalLink href="https://github.com/allenai/allennlp-demo#contributing-a-new-model-to-the-demo" target="_blank" rel="noopener">{' '} this tutorial </ExternalLink>
+            <span>
+              for more information.
+            </span>
+          </span>
+       );
       const modelRequest = "User Contributed Models"
       const modelDescription = (
         <span>
           <span>
-            AllenNLP is looking to add contributed models implemented using AllenNLP as either library components or demos (with free hosting!).
+            We are also looking to add user contributed AllenNLP models as either components in the AllenNLP library and optionally on this demo site (with free hosting!).
             If you have a published result or novel model demonstrating strong performance on a dataset and you are interested
-            in adding your model to a list of publically available implementations, as a service to this demo, or as a component in the library itself,
+            in adding your model to a list of publicly available implementations, as a service to this demo, or as a component in the library itself,
             please consider opening an issue on our
           </span>
           <ExternalLink href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener">{' '} public Github repository </ExternalLink>
@@ -145,12 +157,15 @@ class SingleTaskDemo extends React.Component {
             or sending us an email at allennlp-contact@allenai.org to discuss what you have in mind.
           </span>
         </span>
+
       );
 
       return (
         <div className="model model__content">
           <div className='model__content'>
             <PaneTop>
+              <ModelIntro title={developLocallyHeader} description={developLocallyDescription}/>
+              <br />
               <ModelIntro title={modelRequest} description={modelDescription}/>
             </PaneTop>
           </div>

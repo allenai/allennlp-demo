@@ -25,8 +25,8 @@ import pytz
 
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.predictors import Predictor
-from allennlp.interpret.saliency_interpreters import SimpleGradient, IntegratedGradient, SmoothGradient
-from allennlp.interpret.attackers import InputReduction, Hotflip
+from allennlp.interpret.saliency_interpreters import SaliencyInterpreter, SimpleGradient, IntegratedGradient, SmoothGradient
+from allennlp.interpret.attackers import Attacker, InputReduction, Hotflip 
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
@@ -75,6 +75,8 @@ class ServerError(Exception):
 def main(demo_dir: str,
          port: int,
          cache_size: int,
+         interpret_cache_size: int,
+         attack_cache_size: int,
          models: Dict[str, DemoModel]) -> None:
     """Run the server programatically"""
     logger.info("Starting a flask server on port %i.", port)
@@ -102,7 +104,9 @@ def main(demo_dir: str,
 def make_app(build_dir: str,
              models: Dict[str, DemoModel],
              demo_db: Optional[DemoDatabase] = None,
-             cache_size: int = 128) -> Flask:
+             cache_size: int = 128,
+             interpret_cache_size: int = 128,
+             attack_cache_size: int = 128) -> Flask:
     if not os.path.exists(build_dir):
         logger.error("app directory %s does not exist, aborting", build_dir)
         sys.exit(-1)
@@ -125,6 +129,9 @@ def make_app(build_dir: str,
             app.max_request_lengths[name] = demo_model.max_request_length
 
             if name in supported_interpret_models:
+                app.interpreters[name]['simple_gradient'] = SimpleGradient(predictor)
+                app.interpreters[name]['integrated_gradient'] = IntegratedGradient(predictor)
+                app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)
                 app.attackers[name]["input_reduction"] = InputReduction(predictor)
                 if name == 'masked-lm':
                     app.attackers[name]["hotflip"] = Hotflip(predictor, 'bert')
@@ -140,10 +147,6 @@ def make_app(build_dir: str,
                 else:
                     app.attackers[name]["hotflip"] = Hotflip(predictor)
                     app.attackers[name]["hotflip"].initialize()
-
-                app.interpreters[name]['simple_gradient'] = SimpleGradient(predictor)
-                app.interpreters[name]['integrated_gradient'] = IntegratedGradient(predictor)
-                app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)
 
     # Disable caching for HTML documents and API responses so that clients
     # always talk to the source (this server).
@@ -166,7 +169,32 @@ def make_app(build_dir: str,
         Just a wrapper around ``model.predict_json`` that allows us to use a cache decorator.
         """
         return model.predict_json(json.loads(data))
+    
+    
+        attack = attacker.attack_from_json(inputs=data,
+                                           input_field_to_attack=input_field_to_attack,
+                                           grad_input_field=grad_input_field,
+                                           target=target)
+        
+        
+    @lru_cache(maxsize=interpret_cache_size)
+    def _caching_interpret(interpreter: SaliencyInterpreter, data: str) -> JsonDict:
+        """
+        Just a wrapper around ``model.interpret_from_json`` that allows us to use a cache decorator.
+        """
+        return interpreter.saliency_interpret_from_json(json.loads(data))
 
+    @lru_cache(maxsize=attack_cache_size)
+    def _caching_attack(attacker: Attacker, data: str, input_field_to_attack: str, grad_input_field: str, target: str) -> JsonDict:
+        attacker, json.dumps(data), input_field_to_attack, grad_input_field, target
+        """
+        Just a wrapper around ``model.attack_from_json`` that allows us to use a cache decorator.
+        """
+        return attacker.attack_from_json(inputs=json.loads(data),
+                                         input_field_to_attack=input_field_to_attack,
+                                         grad_input_field=grad_input_field,
+                                         target=target)
+    
     @app.route('/')
     def index() -> Response: # pylint: disable=unused-variable
         return send_file(os.path.join(build_dir, 'index.html'))
@@ -334,6 +362,10 @@ def make_app(build_dir: str,
         """
         if request.method == "OPTIONS":
             return Response(response="", status=200)
+        
+        # Do use the cache if no argument is specified
+        use_cache = request.args.get("cache", "true").lower() != "false"
+
         lowered_model_name = model_name.lower()
 
         data = request.get_json()
@@ -354,11 +386,27 @@ def make_app(build_dir: str,
         if len(serialized_request) > max_request_length:
             raise ServerError(f"Max request length exceeded for model {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
+        
+        pre_hits = _caching_attack.cache_info().hits  # pylint: disable=no-value-for-parameter
 
-        attack = attacker.attack_from_json(inputs=data,
-                                           input_field_to_attack=input_field_to_attack,
-                                           grad_input_field=grad_input_field,
-                                           target=target)
+        if use_cache and attack_cache_size > 0:
+            # lru_cache insists that all function arguments be hashable,
+            # so unfortunately we have to stringify the data.
+            attack = _caching_attack(attacker, json.dumps(data), input_field_to_attack, grad_input_field, target)
+            
+        else:
+            # if cache_size is 0, skip caching altogether
+            attack = attacker.attack_from_json(inputs=data,
+                                               input_field_to_attack=input_field_to_attack,
+                                               grad_input_field=grad_input_field,
+                                               target=target)
+
+        post_hits = _caching_attack.cache_info().hits  # pylint: disable=no-value-for-parameter
+        
+        if use_cache and post_hits > pre_hits:
+            # Cache hit, so insert an artifical pause
+            time.sleep(0.25)
+
         return jsonify(attack)
 
     @app.route('/interpret/<model_name>', methods=['POST', 'OPTIONS'])
@@ -368,8 +416,12 @@ def make_app(build_dir: str,
         """
         if request.method == "OPTIONS":
             return Response(response="", status=200)
-        lowered_model_name = model_name.lower()
 
+        # Do use the cache if no argument is specified
+        use_cache = request.args.get("cache", "true").lower() != "false"
+
+        lowered_model_name = model_name.lower()
+    
         data = request.get_json()
         interpreter_name = data.pop("interpreter")
 
@@ -387,7 +439,22 @@ def make_app(build_dir: str,
             raise ServerError(f"Max request length exceeded for interpreter {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
 
-        interpretation = interpreter.saliency_interpret_from_json(data)
+        pre_hits = _caching_interpret.cache_info().hits  # pylint: disable=no-value-for-parameter
+
+        if use_cache and interpret_cache_size > 0:
+            # lru_cache insists that all function arguments be hashable,
+            # so unfortunately we have to stringify the data.
+            interpretation = _caching_interpret(interpreter, json.dumps(data))
+        else:
+            # if cache_size is 0, skip caching altogether
+            interpretation = interpreter.saliency_interpret_from_json(data)
+
+        post_hits = _caching_prediction.cache_info().hits  # pylint: disable=no-value-for-parameter
+        
+        if use_cache and post_hits > pre_hits:
+            # Cache hit, so insert an artifical pause
+            time.sleep(0.25)
+            
         return jsonify(interpretation)
 
     @app.route('/models')
@@ -453,6 +520,8 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=8000, help='port to serve the demo on')
     parser.add_argument('--demo-dir', type=str, default='demo/', help="directory where the demo HTML is located")
     parser.add_argument('--cache-size', type=int, default=128, help="how many results to keep in memory")
+    parser.add_argument('--interpret-cache-size', type=int, default=128, help="how many interpretation results to keep in memory")
+    parser.add_argument('--attack-cache-size', type=int, default=128, help="how many attack results to keep in memory")
     parser.add_argument('--models-file', type=str, default='models.json', help="json file containing the details of the models to load")
 
     models_group = parser.add_mutually_exclusive_group()
@@ -466,4 +535,6 @@ if __name__ == "__main__":
     main(demo_dir=args.demo_dir,
          port=args.port,
          cache_size=args.cache_size,
+         interpret_cache_size=args.interpret_cache_size,
+         attack_cache_size=args.attack_cache_size,
          models=models)

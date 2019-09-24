@@ -1,7 +1,9 @@
 import React from 'react'
 import colormap from 'colormap'
 import { Tooltip, ColorizedToken } from './Shared';
+import OutputField from './OutputField'
 import {
+  Accordion,
   AccordionItem,
   AccordionItemTitle,
   AccordionItemBody,
@@ -37,14 +39,32 @@ const getTokenWeightPairs = (grads, tokens) => {
   })
 }
 
+export const SaliencyMaps = ({interpretData, inputTokens, inputHeaders, interpretModel, requestData}) => {
+  const simpleGradData = interpretData.simple;
+  const integratedGradData = interpretData.ig;
+  const smoothGradData = interpretData.sg;
+  const interpretationHeader = <>Saliency Maps <i><a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer" style={{paddingLeft: `1em`, fontWeight:100}}>What is this?</a></i></>
+  return (
+    <OutputField label={interpretationHeader}>
+      <Accordion accordion={false}>
+        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
+        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
+        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
+      </Accordion>
+    </OutputField>
+  )
+}
+
 export class SaliencyComponent extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
       topK: {all: 3}, // 3 words are highlighted by default
+      loading: false,
     }
 
+    this.callInterpretModel = this.callInterpretModel.bind(this)
     this.colorize = this.colorize.bind(this)
     this.handleInputTopKChange = this.handleInputTopKChange.bind(this)
     this.getTopKIndices = this.getTopKIndices.bind(this)
@@ -56,6 +76,11 @@ export class SaliencyComponent extends React.Component {
       format: 'hex',
       nshades: 20
     }
+  }
+
+  callInterpretModel = interpretModel => () => {
+    this.setState({ ...this.state, loading: true})
+    interpretModel()
   }
 
   colorize(tokensWithWeights, topKIdx) {
@@ -112,14 +137,18 @@ export class SaliencyComponent extends React.Component {
                         type="button"
                         className="btn"
                         style={{margin: "30px 0px"}}
-                        onClick={interpretModel}
+                        onClick={this.callInterpretModel(interpretModel)}
                        >
                          Interpret Prediction
                       </button>
 
     let displayText = '';
     if (interpretData === undefined) {
-      displayText = <div><p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>{runButton}</div>
+      if (this.state.loading) {
+        displayText = <div><p style={{color: "#7c7c7c"}}>Loading interpretation...</p></div>
+      } else {
+        displayText = <div><p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>{runButton}</div>
+      }
     } else {
       const saliencyMaps = [];
       for (let i = 0; i < inputTokens.length; i++) {
@@ -138,12 +167,13 @@ export class SaliencyComponent extends React.Component {
             {colorMap}
             <Tooltip /> <input type="range" min={0} max={colorMap.length} step="1" value={k} className="slider" onChange={this.handleInputTopKChange(i)} style={{ padding: "0px", margin: "10px 0px" }} />
             <br/>
-            <span style={{ color: "#72BCFF" }}>Visualizing the top {k} words.</span>
+            <span style={{ color: "#72BCFF" }}>Visualizing the top {k} most important words.</span>
             <br />
             <br />
           </div>
         )
         saliencyMaps.push(saliencyMap);
+        saliencyMaps.reverse(); // list of interpretations (only used by NER currently) are in the opposite order.
       }
       displayText = <div>{saliencyMaps}</div>
     }
@@ -165,4 +195,4 @@ export class SaliencyComponent extends React.Component {
   }
 }
 
-export default SaliencyComponent
+export default SaliencyMaps

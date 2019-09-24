@@ -15,7 +15,7 @@ import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 import { Accordion } from 'react-accessible-accordion';
-import { SaliencyComponent } from '../Saliency';
+import SaliencyMaps from '../Saliency'
 import InputReductionComponent from '../InputReduction'
 import {
   GRAD_INTERPRETER,
@@ -194,7 +194,7 @@ const getGradData = (instances, numGrads) => {
   return grads;
 }
 
-const SaliencyMaps = ({interpretData, tokens, relevantTokens, interpretModel, requestData}) => {
+const MySaliencyMaps = ({interpretData, tokens, relevantTokens, interpretModel, requestData}) => {
   let simpleGradData = undefined;
   let integratedGradData = undefined;
   let smoothGradData = undefined;
@@ -215,15 +215,8 @@ const SaliencyMaps = ({interpretData, tokens, relevantTokens, interpretModel, re
         </div>
     );
   });
-  return (
-    <OutputField>
-      <Accordion accordion={false}>
-        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
-        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
-        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
-      </Accordion>
-    </OutputField>
-  )
+  const allInterpretData = {simple: simpleGradData, ig: integratedGradData, sg: smoothGradData};
+  return <SaliencyMaps interpretData={allInterpretData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} />
 }
 
 const Attacks = ({attackData, attackModel, requestData, relevantTokens}) => {
@@ -315,7 +308,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </HighlightContainer>
             <Accordion accordion={false}>
-              <SaliencyMaps interpretData={interpretData} tokens={words} relevantTokens={relevantTokens} interpretModel={interpretModel} requestData={requestData}/>
+              <MySaliencyMaps interpretData={interpretData} tokens={words} relevantTokens={relevantTokens} interpretModel={interpretModel} requestData={requestData}/>
               <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData} relevantTokens={relevantTokens}/>
             </Accordion>
         </FormField>
