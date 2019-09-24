@@ -34,6 +34,7 @@ const Wrapper = styled.div`
 
 const ModelArea = styled.div`
   background: ${({theme}) => theme.palette.common.white};
+  min-height: 30em;
 `
 
 const Loading = styled.div`
@@ -352,7 +353,7 @@ class App extends React.Component {
     }
     return (
       <Wrapper classname="model">
-        <ModelArea className="model__content answer">
+        <ModelArea className="model__content answer" >
           <h2><span>{title}</span></h2>
           <p><span>{description}</span></p>
 
