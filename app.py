@@ -179,14 +179,13 @@ def make_app(build_dir: str,
 
     @lru_cache(maxsize=attack_cache_size)
     def _caching_attack(attacker: Attacker, data: str, input_field_to_attack: str, grad_input_field: str, target: str) -> JsonDict:
-        attacker, json.dumps(data), input_field_to_attack, grad_input_field, target
         """
         Just a wrapper around ``model.attack_from_json`` that allows us to use a cache decorator.
         """
         return attacker.attack_from_json(inputs=json.loads(data),
                                          input_field_to_attack=input_field_to_attack,
                                          grad_input_field=grad_input_field,
-                                         target=target)
+                                         target=json.loads(target))
     
     @app.route('/')
     def index() -> Response: # pylint: disable=unused-variable
@@ -385,7 +384,7 @@ def make_app(build_dir: str,
         if use_cache and attack_cache_size > 0:
             # lru_cache insists that all function arguments be hashable,
             # so unfortunately we have to stringify the data.
-            attack = _caching_attack(attacker, json.dumps(data), input_field_to_attack, grad_input_field, target)
+            attack = _caching_attack(attacker, json.dumps(data), input_field_to_attack, grad_input_field, json.dumps(target))
             
         else:
             # if cache_size is 0, skip caching altogether

@@ -122,6 +122,9 @@ export default class HotflipComponent extends React.Component {
     }
     // data is available, display the results of Hotflip
     else {
+        if (this.state.loading) { // loading is done
+            this.setState({ loading: false });
+        }
         [originalString, flippedString] = colorizeTokensForHotflipUI(hotflipData["original"],
                                                                      hotflipData["final"][0])
         newPrediction = hotflipData["new_prediction"]

@@ -91,6 +91,9 @@ export default class InputReductionComponent extends React.Component {
             // premise for SNLI.
             // (2) you can format the original input and the reduced input yourself, to
             // customize the display for, e.g., NER.
+            if (this.state.loading) { // loading is done
+                this.setState({ loading: false });
+            }
             const original = reducedInput.original;
             const formattedOriginal = reducedInput.formattedOriginal;
             let internalText = [];

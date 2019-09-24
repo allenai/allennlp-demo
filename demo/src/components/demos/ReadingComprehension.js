@@ -43,13 +43,18 @@ const taskModels = [
     desc: "Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow,<br/>a widely used MC baseline that achieved state-of-the-art accuracies on<br/>the SQuAD dataset (Wikipedia sentences) in early 2017."
   },
   {
+    name: "ELMo-BiDAF (trained on SQuAD)",
+    desc: "Same as the BiDAF model except it uses ELMo embeddings instead of GloVe."
+  },
+  {
     name: "NAQANet (trained on DROP)",
     desc: "An augmented version of QANet that adds rudimentary numerical reasoning ability,<br/>trained on DROP (Dua et al., 2019), as published in the original DROP paper."
   }
 ]
 
 const taskEndpoints = {
-  "BiDAF (trained on SQuAD)": "reading-comprehension", // TODO: we should rename tha back-end model to reading-comprehension
+  "BiDAF (trained on SQuAD)": "reading-comprehension",
+  "ELMo-BiDAF (trained on SQuAD)": "elmo-reading-comprehension",
   "NAQANet (trained on DROP)": "naqanet-reading-comprehension"
 };
 
