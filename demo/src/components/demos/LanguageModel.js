@@ -38,6 +38,7 @@ const Wrapper = styled.div`
 
 const ModelArea = styled.div`
   background: ${({theme}) => theme.palette.common.white};
+  min-height: 30em;
 `
 
 const Loading = styled.div`
