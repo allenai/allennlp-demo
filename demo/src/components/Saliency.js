@@ -61,8 +61,10 @@ export class SaliencyComponent extends React.Component {
 
     this.state = {
       topK: {all: 3}, // 3 words are highlighted by default
+      loading: false,
     }
 
+    this.callInterpretModel = this.callInterpretModel.bind(this)
     this.colorize = this.colorize.bind(this)
     this.handleInputTopKChange = this.handleInputTopKChange.bind(this)
     this.getTopKIndices = this.getTopKIndices.bind(this)
@@ -74,6 +76,11 @@ export class SaliencyComponent extends React.Component {
       format: 'hex',
       nshades: 20
     }
+  }
+
+  callInterpretModel = interpretModel => () => {
+    this.setState({ ...this.state, loading: true})
+    interpretModel()
   }
 
   colorize(tokensWithWeights, topKIdx) {
@@ -130,14 +137,18 @@ export class SaliencyComponent extends React.Component {
                         type="button"
                         className="btn"
                         style={{margin: "30px 0px"}}
-                        onClick={interpretModel}
+                        onClick={this.callInterpretModel(interpretModel)}
                        >
                          Interpret Prediction
                       </button>
 
     let displayText = '';
     if (interpretData === undefined) {
-      displayText = <div><p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>{runButton}</div>
+      if (this.state.loading) {
+        displayText = <div><p style={{color: "#7c7c7c"}}>Loading interpretation...</p></div>
+      } else {
+        displayText = <div><p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>{runButton}</div>
+      }
     } else {
       const saliencyMaps = [];
       for (let i = 0; i < inputTokens.length; i++) {

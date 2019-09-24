@@ -51,14 +51,21 @@ export default class HotflipComponent extends React.Component {
       activeIds: [],
       activeDepths: {ids:[],depths:[]},
       selectedId: null,
-      isClicking: false
+      isClicking: false,
+      loading: false,
     };
 
+    this.callAttackFunction = this.callAttackFunction.bind(this);
     this.updateTargetWord = this.updateTargetWord.bind(this);
     this.handleHighlightMouseDown = this.handleHighlightMouseDown.bind(this);
     this.handleHighlightMouseOver = this.handleHighlightMouseOver.bind(this);
     this.handleHighlightMouseOut = this.handleHighlightMouseOut.bind(this);
     this.handleHighlightMouseUp = this.handleHighlightMouseUp.bind(this);
+  }
+
+  callAttackFunction = attackFunction => () => {
+    this.setState({ ...this.state, loading: true})
+    attackFunction(this.state)
   }
 
   handleHighlightMouseDown(id, depth) {
@@ -124,7 +131,7 @@ export default class HotflipComponent extends React.Component {
                         type="button"
                         className="btn"
                         style={{margin: "30px 0px"}}
-                        onClick={ () => hotflipFunction(this.state) }
+                        onClick={this.callAttackFunction(hotflipFunction)}
                        >
                          Flip Words
                       </button>
@@ -143,7 +150,12 @@ export default class HotflipComponent extends React.Component {
         {runButton}
       </div>
 
-    const flippedDisplay = (flippedString === " ") ?
+    const controlDisplay = (this.state.loading && flippedString === " ") ?
+      <div><p style={{color: "#7c7c7c"}}>Loading attack...</p></div>
+    :
+      buttonDisplay
+
+    const resultDisplay = (flippedString === " ") ?
       ""
     :
       <div>
@@ -163,8 +175,8 @@ export default class HotflipComponent extends React.Component {
                 <p>
                     <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the input word with the highest gradient until the prediction changes.
                 </p>
-                {flippedDisplay}
-                {buttonDisplay}
+                {resultDisplay}
+                {controlDisplay}
             </AccordionItemBody>
         </AccordionItem>
     )

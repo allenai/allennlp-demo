@@ -129,6 +129,9 @@ def make_app(build_dir: str,
             app.max_request_lengths[name] = demo_model.max_request_length
 
             if name in supported_interpret_models:
+                app.interpreters[name]['simple_gradient'] = SimpleGradient(predictor)
+                app.interpreters[name]['integrated_gradient'] = IntegratedGradient(predictor)
+                app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)
                 app.attackers[name]["input_reduction"] = InputReduction(predictor)
                 if name == 'masked-lm':
                     app.attackers[name]["hotflip"] = Hotflip(predictor, 'bert')
@@ -144,10 +147,6 @@ def make_app(build_dir: str,
                 else:
                     app.attackers[name]["hotflip"] = Hotflip(predictor)
                     app.attackers[name]["hotflip"].initialize()
-
-                app.interpreters[name]['simple_gradient'] = SimpleGradient(predictor)
-                app.interpreters[name]['integrated_gradient'] = IntegratedGradient(predictor)
-                app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)
 
     # Disable caching for HTML documents and API responses so that clients
     # always talk to the source (this server).

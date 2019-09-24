@@ -52,20 +52,39 @@ const colorizeTokensForInputReductionUI = (originalInput, reducedInput) => {
 }
 
 export default class InputReductionComponent extends React.Component {
+    constructor(props) {
+      super(props)
+
+      this.state = {
+        loading: false,
+      }
+
+      this.callReduceFunction = this.callReduceFunction.bind(this)
+    }
+
+    callReduceFunction = reduceFunction => () => {
+      this.setState({ ...this.state, loading: true})
+      reduceFunction({})
+    }
+
     render() {
         const { reduceFunction, reducedInput } = this.props
         const runButton = <button
                             type="button"
                             className="btn"
                             style={{margin: "30px 0px"}}
-                            onClick={ () => reduceFunction({}) }
+                            onClick={this.callReduceFunction(reduceFunction) }
                            >
                              Reduce Input
                           </button>
 
         let displayText = '';
         if (reducedInput === undefined) {
-            displayText = <div><p style={{color: "#7c7c7c"}}>Press "reduce input" to run input reduction.</p>{runButton}</div>
+            if (this.state.loading) {
+              displayText = <div><p style={{color: "#7c7c7c"}}>Loading reduction...</p></div>
+            } else {
+              displayText = <div><p style={{color: "#7c7c7c"}}>Press "reduce input" to run input reduction.</p>{runButton}</div>
+            }
         } else {
             // There are a number of ways to tweak the output of this component:
             // (1) you can provide a context, which shows up on top, e.g., for displaying the
