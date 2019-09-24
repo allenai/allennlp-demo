@@ -154,8 +154,9 @@ export class SaliencyComponent extends React.Component {
           this.setState({ loading: false });
       }
       const saliencyMaps = [];
+      
       for (let i = 0; i < inputTokens.length; i++) {
-        const grads = interpretData[i];
+        const grads = interpretData[inputTokens.length - 1 - i];
         const tokens = inputTokens[i];
         const header = inputHeaders[i];
         const tokenWeights = getTokenWeightPairs(grads, tokens);
@@ -176,7 +177,6 @@ export class SaliencyComponent extends React.Component {
           </div>
         )
         saliencyMaps.push(saliencyMap);
-        saliencyMaps.reverse(); // list of interpretations (only used by NER currently) are in the opposite order.
       }
       displayText = <div>{saliencyMaps}</div>
     }
