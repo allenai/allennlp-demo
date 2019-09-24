@@ -169,13 +169,6 @@ def make_app(build_dir: str,
         Just a wrapper around ``model.predict_json`` that allows us to use a cache decorator.
         """
         return model.predict_json(json.loads(data))
-    
-    
-        attack = attacker.attack_from_json(inputs=data,
-                                           input_field_to_attack=input_field_to_attack,
-                                           grad_input_field=grad_input_field,
-                                           target=target)
-        
         
     @lru_cache(maxsize=interpret_cache_size)
     def _caching_interpret(interpreter: SaliencyInterpreter, data: str) -> JsonDict:
