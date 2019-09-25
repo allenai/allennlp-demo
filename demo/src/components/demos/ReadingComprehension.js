@@ -166,6 +166,7 @@ const MySaliencyMaps = ({interpretData, questionTokens, passageTokens, interpret
 }
 
 const Attacks = ({attackData, attackModel, requestData}) => {
+  const model = requestData ? requestData.model : undefined;
   let hotflipData = undefined;
   if (attackData && "hotflip" in attackData) {
     hotflipData = attackData["hotflip"];
@@ -190,10 +191,18 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     const reductionData = attackData["input_reduction"];
     reducedInput = {original: reductionData["original"], reduced: [reductionData["final"][0]]};
   }
+
+  // NAQANet needs some fixing in allennlp.attackers.utils.get_fields_to_compare in order to work,
+  // so we're disabling it for now (see TODO in that function).
+  const inputReduction = model.includes('NAQANet') ?
+    " "
+  :
+    <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+
   return (
     <OutputField>
       <Accordion accordion={false}>
-        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+        {inputReduction}
         <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
       </Accordion>
     </OutputField>

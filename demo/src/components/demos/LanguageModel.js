@@ -179,7 +179,10 @@ const getGradData = ({ grad_input_1 }) => {
 }
 
 const cleanTokensForDisplay = (tokens) => {
-  console.log(tokens)
+  // For GPT-2.  GPT-2 uses special characters inside its token dictionary to denote different
+  // kinds of whitespace (e.g., 'Ġ' is prepended to a token when there is a space before it).  This
+  // code re-formats the tokens for display, adding back spaces, putting in wordpiece separator
+  // symbols when necessary, and replacing newline characters with a return symbol.
   return tokens.map((token, index) => {
     token = token.replace(/Ċ/g, "↵");
     if (token[0] === 'Ġ') {
