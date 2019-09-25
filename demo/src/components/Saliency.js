@@ -82,7 +82,7 @@ export class SaliencyComponent extends React.Component {
     this.setState({ ...this.state, loading: true})
     interpretModel()
   }
- 
+
   colorize(tokensWithWeights, topKIdx) {
     const {colormapProps} = this.props
     // colormap package takes minimum of 6 shades
@@ -156,7 +156,7 @@ export class SaliencyComponent extends React.Component {
       const saliencyMaps = [];
       
       for (let i = 0; i < inputTokens.length; i++) {
-        const grads = interpretData[inputTokens.length - 1 - i];
+        const grads = interpretData[inputTokens.length - 1 - i]; // reverse the order for NER
         const tokens = inputTokens[i];
         const header = inputHeaders[i];
         const tokenWeights = getTokenWeightPairs(grads, tokens);
