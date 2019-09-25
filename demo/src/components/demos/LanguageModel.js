@@ -178,6 +178,20 @@ const getGradData = ({ grad_input_1 }) => {
   return [grad_input_1];
 }
 
+const cleanTokensForDisplay = (tokens) => {
+  console.log(tokens)
+  return tokens.map((token, index) => {
+    token = token.replace(/Ċ/g, "↵");
+    if (token[0] === 'Ġ') {
+      return token.replace(/Ġ/g, " ");
+    } else if (index !== 0 && token !== "↵") {
+      return '##' + token;
+    } else {
+      return token;
+    }
+  });
+}
+
 const MySaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) => {
   let simpleGradData = undefined;
   let integratedGradData = undefined;
@@ -187,16 +201,7 @@ const MySaliencyMaps = ({interpretData, tokens, interpretModel, requestData}) =>
     integratedGradData = IG_INTERPRETER in interpretData ? getGradData(interpretData[IG_INTERPRETER]['instance_1']) : undefined
     smoothGradData = SG_INTERPRETER in interpretData ? getGradData(interpretData[SG_INTERPRETER]['instance_1']) : undefined
   }
-  const inputTokens = [tokens.map((token, index) => {
-    token = token.replace(/Ċ/g, "↵");
-    if (token[0] == 'Ġ') {
-      return token.replace(/Ġ/g, " ");
-    } else if (index != 0 && token != "↵") {
-      return '##' + token;
-    } else {
-      return token;
-    }
-  })];
+  const inputTokens = [cleanTokensForDisplay(tokens)];
   const inputHeaders = [<p><strong>Sentence:</strong></p>];
   const allInterpretData = {simple: simpleGradData, ig: integratedGradData, sg: smoothGradData};
   return <SaliencyMaps interpretData={allInterpretData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel} requestData={requestData} />
@@ -206,7 +211,9 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   let hotflipData = undefined;
   if (attackData && attackData.hotflip) {
     hotflipData = attackData["hotflip"];
-    hotflipData["new_prediction"] = hotflipData["outputs"]["words"][0][0];
+    hotflipData["new_prediction"] = cleanTokensForDisplay([hotflipData["outputs"]["words"][0][0]])[0];
+    hotflipData["original"] = cleanTokensForDisplay(hotflipData["original"]);
+    hotflipData["final"][0] = cleanTokensForDisplay(hotflipData["final"][0]);
   }
   return (
     <OutputField>

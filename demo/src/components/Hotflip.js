@@ -122,6 +122,9 @@ export default class HotflipComponent extends React.Component {
     }
     // data is available, display the results of Hotflip
     else {
+        if (this.state.loading) { // loading is done
+            this.setState({ loading: false });
+        }
         [originalString, flippedString] = colorizeTokensForHotflipUI(hotflipData["original"],
                                                                      hotflipData["final"][0])
         newPrediction = hotflipData["new_prediction"]
@@ -139,7 +142,7 @@ export default class HotflipComponent extends React.Component {
     const target = targeted === undefined ?
       " "
     :
-      <p> Change prediction to (leave blank to allow any change): <FormInput type="text" onChange={ this.updateTargetWord }/> </p>
+      <p> Leave blank to allow any change (untargeted). For targeted attacks, enter a single token that you want to flip the mask to: <FormInput type="text" onChange={ this.updateTargetWord }/> </p>
 
     const buttonDisplay = (flippedString !== " " && targeted === undefined) ?
       " "

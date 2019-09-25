@@ -47,11 +47,12 @@ logger.addHandler(handler)
 logger.propagate = False
 
 supported_interpret_models = {'named-entity-recognition',
+                              'fine-grained-named-entity-recognition',
                               'sentiment-analysis',
                               'textual-entailment',
                               'reading-comprehension',
+                              'elmo-reading-comprehension',
                               'naqanet-reading-comprehension',
-                              'fine-grained-named-entity-recognition',
                               'masked-lm',
                               'next-token-lm'}
 
@@ -105,8 +106,8 @@ def make_app(build_dir: str,
              models: Dict[str, DemoModel],
              demo_db: Optional[DemoDatabase] = None,
              cache_size: int = 128,
-             interpret_cache_size: int = 128,
-             attack_cache_size: int = 128) -> Flask:
+             interpret_cache_size: int = 500,
+             attack_cache_size: int = 500) -> Flask:
     if not os.path.exists(build_dir):
         logger.error("app directory %s does not exist, aborting", build_dir)
         sys.exit(-1)
@@ -169,13 +170,6 @@ def make_app(build_dir: str,
         Just a wrapper around ``model.predict_json`` that allows us to use a cache decorator.
         """
         return model.predict_json(json.loads(data))
-    
-    
-        attack = attacker.attack_from_json(inputs=data,
-                                           input_field_to_attack=input_field_to_attack,
-                                           grad_input_field=grad_input_field,
-                                           target=target)
-        
         
     @lru_cache(maxsize=interpret_cache_size)
     def _caching_interpret(interpreter: SaliencyInterpreter, data: str) -> JsonDict:
@@ -186,14 +180,13 @@ def make_app(build_dir: str,
 
     @lru_cache(maxsize=attack_cache_size)
     def _caching_attack(attacker: Attacker, data: str, input_field_to_attack: str, grad_input_field: str, target: str) -> JsonDict:
-        attacker, json.dumps(data), input_field_to_attack, grad_input_field, target
         """
         Just a wrapper around ``model.attack_from_json`` that allows us to use a cache decorator.
         """
         return attacker.attack_from_json(inputs=json.loads(data),
                                          input_field_to_attack=input_field_to_attack,
                                          grad_input_field=grad_input_field,
-                                         target=target)
+                                         target=json.loads(target))
     
     @app.route('/')
     def index() -> Response: # pylint: disable=unused-variable
@@ -392,7 +385,7 @@ def make_app(build_dir: str,
         if use_cache and attack_cache_size > 0:
             # lru_cache insists that all function arguments be hashable,
             # so unfortunately we have to stringify the data.
-            attack = _caching_attack(attacker, json.dumps(data), input_field_to_attack, grad_input_field, target)
+            attack = _caching_attack(attacker, json.dumps(data), input_field_to_attack, grad_input_field, json.dumps(target))
             
         else:
             # if cache_size is 0, skip caching altogether
@@ -520,8 +513,8 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=8000, help='port to serve the demo on')
     parser.add_argument('--demo-dir', type=str, default='demo/', help="directory where the demo HTML is located")
     parser.add_argument('--cache-size', type=int, default=128, help="how many results to keep in memory")
-    parser.add_argument('--interpret-cache-size', type=int, default=128, help="how many interpretation results to keep in memory")
-    parser.add_argument('--attack-cache-size', type=int, default=128, help="how many attack results to keep in memory")
+    parser.add_argument('--interpret-cache-size', type=int, default=500, help="how many interpretation results to keep in memory")
+    parser.add_argument('--attack-cache-size', type=int, default=500, help="how many attack results to keep in memory")
     parser.add_argument('--models-file', type=str, default='models.json', help="json file containing the details of the models to load")
 
     models_group = parser.add_mutually_exclusive_group()

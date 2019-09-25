@@ -43,7 +43,7 @@ export const SaliencyMaps = ({interpretData, inputTokens, inputHeaders, interpre
   const simpleGradData = interpretData.simple;
   const integratedGradData = interpretData.ig;
   const smoothGradData = interpretData.sg;
-  const interpretationHeader = <>Saliency Maps <i><a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer" style={{paddingLeft: `1em`, fontWeight:100}}>What is this?</a></i></>
+  const interpretationHeader = <>Model Interpretations <i><a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer" style={{paddingLeft: `1em`, fontWeight:100}}>What is this?</a></i></>
   return (
     <OutputField label={interpretationHeader}>
       <Accordion accordion={false}>
@@ -150,9 +150,13 @@ export class SaliencyComponent extends React.Component {
         displayText = <div><p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>{runButton}</div>
       }
     } else {
+      if (this.state.loading) { // loading is done
+          this.setState({ loading: false });
+      }
       const saliencyMaps = [];
+      
       for (let i = 0; i < inputTokens.length; i++) {
-        const grads = interpretData[i];
+        const grads = interpretData[inputTokens.length - 1 - i]; // reverse the order for NER
         const tokens = inputTokens[i];
         const header = inputHeaders[i];
         const tokenWeights = getTokenWeightPairs(grads, tokens);
@@ -173,7 +177,6 @@ export class SaliencyComponent extends React.Component {
           </div>
         )
         saliencyMaps.push(saliencyMap);
-        saliencyMaps.reverse(); // list of interpretations (only used by NER currently) are in the opposite order.
       }
       displayText = <div>{saliencyMaps}</div>
     }

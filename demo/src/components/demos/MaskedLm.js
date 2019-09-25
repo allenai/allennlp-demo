@@ -352,7 +352,7 @@ class App extends React.Component {
     }
     return (
       <Wrapper classname="model">
-        <ModelArea className="model__content answer">
+        <ModelArea className="model__content answer" >
           <h2><span>{title}</span></h2>
           <p><span>{description}</span></p>
 

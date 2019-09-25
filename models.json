@@ -1,10 +1,16 @@
 {
     "reading-comprehension": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz",
+        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz",
         "memory": "2Gi",
         "predictor_name": "machine-comprehension",
         "max_request_length": 311108
     },
+    "elmo-reading-comprehension": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz",
+        "memory": "2Gi",
+        "predictor_name": "machine-comprehension",
+        "max_request_length": 311108
+     },
     "naqanet-reading-comprehension": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/naqanet-2019.04.29-fixed-weight-names.tar.gz",
         "predictor_name": "machine-comprehension",
