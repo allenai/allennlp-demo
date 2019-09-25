@@ -47,11 +47,12 @@ logger.addHandler(handler)
 logger.propagate = False
 
 supported_interpret_models = {'named-entity-recognition',
+                              'fine-grained-named-entity-recognition',
                               'sentiment-analysis',
                               'textual-entailment',
                               'reading-comprehension',
+                              'elmo-reading-comprehension',
                               'naqanet-reading-comprehension',
-                              'fine-grained-named-entity-recognition',
                               'masked-lm',
                               'next-token-lm'}
 
