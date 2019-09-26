@@ -8,9 +8,9 @@ To run the demo locally for development, you will need to:
 
 1. Create a fresh environment:
 
-    ```
-    conda create -n allennlp-demo python=3.6
-    source activate allennlp-demo
+    ```bash
+    conda create -n allennlp-demo python=3.7
+    conda activate allennlp-demo
     pip install -r requirements.txt
     ```
 
@@ -27,7 +27,7 @@ To run the demo locally for development, you will need to:
 
 2. Build the frontend and start a development frontend service
 
-    ```
+    ```bash
     ./scripts/build_demo.py
     cd demo
     npm run start
@@ -37,7 +37,7 @@ To run the demo locally for development, you will need to:
 
 3. (Optional) Set up a local DB for storing permalinks.
 
-    ```
+    ```bash
     brew install postgresql
     pg_ctl -D /usr/local/var/postgres start
     psql -d postgres -a -f scripts/local_db_setup.sql
@@ -48,7 +48,7 @@ To run the demo locally for development, you will need to:
 
 4. Start the backend service
 
-    ```
+    ```bash
     ./app.py
     ```
 
@@ -59,11 +59,11 @@ To run the demo locally for development, you will need to:
 
 Here is an example for how to manually build the Docker image and run the demo on port 8000.
 
-```
-$ export GIT_HASH=`git log -1 --pretty=format:"%H"`
-$ docker build -t allennlp/demo:$GIT_HASH .
-$ mkdir -p $HOME/.allennlp
-$ docker run -p 8000:8000 -v $HOME/.allennlp:/root/.allennlp --rm allennlp/demo:$GIT_HASH
+```bash
+export GIT_HASH=`git log -1 --pretty=format:"%H"`
+docker build -t allennlp/demo:$GIT_HASH .
+mkdir -p $HOME/.allennlp
+docker run -p 8000:8000 -v $HOME/.allennlp:/root/.allennlp --rm allennlp/demo:$GIT_HASH
 ```
 
 Note that the `run` process may get killed prematurely if there is insufficient memory allocated to Docker. As of September 14, 2018, setting a memory limit of 10GB was sufficient to run the demo. See [Docker Docs](https://docs.docker.com/docker-for-mac/#advanced) for more on setting memory allocation preferences.
@@ -103,19 +103,20 @@ Here is a [pull request](https://github.com/allenai/allennlp-demo/commit/149d068
 1. Fork and clone [allennlp-demo](https://github.com/allenai/allennlp-demo) and follow the installation instructions.
 
 2. Add the path to your trained model using a `DemoModel` in `models.json`. For example, we will add 
-```json        
-        "sentiment-analysis": {
-           "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
-           "predictor_name": "text_classifier",
-           "max_request_length": 1000
-        },   
-```
+    ```json        
+    "sentiment-analysis": {
+      "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
+      "predictor_name": "text_classifier",
+      "max_request_length": 1000
+    },   
+    ```
+
 Make sure `text_classifier` matches the name from your AllenNLP predictor. In our case, the predictor class should have `@Predictor.register('text_classifier')` at the top.
 
 3. In `app.py` consider adding a log of your model's outputs. Search for `log_blob` in the `predict` function for an example of how to do this.
 
 4. The backend is now set up. Now let's create the front end for your model. Add your model under its associated category in the `modelGroups` object in `demo/src/models.js`. 
-```
+```js
 {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis}
 ```
 Also make sure to import your component at the top of the file.
@@ -147,7 +148,6 @@ class MyFavoriteInterpreter(SaliencyInterpreter):
 
     def saliency_interpret_from_json(self, inputs: JsonDict) -> JsonDict:
     # ** implement your interpretation technique here **
-
 ```
 You can see the final code for SmoothGrad [here](https://github.com/allenai/allennlp/blob/master/allennlp/interpret/saliency_interpreters/smooth_gradient.py).
 
