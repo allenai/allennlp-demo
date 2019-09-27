@@ -147,14 +147,14 @@ class SingleTaskDemo extends React.Component {
       const modelDescription = (
         <span>
           <span>
-            We are also looking to add user contributed AllenNLP models as either components in the AllenNLP library and optionally on this demo site (with free hosting!).
+            We are always looking to add user contributed AllenNLP models as either components in the AllenNLP library or on this demo site.
             If you have a published result or novel model demonstrating strong performance on a dataset and you are interested
             in adding your model to a list of publicly available implementations, as a service to this demo, or as a component in the library itself,
-            please consider opening an issue on our
+            please openan issue on our
           </span>
           <ExternalLink href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener">{' '} public Github repository </ExternalLink>
           <span>
-            or sending us an email at allennlp-contact@allenai.org to discuss what you have in mind.
+            or sending us an email at allennlp-contact@allenai.org.
           </span>
         </span>
 
@@ -164,9 +164,9 @@ class SingleTaskDemo extends React.Component {
         <div className="model model__content">
           <div className='model__content'>
             <PaneTop>
-              <ModelIntro title={developLocallyHeader} description={developLocallyDescription}/>
-              <br />
               <ModelIntro title={modelRequest} description={modelDescription}/>
+              <br />
+              <ModelIntro title={developLocallyHeader} description={developLocallyDescription}/>
             </PaneTop>
           </div>
         </div>
