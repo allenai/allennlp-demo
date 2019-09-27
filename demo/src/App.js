@@ -163,17 +163,23 @@ class SingleTaskDemo extends React.Component {
       return (
         <div className="model model__content">
           <div className='model__content'>
-            <PaneTop>
-              <ModelIntro title={developLocallyHeader} description={developLocallyDescription}/>
-              <br />
-              <ModelIntro title={modelRequest} description={modelDescription}/>
-            </PaneTop>
+            <PullToTop>
+              <PaneTop>
+                <ModelIntro title={developLocallyHeader} description={developLocallyDescription}/>
+                <br />
+                <ModelIntro title={modelRequest} description={modelDescription}/>
+              </PaneTop>
+            </PullToTop>
           </div>
         </div>
       )
     }
   }
 }
+
+const PullToTop = styled.div`
+  margin-bottom: 100%;
+`;
 
 const BlockOverflow = styled.div`
   overflow-y: hidden;
