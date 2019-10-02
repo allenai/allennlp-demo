@@ -1,21 +1,16 @@
 # This Dockerfile is used to serve the AllenNLP demo.
 
-FROM allennlp/allennlp:v0.8.0
+FROM allennlp/commit:ff0d44a5e21d5e6256c73b5b9f216a87c5743f91
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /stage/allennlp
 
-# Install Java.
-RUN echo "deb http://http.debian.net/debian jessie-backports main" >>/etc/apt/sources.list
-RUN apt-get update
-RUN apt-get install -y -t jessie-backports openjdk-8-jdk
-
 # Install npm early so layer is cached when mucking with the demo
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
 
-# Install postgres binary
-RUN pip install psycopg2-binary
-RUN pip install sentry-sdk==0.7.1
+# Install python dependencies
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
 # Download spacy model
 RUN spacy download en_core_web_sm
@@ -33,12 +28,15 @@ COPY server/ server/
 
 RUN pytest tests/
 
+# Copy the configuration files used at runtime
+COPY models.json models.json
+COPY models_small.json models_small.json
+
 # Optional argument to set an environment variable with the Git SHA
 ARG SOURCE_COMMIT
 ENV ALLENNLP_DEMO_SOURCE_COMMIT $SOURCE_COMMIT
 
 EXPOSE 8000
 
-ENV ALLENNLP_DEMO_DIRECTORY /stage/allennlp/demo
-
 ENTRYPOINT ["./app.py"]
+CMD ["--demo-dir", "/stage/allennlp/demo"]

@@ -1,13 +1,15 @@
 import React from 'react';
-import HeatMap from '../HeatMap'
 import {
   Accordion,
   AccordionItem,
   AccordionItemTitle,
   AccordionItemBody,
 } from 'react-accessible-accordion';
-import { API_ROOT } from '../../api-config';
+import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
+
+import HeatMap from '../HeatMap'
+import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import OutputField from '../OutputField'
 import SyntaxHighlight from '../highlight/SyntaxHighlight.js';
@@ -19,11 +21,10 @@ const description = (
     <span>
       Semantic parsing maps natural language to machine language.  This page demonstrates a semantic
       parsing model on the
-      <a href="http://lic.nlp.cornell.edu/nlvr/">{' '}Cornell NLVR</a> dataset.
-      The model is similar to the model in the
-      <a href="https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a">
-      {' '}EMNLP 2017 paper by Krishnamurthy, Dasigi and Gardner</a>, and performs comparably to the best published result
-      on this dataset as of December 2018.
+      <ExternalLink href="http://lic.nlp.cornell.edu/nlvr/">{' '}Cornell NLVR</ExternalLink> dataset.
+      The model is the one described in the
+      <ExternalLink href="https://www.semanticscholar.org/paper/Iterative-Search-for-Weakly-Supervised-Semantic-Dasigi-Gardner/af17ccbdae4cbd1b67d6ab359615c8000f8fb66f">
+      {' '}NAACL 2019 paper by Dasigi, Gardner, Murty, Zettlemoyer, and Hovy</ExternalLink>.
 
       The structured representation is not particularly useful here, unless you know what you're doing.
       We recommend just seeing how the sentence maps to a logical form.
@@ -81,7 +82,7 @@ const Output = ({ responseData }) => {
     const { denotations, logical_form, predicted_actions, sentence_tokens } = responseData
 
     return (
-        <div className="model__content">
+        <div className="model__content answer">
           <OutputField label="Answer">
             { denotations[0] }
           </OutputField>
@@ -94,7 +95,7 @@ const Output = ({ responseData }) => {
 
           <OutputField label="Model internals">
           <Accordion accordion={false}>
-            <AccordionItem>
+            <AccordionItem expanded={true}>
                 <AccordionItemTitle>
                 Predicted actions
                 <div className="accordion__arrow" role="presentation"/>

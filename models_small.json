@@ -1,0 +1,12 @@
+{
+    "reading-comprehension": {
+        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz",
+        "predictor_name": "machine-comprehension",
+        "max_request_length": 311108
+    },
+    "textual-entailment": {
+        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/decomposable-attention-elmo-2018.02.19.tar.gz",
+        "predictor_name": "textual-entailment",
+        "max_request_length": 13129
+    }
+}

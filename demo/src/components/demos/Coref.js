@@ -1,9 +1,16 @@
 import React from 'react';
-import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
+import { ExternalLink } from '@allenai/varnish/components';
+
+import { FormField } from '../Form';
+import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight, getHighlightColor } from '../highlight/Highlight';
+import { UsageSection } from '../UsageSection';
+import { UsageHeader } from '../UsageHeader';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 const apiUrl = () => `${API_ROOT}/predict/coreference-resolution`
 
@@ -16,13 +23,13 @@ const description = (
     in a text. It is an important step for a lot of higher level NLP tasks that involve natural
     language understanding such as document summarization, question answering, and information extraction.
     </span>
-    <a href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener noreferrer">{' '} End-to-end Neural Coreference Resolution ( Lee et al, 2017) {' '}</a>
+    <ExternalLink href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener">{' '} End-to-end Neural Coreference Resolution ( Lee et al, 2017) {' '}</ExternalLink>
     <span>
     is a neural model which considers all possible spans in the document as potential mentions and
     learns distributions over possible anteceedents for each span, using aggressive, learnt
     pruning strategies to retain computational efficiency. It achieved state-of-the-art accuracies on
     </span>
-    <a href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener noreferrer">{' '} the Ontonotes 5.0 dataset {' '}</a>
+    <ExternalLink href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener">{' '} the Ontonotes 5.0 dataset {' '}</ExternalLink>
     <span>
     in early 2017.
     </span>
@@ -187,12 +194,12 @@ class Output extends React.Component {
     }
 
     return (
-      <div className="model__content">
-        <div className="form__field">
+      <div className="model__content answer">
+        <FormField>
           <HighlightContainer isClicking={isClicking}>
             {spanWrapper(spanTree, 0)}
           </HighlightContainer>
-        </div>
+        </FormField>
       </div>
     );
   }
@@ -210,6 +217,49 @@ const examples = [
     }
   ]
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <UsageHeader>Prediction</UsageHeader>
+      <strong>On the command line (bash):</strong>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
+  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz -`} />
+        </SyntaxHighlight>
+      </UsageCode>
+      <strong>As a library (Python):</strong>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
+predictor.predict(
+  document="The woman reading a newspaper sat on the bench with her dog."
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <UsageHeader>Evaluation</UsageHeader>
+      <p>
+        The Coreference model was evaluated on the CoNLL 2012 dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        To compile the data in the right format for evaluating the Coreference model, please see scripts/compile_coref_data.sh.
+        This script requires the Ontonotes 5.0 dataset, available on <a href="https://catalog.ldc.upenn.edu/ldc2013t19">the LDC website</a>.
+      </p>
+    </UsageSection>
+    <UsageSection>
+      <UsageHeader>Training</UsageHeader>
+      <p>
+        The Coreference model was evaluated on the CoNLL 2012 dataset.
+        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+        To compile the data in the right format for evaluating the Coreference model, please see scripts/compile_coref_data.sh.
+        This script requires the Ontonotes 5.0 dataset, available on <a href="https://catalog.ldc.upenn.edu/ldc2013t19">the LDC website</a>.
+      </p>
+    </UsageSection>
+  </React.Fragment>
+)
+
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

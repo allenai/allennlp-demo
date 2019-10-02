@@ -3,24 +3,36 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "hierplane": "0.0.11",
+    "@allenai/varnish": "^0.3.19",
+    "ajv": "^6.10.0",
+    "antd": "^3.20.0",
+    "colormap": "^2.3.1",
+    "hierplane": "^0.1.0",
+    "lodash": "^4.17.11",
     "npm": "6.1.0",
-    "react": "15.6.1",
+    "react": "^16.8.6",
     "react-accessible-accordion": "2.4.5",
     "react-app-rewire-styled-components": "3.0.2",
     "react-app-rewired": "2.1.0",
-    "react-dom": "15.6.1",
+    "react-dom": "^16.8.6",
     "react-proptypes": "1.0.0",
-    "react-router-dom": "4.2.2",
-    "react-scripts": "1.0.13",
-    "react-syntax-highlighter": "8.0.1",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "2.0.3",
+    "react-syntax-highlighter": "^11.0.2",
     "react-tooltip": "3.8.4",
-    "styled-components": "3.4.10"
+    "react-vis": "^1.11.6",
+    "styled-components": "^4.3.2"
   },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

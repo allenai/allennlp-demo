@@ -2,10 +2,6 @@
   background: #fff;
 }
 
-.model__output.model__output--empty {
-  background: 0 0;
-}
-
 .model__content {
   padding: 0.6em 2em 0.875em 2em;
   margin: auto;
@@ -45,7 +41,7 @@
   font-size: 1em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 1em;
+  padding: 1em 0;
   -webkit-transition: padding .2s ease, margin .2s ease;
   transition: padding .2s ease, margin .2s ease;
 }
@@ -61,6 +57,11 @@
     margin: 0;
 }
 
+.model__content.answer {
+  min-height: 30em;
+  padding-top: 0.9em;
+}
+
 @media screen and (max-height:800px) {
   .model__content {
     padding-top: 0.15em;
@@ -68,6 +69,6 @@
   }
 
   .model__content__summary {
-    padding: 0.5em;
+    padding: 0.5em 0;
   }
 }

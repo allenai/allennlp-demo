@@ -16,23 +16,32 @@ from allennlp.service.predictors import Predictor
 import app
 from app import make_app
 from server.db import InMemoryDemoDatabase
+from server.models import DemoModel
 
 TEST_ARCHIVE_FILES = {
-        'machine-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
+        'reading-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
         'semantic-role-labeling': 'tests/fixtures/srl/model.tar.gz',
         'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz',
         'open-information-extraction': 'tests/fixtures/openie/model.tar.gz',
         'event2mind': 'tests/fixtures/event2mind/model.tar.gz'
 }
 
+PREDICTOR_NAMES = {
+    'reading-comprehension': 'machine-comprehension',
+        'semantic-role-labeling': 'semantic-role-labeling',
+        'textual-entailment': 'textual-entailment',
+        'open-information-extraction': 'open-information-extraction',
+        'event2mind': 'event2mind'
+}
+
 PREDICTORS = {
         name: Predictor.from_archive(load_archive(archive_file),
-                                     predictor_name=name)
+                                     predictor_name=PREDICTOR_NAMES[name])
         for name, archive_file in TEST_ARCHIVE_FILES.items()
 }
 
 LIMITS = {
-        'machine-comprehension': 311108,
+        'reading-comprehension': 311108,
         'semantic-role-labeling': 4590,
         'textual-entailment': 13129,
         'open-information-extraction': 19681,
@@ -76,7 +85,7 @@ class TestFlask(AllenNlpTestCase):
 
         if self.client is None:
 
-            self.app = make_app(build_dir=self.TEST_DIR)
+            self.app = make_app(build_dir=self.TEST_DIR, models={})
             self.app.predictors = PREDICTORS
             self.app.max_request_lengths = LIMITS
             self.app.testing = True
@@ -86,7 +95,6 @@ class TestFlask(AllenNlpTestCase):
         return self.client.post(endpoint,
                                 content_type="application/json",
                                 data=json.dumps(data))
-
 
     def tearDown(self):
         super().tearDown()
@@ -99,7 +107,7 @@ class TestFlask(AllenNlpTestCase):
     def test_list_models(self):
         response = self.client.get("/models")
         data = json.loads(response.get_data())
-        assert "machine-comprehension" in set(data["models"])
+        assert "reading-comprehension" in set(data["models"])
 
     def test_unknown_model(self):
         response = self.post_json("/predict/bogus_model",
@@ -109,7 +117,7 @@ class TestFlask(AllenNlpTestCase):
         assert b"unknown model" in data and b"bogus_model" in data
 
     def test_machine_comprehension(self):
-        response = self.post_json("/predict/machine-comprehension",
+        response = self.post_json("/predict/reading-comprehension",
                                   data={"passage": "the super bowl was played in seattle",
                                         "question": "where was the super bowl played?"})
 
@@ -198,10 +206,8 @@ class TestFlask(AllenNlpTestCase):
             assert len(predictor.calls) == 2
 
     def test_disable_caching(self):
-        app.CACHE_SIZE = 0
-
         predictor = CountingPredictor()
-        application = make_app(build_dir=self.TEST_DIR)
+        application = make_app(build_dir=self.TEST_DIR, models={}, cache_size=0)
         application.predictors = {"counting": predictor}
         application.max_request_lengths["counting"] = 100
         application.testing = True
@@ -227,12 +233,12 @@ class TestFlask(AllenNlpTestCase):
         fake_dir = self.TEST_DIR / 'this' / 'directory' / 'does' / 'not' / 'exist'
 
         with self.assertRaises(SystemExit) as context:
-            make_app(fake_dir)
+            make_app(fake_dir, models={})
 
         assert context.exception.code == -1  # pylint: disable=no-member
 
     def test_permalinks_fail_gracefully_with_no_database(self):
-        application = make_app(build_dir=self.TEST_DIR)
+        application = make_app(build_dir=self.TEST_DIR, models={})
         predictor = CountingPredictor()
         application.predictors = {"counting": predictor}
         application.max_request_lengths["counting"] = 100
@@ -250,12 +256,12 @@ class TestFlask(AllenNlpTestCase):
         assert "slug" not in result
 
         # With permalinks not enabled, a post to the /permadata endpoint should be a 400.
-        response = self.client.post("/permadata", data="""{"slug": "someslug"}""")
+        response = self.client.post("/permadata/counting", data="""{"slug": "someslug"}""")
         assert response.status_code == 400
 
     def test_permalinks_work(self):
         db = InMemoryDemoDatabase()
-        application = make_app(build_dir=self.TEST_DIR, demo_db=db)
+        application = make_app(build_dir=self.TEST_DIR, demo_db=db, models={})
         predictor = CountingPredictor()
         application.predictors = {"counting": predictor}
         application.max_request_lengths["counting"] = 100
@@ -273,10 +279,10 @@ class TestFlask(AllenNlpTestCase):
         slug = result.get("slug")
         assert slug is not None
 
-        response = post("/permadata", data={"slug": "not the right slug"})
+        response = post("/permadata/counting", data={"slug": "not the right slug"})
         assert response.status_code == 400
 
-        response = post("/permadata", data={"slug": slug})
+        response = post("/permadata/counting", data={"slug": slug})
         assert response.status_code == 200
         result2 = json.loads(response.get_data())
         assert set(result2.keys()) == {"modelName", "requestData", "responseData"}
@@ -286,7 +292,7 @@ class TestFlask(AllenNlpTestCase):
 
     def test_db_resilient_to_prediction_failure(self):
         db = InMemoryDemoDatabase()
-        application = make_app(build_dir=self.TEST_DIR, demo_db=db)
+        application = make_app(build_dir=self.TEST_DIR, demo_db=db, models={})
         predictor = FailingPredictor()
         application.predictors = {"failing": predictor}
         application.max_request_lengths["failing"] = 100
@@ -305,10 +311,46 @@ class TestFlask(AllenNlpTestCase):
         # in the database for subsequent analysis.
         slug = app.int_to_slug(0)
 
-        response = post("/permadata", data={"slug": slug})
+        response = post("/permadata/counting", data={"slug": slug})
         assert response.status_code == 200
         result = json.loads(response.get_data())
         assert set(result.keys()) == {"modelName", "requestData", "responseData"}
         assert result["modelName"] == "failing"
         assert result["requestData"] == data
         assert result["responseData"] == {}
+
+    def test_microservice(self):
+        models = {
+            'reading-comprehension': DemoModel(TEST_ARCHIVE_FILES['reading-comprehension'],
+                                               'machine-comprehension',
+                                               LIMITS['reading-comprehension'])
+        }
+
+        app = make_app(build_dir=self.TEST_DIR, models=models)
+        app.testing = True
+
+
+        client = app.test_client()
+
+        # Should have only one model
+        response = client.get("/models")
+        data = json.loads(response.get_data())
+        assert data["models"] == ["reading-comprehension"]
+
+        # Should return results for that model
+        response = client.post("/predict/reading-comprehension",
+                               content_type="application/json",
+                               data="""{"passage": "the super bowl was played in seattle",
+                                        "question": "where was the super bowl played?"}""")
+        assert response.status_code == 200
+        results = json.loads(response.data)
+        assert "best_span" in results
+
+        # Other models should be unknown
+        response = client.post("/predict/textual-entailment",
+                               content_type="application/json",
+                               data="""{"premise": "the super bowl was played in seattle",
+                                        "hypothesis": "the super bowl was played in ohio"}""")
+        assert response.status_code == 400
+        data = response.get_data()
+        assert b"unknown model" in data and b"textual-entailment" in data

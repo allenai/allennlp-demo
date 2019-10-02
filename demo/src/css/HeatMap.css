@@ -161,6 +161,7 @@ table.heatmap__col-labels tr th.heatmap__label {
 .heatmap__label__outer {
   display: table;
   text-align: left;
+  margin-bottom: 10px;
 }
 
 .heatmap__label__inner {

@@ -1,11 +1,13 @@
 import React from 'react';
-import HeatMap from '../HeatMap'
+import { ExternalLink } from  '@allenai/varnish/components';
 import {
   Accordion,
   AccordionItem,
   AccordionItemTitle,
   AccordionItemBody,
   } from 'react-accessible-accordion';
+
+import HeatMap from '../HeatMap'
 import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
 import Model from '../Model'
@@ -19,12 +21,10 @@ const description = (
     <span>
       Semantic parsing maps natural language to machine language.  This page demonstrates a semantic
       parsing model on the
-      <a href="https://nlp.stanford.edu/software/sempre/wikitable/">{' '}WikiTableQuestions</a> dataset.
+      <ExternalLink href="https://nlp.stanford.edu/software/sempre/wikitable/">{' '}WikiTableQuestions</ExternalLink> dataset.
       The model is a re-implementation of the parser in the
-      <a href="https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a">
-      {' '}EMNLP 2017 paper by Krishnamurthy, Dasigi and Gardner</a>, which achieved state-of-the-art results
-      on this dataset at the time.  This model is still a proof-of-concept of what you can do with
-      semantic parsing in AllenNLP and its performance is not state-of-the-art (this model gets somewhere around 37-40% accuracy).
+      <ExternalLink href="https://www.semanticscholar.org/paper/Iterative-Search-for-Weakly-Supervised-Semantic-Dasigi-Gardner/af17ccbdae4cbd1b67d6ab359615c8000f8fb66f">
+      {' '}NAACL 2019 paper by Dasigi, Gardner, Murty, Zettlemoyer, and Hovy</ExternalLink>.
     </span>
   </span>
 );
@@ -39,7 +39,13 @@ const fields = [
   {name: "table", label: "Table", type: "TEXT_AREA",
     placeholder: `E.g. "Season\tLevel\tDivision\tSection\tPosition\tMovements\n1993\tTier 3\tDivision 2\tÖstra Svealand\t1st\tPromoted\n1994\tTier 2\tDivision 1\tNorra\t11th\tRelegation Playoffs\n"`},
   {name: "question", label: "Question", type: "TEXT_INPUT",
-    placeholder: `E.g. "What is the only year with the 1st position?"`}
+    placeholder: `E.g. "What is the only year with the 1st position?"`},
+  {name: "beamSearch", type: "BEAM_SEARCH", optional: true,
+   // When we get fresh inputs to the model, we want to clear out the value of initial_sequence
+   dependentInputs: ['initial_sequence'],
+   // The beam search is an "input-output" and so should be rendered below the RUN button.
+   inputOutput: true
+  }
 ]
 
 const ActionInfo = ({ action, question_tokens }) => {
@@ -72,30 +78,31 @@ const ActionInfo = ({ action, question_tokens }) => {
   )
 }
 
+
 const Output = ({ responseData }) => {
     const { answer, logical_form, predicted_actions, linking_scores, feature_scores, similarity_scores, entities, question_tokens } = responseData
 
     return (
-      <div className="model__content">
+      <div className="model__content answer">
         <OutputField label="Answer">
           { answer }
         </OutputField>
 
         <OutputField label="Logical Form" suppressSummary="true">
           <SyntaxHighlight language="lisp">
-              {logical_form.split('fb:').join('').split('.').join('-')}
+              {logical_form[0].toString()}
           </SyntaxHighlight>
         </OutputField>
 
         <OutputField label="Model internals">
           <Accordion accordion={false}>
-            <AccordionItem>
+            <AccordionItem expanded={true}>
               <AccordionItemTitle>
                 Predicted actions
                 <div className="accordion__arrow" role="presentation"/>
               </AccordionItemTitle>
               <AccordionItemBody>
-                {predicted_actions.map((action, action_index) => (
+                {(predicted_actions || []).map((action, action_index) => (
                   <Accordion accordion={false} key={"action_" + action_index}>
                     <AccordionItem>
                       <AccordionItemTitle>
@@ -147,6 +154,17 @@ const Output = ({ responseData }) => {
 
 const examples = [
     {
+      table: "#\tEvent Year\tSeason\tFlag bearer\n" +
+             "7\t2012\tSummer\tEle Opeloge\n" +
+             "6\t2008\tSummer\tEle Opeloge\n" +
+             "5\t2004\tSummer\tUati Maposua\n" +
+             "4\t2000\tSummer\tPauga Lalau\n" +
+             "3\t1996\tSummer\tBob Gasio\n" +
+             "2\t1988\tSummer\tHenry Smith\n" +
+             "1\t1984\tSummer\tApelu Ioane",
+      question: "How many years were held in summer?\n",
+    },
+    {
       table: "Season\tLevel\tDivision\tSection\tPosition\tMovements\n" +
              "1993\tTier 3\tDivision 2\tÖstra Svealand\t1st\tPromoted\n" +
              "1994\tTier 2\tDivision 1\tNorra\t11th\tRelegation Playoffs\n" +
@@ -164,17 +182,6 @@ const examples = [
              "2006*\tTier 3\tDivision 1\tNorra\t5th\t\n" +
              "2007\tTier 3\tDivision 1\tSödra\t14th\tRelegated",
       question: "What is the only season with the 1st position?",
-    },
-    {
-      table: "#\tEvent Year\tSeason\tFlag bearer\n" +
-             "7\t2012\tSummer\tEle Opeloge\n" +
-             "6\t2008\tSummer\tEle Opeloge\n" +
-             "5\t2004\tSummer\tUati Maposua\n" +
-             "4\t2000\tSummer\tPauga Lalau\n" +
-             "3\t1996\tSummer\tBob Gasio\n" +
-             "2\t1988\tSummer\tHenry Smith\n" +
-             "1\t1984\tSummer\tApelu Ioane",
-      question: "How many years were held in summer?\n",
     },
 ];
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { vs } from 'react-syntax-highlighter/styles/hljs';
+import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 /*******************************************************************************
   <SyntaxHighlight /> Component

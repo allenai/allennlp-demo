@@ -1,0 +1,100 @@
+{
+    "reading-comprehension": {
+        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz",
+        "predictor_name": "machine-comprehension",
+        "max_request_length": 311108
+    },
+    "elmo-reading-comprehension": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz",
+        "memory": "2Gi",
+        "predictor_name": "machine-comprehension",
+        "max_request_length": 311108
+     },
+    "naqanet-reading-comprehension": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/naqanet-2019.04.29-fixed-weight-names.tar.gz",
+        "predictor_name": "machine-comprehension",
+        "max_request_length": 25819
+    },
+    "semantic-role-labeling": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2019.06.17.tar.gz",
+        "predictor_name": "semantic-role-labeling",
+        "max_request_length": 4590
+    },
+    "open-information-extraction": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/openie-model.2018-08-20.tar.gz",
+        "predictor_name": "open-information-extraction",
+        "max_request_length": 19681
+    },
+    "textual-entailment": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2018.02.19.tar.gz",
+        "predictor_name": "textual-entailment",
+        "max_request_length": 13129
+    },
+    "coreference-resolution": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/coref-model-2018.02.05.tar.gz",
+        "predictor_name": "coreference-resolution",
+        "max_request_length": 21097
+    },
+    "named-entity-recognition": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/ner-model-2018.12.18.tar.gz",
+        "predictor_name": "sentence-tagger",
+        "max_request_length": 94864
+    },
+    "fine-grained-named-entity-recognition": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner-model-elmo-2018.12.21.tar.gz",
+        "predictor_name": "sentence-tagger",
+        "max_request_length": 22878
+    },
+    "constituency-parsing": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2018.03.14.tar.gz",
+        "predictor_name": "constituency-parser",
+        "max_request_length": 2236
+    },
+    "dependency-parsing": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz",
+        "predictor_name": "biaffine-dependency-parser",
+        "max_request_length": 5675
+    },
+    "wikitables-parser": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2019.07.29.tar.gz",
+        "predictor_name": "wikitables-parser",
+        "max_request_length": 8177
+    },
+    "nlvr-parser": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/nlvr-erm-model-2018-12-18-rule-vocabulary-updated.tar.gz",
+        "predictor_name": "nlvr-parser",
+        "max_request_length": 1136
+    },
+    "event2mind": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/event2mind-2018.10.26.tar.gz",
+        "predictor_name": "event2mind",
+        "max_request_length": 11643
+    },
+    "atis-parser": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/atis-parser-2018.11.10.tar.gz",
+        "predictor_name": "atis-parser",
+        "max_request_length": 2236
+    },
+    "quarel-parser-zero": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/quarel-parser-zero-2018.12.20.tar.gz",
+        "predictor_name": "quarel-parser",
+        "max_request_length": 6695
+    },
+    "next-token-lm": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/gpt2-next-word-lm-2019.09.19.tar.gz",
+        "predictor_name": "next_token_lm",
+        "max_request_length": 10000,
+        "memory": "4Gi"
+    },
+    "masked-lm": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2019.09.17.tar.gz",
+        "predictor_name": "masked_language_model",
+        "max_request_length": 10000,
+        "memory": "4Gi"
+    },
+    "sentiment-analysis": {
+        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
+        "predictor_name": "text_classifier",
+        "max_request_length": 1000
+    }
+}
