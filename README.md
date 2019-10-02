@@ -92,7 +92,7 @@ It should only you to change a single line of code to add a new model for a task
 
 ### Creating a demo for a new task
 
-If your task is not implemented in the AllenNLP demos, we will need to create code to query the model, as well as the create the front-end JavaScript/HTML to display the predictions, interpretations, and attacks. We will use Sentiment Analysis as a running example.
+If your task is not implemented in the AllenNLP demos, we will need to create code to query the model, as well as the create the front-end JavaScript/HTML to display the predictions, interpretations, and attacks. We will use Sentiment Analysis as a running example. Accordingly our model name will be `sentiment-analysis` and we will be using the `SentimentAnalysis` React component.
 
 Here is a [pull request](https://github.com/allenai/allennlp-demo/commit/149d068ccb970d93c1eaf93618a5b16c08cd6582) that implements the below steps. Feel free to follow that PR as a guide.
 
@@ -123,13 +123,20 @@ You can find more information about the front end creation at the bottom of the 
 
 ## Contributing a non-AllenNLP Model
 
-After some recent changes, it should be possible to add non-AllenNLP components to the demo
-simply by providing a Docker image containing them. It needs to follow the following conventions.
+The models in the demo are served using a Flask wrapper
+and the most recent release of AllenNLP. However, at some point you may want
+to contribute a model to the demo that doesn't run on AllenNLP,
+that runs on a fork of AllenNLP, or that requires an older version of AllenNLP or PyTorch.
+
+You can add such components to the demo by preparing a Docker image
+that serves them. It needs to follow the following conventions.
 You need to choose a unique name for your model, say, `my-new-model`. Then
 
-* your Docker image should serve your front-end at `/task/my-new-model`
+* your Docker image should have a web server running on port 8000
 
-* it should serve the back-end (assuming it has one) at `/predict/my-new-model`
+* it should serve your front-end at the URL `/task/my-new-model`
+
+* it should serve your back-end (assuming you have one) at `/predict/my-new-model`
 
 You will then need to add an entry to `models.json` that looks like
 
@@ -145,7 +152,8 @@ and finally modify `demo/src/models.js` to add its entry to the menu:
     {"model": "my-new-model", "name": "Descriptive Name"}
 ```
 
-(you don't have to give a `component` for it).
+(you don't have to specify a `component` for it, as your Docker image is 100% responsible
+ for serving the front-end however it wants to).
 
 ## Adding a New Interpretation Method
 
