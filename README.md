@@ -46,7 +46,13 @@ To run the demo locally for development, you will need to:
     export DEMO_POSTGRES_USER=$USER
     ```
 
-4. Start the backend service
+4. Start the backend service. If you don't specify specific models, it will load every model in the demo, which might use more memory than you have available. If your goal is to test out one or two models, you should load them exclusively:
+
+    ```bash
+    ./app.py --model model1 --model model2
+    ```
+
+    If you really want to load every model, you can do that with
 
     ```bash
     ./app.py
@@ -56,6 +62,19 @@ To run the demo locally for development, you will need to:
 
 
 ## Running with Docker
+
+As above, you probably don't want to build a docker image that will load every model.
+You probably want to go into `Dockerfile` and change the last line
+
+```
+CMD ["--demo-dir", "/stage/allennlp/demo"]
+```
+
+to specify only the models you need:
+
+```
+CMD ["--demo-dir", "/stage/allennlp/demo", "--model", "model1", "--model", "model2"]
+```
 
 Here is an example for how to manually build the Docker image and run the demo on port 8000.
 
@@ -67,6 +86,26 @@ docker run -p 8000:8000 -v $HOME/.allennlp:/root/.allennlp --rm allennlp/demo:$G
 ```
 
 Note that the `run` process may get killed prematurely if there is insufficient memory allocated to Docker. As of September 14, 2018, setting a memory limit of 10GB was sufficient to run the demo. See [Docker Docs](https://docs.docker.com/docker-for-mac/#advanced) for more on setting memory allocation preferences.
+
+## Deployment
+
+The AllenNLP demo runs on [Skiff](https://github.com/allenai/skiff)
+and is deployed using Google Cloud Build triggers. In particular, it runs on Kubernetes with each model getting its own container, along with a
+container to serve the shared UI / menu.
+
+Every commit to the `master` branch will deploy to [demo.staging.allennlp.org](https://demo.staging.allennlp.org).
+
+To deploy the production demo, merge this branch into the `release` branch.
+
+## Monitoring
+
+You can access the demo logs through [Marina](https://marina.apps.allenai.org/a/allennlp-demo),
+which links to GCP, or by visiting GCP directly. The two that are most frequently useful are
+
+* Cloud Build - History (where you can see if / why your builds failed)
+* Kubernetes Engine - Workloads (where you can find the various containers making up the service)
+
+although you can get the logs directly through Marina.
 
 ## Contributing a new AllenNLP model to the demo
 
