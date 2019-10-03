@@ -140,6 +140,24 @@ predictor.predict(
         </SyntaxHighlight>
       </UsageCode>
     </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`allennlp evaluate \\
+  https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz \\
+  https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          allennlp train training_config/basic_stanford_sentiment_treebank.jsonnet -s output_path
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
   </React.Fragment>
 )
 
