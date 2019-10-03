@@ -130,6 +130,9 @@ class SingleTaskDemo extends React.Component {
     } else if (modelComponents[selectedModel]) {
         // This is a model we know the component for, so render it.
         return React.createElement(modelComponents[selectedModel], {requestData, responseData, selectedModel, updateData})
+    } else if (selectedModel === "gpt2") {
+        // Hack to keep around gpt2 link.
+        return React.createElement(modelComponents["next-token-lm"], {requestData, responseData, selectedModel, updateData})
     } else if (selectedModel === "user-models") {
      const developLocallyHeader = "Developing Locally"
      const developLocallyDescription = (
