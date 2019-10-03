@@ -25,7 +25,26 @@ import './css/visualization-types.css';
 
 const DEFAULT_PATH = "/reading-comprehension"
 
-// The App is just a react-router wrapped around the Demo component.
+/*
+The App is just a react-router wrapped around the Demo component.
+The design is a bit convoluted so that the same code can run
+the overall demo frontend or an individual model demo.
+Here's how it accomplishes that:
+
+If you request `/` (corresponding to https://demo.allennlp.org), you will get
+redirected to the default model (here, /reading-comprehension).
+
+The overall front-end service serves all routes that look like `/<model_name>`.
+When you request `/<model_name>`, you will be served the <Demo> component,
+which shows some chrome, a menu, and a <SingleTaskFrame> that's an iframe with src
+`/task/<model_name>`, which the k8s ingress controller will direct to the machine
+serving that specific demo. That machine may be doing *anything*, as long as it serves
+its demo front-end at `/task/<model_name>`.
+
+In particular, that machine may be also running this code,
+for which the route `/task/<model_name>` serves the <SingleTaskDemo> component,
+which delegates to the particular ModelComponent specified in `demo/src/models.js`.
+*/
 const App = () => (
   <ThemeProvider>
     <Router>
