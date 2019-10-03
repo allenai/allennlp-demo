@@ -63,35 +63,38 @@ To run the demo locally for development, you will need to:
 
 ## Running with Docker
 
-As above, you probably don't want to build a docker image that will load every model.
-You probably want to go into `Dockerfile` and change the last line
-
-```
-CMD ["--demo-dir", "/stage/allennlp/demo"]
-```
-
-to specify only the models you need:
-
-```
-CMD ["--demo-dir", "/stage/allennlp/demo", "--model", "model1", "--model", "model2"]
-```
-
 Here is an example for how to manually build the Docker image and run the demo on port 8000.
+As above, you probably don't want to load every model,
+so you should specify the specific models you want in your `docker run` command.
 
 ```bash
 export GIT_HASH=`git log -1 --pretty=format:"%H"`
 docker build -t allennlp/demo:$GIT_HASH .
 mkdir -p $HOME/.allennlp
-docker run -p 8000:8000 -v $HOME/.allennlp:/root/.allennlp --rm allennlp/demo:$GIT_HASH
+docker run -p 8000:8000 \
+           -v $HOME/.allennlp:/root/.allennlp \
+           --rm \
+           allennlp/demo:$GIT_HASH \
+           --model model1 --model model2
 ```
 
 Note that the `run` process may get killed prematurely if there is insufficient memory allocated to Docker. As of September 14, 2018, setting a memory limit of 10GB was sufficient to run the demo. See [Docker Docs](https://docs.docker.com/docker-for-mac/#advanced) for more on setting memory allocation preferences.
 
-## Deployment
+## Deploying
 
 The AllenNLP demo runs on [Skiff](https://github.com/allenai/skiff)
 and is deployed using Google Cloud Build triggers. In particular, it runs on Kubernetes with each model getting its own container, along with a
 container to serve the shared UI / menu.
+
+Although (as in previous steps) the demo is able to run on a single machine
+(modulo the memory pressure from loading all the models),
+the Skiff version is distributed using Kubernetes as follows:
+
+(1) there is a dedicated "demo front-end" container that doesn't load any models
+(2) the ingress controller routes e.g. /predict/machine-comprehension to a dedicated "machine comprehension" container
+(3) that container loads only the machine comprehension model
+
+See the comments in `src/App.js` for more detail.
 
 Every commit to the `master` branch will deploy to [demo.staging.allennlp.org](https://demo.staging.allennlp.org).
 
@@ -102,8 +105,8 @@ To deploy the production demo, merge this branch into the `release` branch.
 You can access the demo logs through [Marina](https://marina.apps.allenai.org/a/allennlp-demo),
 which links to GCP, or by visiting GCP directly. The two that are most frequently useful are
 
-* Cloud Build - History (where you can see if / why your builds failed)
-* Kubernetes Engine - Workloads (where you can find the various containers making up the service)
+* [Cloud Build - History](https://console.cloud.google.com/cloud-build/builds?project=ai2-reviz&query=results.images.name%3D%20%22gcr.io%2Fai2-reviz%2Fallennlp-demo%22) (where you can see if / why your builds failed)
+* [Kubernetes Engine - Workloads](https://console.cloud.google.com/kubernetes/workload?project=ai2-reviz&workload_list_tablesize=50&workload_list_tablequery=%255B%257B_22k_22_3A_22is_system_22_2C_22t_22_3A11_2C_22v_22_3A_22_5C_22false_5C_22_22_2C_22s_22_3Atrue%257D_2C%257B_22k_22_3A_22metadata%252Fname_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22allennlp-demo-*_5C_22_22%257D%255D) (where you can find the various containers making up the service)
 
 although you can get the logs directly through Marina.
 
