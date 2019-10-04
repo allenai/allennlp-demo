@@ -46,7 +46,8 @@ const App = () => (
 // It handles the chrome for header and menus,
 // and it renders the specific task in an iframe.
 const Demo = (props) => {
-  const { model } = props.match.params
+  const { model, slug } = props.match.params
+  const { search } = props.location
   const redirectedModel = modelRedirects[model] || model
 
   return (
@@ -54,16 +55,15 @@ const Demo = (props) => {
       <Header alwaysVisible={true} />
       <div className="pane-container">
         <Menu selectedModel={redirectedModel} clearData={() => {}}/>
-        <SingleTaskFrame { ...props, model: redirectedModel }/>
+        <SingleTaskFrame model={redirectedModel} slug={slug} search={search} />
       </div>
     </React.Fragment>
   )
 }
 
 // Load the task in an iframe
-const SingleTaskFrame = (props, model) => {
-  const { slug } = props.match.params
-  const { search } = props.location
+const SingleTaskFrame = (props) => {
+  const { model, slug, search } = props
   const maybeSlug = slug ? `/${slug}` : ''
   const url = `/task/${model}${maybeSlug}${search}`
 
