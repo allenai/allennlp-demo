@@ -7,7 +7,7 @@ import { Header, ExternalLink } from '@allenai/varnish/components';
 import { API_ROOT } from './api-config';
 import { Menu } from './components/Menu';
 import ModelIntro from './components/ModelIntro';
-import { modelComponents } from './models'
+import { modelComponents, modelRedirects } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
 
@@ -65,14 +65,16 @@ const App = () => (
 // It handles the chrome for header and menus,
 // and it renders the specific task in an iframe.
 const Demo = (props) => {
-  const { model } = props.match.params
+  const { model, slug } = props.match.params
+  const { search } = props.location
+  const redirectedModel = modelRedirects[model] || model
 
   return (
     <React.Fragment>
       <Header alwaysVisible={true} />
       <div className="pane-container">
-        <Menu selectedModel={model} clearData={() => {}}/>
-        <SingleTaskFrame {...props}/>
+        <Menu selectedModel={redirectedModel} clearData={() => {}}/>
+        <SingleTaskFrame model={redirectedModel} slug={slug} search={search} />
       </div>
     </React.Fragment>
   )
@@ -80,8 +82,7 @@ const Demo = (props) => {
 
 // Load the task in an iframe
 const SingleTaskFrame = (props) => {
-  const { model, slug } = props.match.params
-  const { search } = props.location
+  const { model, slug, search } = props
   const maybeSlug = slug ? `/${slug}` : ''
   const url = `/task/${model}${maybeSlug}${search}`
 
