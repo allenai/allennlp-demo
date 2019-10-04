@@ -47,12 +47,14 @@ const App = () => (
 // and it renders the specific task in an iframe.
 const Demo = (props) => {
   const { model } = props.match.params
+  const redirectedModel = modelRedirects[model] ? modelRedirects[model] : model
+  props.match.params.model = redirectedModel
 
   return (
     <React.Fragment>
       <Header alwaysVisible={true} />
       <div className="pane-container">
-        <Menu selectedModel={model} clearData={() => {}}/>
+        <Menu selectedModel={redirectedModel} clearData={() => {}}/>
         <SingleTaskFrame {...props}/>
       </div>
     </React.Fragment>
@@ -130,9 +132,6 @@ class SingleTaskDemo extends React.Component {
     } else if (modelComponents[selectedModel]) {
         // This is a model we know the component for, so render it.
         return React.createElement(modelComponents[selectedModel], {requestData, responseData, selectedModel, updateData})
-    } else if (modelRedirects[selectedModel]) {
-        // Redirects for models with changed names.
-        return React.createElement(modelComponents[modelRedirects[selectedModel]], {requestData, responseData, selectedModel, updateData})
     } else if (selectedModel === "user-models") {
      const developLocallyHeader = "Developing Locally"
      const developLocallyDescription = (
