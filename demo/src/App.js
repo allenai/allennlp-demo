@@ -47,23 +47,22 @@ const App = () => (
 // and it renders the specific task in an iframe.
 const Demo = (props) => {
   const { model } = props.match.params
-  const redirectedModel = modelRedirects[model] ? modelRedirects[model] : model
-  props.match.params.model = redirectedModel
+  const redirectedModel = modelRedirects[model] || model
 
   return (
     <React.Fragment>
       <Header alwaysVisible={true} />
       <div className="pane-container">
         <Menu selectedModel={redirectedModel} clearData={() => {}}/>
-        <SingleTaskFrame {...props}/>
+        <SingleTaskFrame { ...props, model: redirectedModel }/>
       </div>
     </React.Fragment>
   )
 }
 
 // Load the task in an iframe
-const SingleTaskFrame = (props) => {
-  const { model, slug } = props.match.params
+const SingleTaskFrame = (props, model) => {
+  const { slug } = props.match.params
   const { search } = props.location
   const maybeSlug = slug ? `/${slug}` : ''
   const url = `/task/${model}${maybeSlug}${search}`
