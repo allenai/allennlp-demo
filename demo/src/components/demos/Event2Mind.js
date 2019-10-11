@@ -3,6 +3,9 @@ import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
 import { API_ROOT } from '../../api-config';
+import { UsageSection } from '../UsageSection';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import HighlightArrow from '../highlight/HighlightArrow';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
@@ -191,9 +194,33 @@ const examples = [
     "It starts snowing",
   ].map(source => ({source}))
 
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <h3>Prediction</h3>
+      <h5>On the command line (bash):</h5>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{ "source": "PersonX drinks a cup of coffee" }' | \\
+allennlp predict https://storage.googleapis.com/allennlp-public-models/event2mind-2018.10.26.tar.gz -`}
+        </SyntaxHighlight>
+      </UsageCode>
+      <h5>As a library (Python):</h5>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/event2mind-2018.10.26.tar.gz")
+predictor.predict(
+  source="PersonX drinks a cup of coffee"
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+  </React.Fragment>
+)
 
 const apiUrl = () => `${API_ROOT}/predict/event2mind`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
