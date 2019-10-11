@@ -7,7 +7,7 @@ import { Header, ExternalLink } from '@allenai/varnish/components';
 import { API_ROOT } from './api-config';
 import { Menu } from './components/Menu';
 import ModelIntro from './components/ModelIntro';
-import { modelComponents } from './models'
+import { modelComponents, modelRedirects } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
 
@@ -25,7 +25,26 @@ import './css/visualization-types.css';
 
 const DEFAULT_PATH = "/reading-comprehension"
 
-// The App is just a react-router wrapped around the Demo component.
+/*
+The App is just a react-router wrapped around the Demo component.
+The design is a bit convoluted so that the same code can run
+the overall demo frontend or an individual model demo.
+Here's how it accomplishes that:
+
+If you request `/` (corresponding to https://demo.allennlp.org), you will get
+redirected to the default model (here, /reading-comprehension).
+
+The overall front-end service serves all routes that look like `/<model_name>`.
+When you request `/<model_name>`, you will be served the <Demo> component,
+which shows some chrome, a menu, and a <SingleTaskFrame> that's an iframe with src
+`/task/<model_name>`, which the k8s ingress controller will direct to the machine
+serving that specific demo. That machine may be doing *anything*, as long as it serves
+its demo front-end at `/task/<model_name>`.
+
+In particular, that machine may be also running this code,
+for which the route `/task/<model_name>` serves the <SingleTaskDemo> component,
+which delegates to the particular ModelComponent specified in `demo/src/models.js`.
+*/
 const App = () => (
   <ThemeProvider>
     <Router>
@@ -46,14 +65,16 @@ const App = () => (
 // It handles the chrome for header and menus,
 // and it renders the specific task in an iframe.
 const Demo = (props) => {
-  const { model } = props.match.params
+  const { model, slug } = props.match.params
+  const { search } = props.location
+  const redirectedModel = modelRedirects[model] || model
 
   return (
     <React.Fragment>
       <Header alwaysVisible={true} />
       <div className="pane-container">
-        <Menu selectedModel={model} clearData={() => {}}/>
-        <SingleTaskFrame {...props}/>
+        <Menu selectedModel={redirectedModel} clearData={() => {}}/>
+        <SingleTaskFrame model={redirectedModel} slug={slug} search={search} />
       </div>
     </React.Fragment>
   )
@@ -61,8 +82,7 @@ const Demo = (props) => {
 
 // Load the task in an iframe
 const SingleTaskFrame = (props) => {
-  const { model, slug } = props.match.params
-  const { search } = props.location
+  const { model, slug, search } = props
   const maybeSlug = slug ? `/${slug}` : ''
   const url = `/task/${model}${maybeSlug}${search}`
 

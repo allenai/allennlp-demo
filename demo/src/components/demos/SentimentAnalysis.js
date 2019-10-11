@@ -1,5 +1,8 @@
 import React from 'react';
 import { API_ROOT } from '../../api-config';
+import { UsageSection } from '../UsageSection';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import { withRouter } from 'react-router-dom';
 import Model from '../Model'
 import OutputField from '../OutputField'
@@ -115,6 +118,49 @@ const examples = [
   { sentence: "visually imaginative, thematically instructive and thoroughly delightful, it takes us on a roller-coaster ride from innocence to experience without even a hint of that typical kiddie-flick sentimentality."}
 ]
 
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <h3>Prediction</h3>
+      <h5>On the command line (bash):</h5>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
+allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz -`}
+        </SyntaxHighlight>
+      </UsageCode>
+      <h5>As a library (Python):</h5>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz")
+predictor.predict(
+  sentence="a very well-made, funny and entertaining picture."
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`allennlp evaluate \\
+  https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz \\
+  https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          allennlp train training_config/basic_stanford_sentiment_treebank.jsonnet -s output_path
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+  </React.Fragment>
+)
+
 // A call to a pre-existing model component that handles all of the inputs and outputs. We just need to pass it the things we've already defined as props:
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}
 export default withRouter(props => <Model {...props} {...modelProps}/>)

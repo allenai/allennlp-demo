@@ -70,7 +70,7 @@ const modelGroups = [
         models: [
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
             {model: "event2mind", name: "Event2Mind", component: Event2Mind},
-            {model: "next-token-lm", name: "Language Modeling", component: LanguageModel},
+            {model: "next-token-lm", name: "Language Modeling", component: LanguageModel, redirects: ["gpt2"]},
             {model: "masked-lm", name: "Masked Language Modeling", component: MaskedLm}
         ]
     },
@@ -88,4 +88,13 @@ const modelGroups = [
 let modelComponents = {}
 modelGroups.forEach((mg) => mg.models.forEach(({model, component}) => modelComponents[model] = component));
 
-export { modelComponents, modelGroups }
+let modelRedirects = {}
+modelGroups.forEach((mg) => mg.models.forEach(
+  ({model, redirects}) => {
+    if (redirects) {
+      redirects.forEach((redirect) => modelRedirects[redirect] = model)
+    }
+  }
+));
+
+export { modelComponents, modelGroups, modelRedirects }
