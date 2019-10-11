@@ -216,6 +216,25 @@ predictor.predict(
         </SyntaxHighlight>
       </UsageCode>
     </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`allennlp evaluate \
+https://s3-us-west-2.amazonaws.com/allennlp/models/event2mind-2018.10.26.tar.gz  \
+https://raw.githubusercontent.com/uwnlp/event2mind/9855e83c53083b62395cc7e1af6ee9411515a14e/docs/data/test.csv`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`allennlp dry-run -o '{"dataset_reader": {"dummy_instances_for_vocab_generation": true}} {"vocabulary": {"min_count": {"source_tokens": 2}}}' training_config/event2mind.json --serialization-dir vocab_output_path
+allennlp train -o '{"vocabulary": {"directory_path": "vocab_output_path/vocabulary/"}}' training_config/event2mind.json --serialization-dir output_path`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
   </React.Fragment>
 )
 
