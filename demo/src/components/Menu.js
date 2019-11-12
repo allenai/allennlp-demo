@@ -74,7 +74,7 @@ const OuterGrid = styled.div`
 
 const Logo = styled.div`
   z-index: 3;
-  padding: ${({theme}) => `1.3125rem ${theme.spacing.xl}`}; /* match position of initial placement of model title in right pane */
+  padding: ${({theme}) => `1.3125rem ${theme.spacing.xl}`} 1.3125rem 1.5rem; /* match position of initial placement of model title in right pane */
   box-shadow: ${({theme}) => `0 ${theme.spacing.md} ${theme.spacing.md} -${theme.spacing.sm} ${theme.palette.border.main}`};
   border-right: ${({theme}) => `1px solid ${theme.palette.border.main}`};
 `;

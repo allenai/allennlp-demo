@@ -52,6 +52,8 @@ To run the demo locally for development, you will need to:
     ./app.py --model model1 --model model2
     ```
 
+    Where you see "model1" and "model2" examples above, you would use actual model names which are listed as JSON object key names [here](https://github.com/allenai/allennlp-demo/blob/master/models.json).
+
     If you really want to load every model, you can do that with
 
     ```bash
@@ -77,6 +79,8 @@ docker run -p 8000:8000 \
            allennlp/demo:$GIT_HASH \
            --model model1 --model model2
 ```
+
+Where you see "model1" and "model2" examples above, you would use actual model names which are listed as JSON object key names [here](https://github.com/allenai/allennlp-demo/blob/master/models.json).
 
 Note that the `run` process may get killed prematurely if there is insufficient memory allocated to Docker. As of September 14, 2018, setting a memory limit of 10GB was sufficient to run the demo. See [Docker Docs](https://docs.docker.com/docker-for-mac/#advanced) for more on setting memory allocation preferences.
 

@@ -3,6 +3,9 @@ import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
 import { API_ROOT } from '../../api-config';
+import { UsageSection } from '../UsageSection';
+import { UsageCode } from '../UsageCode';
+import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import HighlightArrow from '../highlight/HighlightArrow';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
@@ -191,9 +194,52 @@ const examples = [
     "It starts snowing",
   ].map(source => ({source}))
 
+const usage = (
+  <React.Fragment>
+    <UsageSection>
+      <h3>Prediction</h3>
+      <h5>On the command line (bash):</h5>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          {`echo '{ "source": "PersonX drinks a cup of coffee" }' | \\
+allennlp predict https://storage.googleapis.com/allennlp-public-models/event2mind-2018.10.26.tar.gz -`}
+        </SyntaxHighlight>
+      </UsageCode>
+      <h5>As a library (Python):</h5>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/event2mind-2018.10.26.tar.gz")
+predictor.predict(
+  source="PersonX drinks a cup of coffee"
+)`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <h3>Evaluation</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`allennlp evaluate \
+https://s3-us-west-2.amazonaws.com/allennlp/models/event2mind-2018.10.26.tar.gz  \
+https://raw.githubusercontent.com/uwnlp/event2mind/9855e83c53083b62395cc7e1af6ee9411515a14e/docs/data/test.csv`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+    <UsageSection>
+      <h3>Training</h3>
+      <UsageCode>
+        <SyntaxHighlight language="python">
+          {`allennlp dry-run -o '{"dataset_reader": {"dummy_instances_for_vocab_generation": true}} {"vocabulary": {"min_count": {"source_tokens": 2}}}' training_config/event2mind.json --serialization-dir vocab_output_path
+allennlp train -o '{"vocabulary": {"directory_path": "vocab_output_path/vocabulary/"}}' training_config/event2mind.json --serialization-dir output_path`}
+        </SyntaxHighlight>
+      </UsageCode>
+    </UsageSection>
+  </React.Fragment>
+)
 
 const apiUrl = () => `${API_ROOT}/predict/event2mind`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
