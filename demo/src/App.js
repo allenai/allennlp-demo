@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@allenai/varnish/theme';
+import { DefaultLayoutProvider } from '@allenai/varnish/layout';
 import { Header, ExternalLink } from '@allenai/varnish/components';
 
 import { API_ROOT } from './api-config';
@@ -48,6 +49,7 @@ which delegates to the particular ModelComponent specified in `demo/src/models.j
 const App = () => (
   <ThemeProvider>
     <Router>
+      <DefaultLayoutProvider layoutVariant="app">
         <BlockOverflow>
           <Switch>
             <Route exact path="/" render={() => (
@@ -57,6 +59,7 @@ const App = () => (
             <Route path="/:model/:slug?" component={Demo}/>
           </Switch>
         </BlockOverflow>
+      </DefaultLayoutProvider>
     </Router>
   </ThemeProvider>
 )
