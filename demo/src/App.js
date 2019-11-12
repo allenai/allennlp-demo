@@ -46,9 +46,11 @@ In particular, that machine may be also running this code,
 for which the route `/task/<model_name>` serves the <SingleTaskDemo> component,
 which delegates to the particular ModelComponent specified in `demo/src/models.js`.
 */
+
 const App = () => (
   <ThemeProvider>
     <Router>
+      {/*TODO: Use Varnish's multi-pane layout, rather than our home rolled one.*/}
       <DefaultLayoutProvider layoutVariant="app">
         <BlockOverflow>
           <Switch>
