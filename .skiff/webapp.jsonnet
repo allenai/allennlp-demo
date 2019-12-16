@@ -67,7 +67,7 @@ local hosts = [
         config.appName + '.' + env + topLevelDomain,
     if env == 'prod' then
         'demo' + canonicalTopLevelDomain
-    else
+    else if env == 'staging' then
         'demo' + '.' + env + canonicalTopLevelDomain
 ];
 
