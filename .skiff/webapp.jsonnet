@@ -184,7 +184,9 @@ local ingress = {
             'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
             'nginx.ingress.kubernetes.io/enable-cors': 'false',
             'nginx.ingress.kubernetes.io/use-regex': 'true',
-            'apps.allenai.org/build': std.extVar('buildId')
+            'apps.allenai.org/build': std.extVar('buildId'),
+            'apps.allenai.org/sha': std.extVar('sha'),
+            'apps.allenai.org/repo': std.extVar('repo')
         }
     },
     spec: {
