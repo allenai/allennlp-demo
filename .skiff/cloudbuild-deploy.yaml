@@ -41,6 +41,7 @@ steps:
     '--ext-str', 'image=gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
     '--ext-str', 'sha=$COMMIT_SHA',
     '--ext-str', 'buildId=$BUILD_ID',
+    '--ext-str', 'repo=$REPO_NAME',
     './webapp.jsonnet'
   ]
   dir: '.skiff'
