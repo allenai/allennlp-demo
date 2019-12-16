@@ -39,12 +39,12 @@ const description = (
 
 const taskModels = [
   {
-    name: "BiDAF (trained on SQuAD)",
-    desc: "Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow,<br/>a widely used MC baseline that achieved state-of-the-art accuracies on<br/>the SQuAD dataset (Wikipedia sentences) in early 2017."
-  },
-  {
     name: "ELMo-BiDAF (trained on SQuAD)",
     desc: "Same as the BiDAF model except it uses ELMo embeddings instead of GloVe."
+  },
+  {
+    name: "BiDAF (trained on SQuAD)",
+    desc: "Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow,<br/>a widely used MC baseline that achieved state-of-the-art accuracies on<br/>the SQuAD dataset (Wikipedia sentences) in early 2017."
   },
   {
     name: "NAQANet (trained on DROP)",
@@ -53,8 +53,8 @@ const taskModels = [
 ]
 
 const taskEndpoints = {
-  "BiDAF (trained on SQuAD)": "reading-comprehension",
   "ELMo-BiDAF (trained on SQuAD)": "elmo-reading-comprehension",
+  "BiDAF (trained on SQuAD)": "reading-comprehension",
   "NAQANet (trained on DROP)": "naqanet-reading-comprehension"
 };
 
