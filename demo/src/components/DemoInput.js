@@ -5,9 +5,6 @@ import {
     Select,
     Icon,
     Radio,
-    RadioGroup,
-    SelectOption,
-    SelectOptGroup
 } from '@allenai/varnish/components'
 
 import BeamSearch from './BeamSearch'
@@ -203,7 +200,7 @@ class DemoInput extends React.Component {
                                 disabled={outputState === "working"}>
                             {
                                 field.options.map((value) => (
-                                    <SelectOption key={value} value={value}>{value}</SelectOption>
+                                    <Select.Option key={value} value={value}>{value}</Select.Option>
                                 ))
                             }
                         </FormSelect>
@@ -225,7 +222,7 @@ class DemoInput extends React.Component {
                 case "RADIO":
                     input = (
                         // If we have no value for this select, use the first option.
-                        <RadioGroup
+                        <Radio.Group
                             vertical={true}
                             name={inputId}
                             value={this.state[field.name] || (field.options[0] && field.options[0].name)}
@@ -238,7 +235,7 @@ class DemoInput extends React.Component {
                                     </Radio>
                                 ))
                             }
-                      </RadioGroup>
+                      </Radio.Group>
                     )
                     break
                 default:
@@ -271,7 +268,7 @@ class DemoInput extends React.Component {
                         disabled={outputState === "working"}
                         onChange={this.handleExampleChange}
                         defaultValue="-1">
-                        <SelectOption value="-1">Choose an example...</SelectOption>
+                        <Select.Option value="-1">Choose an example...</Select.Option>
                         {this.normalizedExamples.map((exampleInfo, groupIndex) => {
                             return SelectOptionGroup(exampleInfo, groupIndex, fields)
                         })}
@@ -324,9 +321,9 @@ function SelectOptionGroup(exampleInfo, groupIndex, fields) {
       return RenderOptions(examples, groupIndex, fields)
   } else {
       return (
-          <SelectOptGroup label={exampleType}>
+          <Select.OptGroup label={exampleType}>
               {RenderOptions(examples, groupIndex, fields)}
-          </SelectOptGroup>
+          </Select.OptGroup>
       )
   }
 }
@@ -335,7 +332,7 @@ function RenderOptions(examples, groupIndex, fields) {
     return examples.map((example, exampleIndex) => {
         const encodedName = encodeExampleName(groupIndex, exampleIndex)
         return (
-            <SelectOption value={encodedName} key={encodedName}>{makeSnippet(example, fields)}</SelectOption>
+            <Select.Option value={encodedName} key={encodedName}>{makeSnippet(example, fields)}</Select.Option>
         )
     })
 }
