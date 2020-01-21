@@ -14,6 +14,8 @@ import {
   SG_INTERPRETER
   } from './InterpretConstants';
 
+const TOOLTIP_ID = "saliency-tooltip";
+
 export const getHeaders = (interpreter) => {
   let title = ''
   let description = ''
@@ -93,7 +95,7 @@ export class SaliencyComponent extends React.Component {
     tokensWithWeights.forEach((obj, idx) => {
       colorizedString.push(
         // Again, 1 -, in this case because low extreme is blue and high extreme is red
-        <label key={idx} data-tip={(1 - obj.weight).toFixed(3)} style={{ display: "inline-block" }} >
+        <label key={idx} data-tip={(1 - obj.weight).toFixed(3)} style={{ display: "inline-block" }} data-for={TOOLTIP_ID}>
             <ColorizedToken backgroundColor={topKIdx.has(idx) ? colors[Math.round(obj.weight * (colormapProps.nshades - 1))] : 'transparent'} key={idx}>
                 {obj.token}
             </ColorizedToken>
@@ -166,10 +168,10 @@ export class SaliencyComponent extends React.Component {
         const colorMap = this.colorize(tokenWeights, topKIdx)
         const k = i in this.state.topK ? this.state.topK[i] : this.state.topK.all
         const saliencyMap = (
-          <div>
+          <div key={i}>
             {header}
             {colorMap}
-            <Tooltip /> <input type="range" min={0} max={colorMap.length} step="1" value={k} className="slider" onChange={this.handleInputTopKChange(i)} style={{ padding: "0px", margin: "10px 0px" }} />
+            <Tooltip multiline id={TOOLTIP_ID} /> <input type="range" min={0} max={colorMap.length} step="1" value={k} className="slider" onChange={this.handleInputTopKChange(i)} style={{ padding: "0px", margin: "10px 0px" }} />
             <br/>
             <span style={{ color: "#72BCFF" }}>Visualizing the top {k} most important words.</span>
             <br />

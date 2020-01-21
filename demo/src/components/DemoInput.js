@@ -20,6 +20,7 @@ const PATTERN_WORD_CHAR = /\w/;
 const ELLIPSIS = '…';
 const EXAMPLE_NAME_SEPARATOR = '@@';
 const DEFAULT_OPTION_GROUP = "DEFAULT_OPTION_GROUP";
+const TOOLTIP_ID = "model-tooltip";
 
 /**
  * Truncates the provided text such that no more than limit characters are rendered and adds an
@@ -233,7 +234,7 @@ class DemoInput extends React.Component {
                             {
                                 field.options.map((opt) => (
                                     <Radio key={opt.name} value={opt.name}>
-                                        <span data-tip={opt.desc}> {opt.name} </span>
+                                        <span data-tip={opt.desc} data-for={TOOLTIP_ID}> {opt.name} </span>
                                     </Radio>
                                 ))
                             }
@@ -286,7 +287,7 @@ class DemoInput extends React.Component {
                     </Button>
                 </RunButtonArea>
                 {inputOutputs}
-                <Tooltip multiline/>
+                <Tooltip multiline id={TOOLTIP_ID} />
             </React.Fragment>
         )
     }
