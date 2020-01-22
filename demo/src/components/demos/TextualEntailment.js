@@ -21,13 +21,11 @@ import '../../css/TeComponent.css';
 
 import SaliencyMaps from '../Saliency'
 import InputReductionComponent from '../InputReduction'
-import HotflipComponent from '../Hotflip'
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
   SG_INTERPRETER,
-  INPUT_REDUCTION_ATTACKER,
-  HOTFLIP_ATTACKER
+  INPUT_REDUCTION_ATTACKER
 } from '../InterpretConstants'
 
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
