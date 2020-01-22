@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink } from  '@allenai/varnish/components';
+import { ExternalLink, Tabs } from  '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -191,67 +191,48 @@ const NoOutputMessage = styled.div`
   padding: 2rem;
 `;
 
-// Stateful output component
-class Output extends React.Component {
-    constructor(props) {
-        super(props)
+const Output = props => {
+  const { responseData } = props
+  const { verbs } = responseData
 
-        this.state = { visualizationType: VisualizationType.TREE }
-    }
+  return (
+      <div className="model__content">
+        <Tabs>
+          {
+            Object.keys(VisualizationType).map(tpe => {
+              const vizType = VisualizationType[tpe];
+              let viz = null;
 
-    render() {
-        const { visualizationType } = this.state
-        const { responseData } = this.props
-        const { verbs } = responseData
-
-        let viz = null;
-
-        // If there's no verbs, there's no output to display.
-        if (Array.isArray(verbs) && verbs.length > 0) {
-          switch(visualizationType) {
-            case VisualizationType.TEXT:
-              viz = <TextVisualization verbs={verbs} model="srl" />;
-              break;
-            case VisualizationType.TREE:
-            default:
-              viz = <HierplaneVisualization trees={toHierplaneTrees(responseData)} />
-              break;
+              // If there's no verbs, there's no output to display.
+              if (Array.isArray(verbs) && verbs.length > 0) {
+                switch(vizType) {
+                  case VisualizationType.TEXT:
+                    viz = <TextVisualization verbs={verbs} model="srl" />;
+                    break;
+                  case VisualizationType.TREE:
+                  default:
+                    viz = <HierplaneVisualization trees={toHierplaneTrees(responseData)} />
+                    break;
+                }
+              }
+      
+              if (viz == null) {
+                return (
+                  <NoOutputMessage>
+                    No output. Please revise the sentence and try again.
+                  </NoOutputMessage>
+                );
+              }
+              return (
+                <Tabs.TabPane key={vizType} tab={vizType}>
+                  {viz}
+                </Tabs.TabPane>
+              )
+            })
           }
-        }
-
-        if (viz == null) {
-          return (
-            <NoOutputMessage>
-              No output. Please revise the sentence and try again.
-            </NoOutputMessage>
-          );
-        }
-
-        return (
-            <div>
-                <ul className="visualization-types">
-                    {
-                        Object.keys(VisualizationType).map(tpe => {
-                            const vizType = VisualizationType[tpe];
-                            const className = (
-                                visualizationType === vizType
-                                ? 'visualization-types__active-type'
-                                : null
-                            )
-                            return (
-                                <li key={vizType} className={className}>
-                                <a onClick={() => this.setState({ visualizationType: vizType })}>
-                                    {vizType}
-                                </a>
-                                </li>
-                            )
-                        })
-                    }
-                </ul>
-                {viz}
-            </div>
-        )
-    }
+        </Tabs>
+      </div>
+  )
 }
 
 const examples = [

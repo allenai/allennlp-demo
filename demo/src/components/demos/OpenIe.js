@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink } from '@allenai/varnish/components';
+import { ExternalLink, Tabs } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
 import { API_ROOT } from '../../api-config';
@@ -192,53 +192,36 @@ const VisualizationType = {
 };
 Object.freeze(VisualizationType);
 
-// Stateful output component
-class Output extends React.Component {
-    constructor(props) {
-        super(props);
+const Output = props => {
+  const { responseData } = props
+  const { verbs } = responseData
 
-        this.state = { visualizationType: VisualizationType.TREE }
-    }
-
-    render() {
-        const { visualizationType } = this.state
-        const { responseData } = this.props
-        const { verbs } = responseData
-
-        let viz = null;
-        switch(visualizationType) {
-        case VisualizationType.TEXT:
-            viz = <TextVisualization verbs={verbs} model="oie"/>;
-            break;
-        case VisualizationType.TREE:
-        default:
-            viz = <HierplaneVisualization trees={toHierplaneTrees(responseData)} />
-            break;
-        }
-
-    return (
-      <div>
-          <ul className="visualization-types">
-            {Object.keys(VisualizationType).map(tpe => {
+  return (
+    <div className="model__content">
+      <Tabs>
+          {
+            Object.keys(VisualizationType).map(tpe => {
               const vizType = VisualizationType[tpe];
-              const className = (
-                visualizationType === vizType
-                  ? 'visualization-types__active-type'
-                  : null
-              );
+              let viz = null;
+              switch(vizType) {
+                case VisualizationType.TEXT:
+                  viz = <TextVisualization verbs={verbs} model="oie"/>;
+                  break;
+                case VisualizationType.TREE:
+                default:
+                  viz = <HierplaneVisualization trees={toHierplaneTrees(responseData)} />
+                  break;
+              }
               return (
-                <li key={vizType} className={className}>
-                  <a onClick={() => this.setState({ visualizationType: vizType })}>
-                    {vizType}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-          {viz}
-      </div>
-    )
-  }
+                <Tabs.TabPane key={vizType} tab={vizType}>
+                  {viz}
+                </Tabs.TabPane>
+              )
+            })
+          }
+      </Tabs>
+    </div>
+  )
 }
 
 const examples = [
