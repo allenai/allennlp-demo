@@ -321,7 +321,7 @@ function SelectOptionGroup(exampleInfo, groupIndex, fields) {
       return RenderOptions(examples, groupIndex, fields)
   } else {
       return (
-          <Select.OptGroup label={exampleType}>
+          <Select.OptGroup label={exampleType} key={groupIndex}>
               {RenderOptions(examples, groupIndex, fields)}
           </Select.OptGroup>
       )
