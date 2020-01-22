@@ -118,7 +118,7 @@ const Output = ({ responseData }) => {
 
   return (
     <div className="model__content answer">
-      <OutputField label="SQL Query" suppressSummary="true">
+      <OutputField label="SQL Query" suppressSummary>
         {query}
       </OutputField>
       {internals}

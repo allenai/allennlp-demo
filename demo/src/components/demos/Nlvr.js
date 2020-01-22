@@ -87,7 +87,7 @@ const Output = ({ responseData }) => {
             { denotations[0] }
           </OutputField>
 
-          <OutputField label="Logical Form" suppressSummary="true">
+          <OutputField label="Logical Form" suppressSummary>
             <SyntaxHighlight language="lisp">
                 {logical_form}
             </SyntaxHighlight>

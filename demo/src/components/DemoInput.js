@@ -180,7 +180,7 @@ class DemoInput extends React.Component {
                         onKeyDown: canRun ? this.runOnEnter : undefined,
                         id: inputId,
                         type: "text",
-                        required: "true",
+                        required: true,
                         autoFocus: idx === 0,
                         placeholder: field.placeholder || "",
                         value: this.state[field.name],
