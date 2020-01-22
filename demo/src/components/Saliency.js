@@ -81,8 +81,8 @@ export class SaliencyComponent extends React.Component {
   }
 
   callInterpretModel = interpretModel => () => {
-    this.setState({ ...this.state, loading: true})
-    interpretModel()
+    this.setState({ ...this.state, loading: true});
+    interpretModel().then(() => this.setState({ loading: false }));
   }
 
   colorize(tokensWithWeights, topKIdx) {
@@ -152,9 +152,6 @@ export class SaliencyComponent extends React.Component {
         displayText = <div><p style={{color: "#7c7c7c"}}>Press "interpret prediction" to show the interpretation.</p>{runButton}</div>
       }
     } else {
-      if (this.state.loading) { // loading is done
-          this.setState({ loading: false });
-      }
       const saliencyMaps = [];
       
       for (let i = 0; i < inputTokens.length; i++) {
