@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink } from '@allenai/varnish/components';
+import { ExternalLink, Tabs } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
 import { API_ROOT } from '../../api-config';
@@ -139,50 +139,29 @@ const VisualizationType = {
 };
 Object.freeze(VisualizationType);
 
-// Stateful
-class Output extends React.Component {
-  constructor(props) {
-    super(props);
+const Output = (props) => {
+  const { requestData, responseData } = props;
+  const { source } = requestData
 
-    this.state = {
-      visualizationType: VisualizationType.DIAGRAM
-    }
-  }
-
-  render() {
-    const { requestData, responseData } = this.props;
-    const { visualizationType } = this.state;
-    const { source } = requestData
-
-    const viz = visualizationType === VisualizationType.TEXT
-            ? <TextOutput responseData={responseData} />
-            : <DiagramOutput responseData={responseData} source={source} />
-
-    return (
-        <div>
-            <ul className="visualization-types">
-                {
-                    Object.keys(VisualizationType).map(tpe => {
-                        const vizType = VisualizationType[tpe];
-                        const className = (
-                            visualizationType === vizType
-                            ? 'visualization-types__active-type'
-                            : null
-                        )
-                        return (
-                            <li key={vizType} className={className}>
-                            <a onClick={() => this.setState({ visualizationType: vizType })}>
-                                {vizType}
-                            </a>
-                            </li>
-                        )
-                    })
-                }
-            </ul>
-            {viz}
-        </div>
-    )
-  }
+  return (
+    <div className="model__content">
+      <Tabs>
+          {
+            Object.keys(VisualizationType).map(tpe => {
+              const vizType = VisualizationType[tpe];
+              const viz = vizType === VisualizationType.TEXT
+                ? <TextOutput responseData={responseData} />
+                : <DiagramOutput responseData={responseData} source={source} />
+              return (
+                <Tabs.TabPane key={vizType} tab={vizType}>
+                  {viz}
+                </Tabs.TabPane>
+              )
+            })
+          }
+      </Tabs>
+    </div>
+  )
 }
 
 const examples = [
