@@ -10,6 +10,7 @@ import HighlightArrow from '../highlight/HighlightArrow';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
+import { DemoVisualizationTabs } from './DemoStyles'
 import '../../css/Event2MindDiagram.css';
 
 const title = "Event2Mind"
@@ -145,7 +146,7 @@ const Output = (props) => {
 
   return (
     <div className="model__content">
-      <Tabs>
+      <DemoVisualizationTabs>
           {
             Object.keys(VisualizationType).map(tpe => {
               const vizType = VisualizationType[tpe];
@@ -159,7 +160,7 @@ const Output = (props) => {
               )
             })
           }
-      </Tabs>
+      </DemoVisualizationTabs>
     </div>
   )
 }

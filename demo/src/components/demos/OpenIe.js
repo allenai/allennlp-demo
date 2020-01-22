@@ -10,6 +10,7 @@ import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
+import { DemoVisualizationTabs } from './DemoStyles';
 
 const title = "Open Information Extraction";
 
@@ -198,7 +199,7 @@ const Output = props => {
 
   return (
     <div className="model__content">
-      <Tabs>
+      <DemoVisualizationTabs>
           {
             Object.keys(VisualizationType).map(tpe => {
               const vizType = VisualizationType[tpe];
@@ -219,7 +220,7 @@ const Output = props => {
               )
             })
           }
-      </Tabs>
+      </DemoVisualizationTabs>
     </div>
   )
 }

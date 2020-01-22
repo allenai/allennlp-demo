@@ -10,6 +10,7 @@ import TextVisualization from '../TextVisualization'
 import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
 import { UsageCode } from '../UsageCode';
+import { DemoVisualizationTabs } from './DemoStyles';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 const title = "Semantic Role Labeling"
@@ -197,7 +198,7 @@ const Output = props => {
 
   return (
       <div className="model__content">
-        <Tabs>
+        <DemoVisualizationTabs>
           {
             Object.keys(VisualizationType).map(tpe => {
               const vizType = VisualizationType[tpe];
@@ -230,7 +231,7 @@ const Output = props => {
               )
             })
           }
-        </Tabs>
+        </DemoVisualizationTabs>
       </div>
   )
 }
