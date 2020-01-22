@@ -92,11 +92,11 @@ class Model extends React.Component {
     attackModel = (inputs, attacker, inputToAttack, gradInput) => ({target}) => {
       const attackInputs = {...{attacker}, ...{inputToAttack}, ...{gradInput}}
       if (target !== undefined) {
-        attackInputs['target'] = target
+        return Promise.resolve(attackInputs['target'] = target)
       }
 
       const { apiUrlAttack } = this.props
-      fetch(apiUrlAttack(inputs), {
+      return fetch(apiUrlAttack(inputs), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
