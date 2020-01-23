@@ -113,7 +113,7 @@ class SingleTaskDemo extends React.Component {
   // We also need to update the state whenever we receive new props from React router.
   componentDidUpdate({ match }) {
     const { model, slug } = match.params;
-    if (model !== this.state.selectedModel && slug !== this.state.slug) {
+    if (model !== this.state.selectedModel || slug !== this.state.slug) {
       this.setState({ selectedModel: model, slug });
     }
   }
