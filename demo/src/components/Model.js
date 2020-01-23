@@ -73,7 +73,7 @@ class Model extends React.Component {
 
     interpretModel = (inputs, interpreter) => () => {
       const { apiUrlInterpret } = this.props
-      fetch(apiUrlInterpret(inputs), {
+      return fetch(apiUrlInterpret(inputs), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -96,7 +96,7 @@ class Model extends React.Component {
       }
 
       const { apiUrlAttack } = this.props
-      fetch(apiUrlAttack(inputs), {
+      return fetch(apiUrlAttack(inputs), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

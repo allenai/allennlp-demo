@@ -2,7 +2,7 @@ import React from 'react'
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Footer, ExternalLink } from '@allenai/varnish/components';
+import { ExternalLink } from '@allenai/varnish/components';
 
 import OutputField from '../OutputField'
 import { Accordion } from 'react-accessible-accordion';
@@ -383,7 +383,7 @@ class App extends React.Component {
             <InputOutputColumn>
               <FormLabel>Sentence:</FormLabel>
                 <TextInput type="text"
-                          autosize={{ minRows: 5, maxRows: 10 }}
+                          autoSize={{ minRows: 5, maxRows: 10 }}
                           value={this.state.output}
                           onChange={this.setOutput}/>
                 {this.state.loading ? (
@@ -419,7 +419,7 @@ class App extends React.Component {
   }
 
   interpretModel = (inputs, interpreter) => () => {
-    fetch(apiUrlInterpret(inputs), {
+    return fetch(apiUrlInterpret(inputs), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -441,7 +441,7 @@ class App extends React.Component {
       attackInputs['target'] = {words: [[target]]}
     }
 
-    fetch(apiUrlAttack(inputs), {
+    return fetch(apiUrlAttack(inputs), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',

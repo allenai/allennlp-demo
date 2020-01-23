@@ -111,9 +111,11 @@ class SingleTaskDemo extends React.Component {
   }
 
   // We also need to update the state whenever we receive new props from React router.
-  componentWillReceiveProps({ match }) {
+  componentDidUpdate({ match }) {
     const { model, slug } = match.params;
-    this.setState({selectedModel: model, slug: slug});
+    if (model !== this.state.selectedModel || slug !== this.state.slug) {
+      this.setState({ selectedModel: model, slug });
+    }
   }
 
   // After the component mounts, we check if we need to fetch the data

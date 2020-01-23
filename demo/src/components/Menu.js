@@ -38,7 +38,7 @@ export class MenuBase extends React.Component {
     return (
       <OuterGrid>
         <Logo>
-          <a href="http://www.allennlp.org/" target="_blank" rel="noopener">
+          <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
             <img
               src={allenNlpLogo}
               width={"124px"}
