@@ -92,7 +92,7 @@ class Model extends React.Component {
     attackModel = (inputs, attacker, inputToAttack, gradInput) => ({target}) => {
       const attackInputs = {...{attacker}, ...{inputToAttack}, ...{gradInput}}
       if (target !== undefined) {
-        return Promise.resolve(attackInputs['target'] = target)
+        attackInputs['target'] = target
       }
 
       const { apiUrlAttack } = this.props
