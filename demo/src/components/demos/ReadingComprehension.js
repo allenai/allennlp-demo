@@ -25,6 +25,7 @@ import {
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
 import NestedHighlight, { withHighlightClickHandling, getHighlightColor } from '../highlight/NestedHighlight';
+import { getHighlightConditionalClasses } from '../highlight/Highlight';
 
 const title = "Reading Comprehension"
 
@@ -155,6 +156,7 @@ const NmnDrop = props => {
     onMouseOver,
     onMouseUp,
   } = props
+  const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
   return (
     <div style={{ display: 'flex', border: '1px solid grey' }}>
       <div style={{ padding: '8px', flex: '0 0 auto' }}>
@@ -193,8 +195,8 @@ const NmnDrop = props => {
           ↓
         </div>
         <div>
-          {Object.keys(questionClusters).map((key, i) => {
-            return (
+          {Object.keys(questionClusters).map((key, i) => 
+            (
               <div 
                 key={i}
                 style={{ display: 'flex', justifyContent: 'center' }}
@@ -205,7 +207,19 @@ const NmnDrop = props => {
                     textAlign: 'center',
                     width: `${(Object.keys(questionClusters).length - i) / Object.keys(questionClusters).length * 100}%`
                   }}
-                  className={`highlight ${getHighlightColor(i)} clickable ${selectedId === key ? 'selected' : ''} ${!isClicking && activeIds && activeIds.includes(key) ? 'active' : ''}`}
+                  className={getHighlightConditionalClasses({
+                    labelPosition: null,
+                    label: null,
+                    color: getHighlightColor(i),
+                    isClickable: true,
+                    selectedId,
+                    isClicking,
+                    id: key,
+                    activeDepths,
+                    deepestIndex,
+                    activeIds,
+                    children: null,
+                  })}
                   onMouseDown={onMouseDown ? () => onMouseDown(key, 0) : null}
                   onMouseOver={onMouseOver ? () => onMouseOver(key) : null}
                   onMouseOut={onMouseOut ? () => onMouseOut(key) : null}
@@ -215,7 +229,7 @@ const NmnDrop = props => {
                 </div>
               </div>
             )
-          })}
+          )}
         </div>
         <div style={{ textAlign: 'center' }}>
           ↓

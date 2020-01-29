@@ -5,6 +5,30 @@ import '../../css/Highlight.css';
   <Highlight /> Component
 *******************************************************************************/
 
+export const getHighlightConditionalClasses = (conditions) => {
+  const {
+    labelPosition,
+    label,
+    color,
+    isClickable,
+    selectedId,
+    isClicking,
+    id,
+    activeDepths,
+    deepestIndex,
+    activeIds,
+    children,
+  } = conditions;
+  return `highlight
+    ${labelPosition ? labelPosition : label ? "bottom" : ""}
+    ${color ? color : "blue"}
+    ${isClickable ? "clickable" : ""}
+    ${selectedId && selectedId === id ? "selected" : ""}
+    ${isClicking && activeDepths.ids[deepestIndex] === id ? "clicking active" : ""}
+    ${!isClicking && activeIds && activeIds.includes(id) ? "active" : ""}
+    ${typeof(children) === "string" && children.length < 8 ? "short-text" : ""}`;
+}
+
 export const Highlight = props => {
   const {         // All fields optional:
     activeDepths,   // object
@@ -28,14 +52,19 @@ export const Highlight = props => {
   } = props;
 
   const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
-  const conditionalClasses = `highlight
-    ${labelPosition ? labelPosition : label ? "bottom" : ""}
-    ${color ? color : "blue"}
-    ${isClickable ? "clickable" : ""}
-    ${selectedId && selectedId === id ? "selected" : ""}
-    ${isClicking && activeDepths.ids[deepestIndex] === id ? "clicking active" : ""}
-    ${!isClicking && activeIds && activeIds.includes(id) ? "active" : ""}
-    ${typeof(children) === "string" && children.length < 8 ? "short-text" : ""}`;
+  const conditionalClasses = getHighlightConditionalClasses({
+    labelPosition,
+    label,
+    color,
+    isClickable,
+    selectedId,
+    isClicking,
+    id,
+    activeDepths,
+    deepestIndex,
+    activeIds,
+    children,
+  });
 
   const labelTemplate = (
     <span className="highlight__label">
