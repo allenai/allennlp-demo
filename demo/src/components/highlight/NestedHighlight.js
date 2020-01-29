@@ -23,7 +23,7 @@ const highlightColors = [
  * Matches an index with a color. If index is greater than number of colors, cycle through colors.
  * @param {number} index 
  */
-const getHighlightColor = (index) => {
+export const getHighlightColor = (index) => {
   if (index <= highlightColors.length) {
     return highlightColors[index];
   } else {
@@ -35,7 +35,7 @@ const getHighlightColor = (index) => {
  * Helper function for transforming response data into a tree object.
  * 
  * @param {string[]} tokens a list of strings of each of the tokens (words or punctuation) present
- * @param {number[][][]} clusters a collection of arrays that specify spans to be clustered in the original list of tokens
+ * @param {{ labelString: number[][] } | number[][][]} clusters a collection of arrays that specify spans to be clustered in the original list of tokens
  */
 const transformToTree = (tokens, clusters) => {
   // Span tree data transform code courtesy of Michael S.
@@ -158,7 +158,7 @@ const InnerHighlight = props => {
  * @param {
  *  activeDepths?: { ids: string[], depths: number[]}
  *  activeIds?: string[]
- *  clusters: number[][][]
+ *  clusters: number[][][] | { labelString: [][] }
  *  isClickable?: boolean
  *  isClicking?: boolean
  *  labelPosition: "top" | "left" | "right" | "bottom"
