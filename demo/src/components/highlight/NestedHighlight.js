@@ -229,7 +229,6 @@ export const withHighlightClickHandling = WrappedComponent => {
       depthTable.depths.push(depth);
   
       this.setState({
-        selectedId: null,
         activeIds: [id],
         activeDepths: depthTable,
         isClicking: true
@@ -239,9 +238,9 @@ export const withHighlightClickHandling = WrappedComponent => {
     handleHighlightMouseUp = (id) => {
       const depthTable = this.state.activeDepths;
       const deepestIndex = depthTable.depths.indexOf(Math.max(...depthTable.depths));
-  
+
       this.setState(prevState => ({
-        selectedId: depthTable.ids[deepestIndex],
+        selectedId: prevState.selectedId === depthTable.ids[deepestIndex] ? null : depthTable.ids[deepestIndex],
         isClicking: false,
         activeDepths: {ids:[],depths:[]},
         activeIds: [...prevState.activeIds, id],
