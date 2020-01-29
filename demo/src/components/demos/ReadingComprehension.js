@@ -24,6 +24,7 @@ import {
   INPUT_REDUCTION_ATTACKER,
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
+import NestedHighlight, { withHighlightClickHandling, getHighlightColor } from '../highlight/NestedHighlight';
 
 const title = "Reading Comprehension"
 
@@ -105,6 +106,145 @@ const NoAnswer = () => {
     </OutputField>
   )
 }
+
+const document = `In the first quarter , Buffalo trailed as Chiefs QB Tyler Thigpen completed a 36 - yard TD pass to RB Jamaal Charles . The Bills responded with RB Marshawn Lynch getting a 1 - yard touchdown run . In the second quarter , Buffalo took the lead as kicker Rian Lindell made a 21 - yard and a 40 - yard field goal . Kansas City answered with Thigpen completing a 2 - yard TD pass . Buffalo regained the lead as Lindell got a 39 - yard field goal . The Chiefs struck with kicker Connor Barth getting a 45 - yard field goal , yet the Bills continued their offensive explosion as Lindell got a 34 - yard field goal , along with QB Edwards getting a 15 - yard TD run . In the third quarter , Buffalo continued its poundings with Edwards getting a 5 - yard TD run , while Lindell got himself a 48 - yard field goal . Kansas City tried to rally as Thigpen completed a 45 - yard TD pass to WR Mark Bradley , yet the Bills replied with Edwards completing an 8 - yard TD pass to WR Josh Reed . In the fourth quarter , Edwards completed a 17 - yard TD pass to TE Derek Schouman .`.split(" ")
+
+const clusters = {
+  find: [
+    [62, 63],
+    [89, 90],
+    [104, 105],
+    [121, 122],
+    [163, 164],
+  ],
+  filter: [
+    [39, 131],
+  ],
+  'find-max-num': [
+    [104, 105],
+  ],
+  relocate: [
+    [97, 98]
+  ]
+}
+
+const question = "Who kicked the longest field goal in the second quarter ?".split(' ');
+const questionClusters = {
+  find: [
+    [4, 5]
+  ],
+  filter: [
+    [6, 10]
+  ],
+  'find-max-num': [
+    [3, 3]
+  ],
+  relocate: [
+    [0, 1]
+  ]
+}
+
+const NmnDrop = props => {
+  const { 
+    activeIds,
+    activeDepths,
+    isClicking,
+    selectedId,
+    onMouseDown,
+    onMouseOut,
+    onMouseOver,
+    onMouseUp,
+  } = props
+  return (
+    <div style={{ display: 'flex', border: '1px solid grey' }}>
+      <div style={{ padding: '8px', flex: '0 0 auto' }}>
+        <NestedHighlight 
+          activeDepths={activeDepths}
+          activeIds={activeIds}
+          clusters={questionClusters}
+          isClickable
+          isClicking={isClicking}
+          labelPosition="bottom"
+          onMouseDown={onMouseDown}
+          onMouseOut={onMouseOut}
+          onMouseOver={onMouseOver}
+          onMouseUp={onMouseUp}
+          selectedId={selectedId}
+          tokens={question}
+        />
+        <div style={{ textAlign: 'center' }}>
+          ↓
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          Question Parser
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          ↓
+        </div>
+        <div style={{ textAlign: 'center', fontFamily: 'monospace' }}>
+          {Object.keys(questionClusters).reduce((acc, predicate) => {
+            if (acc === '') {
+              return `${predicate}()`;
+            }
+            return `${predicate}(${acc})`;
+          }, '')}
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          ↓
+        </div>
+        <div>
+          {Object.keys(questionClusters).map((key, i) => {
+            return (
+              <div 
+                key={i}
+                style={{ display: 'flex', justifyContent: 'center' }}
+              >
+                <div 
+                  style={{ 
+                    display: 'unset',
+                    textAlign: 'center',
+                    width: `${(Object.keys(questionClusters).length - i) / Object.keys(questionClusters).length * 100}%`
+                  }}
+                  className={`highlight ${getHighlightColor(i)} clickable ${selectedId === key ? 'selected' : ''} ${!isClicking && activeIds && activeIds.includes(key) ? 'active' : ''}`}
+                  onMouseDown={onMouseDown ? () => onMouseDown(key, 0) : null}
+                  onMouseOver={onMouseOver ? () => onMouseOver(key) : null}
+                  onMouseOut={onMouseOut ? () => onMouseOut(key) : null}
+                  onMouseUp={onMouseUp ? () => onMouseUp(key) : null}
+                >
+                  {key}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          ↓
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          Answer: Connor Barth
+        </div>
+      </div>
+      <div style={{ padding: '8px' }}>
+        <NestedHighlight
+          activeDepths={activeDepths}
+          activeIds={activeIds}
+          clusters={clusters}
+          isClickable
+          isClicking={isClicking}
+          labelPosition="bottom"
+          onMouseDown={onMouseDown}
+          onMouseOut={onMouseOut}
+          onMouseOver={onMouseOver}
+          onMouseUp={onMouseUp}
+          selectedId={selectedId}
+          tokens={document}
+        />
+      </div>
+    </div>
+  );
+}
+
+const NmnDropExplanation = withHighlightClickHandling(NmnDrop);
 
 const MultiSpanHighlight = ({original, highlightSpans, highlightStyles}) => {
   if(original && highlightSpans && highlightStyles) {
@@ -231,7 +371,7 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
               </OutputField>
 
               <OutputField label="Explanation">
-                The model decided the answer was in the passage.
+                <NmnDropExplanation />
               </OutputField>
 
               <OutputField label="Passage">
