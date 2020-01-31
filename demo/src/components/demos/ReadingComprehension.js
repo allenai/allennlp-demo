@@ -49,13 +49,18 @@ const taskModels = [
   {
     name: "NAQANet (trained on DROP)",
     desc: "An augmented version of QANet that adds rudimentary numerical reasoning ability,<br/>trained on DROP (Dua et al., 2019), as published in the original DROP paper."
+  },
+  {
+    name: "NMN (trained on DROP)",
+    desc: "A neural module network trained on DROP."
   }
 ]
 
 const taskEndpoints = {
   "ELMo-BiDAF (trained on SQuAD)": "elmo-reading-comprehension",
   "BiDAF (trained on SQuAD)": "reading-comprehension",
-  "NAQANet (trained on DROP)": "naqanet-reading-comprehension"
+  "NAQANet (trained on DROP)": "naqanet-reading-comprehension",
+  "NMN (trained on DROP)": "nmn-drop"
 };
 
 const fields = [
