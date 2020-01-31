@@ -3,6 +3,7 @@ import json
 
 from allennlp.predictors import Predictor
 from allennlp.models.archival import load_archive
+from allennlp.common import util
 
 from server.demo_model import DemoModel
 from server.gpt2 import Gpt2DemoModel
@@ -33,6 +34,9 @@ def load_demo_models(models_file: str,
     for task_name in task_names:
         model = blob[task_name]
         model_type = model.get("type", "allennlp")
+
+        if task_name == "nmn-drop":
+            util.import_submodules("semqa")
 
         # If ever we introduce additional model types,
         # we'll need to add corresponding logic here.

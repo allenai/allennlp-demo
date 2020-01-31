@@ -15,6 +15,11 @@
         "predictor_name": "machine-comprehension",
         "max_request_length": 25819
     },
+    "nmn-drop": {
+        "archive_file": "https://nmn-drop.s3.amazonaws.com/model.tar.gz",
+        "predictor_name": "drop_demo_predictor",
+        "max_request_length": 25819
+    },
     "semantic-role-labeling": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2019.06.17.tar.gz",
         "predictor_name": "semantic-role-labeling",
