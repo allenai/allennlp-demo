@@ -46,7 +46,15 @@ To run the demo locally for development, you will need to:
     export DEMO_POSTGRES_USER=$USER
     ```
 
-4. Start the backend service
+4. Start the backend service. If you don't specify specific models, it will load every model in the demo, which might use more memory than you have available. If your goal is to test out one or two models, you should load them exclusively:
+
+    ```bash
+    ./app.py --model model1 --model model2
+    ```
+
+    Where you see "model1" and "model2" examples above, you would use actual model names which are listed as JSON object key names [here](https://github.com/allenai/allennlp-demo/blob/master/models.json).
+
+    If you really want to load every model, you can do that with
 
     ```bash
     ./app.py
@@ -58,31 +66,65 @@ To run the demo locally for development, you will need to:
 ## Running with Docker
 
 Here is an example for how to manually build the Docker image and run the demo on port 8000.
+As above, you probably don't want to load every model,
+so you should specify the specific models you want in your `docker run` command.
 
 ```bash
 export GIT_HASH=`git log -1 --pretty=format:"%H"`
 docker build -t allennlp/demo:$GIT_HASH .
 mkdir -p $HOME/.allennlp
-docker run -p 8000:8000 -v $HOME/.allennlp:/root/.allennlp --rm allennlp/demo:$GIT_HASH
+docker run -p 8000:8000 \
+           -v $HOME/.allennlp:/root/.allennlp \
+           --rm \
+           allennlp/demo:$GIT_HASH \
+           --model model1 --model model2
 ```
+
+Where you see "model1" and "model2" examples above, you would use actual model names which are listed as JSON object key names [here](https://github.com/allenai/allennlp-demo/blob/master/models.json).
 
 Note that the `run` process may get killed prematurely if there is insufficient memory allocated to Docker. As of September 14, 2018, setting a memory limit of 10GB was sufficient to run the demo. See [Docker Docs](https://docs.docker.com/docker-for-mac/#advanced) for more on setting memory allocation preferences.
 
+## Deploying
 
+The AllenNLP demo runs on [Skiff](https://github.com/allenai/skiff)
+and is deployed using Google Cloud Build triggers. In particular, it runs on Kubernetes with each model getting its own container, along with a
+container to serve the shared UI / menu.
 
+Although (as in previous steps) the demo is able to run on a single machine
+(modulo the memory pressure from loading all the models),
+the Skiff version is distributed using Kubernetes as follows:
 
+(1) there is a dedicated "demo front-end" container that doesn't load any models
+(2) the ingress controller routes e.g. /predict/machine-comprehension to a dedicated "machine comprehension" container
+(3) that container loads only the machine comprehension model
 
-## Contributing a new model to the demo
+See the comments in `src/App.js` for more detail.
+
+Every commit to the `master` branch will deploy to [demo.staging.allennlp.org](https://demo.staging.allennlp.org).
+
+To deploy the production demo, merge this branch into the `release` branch.
+
+## Monitoring
+
+You can access the demo logs through [Marina](https://marina.apps.allenai.org/a/allennlp-demo),
+which links to GCP, or by visiting GCP directly. The two that are most frequently useful are
+
+* [Cloud Build - History](https://console.cloud.google.com/cloud-build/builds?project=ai2-reviz&query=results.images.name%3D%20%22gcr.io%2Fai2-reviz%2Fallennlp-demo%22) (where you can see if / why your builds failed)
+* [Kubernetes Engine - Workloads](https://console.cloud.google.com/kubernetes/workload?project=ai2-reviz&workload_list_tablesize=50&workload_list_tablequery=%255B%257B_22k_22_3A_22is_system_22_2C_22t_22_3A11_2C_22v_22_3A_22_5C_22false_5C_22_22_2C_22s_22_3Atrue%257D_2C%257B_22k_22_3A_22metadata%252Fname_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22allennlp-demo-*_5C_22_22%257D%255D) (where you can find the various containers making up the service)
+
+although you can get the logs directly through Marina.
+
+## Contributing a new AllenNLP model to the demo
 
 The following describes the steps to add a new [AllenNLP](https://github.com/allenai/allennlp) model to the online [AllenNLP demo](https://demo.allennlp.org).
 
 We assume you already have an AllenNLP model with the code for the model in `allennlp/models/`. To begin, create an AllenNLP Predictor for your model in `allennlp/predictors`. A good template to start with would be the [Sentiment Analysis predictor](https://github.com/allenai/allennlp/blob/master/allennlp/predictors/text_classifier.py).
 
-With the predictor set up, we will now consider two possible scenarios: 
+With the predictor set up, we will now consider two possible scenarios:
 
-1. The task your model solves is already available in the demos (e.g., adding a new textual entailment model). 
+1. The task your model solves is already available in the demos (e.g., adding a new textual entailment model).
 
-2. You are creating a demo for a task that is not in the demos (below we pretend Sentiment Analysis is not present in the demo to illustrate this process). 
+2. You are creating a demo for a task that is not in the demos (below we pretend Sentiment Analysis is not present in the demo to illustrate this process).
 
 ### Adding a New Model for an Existing Task
 
@@ -96,26 +138,26 @@ It should only you to change a single line of code to add a new model for a task
 
 ### Creating a demo for a new task
 
-If your task is not implemented in the AllenNLP demos, we will need to create code to query the model, as well as the create the front-end JavaScript/HTML to display the predictions, interpretations, and attacks. We will use Sentiment Analysis as a running example.
+If your task is not implemented in the AllenNLP demos, we will need to create code to query the model, as well as the create the front-end JavaScript/HTML to display the predictions, interpretations, and attacks. We will use Sentiment Analysis as a running example. Accordingly our model name will be `sentiment-analysis` and we will be using the `SentimentAnalysis` React component.
 
 Here is a [pull request](https://github.com/allenai/allennlp-demo/commit/149d068ccb970d93c1eaf93618a5b16c08cd6582) that implements the below steps. Feel free to follow that PR as a guide.
 
 1. Fork and clone [allennlp-demo](https://github.com/allenai/allennlp-demo) and follow the installation instructions.
 
-2. Add the path to your trained model using a `DemoModel` in `models.json`. For example, we will add 
-    ```json        
+2. Add the path to your trained model using a `DemoModel` in `models.json`. For example, we will add
+    ```json
     "sentiment-analysis": {
       "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
       "predictor_name": "text_classifier",
       "max_request_length": 1000
-    },   
+    },
     ```
 
 Make sure `text_classifier` matches the name from your AllenNLP predictor. In our case, the predictor class should have `@Predictor.register('text_classifier')` at the top.
 
 3. In `app.py` consider adding a log of your model's outputs. Search for `log_blob` in the `predict` function for an example of how to do this.
 
-4. The backend is now set up. Now let's create the front end for your model. Add your model under its associated category in the `modelGroups` object in `demo/src/models.js`. 
+4. The backend is now set up. Now let's create the front end for your model. Add your model under its associated category in the `modelGroups` object in `demo/src/models.js`.
 ```js
 {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis}
 ```
@@ -124,6 +166,40 @@ Also make sure to import your component at the top of the file.
 5. Create a new JavaScript file for your model in `demo/src/components/demos`. The JavaScript follows a basic template that can be copied from other files. See the [Sentiment Analysis front end](https://github.com/allenai/allennlp-demo/blob/149d068ccb970d93c1eaf93618a5b16c08cd6582/demo/src/components/demos/SentimentAnalysis.js) for an example template.
 
 You can find more information about the front end creation at the bottom of the README.
+
+## Contributing a non-AllenNLP Model
+
+The models in the demo are served using a Flask wrapper
+and the most recent release of AllenNLP. However, at some point you may want
+to contribute a model to the demo that doesn't run on AllenNLP,
+that runs on a fork of AllenNLP, or that requires an older version of AllenNLP or PyTorch.
+
+You can add such components to the demo by preparing a Docker image
+that serves them. It needs to follow the following conventions.
+You need to choose a unique name for your model, say, `my-new-model`. Then
+
+* your Docker image should have a web server running on port 8000
+
+* it should serve your front-end at the URL `/task/my-new-model`
+
+* it should serve your back-end (assuming you have one) at `/predict/my-new-model`
+
+You will then need to add an entry to `models.json` that looks like
+
+```
+    "my-new-model": {
+        "image": "registry/location/of/docker/image"
+    }
+```
+
+and finally modify `demo/src/models.js` to add its entry to the menu:
+
+```
+    {"model": "my-new-model", "name": "Descriptive Name"}
+```
+
+(you don't have to specify a `component` for it, as your Docker image is 100% responsible
+ for serving the front-end however it wants to).
 
 ## Adding a New Interpretation Method
 
@@ -152,13 +228,13 @@ class MyFavoriteInterpreter(SaliencyInterpreter):
 You can see the final code for SmoothGrad [here](https://github.com/allenai/allennlp/blob/master/allennlp/interpret/saliency_interpreters/smooth_gradient.py).
 
 3. Add your new class to the `__init__.py` file in  `allennlp/allennlp/interpret/saliency_interpreters/__init__.py`. In our case we add the line `from allennlp.interpret.saliency_interpreters.smooth_gradient import SmoothGradient
-`. 
+`.
 
 4. You are done with the interpretation method! Let's move on to the front-end visualizations. We will demonstrate how to add SmoothGrad to the Sentiment Analysis demo. First, fork and clone the [AllenNLP Demo repo](https://github.com/allenai/allennlp-demo).
 
 5. In `app.py`, import SmoothGradient at the top: `from allennlp.interpret.saliency_interpreters import SmoothGradient. Then, register the Interpreter for Smoothgrad in `make_app()`: add `app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)` at the bottom of the function.
 
-6. Add your interpretation method's name to `allennlp-demo/demo/src/components/InterpretConstants.js`. And add a header title for your method here `allennlp-demo/demo/src/components/Saliency.js`. 
+6. Add your interpretation method's name to `allennlp-demo/demo/src/components/InterpretConstants.js`. And add a header title for your method here `allennlp-demo/demo/src/components/Saliency.js`.
 
 6. Add the call to the reusable visaulization component in the demo front-end. For example, SmoothGrad is implemented alongside Integrated Gradients in the `SaliencyMaps` constant inside `allennlp-demo/demo/src/components/demos/SentimentAnalysis.js`. Now you are done! Start the demo, and look inside Sentiment Analysis for the SmoothGrad visualizations.
 

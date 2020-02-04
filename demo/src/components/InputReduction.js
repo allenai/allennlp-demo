@@ -64,7 +64,7 @@ export default class InputReductionComponent extends React.Component {
 
     callReduceFunction = reduceFunction => () => {
       this.setState({ ...this.state, loading: true})
-      reduceFunction({})
+      reduceFunction({}).then(() => this.setState({ loading: false }))
     }
 
     render() {
@@ -91,9 +91,6 @@ export default class InputReductionComponent extends React.Component {
             // premise for SNLI.
             // (2) you can format the original input and the reduced input yourself, to
             // customize the display for, e.g., NER.
-            if (this.state.loading) { // loading is done
-                this.setState({ loading: false });
-            }
             const original = reducedInput.original;
             const formattedOriginal = reducedInput.formattedOriginal;
             let internalText = [];
@@ -121,7 +118,7 @@ export default class InputReductionComponent extends React.Component {
                     internalText.push(noReduction ? <p>(No reduction was possible)</p> : <p></p>)
                 })
             }
-            displayText = <div>{internalText}</div>
+            displayText = <div>{internalText.map((text, i) => <span key={i}>{text}</span>)}</div>
         }
 
         return (

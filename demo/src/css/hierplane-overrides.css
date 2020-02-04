@@ -10,11 +10,11 @@
   margin-right: 1em;
 }
 
-.hierplane__visualization-verbs a svg {
+.hierplane__visualization-verbs button svg {
   fill: rgba(28, 47, 58, .5);
 }
 
-.hierplane__visualization-verbs a:hover svg {
+.hierplane__visualization-verbs button:hover svg {
   fill: #1c2f3a;
 }
 

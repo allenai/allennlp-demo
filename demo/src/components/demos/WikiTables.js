@@ -88,7 +88,7 @@ const Output = ({ responseData }) => {
           { answer }
         </OutputField>
 
-        <OutputField label="Logical Form" suppressSummary="true">
+        <OutputField label="Logical Form">
           <SyntaxHighlight language="lisp">
               {logical_form[0].toString()}
           </SyntaxHighlight>

@@ -65,7 +65,7 @@ export default class HotflipComponent extends React.Component {
 
   callAttackFunction = attackFunction => () => {
     this.setState({ ...this.state, loading: true})
-    attackFunction(this.state)
+    attackFunction(this.state).then(() => this.setState({ loading: false }));
   }
 
   handleHighlightMouseDown(id, depth) {
@@ -122,9 +122,6 @@ export default class HotflipComponent extends React.Component {
     }
     // data is available, display the results of Hotflip
     else {
-        if (this.state.loading) { // loading is done
-            this.setState({ loading: false });
-        }
         [originalString, flippedString] = colorizeTokensForHotflipUI(hotflipData["original"],
                                                                      hotflipData["final"][0])
         newPrediction = hotflipData["new_prediction"]
