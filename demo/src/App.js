@@ -3,14 +3,15 @@ import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@allenai/varnish/theme';
 import { DefaultLayoutProvider } from '@allenai/varnish/layout';
-import { Header, ExternalLink } from '@allenai/varnish/components';
+import { Header, ExternalLink, Content, Layout, HeaderColumns, Footer } from '@allenai/varnish/components';
 
 import { API_ROOT } from './api-config';
-import { Menu } from './components/Menu';
+import Menu from './components/Menu';
 import ModelIntro from './components/ModelIntro';
 import { modelComponents, modelRedirects } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
+import allenNlpLogo from './components/allennlp_logo.svg';
 
 import './css/App.css';
 import './css/fonts.css';
@@ -75,15 +76,37 @@ const Demo = (props) => {
   const redirectedModel = modelRedirects[model] || model
 
   return (
-    <React.Fragment>
-      <Header alwaysVisible={true} />
-      <div className="pane-container">
-        <Menu selectedModel={redirectedModel} clearData={() => {}}/>
-        <SingleTaskFrame model={redirectedModel} slug={slug} search={search} />
-      </div>
-    </React.Fragment>
-  )
+    <Layout bgcolor="white">
+      <Header alwaysVisible={true}>
+          <HeaderColumnsWithSpace gridTemplateColumns="auto auto 1fr">
+            <Logo width="124px"
+              height="22px"
+              alt="AllenNLP"
+            />
+          </HeaderColumnsWithSpace>
+        </Header>
+      <Layout>
+        <Menu redirectedModel={redirectedModel} />
+        <Layout>
+          <Content>
+            <SingleTaskFrame model={redirectedModel} slug={slug} search={search} />
+          </Content>
+          <Footer />
+        </Layout>
+      </Layout>
+    </Layout>
+  );  
 }
+
+const Logo = styled.img.attrs({
+  src: allenNlpLogo
+})`
+  height: 56px;
+`;
+
+const HeaderColumnsWithSpace = styled(HeaderColumns)`
+    padding: 11.5px 0;
+`;
 
 // Load the task in an iframe
 const SingleTaskFrame = (props) => {
@@ -91,7 +114,7 @@ const SingleTaskFrame = (props) => {
   const maybeSlug = slug ? `/${slug}` : ''
   const url = `/task/${model}${maybeSlug}${search}`
 
-  return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%", borderWidth: 0}}/>
+  return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%", height: "100%", borderWidth: 0}}/>
 }
 
 
