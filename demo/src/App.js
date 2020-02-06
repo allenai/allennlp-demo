@@ -86,10 +86,12 @@ const Demo = (props) => {
     <Layout bgcolor="white">
       <Header alwaysVisible={true}>
           <HeaderColumnsWithSpace gridTemplateColumns="auto auto 1fr">
-            <Logo width="124px"
-              height="22px"
-              alt="AllenNLP"
-            />
+          <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
+              <Logo width="124px"
+                height="22px"
+                alt="AllenNLP"
+              />
+            </a>
           </HeaderColumnsWithSpace>
         </Header>
       <Layout>

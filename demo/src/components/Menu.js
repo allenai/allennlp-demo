@@ -18,11 +18,6 @@ import { modelGroups } from '../models'
 
 export default class Menu extends React.Component {
   siderWidthExpanded = '300px';
-  /**
-   * TODO: Figure out why this must be 80px, and no other value, antd
-   * sets this explicitly in CSS, so I'm not sure why the collapsedWidth
-   * property is provided.
-   */
   siderWidthCollapsed = '80px';
   constructor(props) {
       super(props);
@@ -35,6 +30,7 @@ export default class Menu extends React.Component {
   handleMenuCollapse = () => {
       this.setState({ menuCollapsed: !this.state.menuCollapsed });
   };
+  
   render() {
     return (
       <LeftSider
