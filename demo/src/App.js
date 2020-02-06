@@ -3,15 +3,22 @@ import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@allenai/varnish/theme';
 import { DefaultLayoutProvider } from '@allenai/varnish/layout';
-import { Header, ExternalLink, Content, Layout, HeaderColumns, Footer } from '@allenai/varnish/components';
+import { 
+  Content,
+  ExternalLink,
+  Footer,
+  Header,
+  HeaderColumns,
+  Layout,
+} from '@allenai/varnish/components';
 
+import allenNlpLogo from './components/allennlp_logo.svg';
 import { API_ROOT } from './api-config';
 import Menu from './components/Menu';
 import ModelIntro from './components/ModelIntro';
 import { modelComponents, modelRedirects } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
-import allenNlpLogo from './components/allennlp_logo.svg';
 
 import './css/App.css';
 import './css/fonts.css';

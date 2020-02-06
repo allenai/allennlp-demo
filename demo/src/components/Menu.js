@@ -1,5 +1,14 @@
 import React from 'react';
-import { LeftSider, InternalLink, LeftMenu, IconMenuItemColumns, ImgIcon, Wrapping, BodySmall, LeftMenuItem } from '@allenai/varnish/components';
+import { 
+  BodySmall, 
+  IconMenuItemColumns, 
+  ImgIcon, 
+  InternalLink, 
+  LeftMenu, 
+  LeftMenuItem,
+  LeftSider,
+  Wrapping, 
+} from '@allenai/varnish/components';
 
 import { modelGroups } from '../models'
 
