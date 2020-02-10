@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Footer } from '@allenai/varnish/components';
 
 import '../css/Pane.css';
 import '../css/model.css';
@@ -50,7 +49,6 @@ class ResultDisplay extends React.Component {
         <div className={`pane__${resultPane} model__output ${outputState !== "received" ? "model__output--empty" : ""}`}>
           <div className="pane__thumb"></div>
           {outputContent}
-          <Footer />
         </div>
       );
     }
