@@ -219,7 +219,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     hotflipData["final"][0] = cleanTokensForDisplay(hotflipData["final"][0]);
   }
   return (
-    <OutputField>
+    <OutputField label="Model Attacks">
       <Accordion accordion={false}>
         <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
       </Accordion>
