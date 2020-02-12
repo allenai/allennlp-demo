@@ -155,7 +155,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     };
   }
   return (
-    <OutputField>
+    <OutputField label="Model Attacks">
       <Accordion accordion={false}>
         <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
       </Accordion>

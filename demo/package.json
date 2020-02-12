@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@allenai/varnish": "0.8.6",
+    "@allenai/varnish": "0.8.11",
     "ajv": "^6.10.0",
     "antd": "^3.23.2",
     "colormap": "^2.3.1",

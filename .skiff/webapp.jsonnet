@@ -58,18 +58,16 @@ local num_replicas = (
 );
 
 local topLevelDomain = '.apps.allenai.org';
-local canonicalTopLevelDomain = '.allennlp.org';
 
-local hosts = [
+// Only register demo.allennlp.org for production environments, there's 
+// no wildcard entry (*.allennlp.org) directing URLs with the environment
+// as a subdomain to the Skiff cluster. If a URL is included here that
+// isn't routed to the cluster a TLS certificate can't be issued.
+local hosts =
     if env == 'prod' then
-        config.appName + topLevelDomain
+        [ config.appName + topLevelDomain, 'demo.allennlp.org' ]
     else
-        config.appName + '.' + env + topLevelDomain,
-    if env == 'prod' then
-        'demo' + canonicalTopLevelDomain
-    else
-        'demo' + '.' + env + canonicalTopLevelDomain
-];
+        [ config.appName + '.' + env + topLevelDomain ];
 
 // Each app gets it's own namespace
 local namespaceName = config.appName;
