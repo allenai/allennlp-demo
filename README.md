@@ -188,8 +188,14 @@ You will then need to add an entry to `models.json` that looks like
 
 ```
     "my-new-model": {
-        "image": "registry/location/of/docker/image"
+        "image": "myNewModelImage"
     }
+```
+
+That references an environment variable that will be pulled in by jsonnet. In the "config" step of .skiff/cloudbuild-deploy.yaml add a line like:
+
+```
+    '--ext-str', 'myNewModelImage=registry/location/of/docker/image',
 ```
 
 and finally modify `demo/src/models.js` to add its entry to the menu:
