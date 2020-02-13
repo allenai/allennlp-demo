@@ -31,7 +31,7 @@
         "max_request_length": 13129
     },
     "coreference-resolution": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/coref-bert-lstm-2020.02.04.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/coref-bert-lstm-2020.02.12.tar.gz",
         "predictor_name": "coreference-resolution",
         "max_request_length": 21097,
         "image": "corefImage"
