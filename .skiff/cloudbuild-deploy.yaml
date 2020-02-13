@@ -12,6 +12,14 @@ steps:
     '-c',
     'docker pull gcr.io/$PROJECT_ID/$REPO_NAME:latest || exit 0'
   ]
+# Pull the current latest coref image, so we can use its cached layers.
+- id: 'pull-coref'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/bash'
+  args: [
+    '-c',
+    'docker pull gcr.io/$PROJECT_ID/$REPO_NAME:coref-latest || exit 0'
+  ]
 # Build the Docker image and tag with the current SHA and latest.
 - id: 'build'
   name: 'gcr.io/cloud-builders/docker'
@@ -23,12 +31,31 @@ steps:
     '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
     '.'
   ]
+# Build the coref Docker image and tag with the current SHA and latest.
+- id: 'build-coref'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-f', 'Dockerfile.coref',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME:coref-$COMMIT_SHA',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME:coref-latest',
+    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest',
+    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME:coref-latest',
+    '.'
+  ]
 # Push the image tagged by the SHA
 - id: 'push'
   name: 'gcr.io/cloud-builders/docker'
   args: [
     'push',
     'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
+  ]
+# Push the coref image tagged by the SHA
+- id: 'push-coref'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'push',
+    'gcr.io/$PROJECT_ID/$REPO_NAME:coref-$COMMIT_SHA',
   ]
 # Generate our Kubernetes configuration
 - id: 'config'
@@ -39,6 +66,7 @@ steps:
     '--output-file', './webapp.json',
     '--ext-str', 'env=$_ENV',
     '--ext-str', 'image=gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
+    '--ext-str', 'corefImage=gcr.io/$PROJECT_ID/$REPO_NAME:coref-$COMMIT_SHA',
     '--ext-str', 'sha=$COMMIT_SHA',
     '--ext-str', 'buildId=$BUILD_ID',
     '--ext-str', 'repo=$REPO_NAME',
@@ -58,10 +86,12 @@ substitutions:
   _ENV: staging
 images: [
   'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
-  'gcr.io/$PROJECT_ID/$REPO_NAME:latest'
+  'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
+  'gcr.io/$PROJECT_ID/$REPO_NAME:coref-$COMMIT_SHA',
+  'gcr.io/$PROJECT_ID/$REPO_NAME:coref-latest'
 ]
 artifacts:
   objects:
     location: 'gs://skiff-archive/$REPO_NAME/$_ENV/$COMMIT_SHA/$BUILD_ID'
     paths: ['.skiff/webapp.json']
-timeout: 900s
+timeout: 1800s
