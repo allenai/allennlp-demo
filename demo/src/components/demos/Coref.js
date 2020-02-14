@@ -31,7 +31,7 @@ const description = (
     </span>
     <ExternalLink href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener">{' '} the Ontonotes 5.0 dataset {' '}</ExternalLink>
     <span>
-    in early 2017.
+    in early 2017. We substitute the GloVe embeddings that it uses with BERT embeddings.
     </span>
   </span>
 );
