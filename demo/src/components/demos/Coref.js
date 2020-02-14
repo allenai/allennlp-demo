@@ -31,7 +31,8 @@ const description = (
     </span>
     <ExternalLink href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener">{' '} the Ontonotes 5.0 dataset {' '}</ExternalLink>
     <span>
-    in early 2017.
+    in early 2017. The model here is based on that paper, but we have substituted the GloVe embeddings
+    that it uses with BERT embeddings. On Ontonotes that gives an F1 score of 72.13 on test.
     </span>
   </span>
 );
