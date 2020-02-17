@@ -34,6 +34,9 @@ const description = (
     in early 2017. The model here is based on that paper, but we have substituted the GloVe embeddings
     that it uses with BERT embeddings. On Ontonotes that gives an F1 score of 72.13 on test.
     </span>
+    <p>
+      <b>Contributed by:</b> Zhaofeng Wu
+    </p>
   </span>
 );
 
