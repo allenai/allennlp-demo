@@ -37,12 +37,12 @@
         "image": "corefImage"
     },
     "named-entity-recognition": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/ner-model-2018.12.18.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/ner-model-2020.02.10.tar.gz",
         "predictor_name": "sentence-tagger",
         "max_request_length": 94864
     },
     "fine-grained-named-entity-recognition": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner-model-elmo-2018.12.21.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner-model-elmo-2020.02.10.tar.gz",
         "predictor_name": "sentence-tagger",
         "max_request_length": 22878
     },
