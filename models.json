@@ -5,7 +5,7 @@
         "max_request_length": 311108
     },
     "elmo-reading-comprehension": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2020.02.19-charpad.tar.gz",
         "memory": "2Gi",
         "predictor_name": "reading-comprehension",
         "max_request_length": 311108
