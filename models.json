@@ -1,6 +1,6 @@
 {
     "reading-comprehension": {
-        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-model-2020.02.10-charpad.tar.gz",
         "predictor_name": "machine-comprehension",
         "max_request_length": 311108
     },
@@ -57,7 +57,7 @@
         "max_request_length": 5675
     },
     "wikitables-parser": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2019.07.29.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2020.02.10.tar.gz",
         "predictor_name": "wikitables-parser",
         "max_request_length": 8177
     },

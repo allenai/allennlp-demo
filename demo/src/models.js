@@ -1,6 +1,5 @@
 import SemanticRoleLabeling from './components/demos/SemanticRoleLabeling';
 import OpenIe from './components/demos/OpenIe';
-import Event2Mind from './components/demos/Event2Mind';
 import TextualEntailment from './components/demos/TextualEntailment';
 import SentimentAnalysis from './components/demos/SentimentAnalysis';
 import ReadingComprehension from './components/demos/ReadingComprehension';
@@ -69,7 +68,6 @@ const modelGroups = [
         defaultOpen: true,
         models: [
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
-            {model: "event2mind", name: "Event2Mind", component: Event2Mind},
             {model: "next-token-lm", name: "Language Modeling", component: LanguageModel, redirects: ["gpt2"]},
             {model: "masked-lm", name: "Masked Language Modeling", component: MaskedLm}
         ]
