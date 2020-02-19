@@ -10,7 +10,6 @@ import DependencyParser from './components/demos/DependencyParser';
 import WikiTables from './components/demos/WikiTables';
 import Nlvr from './components/demos/Nlvr';
 import Atis from './components/demos/Atis';
-import QuarelZero from './components/demos/QuarelZero';
 import LanguageModel from './components/demos/LanguageModel';
 import MaskedLm from './components/demos/MaskedLm';
 import annotateIcon from './icons/annotate-14px.svg';
@@ -58,8 +57,7 @@ const modelGroups = [
         models: [
             {model: "wikitables-parser", name: "WikiTableQuestions Semantic Parser", component: WikiTables},
             {model: "nlvr-parser", name: "Cornell NLVR Semantic Parser", component: Nlvr},
-            {model: "atis-parser", name: "Text to SQL (ATIS)", component: Atis},
-            {model: "quarel-parser-zero", name: "QuaRel Zero", component: QuarelZero}
+            {model: "atis-parser", name: "Text to SQL (ATIS)", component: Atis}
         ]
     },
     {

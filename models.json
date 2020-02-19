@@ -76,11 +76,6 @@
         "predictor_name": "atis-parser",
         "max_request_length": 2236
     },
-    "quarel-parser-zero": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/quarel-parser-zero-2018.12.20.tar.gz",
-        "predictor_name": "quarel-parser",
-        "max_request_length": 6695
-    },
     "next-token-lm": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/gpt2-next-word-lm-2020.02.19.tar.gz",
         "predictor_name": "next_token_lm",
