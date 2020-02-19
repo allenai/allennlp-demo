@@ -52,7 +52,7 @@
         "max_request_length": 2236
     },
     "dependency-parsing": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2020.02.10.tar.gz",
         "predictor_name": "biaffine-dependency-parser",
         "max_request_length": 5675
     },
