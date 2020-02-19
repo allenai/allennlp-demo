@@ -7,7 +7,7 @@
     "elmo-reading-comprehension": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz",
         "memory": "2Gi",
-        "predictor_name": "machine-comprehension",
+        "predictor_name": "reading-comprehension",
         "max_request_length": 311108
      },
     "naqanet-reading-comprehension": {
@@ -62,7 +62,7 @@
         "max_request_length": 8177
     },
     "nlvr-parser": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/nlvr-erm-model-2018-12-18-rule-vocabulary-updated.tar.gz",
+        "archive_file": "https://allennlp.s3.amazonaws.com/models/nlvr-erm-model-2020.02.10-rule-vocabulary-updated.tar.gz",
         "predictor_name": "nlvr-parser",
         "max_request_length": 1136
     },
