@@ -47,7 +47,7 @@
         "max_request_length": 22878
     },
     "constituency-parsing": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2018.03.14.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2020.02.10.tar.gz",
         "predictor_name": "constituency-parser",
         "max_request_length": 2236
     },
