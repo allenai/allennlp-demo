@@ -79,7 +79,7 @@ def main(demo_dir: str,
          interpret_cache_size: int,
          attack_cache_size: int,
          models: Dict[str, DemoModel]) -> None:
-    """Run the server programatically"""
+    """Run the server programmatically"""
     logger.info("Starting a flask server on port %i.", port)
 
     logger.info(f"With models {models}")
