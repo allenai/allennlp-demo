@@ -16,7 +16,7 @@
         "max_request_length": 25819
     },
     "semantic-role-labeling": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2019.06.17.tar.gz",
+        "archive_file": "https://allennlp.s3.amazonaws.com/models/srl-model-2020.02.10.tar.gz",
         "predictor_name": "semantic-role-labeling",
         "max_request_length": 4590
     },
@@ -26,7 +26,7 @@
         "max_request_length": 19681
     },
     "textual-entailment": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2018.02.19.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2020.02.10.tar.gz",
         "predictor_name": "textual-entailment",
         "max_request_length": 13129
     },
@@ -57,7 +57,7 @@
         "max_request_length": 5675
     },
     "wikitables-parser": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2020.02.10.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2019.07.29.tar.gz",
         "predictor_name": "wikitables-parser",
         "max_request_length": 8177
     },
