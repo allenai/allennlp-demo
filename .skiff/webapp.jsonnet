@@ -59,7 +59,7 @@ local num_replicas = (
 
 local topLevelDomain = '.apps.allenai.org';
 
-// Only register demo.allennlp.org for production environments, there's 
+// Only register demo.allennlp.org for production environments, there's
 // no wildcard entry (*.allennlp.org) directing URLs with the environment
 // as a subdomain to the Skiff cluster. If a URL is included here that
 // isn't routed to the cluster a TLS certificate can't be issued.
