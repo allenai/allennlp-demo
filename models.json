@@ -8,7 +8,8 @@
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2020.02.19-charpad.tar.gz",
         "memory": "2Gi",
         "predictor_name": "reading-comprehension",
-        "max_request_length": 311108
+        "max_request_length": 311108,
+        "image": "gcr.io/ai2-reviz/allennlp-demo:584070b73f7eb6eb1f82af723295aec0a44ae3a9"
      },
     "naqanet-reading-comprehension": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/naqanet-2020.02.19.tar.gz",
@@ -85,7 +86,8 @@
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2019.09.17.tar.gz",
         "predictor_name": "masked_language_model",
         "max_request_length": 10000,
-        "memory": "4Gi"
+        "memory": "4Gi",
+        "image": "gcr.io/ai2-reviz/allennlp-demo:584070b73f7eb6eb1f82af723295aec0a44ae3a9"
     },
     "sentiment-analysis": {
         "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
