@@ -5,7 +5,7 @@
         "max_request_length": 311108
     },
     "elmo-reading-comprehension": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2020.02.19-charpad.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz",
         "memory": "2Gi",
         "predictor_name": "reading-comprehension",
         "max_request_length": 311108,
@@ -17,7 +17,7 @@
         "max_request_length": 25819
     },
     "semantic-role-labeling": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/srl-model-2020.02.10.tar.gz",
+        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz",
         "predictor_name": "semantic-role-labeling",
         "max_request_length": 4590
     },
@@ -42,9 +42,10 @@
         "max_request_length": 94864
     },
     "fine-grained-named-entity-recognition": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner-model-elmo-2020.02.10.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner-model-elmo-2018.12.21.tar.gz",
         "predictor_name": "sentence-tagger",
-        "max_request_length": 22878
+        "max_request_length": 22878,
+        "image": "gcr.io/ai2-reviz/allennlp-demo:584070b73f7eb6eb1f82af723295aec0a44ae3a9"
     },
     "constituency-parsing": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2020.02.10.tar.gz",
