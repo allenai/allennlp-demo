@@ -148,23 +148,6 @@ class TestFlask(AllenNlpTestCase):
         results = json.loads(response.get_data())
         assert "verbs" in results
 
-    def test_event2mind(self):
-        response = self.post_json("/predict/event2mind",
-                                  data={"source": "PersonX starts to yell at PersonY"})
-        assert response.status_code == 200
-        results = json.loads(response.get_data())
-        assert "xintent_top_k_predicted_tokens" in results
-        assert "xreact_top_k_predicted_tokens" in results
-        assert "oreact_top_k_predicted_tokens" in results
-
-    def test_checks_request_length(self):
-        long_string = "PersonX" * 3000
-
-        response = self.post_json("/predict/event2mind", data={"source": long_string})
-        assert response.status_code == 400
-        results = json.loads(response.get_data())
-        assert results["message"].startswith("Max request length exceeded for model event2mind!")
-
     def test_caching(self):
         predictor = CountingPredictor()
         data = {"input1": "this is input 1", "input2": 10}
