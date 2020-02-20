@@ -9,6 +9,7 @@ WORKDIR /stage/allennlp
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
 
 # Install python dependencies
+RUN pip install git+git://github.com/allenai/allennlp-hub.git@d1a2099f3e0d618b46f9877ad2c265a4cc6be12b
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
