@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@allenai/varnish/theme';
 import { DefaultLayoutProvider } from '@allenai/varnish/layout';
-import { 
+import {
   Content,
   ExternalLink,
   Footer,
@@ -102,7 +102,7 @@ const Demo = (props) => {
         </Layout>
       </Layout>
     </Layout>
-  );  
+  );
 }
 
 const Logo = styled.img.attrs({
@@ -143,8 +143,19 @@ class SingleTaskDemo extends React.Component {
   // We also need to update the state whenever we receive new props from React router.
   componentDidUpdate() {
     const { model, slug } = this.props;
-    if (model !== this.state.selectedModel || slug !== this.state.slug) {
-        this.setState({ selectedModel: model, slug });
+      if (model !== this.state.selectedModel || slug !== this.state.slug) {
+        const isModelChange = model !== this.state.selectedModel;
+        const responseData = (
+            isModelChange
+                ? null
+                : this.state.responseData
+        );
+        const requestData = (
+            isModelChange
+                ? null
+                : this.state.requestData
+        );
+        this.setState({ selectedModel: model, slug, responseData, requestData });
     }
   }
 
