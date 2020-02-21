@@ -144,7 +144,7 @@ class SingleTaskDemo extends React.Component {
   componentDidUpdate() {
     const { model, slug } = this.props;
     if (model !== this.state.selectedModel || slug !== this.state.slug) {
-        this.setState({ selectedModel: model, slug, requestData: null, responseData: null });
+        this.setState({ selectedModel: model, slug });
     }
   }
 
