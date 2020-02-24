@@ -22,30 +22,25 @@ from server.models import DemoModel
 TEST_ARCHIVE_FILES = {
         'reading-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
         'semantic-role-labeling': 'tests/fixtures/srl/model.tar.gz',
-        'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz',
-        'open-information-extraction': 'tests/fixtures/openie/model.tar.gz'
+        'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz'
 }
 
 PREDICTOR_NAMES = {
-    'reading-comprehension': 'machine-comprehension',
+    'reading-comprehension': 'reading-comprehension',
         'semantic-role-labeling': 'semantic-role-labeling',
-        'textual-entailment': 'textual-entailment',
-        'open-information-extraction': 'open-information-extraction'
+        'textual-entailment': 'textual-entailment'
 }
 
-"""
 PREDICTORS = {
         name: Predictor.from_archive(load_archive(archive_file),
                                      predictor_name=PREDICTOR_NAMES[name])
         for name, archive_file in TEST_ARCHIVE_FILES.items()
 }
-"""
 
 LIMITS = {
         'reading-comprehension': 311108,
         'semantic-role-labeling': 4590,
-        'textual-entailment': 13129,
-        'open-information-extraction': 19681
+        'textual-entailment': 13129
 }
 
 
@@ -74,7 +69,6 @@ class FailingPredictor(Predictor):
     def predict_json(self, inputs: JsonDict) -> JsonDict:
         raise RuntimeError("Predicting is hard!")
 
-@pytest.mark.skip(reason="Test fixtures are out of date.")
 class TestFlask(AllenNlpTestCase):
     client = None
 
@@ -117,7 +111,7 @@ class TestFlask(AllenNlpTestCase):
         data = response.get_data()
         assert b"unknown model" in data and b"bogus_model" in data
 
-    def test_machine_comprehension(self):
+    def test_reading_comprehension(self):
         response = self.post_json("/predict/reading-comprehension",
                                   data={"passage": "the super bowl was played in seattle",
                                         "question": "where was the super bowl played?"})
@@ -141,6 +135,7 @@ class TestFlask(AllenNlpTestCase):
         results = json.loads(response.get_data())
         assert "verbs" in results
 
+    @pytest.mark.skip(reason="Test fixtures is out of date.")
     def test_open_information_extraction(self):
         response = self.post_json("/predict/open-information-extraction",
                                   data={"sentence": "the super bowl was played in seattle"})
@@ -306,7 +301,7 @@ class TestFlask(AllenNlpTestCase):
     def test_microservice(self):
         models = {
             'reading-comprehension': DemoModel(TEST_ARCHIVE_FILES['reading-comprehension'],
-                                               'machine-comprehension',
+                                               'reading-comprehension',
                                                LIMITS['reading-comprehension'])
         }
 

@@ -1,7 +1,7 @@
 {
     "reading-comprehension": {
         "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/bidaf-model-2017.09.15-charpad.tar.gz",
-        "predictor_name": "machine-comprehension",
+        "predictor_name": "reading-comprehension",
         "max_request_length": 311108
     },
     "textual-entailment": {
