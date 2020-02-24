@@ -139,7 +139,7 @@ const Token = styled.span`
   font-weight: 600;
 `
 
-const DEFAULT = "Joel is";
+const DEFAULT = "AllenNLP is";
 
 function addToUrl(output, choice) {
   if (window.frameElement) {

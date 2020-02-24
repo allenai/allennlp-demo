@@ -59,7 +59,7 @@ local num_replicas = (
 
 local topLevelDomain = '.apps.allenai.org';
 
-// Only register demo.allennlp.org for production environments, there's 
+// Only register demo.allennlp.org for production environments, there's
 // no wildcard entry (*.allennlp.org) directing URLs with the environment
 // as a subdomain to the Skiff cluster. If a URL is included here that
 // isn't routed to the cluster a TLS certificate can't be issued.
@@ -351,7 +351,7 @@ local get_memory(model_name) = if std.objectHas(models[model_name], "memory") th
 // that serves up the model at /predict/{model_name}
 // and that serves up the front-end at /task/{model_name}
 // and that (optionally) serves up permalinks at /permadata/{model_name},
-local get_image(model_name) = if std.objectHas(models[model_name], "image") then std.extVar(models[model_name]["image"]) else image;
+local get_image(model_name) = if std.objectHas(models[model_name], "image") then models[model_name]["image"] else image;
 
 local model_deployment(model_name) = {
     apiVersion: 'extensions/v1beta1',

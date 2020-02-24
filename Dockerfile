@@ -1,6 +1,6 @@
 # This Dockerfile is used to serve the AllenNLP demo.
 
-FROM allennlp/commit:ff0d44a5e21d5e6256c73b5b9f216a87c5743f91
+FROM allennlp/commit:17c2ff1ce2cb5e84ab9a0f524e6c01362c242cae
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /stage/allennlp
@@ -26,7 +26,7 @@ COPY tests/ tests/
 COPY app.py app.py
 COPY server/ server/
 
-RUN pytest tests/general_tests/
+RUN pytest tests/
 
 # Copy the configuration files used at runtime
 COPY models.json models.json
