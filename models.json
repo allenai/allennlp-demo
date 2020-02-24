@@ -76,7 +76,8 @@
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/gpt2-next-word-lm-2020.02.19.tar.gz",
         "predictor_name": "next_token_lm",
         "max_request_length": 10000,
-        "memory": "4Gi"
+        "memory": "4Gi",
+        "image": "gcr.io/ai2-reviz/allennlp-demo:584070b73f7eb6eb1f82af723295aec0a44ae3a9"
     },
     "masked-lm": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2019.09.17.tar.gz",
