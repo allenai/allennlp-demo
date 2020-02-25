@@ -93,15 +93,19 @@ const Demo = (props) => {
       <Layout>
         <Menu redirectedModel={redirectedModel} />
         <Layout>
-          <Content>
+          <FullSizeContent>
             <SingleTaskDemo model={redirectedModel} slug={slug} />
-          </Content>
+          </FullSizeContent>
           <Footer />
         </Layout>
       </Layout>
     </Layout>
   );
 }
+
+const FullSizeContent = styled(Content)`
+    padding: 0;
+`;
 
 const Logo = styled.img.attrs({
   src: allenNlpLogo
