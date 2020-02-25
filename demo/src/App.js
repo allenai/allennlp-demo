@@ -19,6 +19,7 @@ import ModelIntro from './components/ModelIntro';
 import { modelComponents, modelRedirects } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
+import { ScrollToTop } from './components/ScrollToTop';
 
 import './css/App.css';
 import './css/fonts.css';
@@ -54,11 +55,11 @@ In particular, that machine may be also running this code,
 for which the route `/task/<model_name>` serves the <SingleTaskDemo> component,
 which delegates to the particular ModelComponent specified in `demo/src/models.js`.
 */
-
 const App = () => (
   <ThemeProvider>
     <Router>
       <DefaultLayoutProvider layoutVariant="app">
+        <ScrollToTop />
         <Switch>
           <Route exact path="/" render={() => (
             <Redirect to={DEFAULT_PATH}/>
@@ -109,15 +110,6 @@ const Logo = styled.img.attrs({
 const HeaderColumnsWithSpace = styled(HeaderColumns)`
     padding: 6.5px 0;
 `;
-
-// Load the task in an iframe
-const SingleTaskFrame = (props) => {
-  const { model, slug, search } = props
-  const maybeSlug = slug ? `/${slug}` : ''
-  const url = `/task/${model}${maybeSlug}${search}`
-
-  return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%", height: "100%", borderWidth: 0}}/>
-}
 
 class SingleTaskDemo extends React.Component {
   constructor(props) {
