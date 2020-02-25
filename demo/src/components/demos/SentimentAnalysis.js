@@ -127,11 +127,19 @@ const Attacks = ({attackData, attackModel, requestData}) => {
 
 // What is rendered as Output when the user hits buttons on the demo.
 const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
+  const model = requestData ? requestData.model : undefined;
+
   const [positiveClassProbability, negativeClassProbability] = responseData['probs']
   const prediction = negativeClassProbability < positiveClassProbability ? "Positive" : "Negative"
 
   let t = requestData;
   const tokens = t['sentence'].split(' '); // this model expects space-separated inputs
+
+  // The RoBERTa-large model is very slow to be attacked
+  const attacks = model && model.includes('RoBERTa') ?
+    " "
+  :
+    <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
 
   // The "Answer" output field has the models predictions. The other output fields are the
   // reusable HTML/JavaScript for the interpretation methods.
@@ -144,7 +152,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
     <OutputField>
       <Accordion accordion={false}>
           <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={interpretModel} requestData={requestData}/>
-          <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
+          {attacks}
       </Accordion>
     </OutputField>
   </div>
