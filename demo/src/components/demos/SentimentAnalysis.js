@@ -18,11 +18,6 @@ import {
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
 
-// APIs. These link to the functions in app.py
-const apiUrl = () => `${API_ROOT}/predict/sentiment-analysis`
-const apiUrlInterpret = () => `${API_ROOT}/interpret/sentiment-analysis`
-const apiUrlAttack = () => `${API_ROOT}/attack/sentiment-analysis`
-
 // title of the page
 const title = "Sentiment Analysis"
 
@@ -33,11 +28,11 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 const description = (
   <span>
     <span>
-    Sentiment Analysis predicts whether an input is positive or negative. The model is based on
-     <a href="https://arxiv.org/pdf/1907.11692.pdf">RoBERTa large</a>
-     and is trained on the binary classification setting of
+    Sentiment Analysis predicts whether an input is positive or negative. The two models are based
+    on GloVe embeddings and <a href="https://arxiv.org/pdf/1907.11692.pdf">RoBERTa large</a>,
+    respectively, and are trained on the binary classification setting of
     the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.
-    It achieves 95.11% accuracy on the test set.
+    They achieves about 87% and 95.11% accuracy on the test set.
     </span>
     <p>
       <b>Contributed by:</b> Zhaofeng Wu
@@ -48,11 +43,46 @@ const descriptionEllipsed = (
   <span> Sentiment Analysis predicts whether an input is positive or negative… </span>
 );
 
+const taskModels = [
+  {
+    name: "GloVe-LSTM",
+    desc: "Using GloVe embeddings and an LSTM layer."
+  },
+  {
+    name: "RoBERTa",
+    desc: "Using RoBERTa embeddings."
+  }
+]
+
+const taskEndpoints = {
+  "GloVe-LSTM": "glove-sentiment-analysis",
+  "RoBERTa": "roberta-sentiment-analysis"
+};
+
 // Input fields to the model.
 const fields = [
   {name: "sentence", label: "Input", type: "TEXT_INPUT",
-   placeholder: 'E.g. "amazing movie"'}
+   placeholder: 'E.g. "amazing movie"'},
+  {name: "model", label: "Model", type: "RADIO", options: taskModels, optional: true}
 ]
+
+const getUrl = (model, apiCall) => {
+  const selectedModel = model || (taskModels[0] && taskModels[0].name);
+  const endpoint = taskEndpoints[selectedModel]
+  return `${API_ROOT}/${apiCall}/${endpoint}`
+}
+
+const apiUrl = ({model}) => {
+  return getUrl(model, "predict")
+}
+
+const apiUrlInterpret = ({model}) => {
+  return getUrl(model, "interpret")
+}
+
+const apiUrlAttack = ({model}) => {
+  return getUrl(model, "attack")
+}
 
 const getGradData = ({ grad_input_1: gradInput1 }) => {
   return [gradInput1];
