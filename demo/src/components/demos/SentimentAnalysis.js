@@ -137,14 +137,14 @@ const usage = (
       <UsageCode>
         <SyntaxHighlight language="bash">
           {`echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz -`}
+allennlp predict https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz -`}
         </SyntaxHighlight>
       </UsageCode>
       <h5>As a library (Python):</h5>
       <UsageCode>
         <SyntaxHighlight language="python">
           {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz")
+predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz")
 predictor.predict(
   sentence="a very well-made, funny and entertaining picture."
 )`}
@@ -156,7 +156,7 @@ predictor.predict(
       <UsageCode>
         <SyntaxHighlight language="python">
           {`allennlp evaluate \\
-  https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz \\
+  https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz \\
   https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`}
         </SyntaxHighlight>
       </UsageCode>
