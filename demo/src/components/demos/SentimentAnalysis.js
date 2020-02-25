@@ -31,7 +31,16 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 // Text shown in the UI
 const description = (
-  <span> Sentiment Analysis predicts whether an input is positive or negative. The model is a simple LSTM using GloVe embeddings that is trained on the binary classification setting of the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>. It achieves about 87% accuracy on the test set.</span>
+  <span>
+  Sentiment Analysis predicts whether an input is positive or negative. The model is based on
+  <a href="https://arxiv.org/pdf/1907.11692.pdf">RoBERTa large</a>
+  and is trained on the binary classification setting of
+  the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.
+  It achieves 95.11% accuracy on the test set.
+  </span>
+  <p>
+    <b>Contributed by:</b> Zhaofeng Wu
+  </p>
 );
 const descriptionEllipsed = (
   <span> Sentiment Analysis predicts whether an input is positive or negative… </span>
