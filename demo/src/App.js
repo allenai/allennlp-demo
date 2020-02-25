@@ -11,6 +11,7 @@ import {
   HeaderColumns,
   Layout,
 } from '@allenai/varnish/components';
+import { ScrollToTopOnPageChange} from '@allenai/varnish/components/ScrollToTopOnPageChange';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
 import { API_ROOT } from './api-config';
@@ -54,20 +55,17 @@ In particular, that machine may be also running this code,
 for which the route `/task/<model_name>` serves the <SingleTaskDemo> component,
 which delegates to the particular ModelComponent specified in `demo/src/models.js`.
 */
-
 const App = () => (
   <ThemeProvider>
     <Router>
-      {/*TODO: Use Varnish's multi-pane layout, rather than our home rolled one.*/}
       <DefaultLayoutProvider layoutVariant="app">
-        <BlockOverflow>
-          <Switch>
-            <Route exact path="/" render={() => (
-              <Redirect to={DEFAULT_PATH}/>
-            )}/>
-            <Route path="/:model/:slug?" component={Demo}/>
-          </Switch>
-        </BlockOverflow>
+        <ScrollToTopOnPageChange />
+        <Switch>
+          <Route exact path="/" render={() => (
+            <Redirect to={DEFAULT_PATH}/>
+          )}/>
+          <Route path="/:model/:slug?" component={Demo}/>
+        </Switch>
       </DefaultLayoutProvider>
     </Router>
   </ThemeProvider>
@@ -82,22 +80,22 @@ const Demo = (props) => {
 
   return (
     <Layout bgcolor="white">
-      <Header alwaysVisible={true}>
-          <HeaderColumnsWithSpace gridTemplateColumns="auto auto 1fr">
-          <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
-              <Logo width="124px"
-                height="22px"
-                alt="AllenNLP"
-              />
-            </a>
-          </HeaderColumnsWithSpace>
-        </Header>
+      <Header>
+        <HeaderColumnsWithSpace gridTemplateColumns="auto auto 1fr">
+        <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
+            <Logo width="147px"
+              height="26px"
+              alt="AllenNLP"
+            />
+          </a>
+        </HeaderColumnsWithSpace>
+      </Header>
       <Layout>
         <Menu redirectedModel={redirectedModel} />
         <Layout>
-          <Content>
+          <FullSizeContent>
             <SingleTaskDemo model={redirectedModel} slug={slug} />
-          </Content>
+          </FullSizeContent>
           <Footer />
         </Layout>
       </Layout>
@@ -105,25 +103,17 @@ const Demo = (props) => {
   );
 }
 
+const FullSizeContent = styled(Content)`
+    padding: 0;
+`;
+
 const Logo = styled.img.attrs({
   src: allenNlpLogo
-})`
-  height: 56px;
-`;
+})``;
 
 const HeaderColumnsWithSpace = styled(HeaderColumns)`
-    padding: 11.5px 0;
+    padding: 6.5px 0;
 `;
-
-// Load the task in an iframe
-const SingleTaskFrame = (props) => {
-  const { model, slug, search } = props
-  const maybeSlug = slug ? `/${slug}` : ''
-  const url = `/task/${model}${maybeSlug}${search}`
-
-  return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%", height: "100%", borderWidth: 0}}/>
-}
-
 
 class SingleTaskDemo extends React.Component {
   constructor(props) {
@@ -247,10 +237,6 @@ class SingleTaskDemo extends React.Component {
 
 const PullToTop = styled.div`
   margin-bottom: 100%;
-`;
-
-const BlockOverflow = styled.div`
-  overflow-y: hidden;
 `;
 
 export default App;

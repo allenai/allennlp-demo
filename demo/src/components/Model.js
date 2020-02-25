@@ -167,7 +167,6 @@ export const Wrapper = styled.div`
   background: ${({theme}) => theme.palette.background.light};
   display: block;
   width: 100%;
-  overflow-y: auto;
 `;
 
 export default Model

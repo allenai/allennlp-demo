@@ -27,8 +27,6 @@ function copyToClipboard(text) {
 }
 
 class Permalink extends React.Component {
-
-
     render() {
         const { slug } = this.props;
 
