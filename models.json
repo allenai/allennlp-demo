@@ -89,6 +89,7 @@
     "sentiment-analysis": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz",
         "predictor_name": "text_classifier",
-        "max_request_length": 1000
+        "max_request_length": 1000,
+        "memory": "4Gi"
     }
 }
