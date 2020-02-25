@@ -87,7 +87,7 @@
         "image": "gcr.io/ai2-reviz/allennlp-demo:584070b73f7eb6eb1f82af723295aec0a44ae3a9"
     },
     "sentiment-analysis": {
-        "archive_file": "https://storage.cloud.google.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz",
         "predictor_name": "text_classifier",
         "max_request_length": 1000
     }
