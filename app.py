@@ -48,8 +48,8 @@ logger.propagate = False
 
 supported_interpret_models = {'named-entity-recognition',
                               'fine-grained-named-entity-recognition',
-                              'glove-sentiment-analysis"',
-                              'roberta-sentiment-analysis"',
+                              'glove-sentiment-analysis',
+                              'roberta-sentiment-analysis',
                               'textual-entailment',
                               'reading-comprehension',
                               'elmo-reading-comprehension',
