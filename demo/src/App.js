@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@allenai/varnish/theme';
 import { DefaultLayoutProvider } from '@allenai/varnish/layout';
-import { 
+import {
   Content,
   ExternalLink,
   Footer,
@@ -58,17 +58,14 @@ which delegates to the particular ModelComponent specified in `demo/src/models.j
 const App = () => (
   <ThemeProvider>
     <Router>
-      {/*TODO: Use Varnish's multi-pane layout, rather than our home rolled one.*/}
       <DefaultLayoutProvider layoutVariant="app">
-        <BlockOverflow>
-          <Switch>
-            <Route exact path="/" render={() => (
-              <Redirect to={DEFAULT_PATH}/>
-            )}/>
-            <Route path="/task/:model/:slug?" component={SingleTaskDemo}/>
-            <Route path="/:model/:slug?" component={Demo}/>
-          </Switch>
-        </BlockOverflow>
+        <Switch>
+          <Route exact path="/" render={() => (
+            <Redirect to={DEFAULT_PATH}/>
+          )}/>
+          <Route path="/task/:model/:slug?" component={SingleTaskDemo}/>
+          <Route path="/:model/:slug?" component={Demo}/>
+        </Switch>
       </DefaultLayoutProvider>
     </Router>
   </ThemeProvider>
@@ -84,16 +81,16 @@ const Demo = (props) => {
 
   return (
     <Layout bgcolor="white">
-      <Header alwaysVisible={true}>
-          <HeaderColumnsWithSpace gridTemplateColumns="auto auto 1fr">
-          <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
-              <Logo width="124px"
-                height="22px"
-                alt="AllenNLP"
-              />
-            </a>
-          </HeaderColumnsWithSpace>
-        </Header>
+      <Header>
+        <HeaderColumnsWithSpace gridTemplateColumns="auto auto 1fr">
+        <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
+            <Logo width="147px"
+              height="26px"
+              alt="AllenNLP"
+            />
+          </a>
+        </HeaderColumnsWithSpace>
+      </Header>
       <Layout>
         <Menu redirectedModel={redirectedModel} />
         <Layout>
@@ -104,17 +101,15 @@ const Demo = (props) => {
         </Layout>
       </Layout>
     </Layout>
-  );  
+  );
 }
 
 const Logo = styled.img.attrs({
   src: allenNlpLogo
-})`
-  height: 56px;
-`;
+})``;
 
 const HeaderColumnsWithSpace = styled(HeaderColumns)`
-    padding: 11.5px 0;
+    padding: 6.5px 0;
 `;
 
 // Load the task in an iframe
@@ -125,7 +120,6 @@ const SingleTaskFrame = (props) => {
 
   return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%", height: "100%", borderWidth: 0}}/>
 }
-
 
 class SingleTaskDemo extends React.Component {
   constructor(props) {
@@ -238,10 +232,6 @@ class SingleTaskDemo extends React.Component {
 
 const PullToTop = styled.div`
   margin-bottom: 100%;
-`;
-
-const BlockOverflow = styled.div`
-  overflow-y: hidden;
 `;
 
 export default App;

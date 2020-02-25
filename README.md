@@ -54,6 +54,11 @@ To run the demo locally for development, you will need to:
 
     Where you see "model1" and "model2" examples above, you would use actual model names which are listed as JSON object key names [here](https://github.com/allenai/allennlp-demo/blob/master/models.json).
 
+    e.g.
+    ```bash
+    ./app.py --model reading-comprehension
+    ```
+
     If you really want to load every model, you can do that with
 
     ```bash
