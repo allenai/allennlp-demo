@@ -11,6 +11,7 @@ import {
   HeaderColumns,
   Layout,
 } from '@allenai/varnish/components';
+import { ScrollToTopOnPageChange} from '@allenai/varnish/components/ScrollToTopOnPageChange';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
 import { API_ROOT } from './api-config';
@@ -19,7 +20,6 @@ import ModelIntro from './components/ModelIntro';
 import { modelComponents, modelRedirects } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
-import { ScrollToTop } from './components/ScrollToTop';
 
 import './css/App.css';
 import './css/fonts.css';
@@ -59,7 +59,7 @@ const App = () => (
   <ThemeProvider>
     <Router>
       <DefaultLayoutProvider layoutVariant="app">
-        <ScrollToTop />
+        <ScrollToTopOnPageChange />
         <Switch>
           <Route exact path="/" render={() => (
             <Redirect to={DEFAULT_PATH}/>
