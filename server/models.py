@@ -34,11 +34,9 @@ def load_demo_models(models_file: str,
     for task_name in task_names:
         model = blob[task_name]
         model_type = model.get("type", "allennlp")
-        overrides = ""
 
         if task_name == "nmn-drop":
             util.import_submodules("semqa")
-            overrides = "{\"model\": { \"debug\":true}}"
 
         # If ever we introduce additional model types,
         # we'll need to add corresponding logic here.
@@ -53,7 +51,7 @@ def load_demo_models(models_file: str,
                     archive_file=model["archive_file"],
                     predictor_name=model["predictor_name"],
                     max_request_length=model["max_request_length"],
-                    overrides=overrides
+                    overrides=model.get("overrides", "")
         )
 
     return demo_models
