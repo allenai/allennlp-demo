@@ -79,7 +79,7 @@ def main(demo_dir: str,
          interpret_cache_size: int,
          attack_cache_size: int,
          models: Dict[str, DemoModel]) -> None:
-    """Run the server programatically"""
+    """Run the server programmatically"""
     logger.info("Starting a flask server on port %i.", port)
 
     logger.info(f"With models {models}")
@@ -333,10 +333,6 @@ def make_app(build_dir: str,
         elif model_name == "wikitables-parser":
              log_blob['outputs']['logical_form'] = prediction['logical_form']
              log_blob['outputs']['answer'] = prediction['answer']
-        elif model_name == "quarel-parser-zero":
-             log_blob['outputs']['logical_form'] = prediction['logical_form']
-             log_blob['outputs']['answer'] = prediction['answer']
-             log_blob['outputs']['score'] = prediction['score']
         elif model_name == "nlvr-parser":
              log_blob['outputs']['logical_form'] = prediction['logical_form'][0]
              log_blob['outputs']['answer'] = prediction['denotations'][0][0]

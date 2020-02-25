@@ -63,7 +63,6 @@ const App = () => (
           <Route exact path="/" render={() => (
             <Redirect to={DEFAULT_PATH}/>
           )}/>
-          <Route path="/task/:model/:slug?" component={SingleTaskDemo}/>
           <Route path="/:model/:slug?" component={Demo}/>
         </Switch>
       </DefaultLayoutProvider>
@@ -76,7 +75,6 @@ const App = () => (
 // and it renders the specific task in an iframe.
 const Demo = (props) => {
   const { model, slug } = props.match.params
-  const { search } = props.location
   const redirectedModel = modelRedirects[model] || model
 
   return (
@@ -95,7 +93,7 @@ const Demo = (props) => {
         <Menu redirectedModel={redirectedModel} />
         <Layout>
           <Content>
-            <SingleTaskFrame model={redirectedModel} slug={slug} search={search} />
+            <SingleTaskDemo model={redirectedModel} slug={slug} />
           </Content>
           <Footer />
         </Layout>
@@ -126,7 +124,7 @@ class SingleTaskDemo extends React.Component {
     super(props);
 
     // React router supplies us with a model name and (possibly) a slug.
-    const { model, slug } = props.match.params
+    const { model, slug } = props;
 
     this.state = {
       slug,
@@ -137,10 +135,21 @@ class SingleTaskDemo extends React.Component {
   }
 
   // We also need to update the state whenever we receive new props from React router.
-  componentDidUpdate({ match }) {
-    const { model, slug } = match.params;
-    if (model !== this.state.selectedModel || slug !== this.state.slug) {
-      this.setState({ selectedModel: model, slug });
+  componentDidUpdate() {
+    const { model, slug } = this.props;
+      if (model !== this.state.selectedModel || slug !== this.state.slug) {
+        const isModelChange = model !== this.state.selectedModel;
+        const responseData = (
+            isModelChange
+                ? null
+                : this.state.responseData
+        );
+        const requestData = (
+            isModelChange
+                ? null
+                : this.state.requestData
+        );
+        this.setState({ selectedModel: model, slug, responseData, requestData });
     }
   }
 
@@ -148,7 +157,7 @@ class SingleTaskDemo extends React.Component {
   // for a permalink.
   componentDidMount() {
     const { slug, responseData } = this.state;
-    const { model } = this.props.match.params
+    const { model } = this.props;
 
     // If this is a permalink and we don't yet have the data for it...
     if (slug && !responseData) {

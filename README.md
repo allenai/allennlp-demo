@@ -100,7 +100,7 @@ Although (as in previous steps) the demo is able to run on a single machine
 the Skiff version is distributed using Kubernetes as follows:
 
 (1) there is a dedicated "demo front-end" container that doesn't load any models
-(2) the ingress controller routes e.g. /predict/machine-comprehension to a dedicated "machine comprehension" container
+(2) the ingress controller routes e.g. /predict/reading-comprehension to a dedicated "reading comprehension" container
 (3) that container loads only the machine comprehension model
 
 See the comments in `src/App.js` for more detail.
