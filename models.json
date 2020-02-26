@@ -18,7 +18,8 @@
         "archive_file": "https://nmn-drop.s3.amazonaws.com/model.tar.gz",
         "predictor_name": "drop_demo_predictor",
         "max_request_length": 25819,
-        "overrides": "{\"model\": { \"debug\":true}}"
+        "overrides": "{\"model\": { \"debug\":true}}",
+        "image": "gcr.io/ai2-reviz/allennlp-demo-nmn-drop:a1e124071eb949bec6c1fd65b352f6e60b3a5cfd"
     },
     "semantic-role-labeling": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.03.24.tar.gz",
