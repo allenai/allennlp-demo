@@ -75,7 +75,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     reducedInput = {original: reductionData["original"], reduced: [reductionData["final"][0]]};
   }
   return (
-    <OutputField>
+    <OutputField label="Model Attacks">
       <Accordion accordion={false}>
         <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
         <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />

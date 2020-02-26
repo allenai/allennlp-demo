@@ -3,10 +3,19 @@ import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { ThemeProvider } from '@allenai/varnish/theme';
 import { DefaultLayoutProvider } from '@allenai/varnish/layout';
-import { Header, ExternalLink } from '@allenai/varnish/components';
+import {
+  Content,
+  ExternalLink,
+  Footer,
+  Header,
+  HeaderColumns,
+  Layout,
+} from '@allenai/varnish/components';
+import { ScrollToTopOnPageChange} from '@allenai/varnish/components/ScrollToTopOnPageChange';
 
+import allenNlpLogo from './components/allennlp_logo.svg';
 import { API_ROOT } from './api-config';
-import { Menu } from './components/Menu';
+import Menu from './components/Menu';
 import ModelIntro from './components/ModelIntro';
 import { modelComponents, modelRedirects } from './models'
 import { PaneTop } from './components/Pane';
@@ -46,21 +55,17 @@ In particular, that machine may be also running this code,
 for which the route `/task/<model_name>` serves the <SingleTaskDemo> component,
 which delegates to the particular ModelComponent specified in `demo/src/models.js`.
 */
-
 const App = () => (
   <ThemeProvider>
     <Router>
-      {/*TODO: Use Varnish's multi-pane layout, rather than our home rolled one.*/}
       <DefaultLayoutProvider layoutVariant="app">
-        <BlockOverflow>
-          <Switch>
-            <Route exact path="/" render={() => (
-              <Redirect to={DEFAULT_PATH}/>
-            )}/>
-            <Route path="/task/:model/:slug?" component={SingleTaskDemo}/>
-            <Route path="/:model/:slug?" component={Demo}/>
-          </Switch>
-        </BlockOverflow>
+        <ScrollToTopOnPageChange />
+        <Switch>
+          <Route exact path="/" render={() => (
+            <Redirect to={DEFAULT_PATH}/>
+          )}/>
+          <Route path="/:model/:slug?" component={Demo}/>
+        </Switch>
       </DefaultLayoutProvider>
     </Router>
   </ThemeProvider>
@@ -71,36 +76,51 @@ const App = () => (
 // and it renders the specific task in an iframe.
 const Demo = (props) => {
   const { model, slug } = props.match.params
-  const { search } = props.location
   const redirectedModel = modelRedirects[model] || model
 
   return (
-    <React.Fragment>
-      <Header alwaysVisible={true} />
-      <div className="pane-container">
-        <Menu selectedModel={redirectedModel} clearData={() => {}}/>
-        <SingleTaskFrame model={redirectedModel} slug={slug} search={search} />
-      </div>
-    </React.Fragment>
-  )
+    <Layout bgcolor="white">
+      <Header>
+        <HeaderColumnsWithSpace gridTemplateColumns="auto auto 1fr">
+        <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
+            <Logo width="147px"
+              height="26px"
+              alt="AllenNLP"
+            />
+          </a>
+        </HeaderColumnsWithSpace>
+      </Header>
+      <Layout>
+        <Menu redirectedModel={redirectedModel} />
+        <Layout>
+          <FullSizeContent>
+            <SingleTaskDemo model={redirectedModel} slug={slug} />
+          </FullSizeContent>
+          <Footer />
+        </Layout>
+      </Layout>
+    </Layout>
+  );
 }
 
-// Load the task in an iframe
-const SingleTaskFrame = (props) => {
-  const { model, slug, search } = props
-  const maybeSlug = slug ? `/${slug}` : ''
-  const url = `/task/${model}${maybeSlug}${search}`
+const FullSizeContent = styled(Content)`
+    padding: 0;
+`;
 
-  return <iframe title={`SingleTaskFrame for ${model}`} src={url} style={{width: "100%", borderWidth: 0}}/>
-}
+const Logo = styled.img.attrs({
+  src: allenNlpLogo
+})``;
 
+const HeaderColumnsWithSpace = styled(HeaderColumns)`
+    padding: 6.5px 0;
+`;
 
 class SingleTaskDemo extends React.Component {
   constructor(props) {
     super(props);
 
     // React router supplies us with a model name and (possibly) a slug.
-    const { model, slug } = props.match.params
+    const { model, slug } = props;
 
     this.state = {
       slug,
@@ -111,10 +131,21 @@ class SingleTaskDemo extends React.Component {
   }
 
   // We also need to update the state whenever we receive new props from React router.
-  componentDidUpdate({ match }) {
-    const { model, slug } = match.params;
-    if (model !== this.state.selectedModel || slug !== this.state.slug) {
-      this.setState({ selectedModel: model, slug });
+  componentDidUpdate() {
+    const { model, slug } = this.props;
+      if (model !== this.state.selectedModel || slug !== this.state.slug) {
+        const isModelChange = model !== this.state.selectedModel;
+        const responseData = (
+            isModelChange
+                ? null
+                : this.state.responseData
+        );
+        const requestData = (
+            isModelChange
+                ? null
+                : this.state.requestData
+        );
+        this.setState({ selectedModel: model, slug, responseData, requestData });
     }
   }
 
@@ -122,7 +153,7 @@ class SingleTaskDemo extends React.Component {
   // for a permalink.
   componentDidMount() {
     const { slug, responseData } = this.state;
-    const { model } = this.props.match.params
+    const { model } = this.props;
 
     // If this is a permalink and we don't yet have the data for it...
     if (slug && !responseData) {
@@ -206,10 +237,6 @@ class SingleTaskDemo extends React.Component {
 
 const PullToTop = styled.div`
   margin-bottom: 100%;
-`;
-
-const BlockOverflow = styled.div`
-  overflow-y: hidden;
 `;
 
 export default App;

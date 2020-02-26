@@ -139,7 +139,7 @@ const Token = styled.span`
   font-weight: 600;
 `
 
-const DEFAULT = "Joel is";
+const DEFAULT = "AllenNLP is";
 
 function addToUrl(output, choice) {
   if (window.frameElement) {
@@ -219,7 +219,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     hotflipData["final"][0] = cleanTokensForDisplay(hotflipData["final"][0]);
   }
   return (
-    <OutputField>
+    <OutputField label="Model Attacks">
       <Accordion accordion={false}>
         <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
       </Accordion>

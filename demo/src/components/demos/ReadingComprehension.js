@@ -74,7 +74,7 @@ const fields = [
 const Attention = ({passage_question_attention, question_tokens, passage_tokens}) => {
   if(passage_question_attention && question_tokens && passage_tokens) {
     return (
-        <OutputField label="Model internals">
+        <OutputField label="Model Internals">
           <Accordion accordion={false}>
             <AccordionItem expanded={false}>
               <AccordionItemTitle>
@@ -205,7 +205,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
 
   return (
-    <OutputField>
+    <OutputField label="Model Attacks">
       <Accordion accordion={false}>
         {inputReduction}
         <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />

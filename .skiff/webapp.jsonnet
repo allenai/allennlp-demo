@@ -58,18 +58,16 @@ local num_replicas = (
 );
 
 local topLevelDomain = '.apps.allenai.org';
-local canonicalTopLevelDomain = '.allennlp.org';
 
-local hosts = [
+// Only register demo.allennlp.org for production environments, there's
+// no wildcard entry (*.allennlp.org) directing URLs with the environment
+// as a subdomain to the Skiff cluster. If a URL is included here that
+// isn't routed to the cluster a TLS certificate can't be issued.
+local hosts =
     if env == 'prod' then
-        config.appName + topLevelDomain
+        [ config.appName + topLevelDomain, 'demo.allennlp.org' ]
     else
-        config.appName + '.' + env + topLevelDomain,
-    if env == 'prod' then
-        'demo' + canonicalTopLevelDomain
-    else
-        'demo' + '.' + env + canonicalTopLevelDomain
-];
+        [ config.appName + '.' + env + topLevelDomain ];
 
 // Each app gets it's own namespace
 local namespaceName = config.appName;
@@ -348,7 +346,8 @@ local DEFAULT_MEMORY = "1Gi";
 local get_cpu(model_name) = if std.objectHas(models[model_name], "cpu") then models[model_name]["cpu"] else DEFAULT_CPU;
 local get_memory(model_name) = if std.objectHas(models[model_name], "memory") then models[model_name]["memory"] else DEFAULT_MEMORY;
 
-// A model can specify its own docker image. It needs to run a server on config.port
+// A model can specify its own docker image by providing an environment
+// variable with the image name. It needs to run a server on config.port
 // that serves up the model at /predict/{model_name}
 // and that serves up the front-end at /task/{model_name}
 // and that (optionally) serves up permalinks at /permadata/{model_name},
