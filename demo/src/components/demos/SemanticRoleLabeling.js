@@ -20,7 +20,6 @@ const description = (
       <span>
         Semantic Role Labeling (SRL) recovers the latent predicate argument structure of a sentence,
         providing representations that answer basic questions about sentence meaning, including “who” did “what” to “whom,” etc.
-        The AllenNLP toolkit provides the following SRL visualization, which can be used for any SRL model in AllenNLP.
         This page demonstrates a reimplementation of
       </span>
       <ExternalLink href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener">{' '} a BERT based model (Shi et al, 2019)</ExternalLink>

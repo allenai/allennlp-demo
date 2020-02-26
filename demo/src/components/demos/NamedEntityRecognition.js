@@ -34,8 +34,8 @@ const description = (
   <span>
     <span>
         The named entity recognition model identifies named entities
-        (people, locations, organizations, and miscellaneous)
-        in the input text. This model is the "baseline" model described in
+        (people, locations, organizations, etc.)
+        in the input text. This elmo-ner model is the "baseline" model described in
     </span>
     <ExternalLink href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc" target="_blank" rel="noopener">
       {' '} Peters, Ammar, Bhagavatula, and Power 2017 {' '}
@@ -50,7 +50,7 @@ const description = (
     </span>
     <ExternalLink href = "https://www.clips.uantwerpen.be/conll2003/ner/" target="_blank" rel="noopener">{' '} CoNLL-2003 {' '}</ExternalLink>
     <span>
-      NER dataset. It is not state of the art on that task, but it&#39;s not terrible either.
+      NER dataset.
       (This is also the model constructed in our
     </span>
     <ExternalLink href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/walk_through_allennlp/creating_a_model.md" target="_blank" rel="noopener">{' '}Creating a Model{' '}</ExternalLink>

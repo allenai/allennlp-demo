@@ -20,19 +20,19 @@ const description = (
   <span>
     <span>
     Coreference resolution is the task of finding all expressions that refer to the same entity
-    in a text. It is an important step for a lot of higher level NLP tasks that involve natural
+    in a text. It is an important step for many higher level NLP tasks that involve natural
     language understanding such as document summarization, question answering, and information extraction.
     </span>
     <ExternalLink href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener">{' '} End-to-end Neural Coreference Resolution ( Lee et al, 2017) {' '}</ExternalLink>
     <span>
     is a neural model which considers all possible spans in the document as potential mentions and
-    learns distributions over possible anteceedents for each span, using aggressive, learnt
+    learns distributions over possible anteceedents for each span, using aggressive
     pruning strategies to retain computational efficiency. It achieved state-of-the-art accuracies on
     </span>
     <ExternalLink href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener">{' '} the Ontonotes 5.0 dataset {' '}</ExternalLink>
     <span>
     in early 2017. The model here is based on that paper, but we have substituted the GloVe embeddings
-    that it uses with BERT embeddings. On Ontonotes that gives an F1 score of 72.13 on test.
+    that it uses with BERT embeddings. On Ontonotes this model achieves an F1 score of 72.13% on the test set.
     </span>
     <p>
       <b>Contributed by:</b> Zhaofeng Wu
