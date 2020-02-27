@@ -152,7 +152,8 @@ const DEFAULT_MODEL = "345M"
 
 const description = (
   <span>
-Enter text with one or more "[MASK]" tokens and <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener noreferrer">BERT</a> will generate the most likely token to substitute for each "[MASK]".
+Masked language modeling is a fill-in-the-blank task, where a model uses the context surrounding a [MASK] token to try to guess what the [MASK] should be. The model shown here is <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener noreferrer">BERT</a>, the first large transformer to be trained on this task.
+Enter text with one or more "[MASK]" token and the model will generate the most likely substitution for each "[MASK]".
   </span>
 )
 

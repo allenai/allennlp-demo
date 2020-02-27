@@ -16,14 +16,9 @@ const title = "Open Information Extraction";
 
 const description = (
   <span>
-    <span>
-    Given an input sentence, Open Information Extraction (Open IE) extracts a list of
-  propositions, each composed of a single predicate and an arbitrary number of arguments.
-    These often simplify syntactically complex sentences, and make their predicate-argument structure easily accessible for various downstream tasks.
-    The AllenNLP toolkit provides the following Open IE visualization, which can be used for any Open IE model in AllenNLP.
-      This page demonstrates a reimplementation of
-    </span>
-    <ExternalLink href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</ExternalLink>.
+    Given an input sentence, Open Information Extraction (Open IE) extracts a list of propositions, each composed of a single predicate and an arbitrary number of arguments.
+    These extractions break syntactically complex sentences into the relationships they express, which can then be used for various downstream tasks.
+    This page demonstrates a reimplementation of <ExternalLink href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</ExternalLink>.
   </span>
 )
 

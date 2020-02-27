@@ -41,8 +41,7 @@ const description = (
   <span>
     <span>
     Textual Entailment (TE) takes a pair of sentences and predicts whether the facts in the first
-    necessarily imply the facts in the second one.  The AllenNLP toolkit provides the following TE visualization,
-    which can be run for any TE model you develop.
+    necessarily imply the facts in the second one.
     This page demonstrates a reimplementation of
     </span>
     <ExternalLink href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27" target="_blanke" rel="noopener">{' '} the decomposable attention model (Parikh et al, 2017) {' '}</ExternalLink>
