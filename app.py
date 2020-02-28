@@ -26,7 +26,7 @@ import pytz
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.predictors import Predictor
 from allennlp.interpret.saliency_interpreters import SaliencyInterpreter, SimpleGradient, IntegratedGradient, SmoothGradient
-from allennlp.interpret.attackers import Attacker, InputReduction, Hotflip 
+from allennlp.interpret.attackers import Attacker, InputReduction, Hotflip
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
@@ -48,7 +48,8 @@ logger.propagate = False
 
 supported_interpret_models = {'named-entity-recognition',
                               'fine-grained-named-entity-recognition',
-                              'sentiment-analysis',
+                              'glove-sentiment-analysis',
+                              'roberta-sentiment-analysis',
                               'textual-entailment',
                               'reading-comprehension',
                               'elmo-reading-comprehension',
@@ -170,7 +171,7 @@ def make_app(build_dir: str,
         Just a wrapper around ``model.predict_json`` that allows us to use a cache decorator.
         """
         return model.predict_json(json.loads(data))
-        
+
     @lru_cache(maxsize=interpret_cache_size)
     def _caching_interpret(interpreter: SaliencyInterpreter, data: str) -> JsonDict:
         """
@@ -187,7 +188,7 @@ def make_app(build_dir: str,
                                          input_field_to_attack=input_field_to_attack,
                                          grad_input_field=grad_input_field,
                                          target=json.loads(target))
-    
+
     @app.route('/')
     def index() -> Response: # pylint: disable=unused-variable
         return send_file(os.path.join(build_dir, 'index.html'))
@@ -351,7 +352,7 @@ def make_app(build_dir: str,
         """
         if request.method == "OPTIONS":
             return Response(response="", status=200)
-        
+
         # Do use the cache if no argument is specified
         use_cache = request.args.get("cache", "true").lower() != "false"
 
@@ -375,14 +376,14 @@ def make_app(build_dir: str,
         if len(serialized_request) > max_request_length:
             raise ServerError(f"Max request length exceeded for model {model_name}! " +
                               f"Max: {max_request_length} Actual: {len(serialized_request)}")
-        
+
         pre_hits = _caching_attack.cache_info().hits  # pylint: disable=no-value-for-parameter
 
         if use_cache and attack_cache_size > 0:
             # lru_cache insists that all function arguments be hashable,
             # so unfortunately we have to stringify the data.
             attack = _caching_attack(attacker, json.dumps(data), input_field_to_attack, grad_input_field, json.dumps(target))
-            
+
         else:
             # if cache_size is 0, skip caching altogether
             attack = attacker.attack_from_json(inputs=data,
@@ -391,7 +392,7 @@ def make_app(build_dir: str,
                                                target=target)
 
         post_hits = _caching_attack.cache_info().hits  # pylint: disable=no-value-for-parameter
-        
+
         if use_cache and post_hits > pre_hits:
             # Cache hit, so insert an artifical pause
             time.sleep(0.25)
@@ -410,7 +411,7 @@ def make_app(build_dir: str,
         use_cache = request.args.get("cache", "true").lower() != "false"
 
         lowered_model_name = model_name.lower()
-    
+
         data = request.get_json()
         interpreter_name = data.pop("interpreter")
 
@@ -439,11 +440,11 @@ def make_app(build_dir: str,
             interpretation = interpreter.saliency_interpret_from_json(data)
 
         post_hits = _caching_prediction.cache_info().hits  # pylint: disable=no-value-for-parameter
-        
+
         if use_cache and post_hits > pre_hits:
             # Cache hit, so insert an artifical pause
             time.sleep(0.25)
-            
+
         return jsonify(interpretation)
 
     @app.route('/models')
