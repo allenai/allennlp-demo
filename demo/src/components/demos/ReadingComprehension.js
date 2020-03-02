@@ -108,42 +108,7 @@ const NoAnswer = () => {
   )
 }
 
-const document = `In the first quarter , Buffalo trailed as Chiefs QB Tyler Thigpen completed a 36 - yard TD pass to RB Jamaal Charles . The Bills responded with RB Marshawn Lynch getting a 1 - yard touchdown run . In the second quarter , Buffalo took the lead as kicker Rian Lindell made a 21 - yard and a 40 - yard field goal . Kansas City answered with Thigpen completing a 2 - yard TD pass . Buffalo regained the lead as Lindell got a 39 - yard field goal . The Chiefs struck with kicker Connor Barth getting a 45 - yard field goal , yet the Bills continued their offensive explosion as Lindell got a 34 - yard field goal , along with QB Edwards getting a 15 - yard TD run . In the third quarter , Buffalo continued its poundings with Edwards getting a 5 - yard TD run , while Lindell got himself a 48 - yard field goal . Kansas City tried to rally as Thigpen completed a 45 - yard TD pass to WR Mark Bradley , yet the Bills replied with Edwards completing an 8 - yard TD pass to WR Josh Reed . In the fourth quarter , Edwards completed a 17 - yard TD pass to TE Derek Schouman .`.split(" ")
 
-const clusters = {
-  find: [
-    [62, 63],
-    [89, 90],
-    [104, 105],
-    [121, 122],
-    [163, 164],
-  ],
-  filter: [
-    [39, 131],
-  ],
-  'find-max-num': [
-    [104, 105],
-  ],
-  relocate: [
-    [97, 98]
-  ]
-}
-
-const question = "Who kicked the longest field goal in the second quarter ?".split(' ');
-const questionClusters = {
-  find: [
-    [4, 5]
-  ],
-  filter: [
-    [6, 10]
-  ],
-  'find-max-num': [
-    [3, 3]
-  ],
-  relocate: [
-    [0, 1]
-  ]
-}
 
 const NmnDrop = props => {
   const { 
@@ -155,6 +120,22 @@ const NmnDrop = props => {
     onMouseOut,
     onMouseOver,
     onMouseUp,
+
+    programLisp,
+    questionTokens,
+    passageTokens,
+    /**
+     * For example:
+     * {
+     *   "predicate": [
+     *     [index1, index2], // these are the spans to highlight for this predicate
+     *     [index1, index2]
+     *   ]
+     * }
+     */
+    questionClusters, 
+    passageClusters,
+    answer,
   } = props
   const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
   return (
@@ -172,7 +153,7 @@ const NmnDrop = props => {
           onMouseOver={onMouseOver}
           onMouseUp={onMouseUp}
           selectedId={selectedId}
-          tokens={question}
+          tokens={questionTokens}
         />
         <div style={{ textAlign: 'center' }}>
           ↓
@@ -184,12 +165,7 @@ const NmnDrop = props => {
           ↓
         </div>
         <div style={{ textAlign: 'center', fontFamily: 'monospace' }}>
-          {Object.keys(questionClusters).reduce((acc, predicate) => {
-            if (acc === '') {
-              return `${predicate}()`;
-            }
-            return `${predicate}(${acc})`;
-          }, '')}
+          {programLisp}
         </div>
         <div style={{ textAlign: 'center' }}>
           ↓
@@ -235,14 +211,14 @@ const NmnDrop = props => {
           ↓
         </div>
         <div style={{ textAlign: 'center' }}>
-          Answer: Connor Barth
+          {answer}
         </div>
       </div>
       <div style={{ padding: '8px' }}>
         <NestedHighlight
           activeDepths={activeDepths}
           activeIds={activeIds}
-          clusters={clusters}
+          clusters={passageClusters}
           isClickable
           isClicking={isClicking}
           labelPosition="bottom"
@@ -251,7 +227,7 @@ const NmnDrop = props => {
           onMouseOver={onMouseOver}
           onMouseUp={onMouseUp}
           selectedId={selectedId}
-          tokens={document}
+          tokens={passageTokens}
         />
       </div>
     </div>
@@ -374,6 +350,86 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
     const { answer, question_tokens: questionTokens, passage_tokens: passageTokens } = responseData;
     const { answer_type: answerType } = answer || {};
 
+    if (requestData.model === 'NMN (trained on DROP)') {
+      const programExecution = responseData.program_execution;
+      const questionClusters = programExecution.reduce((acc, e) => {
+        Object.keys(e).forEach(key => {
+          if (e[key].question) {
+            let clusterKey = key
+            while (acc[clusterKey]) {
+              clusterKey = clusterKey + "_"
+            }
+            acc[clusterKey] = e[key].question.reduce((clusterAcc, q, i) => {
+              if (q > 0.000001) {
+                const lastCluster = clusterAcc[clusterAcc.length - 1]
+                if (!lastCluster) {
+                  clusterAcc.push([i, i])
+                } else {
+                  if (lastCluster[1] === i - 1) {
+                    lastCluster[1] = i
+                  }
+                  if (lastCluster[1] < i - 1) {
+                    clusterAcc.push([i, i])
+                  }
+                }
+              }
+              return clusterAcc;
+            }, [])
+          }
+        })
+        return acc;
+      }, {})
+      const passageClusters = programExecution.reduce((acc, e) => {
+        Object.keys(e).forEach(key => {
+          if (e[key].passage) {
+            let clusterKey = key
+            while (acc[clusterKey]) {
+              clusterKey = clusterKey + "_"
+            }
+            acc[clusterKey] = e[key].passage.reduce((clusterAcc, q, i) => {
+              if (q > 0.00001) {
+                const lastCluster = clusterAcc[clusterAcc.length - 1]
+                if (!lastCluster) {
+                  clusterAcc.push([i, i])
+                } else {
+                  if (lastCluster[1] === i - 1) {
+                    lastCluster[1] = i
+                  }
+                  if (lastCluster[1] < i - 1) {
+                    clusterAcc.push([i, i])
+                  }
+                }
+              }
+              return clusterAcc;
+            }, [])
+          }
+        })
+        return acc;
+      }, {})
+      return (
+        <section>
+          <OutputField label="Answer">
+            {answer}
+          </OutputField>
+          <OutputField label="Explanation">
+            <section>
+              <NmnDropExplanation
+                programLisp={responseData.program_lisp}
+                questionTokens={questionTokens}
+                passageTokens={passageTokens}
+                questionClusters={questionClusters}
+                passageClusters={passageClusters}
+                answer={answer}
+              />
+            </section>
+          </OutputField>
+          <OutputField label="Question">
+            {question}
+          </OutputField>
+        </section>
+      );
+    }
+
     switch(answerType) {
       case "passage_span": {
         const { spans, value } = answer || {};
@@ -385,7 +441,7 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
               </OutputField>
 
               <OutputField label="Explanation">
-                <NmnDropExplanation />
+                The model decided the answer was in the passage.
               </OutputField>
 
               <OutputField label="Passage">
@@ -462,8 +518,8 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
                 {question}
               </OutputField>
 
-              <MySaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel = {interpretModel} requestData = {requestData}/>
-              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+              <MySaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel={interpretModel} requestData={requestData}/>
+              <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
               <Attention {...responseData}/>
             </section>
           )
