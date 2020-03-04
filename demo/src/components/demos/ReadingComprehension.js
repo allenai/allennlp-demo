@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip } from 'antd';
+import { Tooltip, Collapse } from 'antd';
 import styled from 'styled-components';
 import HeatMap from '../HeatMap'
 import { withRouter } from 'react-router-dom';
@@ -128,11 +128,13 @@ const HighlightTooltipData = props => {
   )
 }
 
+const DEFAULT_FILTER_VALUE = 0.001
+
 class NmnDrop extends React.Component {
   state = {
     questionData: {},
     passageData: {},
-    filterValue: 0.999,
+    filterValues: {},
   }
 
   componentDidMount() {
@@ -153,18 +155,21 @@ class NmnDrop extends React.Component {
       programNestedExpression,
     } = this.props;
     const {
-      filterValue
+      filterValues
     } = this.state;
-    const filter = 1 - filterValue;
     const moduleNames = programNestedExpression.flat(Infinity).reverse()
-    const questionData = getHighlightClusters(programExecution, 'question', filter, questionTokens, moduleNames)
-    const passageData = getHighlightClusters(programExecution, 'passage', filter, passageTokens, moduleNames)
+    const questionData = getHighlightClusters(programExecution, 'question', filterValues, questionTokens, moduleNames)
+    const passageData = getHighlightClusters(programExecution, 'passage', filterValues, passageTokens, moduleNames)
     this.setState({ questionData, passageData });
   }
 
-  handleUpdateFilterValue = (e) => {
+  handleUpdateFilterValue = (name) => (e) => {
     const filterValue = e.target.value;
-    this.setState({ filterValue }, this.updateData)
+    const filterValues = {
+      ...this.state.filterValues,
+      [name]: filterValue
+    }
+    this.setState({ filterValues }, this.updateData)
   }
 
   render () {
@@ -195,7 +200,6 @@ class NmnDrop extends React.Component {
       data[d] = passageData[d].clusters;
       return data;
     }, {})
-  
     const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
     return (
       <section>
@@ -282,19 +286,6 @@ class NmnDrop extends React.Component {
             />
         </OutputField>
         <OutputField label="Passage">
-          <FormItem>
-            <label htmlFor="highlight-sensitivity">Highlight Sensitivity</label>
-            <input
-              id="highlight-sensitivity"
-              type="range"
-              min="0.9"
-              max="1"
-              step="0.0001"
-              className="slider"
-              value={this.state.filterValue}
-              onChange={this.handleUpdateFilterValue}
-            />
-          </FormItem>
           <NestedHighlight
               activeDepths={activeDepths}
               activeIds={activeIds}
@@ -309,6 +300,27 @@ class NmnDrop extends React.Component {
               selectedId={selectedId}
               tokens={passageTokens.map((t, i) => <Tooltip title={<HighlightTooltipData index={i} data={passageData} />}>{t}</Tooltip>)}
             />
+        </OutputField>
+        <OutputField label="For Model Developers">
+          <Collapse>
+            <Collapse.Panel header="Highlight Sensitivity" key="1">
+              {Object.keys(questionData).map(d => (
+                  <FormItem key={d}>
+                    <label htmlFor="highlight-sensitivity">Adjust Highlight Sensitivity for {d}</label>
+                    <input
+                      id="highlight-sensitivity"
+                      type="range"
+                      min="0.00001"
+                      max="0.01"
+                      step="0.00001"
+                      className="slider"
+                      value={this.state.filterValues[d] || DEFAULT_FILTER_VALUE}
+                      onChange={this.handleUpdateFilterValue(d)}
+                    />
+                  </FormItem>
+              ))}
+            </Collapse.Panel>
+          </Collapse>
         </OutputField>
       </section>
     );
@@ -437,7 +449,7 @@ const setIsEqual = (a, b) => {
   return Array.from(a).every(value => b.has(value)) && Array.from(b).every(value => a.has(value))
 }
 
-const getHighlightClusters = (programExecution, keyType, filterValue, tokens, moduleNames) => {
+const getHighlightClusters = (programExecution, keyType, filterValues, tokens, moduleNames) => {
   const initialClusters = moduleNames.reduce((names, name) => {
     let key = name;
     // Rename the cluster key if there are duplicates
@@ -462,7 +474,7 @@ const getHighlightClusters = (programExecution, keyType, filterValue, tokens, mo
         highlightClusters[clusterKey] = {
           displayName: key,
           values: e[key][keyType],
-          highlightedIndicies: new Set(e[key][keyType].map((value, i) => value > filterValue ? i : undefined).filter(i => i)),
+          highlightedIndicies: new Set(e[key][keyType].map((value, i) => value > (filterValues[clusterKey] || DEFAULT_FILTER_VALUE) ? i : undefined).filter(i => i)),
           clusters: [],
         }
       }
