@@ -130,7 +130,7 @@ class NmnDrop extends React.Component {
   state = {
     questionData: {},
     passageData: {},
-    filterValue: 0.000001,
+    filterValue: 0.999,
   }
 
   componentDidMount() {
@@ -152,13 +152,15 @@ class NmnDrop extends React.Component {
     const {
       filterValue
     } = this.state;
-    const questionData = getHighlightClusters(programExecution, 'question', filterValue, questionTokens)
-    const passageData = getHighlightClusters(programExecution, 'passage', filterValue, passageTokens)
+    const filter = 1 - filterValue;
+    const questionData = getHighlightClusters(programExecution, 'question', filter, questionTokens)
+    const passageData = getHighlightClusters(programExecution, 'passage', filter, passageTokens)
     this.setState({ questionData, passageData });
   }
 
   handleUpdateFilterValue = (e) => {
-    this.setState({ filterValue: e.target.value }, this.updateData)
+    const filterValue = e.target.value;
+    this.setState({ filterValue }, this.updateData)
   }
 
   render () {
@@ -181,12 +183,17 @@ class NmnDrop extends React.Component {
       questionData,
       passageData,
     } = this.state;
-    const questionClusters = Object.keys(questionData).reduce((acc, m) => { 
-      acc[m] = questionData[m].clusters;
+    const questionModules = new Set(Object.keys(questionData))
+    const passageModules = new Set(Object.keys(passageData))
+    const allUsedModules = new Set([...questionModules, ...passageModules])
+    // It's necessary to include all keys so that they are rendered as th same
+    // color in both highlight spans.
+    const questionClusters = Array.from(allUsedModules).reduce((acc, m) => { 
+      acc[m] = (questionData[m] || {}).clusters || [];
       return acc;
     }, {});
-    const passageClusters = Object.keys(passageData).reduce((acc, m) => { 
-      acc[m] = passageData[m].clusters;
+    const passageClusters = Array.from(allUsedModules).reduce((acc, m) => { 
+      acc[m] = (passageData[m] || {}).clusters || [];
       return acc;
     }, {})
   
@@ -216,7 +223,7 @@ class NmnDrop extends React.Component {
             ↓
           </QuestionStep>
           <div>
-            {Object.keys(passageData).map((key, i) => 
+            {Array.from(allUsedModules).map((key, i) => 
               (
                 <div 
                   key={i}
@@ -226,7 +233,7 @@ class NmnDrop extends React.Component {
                     style={{ 
                       display: 'unset',
                       textAlign: 'center',
-                      width: `${(Object.keys(passageData).length - i) / Object.keys(passageData).length * 100}%`
+                      width: `${(Array.from(allUsedModules).length - i) / Array.from(allUsedModules).length * 100}%`
                     }}
                     className={getHighlightConditionalClasses({
                       labelPosition: null,
@@ -246,7 +253,7 @@ class NmnDrop extends React.Component {
                     onMouseOut={onMouseOut ? () => onMouseOut(key) : null}
                     onMouseUp={onMouseUp ? () => onMouseUp(key) : null}
                   >
-                    {passageData[key].displayName}
+                    {(passageData[key] || questionData[key]).displayName}
                   </div>
                 </div>
               )
@@ -265,9 +272,9 @@ class NmnDrop extends React.Component {
             <input
               id="highlight-sensitivity"
               type="range"
-              min="0.000001"
-              max="0.01"
-              step="0.00001"
+              min="0.9"
+              max="1"
+              step="0.0001"
               className="slider"
               value={this.state.filterValue}
               onChange={this.handleUpdateFilterValue}
