@@ -38,6 +38,7 @@ const processHighlightData = (programExecution, dataType, filterValues, tokens, 
       while (internalKeyNames[name]) {
         name = `${name}*`
       }
+      internalKeyNames[name] = true
       const temp = execution[moduleName]
       delete execution[moduleName]
       execution[name] = temp
