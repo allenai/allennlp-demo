@@ -111,8 +111,8 @@ const InnerHighlight = props => {
     selectedId,
   } = props;
   return (
-      data.map((token, idx) =>
-        typeof(token) === "object" ? (
+      data.map((token, idx) => {
+        return typeof(token) === "object" && !(React.isValidElement(token)) ? (
           <Highlight
             activeDepths={activeDepths}
             activeIds={activeIds}
@@ -148,7 +148,7 @@ const InnerHighlight = props => {
         ) : (
           <span key={idx}>{token}&nbsp;</span>
         )
-      )
+      })
   )
 }
 

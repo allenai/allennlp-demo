@@ -1,4 +1,6 @@
 import React from 'react';
+import { Tooltip } from 'antd';
+import styled from 'styled-components';
 import HeatMap from '../HeatMap'
 import { withRouter } from 'react-router-dom';
 import {
@@ -26,6 +28,7 @@ import {
 } from '../InterpretConstants'
 import NestedHighlight, { withHighlightClickHandling, getHighlightColor } from '../highlight/NestedHighlight';
 import { getHighlightConditionalClasses } from '../highlight/Highlight';
+import FormItem from 'antd/lib/form/FormItem';
 
 const title = "Reading Comprehension"
 
@@ -108,131 +111,211 @@ const NoAnswer = () => {
   )
 }
 
+const HighlightTooltipData = props => {
+  const {
+    data,
+    index
+  } = props;
 
-
-const NmnDrop = props => {
-  const { 
-    activeIds,
-    activeDepths,
-    isClicking,
-    selectedId,
-    onMouseDown,
-    onMouseOut,
-    onMouseOver,
-    onMouseUp,
-
-    programLisp,
-    questionTokens,
-    passageTokens,
-    /**
-     * For example:
-     * {
-     *   "predicate": [
-     *     [index1, index2], // these are the spans to highlight for this predicate
-     *     [index1, index2]
-     *   ]
-     * }
-     */
-    questionClusters, 
-    passageClusters,
-    answer,
-  } = props
-  const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
   return (
-    <div style={{ display: 'flex', border: '1px solid grey' }}>
-      <div style={{ padding: '8px', flex: '0 0 auto' }}>
-        <NestedHighlight 
-          activeDepths={activeDepths}
-          activeIds={activeIds}
-          clusters={questionClusters}
-          isClickable
-          isClicking={isClicking}
-          labelPosition="bottom"
-          onMouseDown={onMouseDown}
-          onMouseOut={onMouseOut}
-          onMouseOver={onMouseOver}
-          onMouseUp={onMouseUp}
-          selectedId={selectedId}
-          tokens={questionTokens}
-        />
-        <div style={{ textAlign: 'center' }}>
-          ↓
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          Question Parser
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          ↓
-        </div>
-        <div style={{ textAlign: 'center', fontFamily: 'monospace' }}>
-          {programLisp}
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          ↓
-        </div>
-        <div>
-          {Object.keys(questionClusters).map((key, i) => 
-            (
-              <div 
-                key={i}
-                style={{ display: 'flex', justifyContent: 'center' }}
-              >
-                <div 
-                  style={{ 
-                    display: 'unset',
-                    textAlign: 'center',
-                    width: `${(Object.keys(questionClusters).length - i) / Object.keys(questionClusters).length * 100}%`
-                  }}
-                  className={getHighlightConditionalClasses({
-                    labelPosition: null,
-                    label: null,
-                    color: getHighlightColor(i),
-                    isClickable: true,
-                    selectedId,
-                    isClicking,
-                    id: key,
-                    activeDepths,
-                    deepestIndex,
-                    activeIds,
-                    children: null,
-                  })}
-                  onMouseDown={onMouseDown ? () => onMouseDown(key, 0) : null}
-                  onMouseOver={onMouseOver ? () => onMouseOver(key) : null}
-                  onMouseOut={onMouseOut ? () => onMouseOut(key) : null}
-                  onMouseUp={onMouseUp ? () => onMouseUp(key) : null}
-                >
-                  {key}
-                </div>
-              </div>
-            )
-          )}
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          ↓
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          {answer}
-        </div>
-      </div>
-      <div style={{ padding: '8px' }}>
-        <NestedHighlight
-          activeDepths={activeDepths}
-          activeIds={activeIds}
-          clusters={passageClusters}
-          isClickable
-          isClicking={isClicking}
-          labelPosition="bottom"
-          onMouseDown={onMouseDown}
-          onMouseOut={onMouseOut}
-          onMouseOver={onMouseOver}
-          onMouseUp={onMouseUp}
-          selectedId={selectedId}
-          tokens={passageTokens}
-        />
-      </div>
+    <div>
+      {Object.keys(data).map(m => (
+        <div key={m}>{data[m].displayName}: {data[m].values[index]}</div>
+      ))}
     </div>
-  );
+  )
 }
+
+class NmnDrop extends React.Component {
+  state = {
+    questionData: {},
+    passageData: {},
+    filterValue: 0.000001,
+  }
+
+  componentDidMount() {
+    this.updateData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.programExecution !== this.props.programExecution) {
+      this.updateData();
+    }
+  }
+
+  updateData = () => {
+    const {
+      programExecution,
+      questionTokens,
+      passageTokens,
+    } = this.props;
+    const {
+      filterValue
+    } = this.state;
+    const questionData = getHighlightClusters(programExecution, 'question', filterValue, questionTokens)
+    const passageData = getHighlightClusters(programExecution, 'passage', filterValue, passageTokens)
+    this.setState({ questionData, passageData });
+  }
+
+  handleUpdateFilterValue = (e) => {
+    this.setState({ filterValue: e.target.value }, this.updateData)
+  }
+
+  render () {
+    const { 
+      activeIds,
+      activeDepths,
+      isClicking,
+      selectedId,
+      onMouseDown,
+      onMouseOut,
+      onMouseOver,
+      onMouseUp,
+      programLisp,
+      questionTokens,
+      passageTokens,
+      answer,
+      question,
+    } = this.props
+    const {
+      questionData,
+      passageData,
+    } = this.state;
+    const questionClusters = Object.keys(questionData).reduce((acc, m) => { 
+      acc[m] = questionData[m].clusters;
+      return acc;
+    }, {});
+    const passageClusters = Object.keys(passageData).reduce((acc, m) => { 
+      acc[m] = passageData[m].clusters;
+      return acc;
+    }, {})
+  
+    const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
+    return (
+      <section>
+        <OutputField label="Answer">
+          {answer}
+        </OutputField>
+        <OutputField label="Explanation">
+        <QuestionStep>
+            {question}
+          </QuestionStep>
+          <QuestionStep>
+            ↓
+          </QuestionStep>
+          <QuestionStep>
+            Question Parser
+          </QuestionStep>
+          <QuestionStep>
+            ↓
+          </QuestionStep>
+          <CodeQuestionStep>
+            {programLisp}
+          </CodeQuestionStep>
+          <QuestionStep>
+            ↓
+          </QuestionStep>
+          <div>
+            {Object.keys(passageData).map((key, i) => 
+              (
+                <div 
+                  key={i}
+                  style={{ display: 'flex', justifyContent: 'center' }}
+                >
+                  <div 
+                    style={{ 
+                      display: 'unset',
+                      textAlign: 'center',
+                      width: `${(Object.keys(passageData).length - i) / Object.keys(passageData).length * 100}%`
+                    }}
+                    className={getHighlightConditionalClasses({
+                      labelPosition: null,
+                      label: null,
+                      color: getHighlightColor(i),
+                      isClickable: true,
+                      selectedId,
+                      isClicking,
+                      id: key,
+                      activeDepths,
+                      deepestIndex,
+                      activeIds,
+                      children: null,
+                    })}
+                    onMouseDown={onMouseDown ? () => onMouseDown(key, 0) : null}
+                    onMouseOver={onMouseOver ? () => onMouseOver(key) : null}
+                    onMouseOut={onMouseOut ? () => onMouseOut(key) : null}
+                    onMouseUp={onMouseUp ? () => onMouseUp(key) : null}
+                  >
+                    {passageData[key].displayName}
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+          <QuestionStep>
+            ↓
+          </QuestionStep>
+          <QuestionStep>
+            {answer}
+          </QuestionStep>
+        </OutputField>
+        <OutputField label="Passage">
+          <FormItem>
+            <label htmlFor="highlight-sensitivity">Highlight Sensitivity</label>
+            <input
+              id="highlight-sensitivity"
+              type="range"
+              min="0.000001"
+              max="0.01"
+              step="0.00001"
+              className="slider"
+              value={this.state.filterValue}
+              onChange={this.handleUpdateFilterValue}
+            />
+          </FormItem>
+          <NestedHighlight
+              activeDepths={activeDepths}
+              activeIds={activeIds}
+              clusters={passageClusters}
+              isClickable
+              isClicking={isClicking}
+              labelPosition="bottom"
+              onMouseDown={onMouseDown}
+              onMouseOut={onMouseOut}
+              onMouseOver={onMouseOver}
+              onMouseUp={onMouseUp}
+              selectedId={selectedId}
+              tokens={passageTokens.map((t, i) => <Tooltip title={<HighlightTooltipData index={i} data={passageData} />}>{t}</Tooltip>)}
+            />
+        </OutputField>
+        <OutputField label="Question">
+          <NestedHighlight 
+              activeDepths={activeDepths}
+              activeIds={activeIds}
+              clusters={questionClusters}
+              isClickable
+              isClicking={isClicking}
+              labelPosition="bottom"
+              onMouseDown={onMouseDown}
+              onMouseOut={onMouseOut}
+              onMouseOver={onMouseOver}
+              onMouseUp={onMouseUp}
+              selectedId={selectedId}
+              tokens={questionTokens.map((t, i) => <Tooltip title={<HighlightTooltipData index={i} data={questionData} />}>{t}</Tooltip>)}
+            />
+        </OutputField>
+      </section>
+    );
+  }
+}
+
+const QuestionStep = styled.div`
+  text-align: center;
+`;
+
+const CodeQuestionStep = styled(QuestionStep)`
+  font-family: monospace;
+`;
 
 const NmnDropExplanation = withHighlightClickHandling(NmnDrop);
 
@@ -344,6 +427,52 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   )
 }
 
+const setIsEqual = (a, b) => {
+  return Array.from(a).every(value => b.has(value)) && Array.from(b).every(value => a.has(value))
+}
+
+const getHighlightClusters = (programExecution, keyType, filterValue, tokens) => {
+  const naiveClusters = programExecution.reduce((highlightClusters, e) => {
+    Object.keys(e).forEach(key => {
+      if (e[key][keyType]) {
+        let clusterKey = key
+        // Rename the cluster key if there are duplicates
+        while (highlightClusters[clusterKey]) {
+          clusterKey = clusterKey + "_"
+        }
+        highlightClusters[clusterKey] = {
+          displayName: key,
+          values: e[key][keyType],
+          highlightedIndicies: new Set(e[key][keyType].map((value, i) => value > filterValue ? i : undefined).filter(i => i)),
+          clusters: [],
+        }
+      }
+    })
+    return highlightClusters;
+  }, {});
+  const modules = Object.keys(naiveClusters)
+  let prevModulesWithHighlight = new Set()
+  for (let i = 0; i < tokens.length; i++) {
+    const modulesWithHighlight = new Set()
+    for (let n = 0; n < modules.length; n++) {
+      if (naiveClusters[modules[n]].highlightedIndicies.has(i)) {
+        modulesWithHighlight.add(modules[n])
+      }
+    }
+    if (setIsEqual(prevModulesWithHighlight, modulesWithHighlight)) {
+      modulesWithHighlight.forEach(m => {
+        naiveClusters[m].clusters[naiveClusters[m].clusters.length - 1][1] = i;
+      })
+    } else {
+      modulesWithHighlight.forEach(m => {
+        naiveClusters[m].clusters.push([i, i])
+      })
+    }
+    prevModulesWithHighlight = modulesWithHighlight;
+  }
+  return naiveClusters;
+}
+
 const AnswerByType = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   if(requestData && responseData) {
     const { passage, question } = requestData;
@@ -352,81 +481,15 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
 
     if (requestData.model === 'NMN (trained on DROP)') {
       const programExecution = responseData.program_execution;
-      const questionClusters = programExecution.reduce((acc, e) => {
-        Object.keys(e).forEach(key => {
-          if (e[key].question) {
-            let clusterKey = key
-            while (acc[clusterKey]) {
-              clusterKey = clusterKey + "_"
-            }
-            acc[clusterKey] = e[key].question.reduce((clusterAcc, q, i) => {
-              if (q > 0.000001) {
-                const lastCluster = clusterAcc[clusterAcc.length - 1]
-                if (!lastCluster) {
-                  clusterAcc.push([i, i])
-                } else {
-                  if (lastCluster[1] === i - 1) {
-                    lastCluster[1] = i
-                  }
-                  if (lastCluster[1] < i - 1) {
-                    clusterAcc.push([i, i])
-                  }
-                }
-              }
-              return clusterAcc;
-            }, [])
-          }
-        })
-        return acc;
-      }, {})
-      const passageClusters = programExecution.reduce((acc, e) => {
-        Object.keys(e).forEach(key => {
-          if (e[key].passage) {
-            let clusterKey = key
-            while (acc[clusterKey]) {
-              clusterKey = clusterKey + "_"
-            }
-            acc[clusterKey] = e[key].passage.reduce((clusterAcc, q, i) => {
-              if (q > 0.00001) {
-                const lastCluster = clusterAcc[clusterAcc.length - 1]
-                if (!lastCluster) {
-                  clusterAcc.push([i, i])
-                } else {
-                  if (lastCluster[1] === i - 1) {
-                    lastCluster[1] = i
-                  }
-                  if (lastCluster[1] < i - 1) {
-                    clusterAcc.push([i, i])
-                  }
-                }
-              }
-              return clusterAcc;
-            }, [])
-          }
-        })
-        return acc;
-      }, {})
       return (
-        <section>
-          <OutputField label="Answer">
-            {answer}
-          </OutputField>
-          <OutputField label="Explanation">
-            <section>
-              <NmnDropExplanation
-                programLisp={responseData.program_lisp}
-                questionTokens={questionTokens}
-                passageTokens={passageTokens}
-                questionClusters={questionClusters}
-                passageClusters={passageClusters}
-                answer={answer}
-              />
-            </section>
-          </OutputField>
-          <OutputField label="Question">
-            {question}
-          </OutputField>
-        </section>
+        <NmnDropExplanation
+          programLisp={responseData.program_lisp}
+          questionTokens={questionTokens}
+          passageTokens={passageTokens}
+          programExecution={programExecution}
+          answer={answer}
+          question={question}
+        />
       );
     }
 
