@@ -119,9 +119,11 @@ const HighlightTooltipData = props => {
 
   return (
     <div>
-      {Object.keys(data).map(m => (
-        <div key={m}>{data[m].displayName}: {data[m].values[index]}</div>
-      ))}
+      {Object.keys(data)
+        .filter(m => !!data[m].values[index])
+        .map(m => (
+          <div key={m}>{data[m].displayName}: {data[m].values[index]}</div>
+        ))}
     </div>
   )
 }
@@ -148,13 +150,15 @@ class NmnDrop extends React.Component {
       programExecution,
       questionTokens,
       passageTokens,
+      programNestedExpression,
     } = this.props;
     const {
       filterValue
     } = this.state;
     const filter = 1 - filterValue;
-    const questionData = getHighlightClusters(programExecution, 'question', filter, questionTokens)
-    const passageData = getHighlightClusters(programExecution, 'passage', filter, passageTokens)
+    const moduleNames = programNestedExpression.flat(Infinity).reverse()
+    const questionData = getHighlightClusters(programExecution, 'question', filter, questionTokens, moduleNames)
+    const passageData = getHighlightClusters(programExecution, 'passage', filter, passageTokens, moduleNames)
     this.setState({ questionData, passageData });
   }
 
@@ -183,18 +187,13 @@ class NmnDrop extends React.Component {
       questionData,
       passageData,
     } = this.state;
-    const questionModules = new Set(Object.keys(questionData))
-    const passageModules = new Set(Object.keys(passageData))
-    const allUsedModules = new Set([...questionModules, ...passageModules])
-    // It's necessary to include all keys so that they are rendered as th same
-    // color in both highlight spans.
-    const questionClusters = Array.from(allUsedModules).reduce((acc, m) => { 
-      acc[m] = (questionData[m] || {}).clusters || [];
-      return acc;
-    }, {});
-    const passageClusters = Array.from(allUsedModules).reduce((acc, m) => { 
-      acc[m] = (passageData[m] || {}).clusters || [];
-      return acc;
+    const questionClusters = Object.keys(questionData).reduce((data, d) => {
+      data[d] = questionData[d].clusters;
+      return data;
+    }, {})
+    const passageClusters = Object.keys(passageData).reduce((data, d) => {
+      data[d] = passageData[d].clusters;
+      return data;
     }, {})
   
     const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
@@ -223,7 +222,7 @@ class NmnDrop extends React.Component {
             ↓
           </QuestionStep>
           <div>
-            {Array.from(allUsedModules).map((key, i) => 
+            {Object.keys(questionData).map((key, i) => 
               (
                 <div 
                   key={i}
@@ -233,7 +232,7 @@ class NmnDrop extends React.Component {
                     style={{ 
                       display: 'unset',
                       textAlign: 'center',
-                      width: `${(Array.from(allUsedModules).length - i) / Array.from(allUsedModules).length * 100}%`
+                      width: `${(Object.keys(questionData).length - i) / Object.keys(questionData).length * 100}%`
                     }}
                     className={getHighlightConditionalClasses({
                       labelPosition: null,
@@ -253,7 +252,7 @@ class NmnDrop extends React.Component {
                     onMouseOut={onMouseOut ? () => onMouseOut(key) : null}
                     onMouseUp={onMouseUp ? () => onMouseUp(key) : null}
                   >
-                    {(passageData[key] || questionData[key]).displayName}
+                    {questionData[key].displayName}
                   </div>
                 </div>
               )
@@ -265,6 +264,22 @@ class NmnDrop extends React.Component {
           <QuestionStep>
             {answer}
           </QuestionStep>
+        </OutputField>
+        <OutputField label="Question">
+          <NestedHighlight 
+              activeDepths={activeDepths}
+              activeIds={activeIds}
+              clusters={questionClusters}
+              isClickable
+              isClicking={isClicking}
+              labelPosition="bottom"
+              onMouseDown={onMouseDown}
+              onMouseOut={onMouseOut}
+              onMouseOver={onMouseOver}
+              onMouseUp={onMouseUp}
+              selectedId={selectedId}
+              tokens={questionTokens.map((t, i) => <Tooltip title={<HighlightTooltipData index={i} data={questionData} />}>{t}</Tooltip>)}
+            />
         </OutputField>
         <OutputField label="Passage">
           <FormItem>
@@ -293,22 +308,6 @@ class NmnDrop extends React.Component {
               onMouseUp={onMouseUp}
               selectedId={selectedId}
               tokens={passageTokens.map((t, i) => <Tooltip title={<HighlightTooltipData index={i} data={passageData} />}>{t}</Tooltip>)}
-            />
-        </OutputField>
-        <OutputField label="Question">
-          <NestedHighlight 
-              activeDepths={activeDepths}
-              activeIds={activeIds}
-              clusters={questionClusters}
-              isClickable
-              isClicking={isClicking}
-              labelPosition="bottom"
-              onMouseDown={onMouseDown}
-              onMouseOut={onMouseOut}
-              onMouseOver={onMouseOver}
-              onMouseUp={onMouseUp}
-              selectedId={selectedId}
-              tokens={questionTokens.map((t, i) => <Tooltip title={<HighlightTooltipData index={i} data={questionData} />}>{t}</Tooltip>)}
             />
         </OutputField>
       </section>
@@ -438,14 +437,27 @@ const setIsEqual = (a, b) => {
   return Array.from(a).every(value => b.has(value)) && Array.from(b).every(value => a.has(value))
 }
 
-const getHighlightClusters = (programExecution, keyType, filterValue, tokens) => {
+const getHighlightClusters = (programExecution, keyType, filterValue, tokens, moduleNames) => {
+  const initialClusters = moduleNames.reduce((names, name) => {
+    let key = name;
+    // Rename the cluster key if there are duplicates
+    while (names[key]) {
+      key = `${key}_`
+    }
+    names[key] = { 
+      displayName: name,
+      values: [],
+      highlightedIndicies: new Set(),
+      clusters: [],
+    }
+    return names;
+  }, {})
   const naiveClusters = programExecution.reduce((highlightClusters, e) => {
     Object.keys(e).forEach(key => {
       if (e[key][keyType]) {
         let clusterKey = key
-        // Rename the cluster key if there are duplicates
-        while (highlightClusters[clusterKey]) {
-          clusterKey = clusterKey + "_"
+        while (highlightClusters[clusterKey].values.length !== 0) {
+          clusterKey = `${clusterKey}_`
         }
         highlightClusters[clusterKey] = {
           displayName: key,
@@ -456,7 +468,7 @@ const getHighlightClusters = (programExecution, keyType, filterValue, tokens) =>
       }
     })
     return highlightClusters;
-  }, {});
+  }, initialClusters);
   const modules = Object.keys(naiveClusters)
   let prevModulesWithHighlight = new Set()
   for (let i = 0; i < tokens.length; i++) {
@@ -488,6 +500,7 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
 
     if (requestData.model === 'NMN (trained on DROP)') {
       const programExecution = responseData.program_execution;
+      const programNestedExpression = responseData.program_nested_expression;
       return (
         <NmnDropExplanation
           programLisp={responseData.program_lisp}
@@ -496,6 +509,7 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
           programExecution={programExecution}
           answer={answer}
           question={question}
+          programNestedExpression={programNestedExpression}
         />
       );
     }
