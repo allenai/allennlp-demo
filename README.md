@@ -21,7 +21,7 @@ To run the demo locally for development, you will need to:
     b.  If you would like to use the same version this commit was tested on, please look in the
         Dockerfile and install that commit.
 
-        git+git://github.com/allenai/allennlp.git@$SOURCE_COMMIT`.
+        git+git://github.com/allenai/allennlp.git@$SOURCE_COMMIT
 
     c.  To install AllenNLP from source you can use `pip install --editable .`
 
