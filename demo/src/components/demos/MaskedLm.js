@@ -237,6 +237,17 @@ class App extends React.Component {
 
       this.debouncedChoose()
     }
+    else { // Update text input without request to backend server
+      this.setState({
+          output: value,
+          words: null,
+          logits: null,
+          probabilities: null,
+          interpretData: null,
+          attackData: null,
+          loading: false
+      })
+    }
   }
 
   createRequestId() {
