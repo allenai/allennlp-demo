@@ -120,6 +120,9 @@ function renderProgramWithHighlights(displayInfoByName, maybeModuleName, listene
     // key that should exist in the map that ultimately gives us the "highlight index" and
     // the display name of the module. The "highlight index" is a way to tell the highlighting
     // mechanism what to highlight when this module is hovered.
+
+    // TODO: It looks like there's a replace I'll need to do up above as well, this is getting out
+    // of hand.
     let resolvedKey = maybeModuleName;
     while(seenKeys.has(resolvedKey)) {
       resolvedKey = `${resolvedKey}*`;
@@ -197,8 +200,6 @@ class NmnDrop extends React.Component {
     const {
       activeIds,
       activeDepths,
-      isClicking,
-      selectedId,
       onMouseDown,
       onMouseOut,
       onMouseOver,
@@ -269,14 +270,9 @@ class NmnDrop extends React.Component {
               activeDepths={activeDepths}
               activeIds={activeIds}
               clusters={questionClusters}
-              isClickable
-              isClicking={isClicking}
               labelPosition="bottom"
-              onMouseDown={onMouseDown}
               onMouseOut={onMouseOut}
               onMouseOver={onMouseOver}
-              onMouseUp={onMouseUp}
-              selectedId={selectedId}
               tokens={questionTokens.map((t, i) => <Tooltip title={<HighlightTooltipData index={i} data={questionData} />}>{t}</Tooltip>)}
             />
         </OutputField>
@@ -285,14 +281,9 @@ class NmnDrop extends React.Component {
               activeDepths={activeDepths}
               activeIds={activeIds}
               clusters={passageClusters}
-              isClickable
-              isClicking={isClicking}
               labelPosition="bottom"
-              onMouseDown={onMouseDown}
               onMouseOut={onMouseOut}
               onMouseOver={onMouseOver}
-              onMouseUp={onMouseUp}
-              selectedId={selectedId}
               tokens={passageTokens.map((t, i) => <Tooltip title={<HighlightTooltipData index={i} data={passageData} />}>{t}</Tooltip>)}
             />
         </OutputField>
