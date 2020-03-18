@@ -103,7 +103,7 @@ const HighlightTooltipData = props => {
   )
 }
 
-// TODO: THis is a hack, if this treatment lands it should be eliminated. The processHighlightData
+// TODO: This is a hack, if this treatment lands it should be eliminated. The processHighlightData
 // methods should likely be refactored to make all this bit fiddling unecessary.
 function renderProgramWithHighlights(displayInfoByName, maybeModuleName, listeners, isLast = false, seenKeys = new Set()) {
   if (Array.isArray(maybeModuleName)) {
@@ -249,9 +249,6 @@ class NmnDrop extends React.Component {
           <QuestionStep>
             ↓
           </QuestionStep>
-          <QuestionStep>
-            ↓
-          </QuestionStep>
           <CodeQuestionStep>
             {renderProgramWithHighlights(
                 moduleDisplayInfoByName,
@@ -324,19 +321,6 @@ class NmnDrop extends React.Component {
     );
   }
 }
-
-const Predicate = styled.div`
-  &&& {
-    display: unset;
-    text-align: center;
-    width: ${props => props.width};
-  }
-`;
-
-const PredicateWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-`;
 
 const QuestionStep = styled.div`
   text-align: center;
