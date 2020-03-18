@@ -3,7 +3,6 @@ import { Tooltip, Collapse } from 'antd';
 import styled from 'styled-components';
 import OutputField from '../../OutputField'
 import NestedHighlight, { withHighlightClickHandling, getHighlightColor } from '../../highlight/NestedHighlight';
-import { getHighlightConditionalClasses } from '../../highlight/Highlight';
 import FormItem from 'antd/lib/form/FormItem';
 
 const DEFAULT_FILTER_VALUE = 0.001
@@ -21,7 +20,7 @@ const processHighlightData = (programExecution, dataType, filterValues, tokens, 
     while (data[key]) {
       key = `${key}*`
     }
-    data[key] = { 
+    data[key] = {
       displayName: name,
       values: [],
       highlightedIndicies: new Set(),
@@ -104,6 +103,54 @@ const HighlightTooltipData = props => {
   )
 }
 
+// TODO: THis is a hack, if this treatment lands it should be eliminated. The processHighlightData
+// methods should likely be refactored to make all this bit fiddling unecessary.
+function renderProgramWithHighlights(displayInfoByName, maybeModuleName, listeners, isLast = false, seenKeys = new Set()) {
+  if (Array.isArray(maybeModuleName)) {
+    const lastIdx = maybeModuleName.length - 1;
+    return (
+      <React.Fragment>
+        ({ maybeModuleName.map((m, i) =>
+            renderProgramWithHighlights(displayInfoByName, m, listeners, i === lastIdx, seenKeys)) }){!isLast ? ' ' : null}
+      </React.Fragment>
+    );
+  } else {
+    // TODO: This is a ridiculous hack. On line 19 you can see how, on the client, we ensure
+    // names are unique by appending a trailing `*`. We use the same hack here to "resolve" a
+    // key that should exist in the map that ultimately gives us the "highlight index" and
+    // the display name of the module. The "highlight index" is a way to tell the highlighting
+    // mechanism what to highlight when this module is hovered.
+    let resolvedKey = maybeModuleName;
+    while(seenKeys.has(resolvedKey)) {
+      resolvedKey = `${resolvedKey}*`;
+    }
+    seenKeys.add(resolvedKey);
+
+    // See if we have display info for the thing. It's possible we don't. Why, I'm not sure.
+    // TODO: Figure out why not and either update the comment or fix this tom foolery.
+    const { idx, displayName } = (
+      resolvedKey in displayInfoByName
+        ? displayInfoByName[resolvedKey]
+        : { idx: -1, displayName: resolvedKey }
+    );
+    const { onMouseDown, onMouseOver, onMouseOut, onMouseUp } = listeners;
+    return (
+      <React.Fragment>
+        <span
+            key={maybeModuleName}
+            className={idx !== -1 ? `highlight-text--${getHighlightColor(idx)}` : ''}
+            onMouseDown={onMouseDown ? () => onMouseDown(resolvedKey, 0) : null}
+            onMouseOver={onMouseOver ? () => onMouseOver(resolvedKey) : null}
+            onMouseOut={onMouseOut ? () => onMouseOut(resolvedKey) : null}
+            onMouseUp={onMouseUp ? () => onMouseUp(resolvedKey) : null}
+        >
+          {displayName}
+        </span>{!isLast ? ' ' : null}
+      </React.Fragment>
+    );
+  }
+}
+
 class NmnDrop extends React.Component {
   state = {
     questionData: {},
@@ -147,7 +194,7 @@ class NmnDrop extends React.Component {
   }
 
   render () {
-    const { 
+    const {
       activeIds,
       activeDepths,
       isClicking,
@@ -156,11 +203,11 @@ class NmnDrop extends React.Component {
       onMouseOut,
       onMouseOver,
       onMouseUp,
-      programLisp,
       questionTokens,
       passageTokens,
       answer,
       question,
+      programNestedExpression
     } = this.props
     const {
       questionData,
@@ -174,7 +221,16 @@ class NmnDrop extends React.Component {
       data[d] = passageData[d].clusters;
       return data;
     }, {})
-    const deepestIndex = activeDepths ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths)) : null;
+    const moduleDisplayInfoByName = Object.keys(questionData).reduce((byName, key, idx) => {
+      if (byName[key]) {
+        throw Error(`Duplicate key: ${key}`);
+      }
+      byName[key] = {
+        displayName: questionData[key].displayName,
+        idx
+      };
+      return byName;
+    }, {});
     return (
       <section>
         <OutputField label="Answer">
@@ -193,42 +249,17 @@ class NmnDrop extends React.Component {
           <QuestionStep>
             ↓
           </QuestionStep>
-          <CodeQuestionStep>
-            {programLisp}
-          </CodeQuestionStep>
           <QuestionStep>
             ↓
           </QuestionStep>
-          <div>
-            {Object.keys(questionData).map((key, i) => 
-              (
-                <PredicateWrapper key={i}>
-                  <Predicate 
-                    width={`${(Object.keys(questionData).length - i) / Object.keys(questionData).length * 100}%`}
-                    className={getHighlightConditionalClasses({
-                      labelPosition: null,
-                      label: null,
-                      color: getHighlightColor(i),
-                      isClickable: true,
-                      selectedId,
-                      isClicking,
-                      id: key,
-                      activeDepths,
-                      deepestIndex,
-                      activeIds,
-                      children: null,
-                    })}
-                    onMouseDown={onMouseDown ? () => onMouseDown(key, 0) : null}
-                    onMouseOver={onMouseOver ? () => onMouseOver(key) : null}
-                    onMouseOut={onMouseOut ? () => onMouseOut(key) : null}
-                    onMouseUp={onMouseUp ? () => onMouseUp(key) : null}
-                  >
-                    {questionData[key].displayName}
-                  </Predicate>
-                </PredicateWrapper>
-              )
+          <CodeQuestionStep>
+            {renderProgramWithHighlights(
+                moduleDisplayInfoByName,
+                programNestedExpression,
+                { onMouseDown, onMouseOut, onMouseOver, onMouseUp },
+                false
             )}
-          </div>
+          </CodeQuestionStep>
           <QuestionStep>
             ↓
           </QuestionStep>
@@ -237,7 +268,7 @@ class NmnDrop extends React.Component {
           </QuestionStep>
         </OutputField>
         <OutputField label="Question">
-          <NestedHighlight 
+          <NestedHighlight
               activeDepths={activeDepths}
               activeIds={activeIds}
               clusters={questionClusters}
@@ -313,6 +344,8 @@ const QuestionStep = styled.div`
 
 const CodeQuestionStep = styled(QuestionStep)`
   font-family: monospace;
+  font-weight: 900;
+  font-size: 1.25em;
 `;
 
 const NmnDropExplanation = withHighlightClickHandling(NmnDrop);
