@@ -1,6 +1,6 @@
 {
     "reading-comprehension": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-model-2020.02.10-charpad.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-model-2020.03.19.tar.gz",
         "predictor_name": "reading-comprehension",
         "max_request_length": 311108
     },
