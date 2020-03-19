@@ -23,6 +23,7 @@ function shouldHaveLeadingSpace(curToken, prevToken) {
   );
 }
 
+// TODO: Use styled component
 function stylesForSpan(active, alpha) {
   return Object.assign({ padding: '1px' }, active ? {
     background: `rgba(252, 255, 0, ${alpha})`,
@@ -190,22 +191,18 @@ const ImportantInputText = ({ response, output }) => {
             </Col>
           </Row>
         </FormField>
-        {output.question ? (
-          <OutputField label="Question">
-            <Text
-                tokens={response.question_tokens}
-                output={output.question}
-                activeThreshold={minProb} />
-          </OutputField>
-        ) : null}
-        {output.passage ? (
-          <OutputField label="Passage">
-            <Text
-                tokens={response.passage_tokens}
-                output={output.passage}
-                activeThreshold={minProb} />
-          </OutputField>
-        ) : null}
+        <OutputField label="Question">
+          <Text
+              tokens={response.question_tokens}
+              output={output.question || []}
+              activeThreshold={minProb} />
+        </OutputField>
+        <OutputField label="Passage">
+          <Text
+              tokens={response.passage_tokens || []}
+              output={output.passage}
+              activeThreshold={minProb} />
+        </OutputField>
     </React.Fragment>
   )
 }
