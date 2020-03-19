@@ -20,7 +20,7 @@
         "max_request_length": 25819,
         "overrides": "{\"model\": { \"debug\":true}}",
         "memory": "4Gi",
-        "image": "gcr.io/ai2-reviz/allennlp-demo-nmn-drop:735d3f4e2c6fad9a2e276d4d24d39a32135a4fa8"
+        "image": "gcr.io/ai2-reviz/allennlp-demo-nmn-drop:a84ed16b2d7cca9b84dc4056a87732932297ac18"
     },
     "semantic-role-labeling": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.03.24.tar.gz",
