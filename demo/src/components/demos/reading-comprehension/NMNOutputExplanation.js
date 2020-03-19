@@ -99,53 +99,53 @@ const ModuleDefinition = styled.div`
 const moduleDescriptions = [
   new ModuleDescription(
     'find',
-    'find(Q) → P ',
-    'For question spans in the input, find similar spans in the passage'
+    'find(Q) → P',
+    'For text spans in the question, find similar text spans in the passage.'
   ),
   new ModuleDescription(
     'filter',
-    'filter(Q, P) → P ',
-    'Based on the question, select a subset of spans from the input'
+    'filter(Q, P) → P',
+    'Based on the question, select a subset of spans from the input.'
   ),
   new ModuleDescription(
     'relocate',
     'relocate(Q, P) → P',
-    'Find the argument asked for in the question for input paragraph spans'
+    'Find spans in the passage related to an argument in the question.'
   ),
   new ModuleDescription(
     'find-num',
     'find-num(P) → N',
-    'Find the number(s) associated to the input paragraph spans'
+    'Find the number(s) associated to the input paragraph spans.'
   ),
   new ModuleDescription(
     'find-date',
     'find-date(P) → D',
-    'Find the date(s) associated to the input paragraph spans'
+    'Find the date(s) associated to the input paragraph spans.'
   ),
   new ModuleDescription(
     'count',
-    'count(P) → C ',
-    'Count the number of input passage spans'
+    'count(P) → C',
+    'Count the number of input passage spans.'
   ),
   new ModuleDescription(
     'compare-num-lt',
     'compare-num-lt(P1, P2) → P ',
-    'Output the span associated with the smaller number'
+    'Output the span associated with the smaller number.'
   ),
   new ModuleDescription(
     'time-diff',
-    'time-diff(P1, P2) → TD ',
-    'Difference between the dates associated with the paragraph spans'
+    'time-diff(P1, P2) → TD',
+    'Difference between the dates associated with the paragraph spans.'
   ),
   new ModuleDescription(
     'find-max-num',
     'find-max-num(P) → P',
-    'Select the span that is associated with the largest number'
+    'Select the text span in the passage with the largest number.'
   ),
   new ModuleDescription(
     'span',
-    'span(P) → S ',
-    'Identify a contiguous span from the attended tokens'
+    'span(P) → S',
+    'Identify a contiguous span from the attended tokens.'
   )
 ]
 
