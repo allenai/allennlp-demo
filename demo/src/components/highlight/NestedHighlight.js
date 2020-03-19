@@ -21,7 +21,7 @@ const highlightColors = [
 
 /**
  * Matches an index with a color. If index is greater than number of colors, cycle through colors.
- * @param {number} index 
+ * @param {number} index
  */
 export const getHighlightColor = (index) => {
   if (index <= highlightColors.length) {
@@ -33,7 +33,7 @@ export const getHighlightColor = (index) => {
 
 /**
  * Helper function for transforming response data into a tree object.
- * 
+ *
  * @param {string[]} tokens a list of strings of each of the tokens (words or punctuation) present
  * @param {{ labelString: number[][] } | number[][][]} clusters a collection of arrays that specify spans to be clustered in the original list of tokens
  */
@@ -130,7 +130,7 @@ const InnerHighlight = props => {
             onMouseUp={onMouseUp}
             selectedId={selectedId}
           >
-              <InnerHighlight 
+              <InnerHighlight
                 activeDepths={activeDepths}
                 activeIds={activeIds}
                 data={token.contents}
@@ -153,12 +153,12 @@ const InnerHighlight = props => {
 }
 
 /**
- * A function that recursively handles rendering spans of text to highlight. 
+ * A function that recursively handles rendering spans of text to highlight.
  * Use in conjunction withHighlightClickHandling if isClickable is true.
  * @param {
  *  activeDepths?: { ids: string[], depths: number[]}
  *  activeIds?: string[]
- *  clusters: number[][][] | { labelString: [][] }
+ *  clusters: number[][][] | { [id: string]: number[][] }
  *  isClickable?: boolean
  *  isClicking?: boolean
  *  labelPosition: "top" | "left" | "right" | "bottom"
@@ -168,8 +168,8 @@ const InnerHighlight = props => {
  *  onMouseUp?: (id: string) => void
  *  selectedId?: string
  *  tokens: string[]
- * } props 
- */ 
+ * } props
+ */
 const NestedHighlight = props => {
   const {
     activeDepths,
@@ -210,7 +210,7 @@ export default NestedHighlight;
 /**
  * An HOC that handles highlight click handling state and passes through
  * any given props.
- * 
+ *
  * @param {React.Component} WrappedComponent Any component that requires highlight click handling
  */
 export const withHighlightClickHandling = WrappedComponent => {
@@ -222,19 +222,19 @@ export const withHighlightClickHandling = WrappedComponent => {
       selectedId: null,
       isClicking: false
     };
-  
+
     handleHighlightMouseDown = (id, depth) => {
       let depthTable = this.state.activeDepths;
       depthTable.ids.push(id);
       depthTable.depths.push(depth);
-  
+
       this.setState({
         activeIds: [id],
         activeDepths: depthTable,
         isClicking: true
       });
     }
-  
+
     handleHighlightMouseUp = (id) => {
       const depthTable = this.state.activeDepths;
       const deepestIndex = depthTable.depths.indexOf(Math.max(...depthTable.depths));
@@ -246,13 +246,13 @@ export const withHighlightClickHandling = WrappedComponent => {
         activeIds: [...prevState.activeIds, id],
       }));
     }
-  
+
     handleHighlightMouseOver = (id) => {
       this.setState(prevState => ({
         activeIds: [...prevState.activeIds, id],
       }));
     }
-  
+
     handleHighlightMouseOut = () => {
       this.setState(prevState => ({
         activeIds: prevState.activeIds.filter(i => (i === this.state.selectedId)),
