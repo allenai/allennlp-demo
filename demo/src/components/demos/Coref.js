@@ -51,7 +51,7 @@ const fields = [
 ]
 
 const Output = (props) => {
-  const { 
+  const {
     responseData,
     activeIds,
     activeDepths,
@@ -63,6 +63,8 @@ const Output = (props) => {
     onMouseUp,
   } = props;
   const { document, clusters } = responseData
+
+  console.log(clusters);
 
   return (
     <div className="model__content answer">

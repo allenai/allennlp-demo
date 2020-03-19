@@ -24,7 +24,7 @@ import {
   INPUT_REDUCTION_ATTACKER,
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
-import NmnDropExplanation from './ReadingComprehension/NmnDropExplanation';
+import NMNOutputExplanation from './reading-comprehension/NMNOutputExplanation';
 
 const title = "Reading Comprehension"
 
@@ -37,6 +37,11 @@ const description = (
     the system understands the passage.
   </span>
   )
+
+const NMNModel = {
+  name: "NMN (trained on DROP)",
+  desc: "A neural module network trained on DROP."
+};
 
 const taskModels = [
   {
@@ -51,10 +56,7 @@ const taskModels = [
     name: "NAQANet (trained on DROP)",
     desc: "An augmented version of QANet that adds rudimentary numerical reasoning ability,<br/>trained on DROP (Dua et al., 2019), as published in the original DROP paper."
   },
-  {
-    name: "NMN (trained on DROP)",
-    desc: "A neural module network trained on DROP."
-  }
+  NMNModel
 ]
 
 const taskEndpoints = {
@@ -220,22 +222,6 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
     const { passage, question } = requestData;
     const { answer, question_tokens: questionTokens, passage_tokens: passageTokens } = responseData;
     const { answer_type: answerType } = answer || {};
-
-    if (requestData.model === 'NMN (trained on DROP)') {
-      const programExecution = responseData.program_execution;
-      const programNestedExpression = responseData.program_nested_expression;
-      return (
-        <NmnDropExplanation
-          programLisp={responseData.program_lisp}
-          questionTokens={questionTokens}
-          passageTokens={passageTokens}
-          programExecution={programExecution}
-          answer={answer}
-          question={question}
-          programNestedExpression={programNestedExpression}
-        />
-      );
-    }
 
     switch(answerType) {
       case "passage_span": {
@@ -403,11 +389,21 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
 }
 
 const Output = (props) => {
-  return (
-    <div className="model__content answer">
-      <AnswerByType {...props}/>
-    </div>
-  )
+  switch (props.requestData.model) {
+    case NMNModel.name: {
+      return (
+        <div className="model__content answer">
+          <NMNOutputExplanation response={props.responseData} />
+        </div>
+      );
+    }
+    default:
+      return (
+        <div className="model__content answer">
+          <AnswerByType {...props} />
+        </div>
+      )
+  }
 }
 
 const addSnippet = (example) => {
