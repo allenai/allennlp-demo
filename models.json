@@ -3,11 +3,5 @@
         "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/scibert/ner.tar.gz",
         "predictor_name": "sentence-tagger",
         "max_request_length": 94864
-    },
-    "masked-lm": {
-        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/scibert/ner.tar.gz",
-        "predictor_name": "masked_language_model",
-        "max_request_length": 10000,
-        "memory": "4Gi"
     }
 }

@@ -1,6 +1,9 @@
 from typing import Dict, List
 import json
 
+from scibert import models
+from scibert.models.bert_crf_tagger import BertCrfTagger
+
 from allennlp.predictors import Predictor
 from allennlp.models.archival import load_archive
 
