@@ -60,16 +60,11 @@ local num_replicas = (
 local topLevelDomain = '.apps.allenai.org';
 local canonicalTopLevelDomain = '.allennlp.org';
 
-local hosts = [
+local hosts =
     if env == 'prod' then
-        config.appName + topLevelDomain
+        [ config.appName + topLevelDomain, 'demo.allennlp.org' ]
     else
-        config.appName + '.' + env + topLevelDomain,
-    if env == 'prod' then
-        'demo' + canonicalTopLevelDomain
-    else
-        'demo' + '.' + env + canonicalTopLevelDomain
-];
+        [ config.appName + '.' + env + topLevelDomain ];
 
 // Each app gets it's own namespace
 local namespaceName = config.appName;
