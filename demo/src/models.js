@@ -28,58 +28,7 @@ const modelGroups = [
         iconSrc: annotateIcon,
         defaultOpen: true,
         models: [
-            {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SemanticRoleLabeling},
             {model: "named-entity-recognition", name: "Named Entity Recognition", component: NamedEntityRecognition},
-            {model: "constituency-parsing", name: "Constituency Parsing", component: ConstituencyParser},
-            {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParser},
-            {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe},
-            {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis}
-        ]
-    },
-    {
-        label: "Annotate a passage",
-        iconSrc: passageIcon,
-        defaultOpen: true,
-        models: [
-            {model: "coreference-resolution", name: "Coreference Resolution", component: Coref}
-        ]
-    },
-    {
-        label: "Answer a question",
-        iconSrc: questionIcon,
-        defaultOpen: true,
-        models: [
-            {model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension}
-        ]
-    },
-    {
-        label: "Semantic parsing",
-        iconSrc: parseIcon,
-        defaultOpen: true,
-        models: [
-            {model: "wikitables-parser", name: "WikiTableQuestions Semantic Parser", component: WikiTables},
-            {model: "nlvr-parser", name: "Cornell NLVR Semantic Parser", component: Nlvr},
-            {model: "atis-parser", name: "Text to SQL (ATIS)", component: Atis},
-            {model: "quarel-parser-zero", name: "QuaRel Zero", component: QuarelZero}
-        ]
-    },
-    {
-        label: "Other",
-        iconSrc: otherIcon,
-        defaultOpen: true,
-        models: [
-            {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
-            {model: "event2mind", name: "Event2Mind", component: Event2Mind},
-            {model: "next-token-lm", name: "Language Modeling", component: LanguageModel, redirects: ["gpt2"]},
-            {model: "masked-lm", name: "Masked Language Modeling", component: MaskedLm}
-        ]
-    },
-    {
-        label: "Contributing",
-        iconSrc: addIcon,
-        defaultOpen: true,
-        models: [
-            {model: "user-models", name: "Your model here!"}
         ]
     }
 ]

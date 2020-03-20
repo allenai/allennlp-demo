@@ -68,18 +68,13 @@ const descriptionEllipsed = (
 
 const taskModels = [
   {
-    name: "elmo-ner",
+    name: "scibert-ner",
     desc: "Reimplementation of the NER model described in 'Deep<br/>contextualized word representations' by Peters, et. al."
-  },
-  {
-    name: "fine-grained-ner",
-    desc: "This Model identifies a broad range of 16 semantic types in the input text.<br/>This model is a reimplementation of Lample (2016) and uses a biLSTM<br/>with a CRF layer, character embeddings and ELMo embeddings. It was<br/>trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2."
   }
 ]
 
 const taskEndpoints = {
-  "elmo-ner": "named-entity-recognition",
-  "fine-grained-ner": "fine-grained-named-entity-recognition"
+  "scibert-ner": "named-entity-recognition"
 };
 
 const fields = [
