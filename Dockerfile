@@ -25,6 +25,7 @@ RUN ./scripts/build_demo.py
 COPY tests/ tests/
 COPY app.py app.py
 COPY server/ server/
+COPY scibert/ scibert/
 
 # Copy the configuration files used at runtime
 COPY models.json models.json
