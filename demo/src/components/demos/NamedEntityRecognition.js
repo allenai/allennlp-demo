@@ -179,7 +179,7 @@ const TokenSpan = ({ token }) => {
 
     if (entity !== null) { // If token has entity value:
       // Display entity text wrapped in a <Highlight /> component.
-      return (<Highlight label={entity} color={entityLookup[entity].color} tooltip={entityLookup[entity].tooltip}>{token.text} </Highlight>);
+      return (<Highlight label={entity} color={"pink"}>{token.text} </Highlight>);
     } else { // If no entity:
       // Display raw text.
       return (<span>{token.text} </span>);
