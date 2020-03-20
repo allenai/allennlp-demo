@@ -26,8 +26,6 @@ COPY tests/ tests/
 COPY app.py app.py
 COPY server/ server/
 
-RUN pytest tests/
-
 # Copy the configuration files used at runtime
 COPY models.json models.json
 COPY models_small.json models_small.json
