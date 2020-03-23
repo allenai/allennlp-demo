@@ -2,3 +2,4 @@ psycopg2-binary
 python-json-logger
 pytorch-pretrained-bert
 jsonlines
+pip install "git+git://github.com/allenai/allennlp.git@98640b565355a0d6d3de6e7838b6e826af80baca"
