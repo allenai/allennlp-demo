@@ -6,6 +6,7 @@ from allennlp.models.archival import load_archive
 
 from allennlp_models import coref
 from allennlp_models import rc
+from allennlp_models import syntax
 
 from server.demo_model import DemoModel
 from server.gpt2 import Gpt2DemoModel
