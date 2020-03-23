@@ -32,7 +32,7 @@ const description = (
     on GloVe embeddings and <a href="https://arxiv.org/pdf/1907.11692.pdf">RoBERTa large</a>,
     respectively, and are trained on the binary classification setting of
     the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.
-    They achieves about 87% and 95.11% accuracy on the test set.
+    They achieve about 87% and 95.11% accuracy on the test set.
     </span>
     <p>
       <b>Contributed by:</b> Zhaofeng Wu
