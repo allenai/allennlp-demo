@@ -23,7 +23,7 @@ const description = (
     in a text. It is an important step for many higher level NLP tasks that involve natural
     language understanding such as document summarization, question answering, and information extraction.
     </span>
-    <ExternalLink href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener">{' '} End-to-end Neural Coreference Resolution ( Lee et al, 2017) {' '}</ExternalLink>
+    <ExternalLink href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener">{' '} End-to-end Neural Coreference Resolution (Lee et al, 2017) {' '}</ExternalLink>
     <span>
     is a neural model which considers all possible spans in the document as potential mentions and
     learns distributions over possible anteceedents for each span, using aggressive
@@ -32,10 +32,12 @@ const description = (
     <ExternalLink href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener">{' '} the Ontonotes 5.0 dataset {' '}</ExternalLink>
     <span>
     in early 2017. The model here is based on that paper, but we have substituted the GloVe embeddings
-    that it uses with BERT embeddings. On Ontonotes this model achieves an F1 score of 72.13% on the test set.
+    that it uses with
+    <ExternalLink href = "https://www.semanticscholar.org/paper/SpanBERT%3A-Improving-Pre-training-by-Representing-Joshi-Chen/81f5810fbbab9b7203b9556f4ce3c741875407bc" target="_blank" rel="noopener">{' '} SpanBERT embeddings</ExternalLink>
+    . On Ontonotes this model achieves an F1 score of 78.87% on the test set.
     </span>
     <p>
-      <b>Contributed by:</b> Zhaofeng Wu
+      <b>Contributed by:</b> <ExternalLink href = "https://zhaofengwu.github.io" target="_blank" rel="noopener">Zhaofeng Wu</ExternalLink>
     </p>
   </span>
 );
@@ -229,14 +231,14 @@ const usage = (
       <UsageCode>
         <SyntaxHighlight language="bash">
           {`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
-  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz -`} />
+  allennlp predict https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz -`} />
         </SyntaxHighlight>
       </UsageCode>
       <strong>As a library (Python):</strong>
       <UsageCode>
         <SyntaxHighlight language="python">
           {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
+predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz")
 predictor.predict(
   document="The woman reading a newspaper sat on the bench with her dog."
 )`}

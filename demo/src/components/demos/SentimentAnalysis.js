@@ -35,7 +35,7 @@ const description = (
     They achieves about 87% and 95.11% accuracy on the test set.
     </span>
     <p>
-      <b>Contributed by:</b> Zhaofeng Wu
+      <b>Contributed by:</b> <a href="https://zhaofengwu.github.io">Zhaofeng Wu</a>
     </p>
   </span>
 );
