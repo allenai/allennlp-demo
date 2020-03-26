@@ -129,7 +129,7 @@ const moduleDescriptions = [
   new ModuleDescription(
     'find-min-num',
     'find-min-num(P) → P',
-    'SElect the text span in the passage with the smallest number.',
+    'Select the text span in the passage with the smallest number.',
     getHighlightColor(9)
   ),
   new ModuleDescription(
@@ -180,7 +180,7 @@ const WithAdjustableProbThreshold = ({ probs, children }) => {
                 min={log.range[0]}
                 max={log.range[1]}
                 step={(log.range[1] - log.range[0]) / 100}
-                tipFormatter={p => p > 0 ? log.value(p) : 0}
+                tipFormatter={p => (p > 0 ? log.value(p) : 0).toString()}
                 onChange={p => setMinProb(log.value(p))}
                 value={log.scale(minProb)}
                 disabled={probs.length === 0} />
@@ -211,6 +211,9 @@ function getNumericOutput(moduleName, output) {
       return output.count;
     case 'find-num':
       return output.number;
+    case 'find-max-num':
+    case 'find-min-num':
+      return output.number_input;
     default:
       return undefined;
   }
