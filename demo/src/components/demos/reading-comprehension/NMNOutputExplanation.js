@@ -1,36 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import OutputField from '../../OutputField';
-import { Tooltip, Row, Col, Tabs, Slider } from 'antd';
+import { Row, Col, Tabs, Slider } from 'antd';
 import { FormField, FormLabel } from '../../Form';
-
-const punc = new Set("!?,;.-'");
-function isPunctuation(char, debug = false) {
-  if (debug) {
-    console.log(char, punc.has(char));
-  }
-  return punc.has(char);
-}
-
-function shouldHaveLeadingSpace(curToken, prevToken) {
-  if (!prevToken) {
-    return false;
-  }
-  return (
-    prevToken !== '' &&
-    !isPunctuation(curToken[0]) &&
-    !prevToken.endsWith('-')
-  );
-}
-
-// TODO: Use styled component
-function stylesForSpan(active, alpha) {
-  return Object.assign({ padding: '1px' }, active ? {
-    background: `rgba(252, 255, 0, ${alpha})`,
-    fontWeight: 'bold',
-    borderBottom: `2px solid rgba(252, 255, 0, 1)`
-  } : {});
-}
+import { Highlight } from '../../highlight/Highlight';
+import HighlightContainer from '../../highlight/HighlightContainer';
+import { getHighlightColor } from '../../highlight/NestedHighlight';
 
 const RawResponse = styled.code`
   ${({ theme }) => `
@@ -48,40 +23,33 @@ const RawResponse = styled.code`
   `}
 `;
 
-const Text = ({ tokens, output, activeThreshold }) => {
+const Text = ({ tokens, output, activeThreshold, moduleName, highlightColor }) => {
   const fragments = [];
-  let prevToken = null;
   for(const [ idx, token ] of Object.entries(tokens)) {
     const prob = output[idx] || 0;
     const active = prob >= activeThreshold;
     const nf = Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
-    const alpha = prob / 1;
     fragments.push((
       <React.Fragment key={`${idx}/${token}`}>
-        {shouldHaveLeadingSpace(token, prevToken) ? ' ' : ''}
         {active ? (
-          <Tooltip title={nf.format(prob)}>
-            <span style={stylesForSpan(active, alpha)}>
-              {token}
-            </span>
-          </Tooltip>
+          <Highlight tooltip={nf.format(prob)} label={moduleName} color={highlightColor}>
+            <span>{token} </span>
+          </Highlight>
         ) : (
-          <span style={stylesForSpan(active, alpha)}>
-            {token}
-          </span>
+          <span>{token} </span>
         )}
       </React.Fragment>
     ));
-    prevToken = token;
   }
-  return fragments;
+  return <HighlightContainer>{fragments}</HighlightContainer>;
 }
 
 class ModuleDescription {
-  constructor(name, signature, description) {
+  constructor(name, signature, description, color) {
     this.name = name;
     this.signature = signature;
     this.description = description;
+    this.color = color;
   }
 }
 
@@ -100,54 +68,70 @@ const moduleDescriptions = [
   new ModuleDescription(
     'find',
     'find(Q) → P',
-    'For text spans in the question, find similar text spans in the passage.'
+    'For text spans in the question, find similar text spans in the passage.',
+    getHighlightColor(0)
   ),
   new ModuleDescription(
     'filter',
     'filter(Q, P) → P',
-    'Based on the question, select a subset of spans from the input.'
+    'Based on the question, select a subset of spans from the input.',
+    getHighlightColor(1)
   ),
   new ModuleDescription(
     'relocate',
     'relocate(Q, P) → P',
-    'Find spans in the passage related to an argument in the question.'
+    'Find spans in the passage related to an argument in the question.',
+    getHighlightColor(2)
   ),
   new ModuleDescription(
     'find-num',
     'find-num(P) → N',
-    'Find the number(s) associated to the input paragraph spans.'
+    'Find the number(s) associated to the input paragraph spans.',
+    getHighlightColor(3)
   ),
   new ModuleDescription(
     'find-date',
     'find-date(P) → D',
-    'Find the date(s) associated to the input paragraph spans.'
+    'Find the date(s) associated to the input paragraph spans.',
+    getHighlightColor(4)
   ),
   new ModuleDescription(
     'count',
     'count(P) → C',
-    'Count the number of input passage spans.'
+    'Count the number of input passage spans.',
+    getHighlightColor(5)
   ),
   new ModuleDescription(
     'compare-num-lt',
     'compare-num-lt(P1, P2) → P ',
-    'Output the span associated with the smaller number.'
+    'Output the span associated with the smaller number.',
+    getHighlightColor(6)
   ),
   new ModuleDescription(
     'time-diff',
     'time-diff(P1, P2) → TD',
-    'Difference between the dates associated with the paragraph spans.'
+    'Difference between the dates associated with the paragraph spans.',
+    getHighlightColor(7)
   ),
   new ModuleDescription(
     'find-max-num',
     'find-max-num(P) → P',
-    'Select the text span in the passage with the largest number.'
+    'Select the text span in the passage with the largest number.',
+    getHighlightColor(8)
+  ),
+  new ModuleDescription(
+    'find-min-num',
+    'find-min-num(P) → P',
+    'SElect the text span in the passage with the smallest number.',
+    getHighlightColor(9)
   ),
   new ModuleDescription(
     'span',
     'span(P) → S',
-    'Identify a contiguous span from the attended tokens.'
+    'Identify a contiguous span from the attended tokens.',
+    getHighlightColor(10)
   )
-]
+];
 
 class LogScale {
   // We shift the provided values by 1, as to handle the fact that our value
@@ -167,7 +151,14 @@ class LogScale {
   }
 }
 
-const ImportantInputText = ({ response, output }) => {
+// The slider's slider gets cut off on the left w/o this.
+const ColWithLeftPadding = styled(Col)`
+  ${({ theme }) => `
+    padding-left: ${theme.spacing.xs};
+  `}
+`
+
+const ImportantInputText = ({ response, output, moduleName, highlightColor }) => {
   const probs =
     (output.question || []).concat(output.passage || [])
                            .slice()
@@ -180,7 +171,7 @@ const ImportantInputText = ({ response, output }) => {
         <FormField>
           <FormLabel>Minimum Probability:</FormLabel>
           <Row>
-            <Col span={12}>
+            <ColWithLeftPadding span={12}>
               <Slider
                   min={log.range[0]}
                   max={log.range[1]}
@@ -188,7 +179,7 @@ const ImportantInputText = ({ response, output }) => {
                   tipFormatter={p => log.value(p)}
                   onChange={p => setMinProb(log.value(p))}
                   value={log.scale(minProb)} />
-            </Col>
+            </ColWithLeftPadding>
             <Col span={8}>
               {minProb}
             </Col>
@@ -198,13 +189,17 @@ const ImportantInputText = ({ response, output }) => {
           <Text
               tokens={response.question_tokens}
               output={output.question || []}
-              activeThreshold={minProb} />
+              moduleName={moduleName}
+              activeThreshold={minProb}
+              highlightColor={highlightColor} />
         </OutputField>
         <OutputField label="Passage">
           <Text
               tokens={response.passage_tokens || []}
               output={output.passage}
-              activeThreshold={minProb} />
+              moduleName={moduleName}
+              activeThreshold={minProb}
+              highlightColor={highlightColor} />
         </OutputField>
     </React.Fragment>
   )
@@ -244,13 +239,18 @@ const NMNOutputExplanation = ({ response }) => {
                 case 'find':
                 // TODO: find-max-num will have a new, intermediate representation
                 case 'find-max-num':
+                case 'find-min-num':
                 case 'find-date':
                 case 'filter':
                 case 'relocate': {
                   return (
                     <Tabs.TabPane tab={tab} key={key}>
                       {description}
-                      <ImportantInputText response={response} output={output} />
+                      <ImportantInputText
+                          response={response}
+                          output={output}
+                          moduleName={moduleName}
+                          highlightColor={desc.color || 'blue'} />
                     </Tabs.TabPane>
                   );
                 }
