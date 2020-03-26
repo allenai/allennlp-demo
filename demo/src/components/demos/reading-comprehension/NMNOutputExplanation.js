@@ -7,6 +7,9 @@ import { Highlight } from '../../highlight/Highlight';
 import HighlightContainer from '../../highlight/HighlightContainer';
 import { getHighlightColor } from '../../highlight/NestedHighlight';
 
+// A non-value that we use to indicate that the span has no probability associated with it.
+const NO_PROB = Infinity;
+
 const RawResponse = styled.code`
   ${({ theme }) => `
     display: block;
@@ -26,8 +29,8 @@ const RawResponse = styled.code`
 const Text = ({ tokens, output, activeThreshold, moduleName, highlightColor }) => {
   const fragments = [];
   for(const [ idx, token ] of Object.entries(tokens)) {
-    const prob = output[idx] || 0;
-    const active = prob >= activeThreshold;
+    const prob = idx in output ? output[idx] : NO_PROB;
+    const active = prob !== NO_PROB && prob >= activeThreshold;
     const nf = Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
     fragments.push((
       <React.Fragment key={`${idx}/${token}`}>
@@ -41,8 +44,12 @@ const Text = ({ tokens, output, activeThreshold, moduleName, highlightColor }) =
       </React.Fragment>
     ));
   }
-  return <HighlightContainer>{fragments}</HighlightContainer>;
+  return <NMNHighlightContainer>{fragments}</NMNHighlightContainer>;
 }
+
+const NMNHighlightContainer = styled(HighlightContainer)`
+  padding: 0 !important;
+`;
 
 class ModuleDescription {
   constructor(name, signature, description, color) {
@@ -158,69 +165,148 @@ const ColWithLeftPadding = styled(Col)`
   `}
 `
 
-const ImportantInputText = ({ response, output, moduleName, highlightColor }) => {
-  const probs =
-    (output.question || []).concat(output.passage || [])
-                           .slice()
-                           .sort((a, b) => a - b);
-  const log = new LogScale(0, 1, [ probs[0], Math.max(probs[probs.length - 1], 1) ]);
-  const defaultProb = probs[Math.floor(probs.length * 0.95)];
+const WithAdjustableProbThreshold = ({ probs, children }) => {
+  const sortedProbs = probs.sort((a, b) => a - b);
+  const log = new LogScale(0, 1, [ sortedProbs[0], Math.max(sortedProbs[sortedProbs.length - 1], 1) ]);
+  const defaultProb = probs[Math.floor(sortedProbs.length * 0.95)];
   const [ minProb, setMinProb ] = React.useState(defaultProb)
-
-  // NOTE: This is a temporary hack, which we're going to remove, but is helpful while developing the
-  // application:
-  // Find any output which we're not displaying, and show it as JSON so we know it exists
-  const allOutputPropertyNames = Object.getOwnPropertyNames(output);
-  const nonVisualizedPropertyNames = allOutputPropertyNames.filter(n => n !== 'question' && n !== 'passage');
-  const nonVisualizedOutput = nonVisualizedPropertyNames.reduce((out, prop) => {
-    out[prop] = output[prop];
-    return out;
-  }, {});
-
   return (
     <React.Fragment>
-        <FormField>
-          <FormLabel>Minimum Probability:</FormLabel>
-          <Row>
-            <ColWithLeftPadding span={12}>
-              <Slider
-                  min={log.range[0]}
-                  max={log.range[1]}
-                  step={(log.range[1] - log.range[0]) / 100}
-                  tipFormatter={p => log.value(p)}
-                  onChange={p => setMinProb(log.value(p))}
-                  value={log.scale(minProb)} />
-            </ColWithLeftPadding>
-            <Col span={8}>
-              {minProb}
-            </Col>
-          </Row>
-        </FormField>
-        <OutputField label="Question">
-          <Text
-              tokens={response.question_tokens}
-              output={output.question || []}
-              moduleName={moduleName}
-              activeThreshold={minProb}
-              highlightColor={highlightColor} />
-        </OutputField>
-        <OutputField label="Passage">
-          <Text
-              tokens={response.passage_tokens || []}
-              output={output.passage}
-              moduleName={moduleName}
-              activeThreshold={minProb}
-              highlightColor={highlightColor} />
-        </OutputField>
-        {nonVisualizedPropertyNames.length > 0 ? (
-          <OutputField label="Other">
-            <RawResponse>
-              {JSON.stringify(nonVisualizedOutput, null, 2)}
-            </RawResponse>
-          </OutputField>
-        ) : null}
+      <FormField>
+        <FormLabel>Minimum Probability:</FormLabel>
+        <Row>
+          <ColWithLeftPadding span={12}>
+            <Slider
+                min={log.range[0]}
+                max={log.range[1]}
+                step={(log.range[1] - log.range[0]) / 100}
+                tipFormatter={p => p > 0 ? log.value(p) : 0}
+                onChange={p => setMinProb(log.value(p))}
+                value={log.scale(minProb)}
+                disabled={probs.length === 0} />
+          </ColWithLeftPadding>
+          <Col span={8}>
+            {minProb}
+          </Col>
+        </Row>
+      </FormField>
+      {children(minProb)}
     </React.Fragment>
-  )
+  );
+}
+
+/**
+ * Returns output affiliated with numbers in the passage, provided the module name. Certain
+ * modules have this output while others do not, this function merely maintains the mapping
+ * between a module and the output that's expected.
+ *
+ * @param  {string}                   moduleName
+ * @param  {{ [k: string]: number[]}} output      The output for the current module.
+ *
+ * @returns {number[] | undefined}
+ */
+function getNumericOutput(moduleName, output) {
+  switch (moduleName) {
+    case 'count':
+      return output.count;
+    case 'find-num':
+      return output.number;
+    default:
+      return undefined;
+  }
+}
+
+const ModuleOutputVisualization = ({ response, output, moduleName }) => {
+  // When there's multiple instances of the same module in a single
+  // program, the module name is de-anonymized by prefixing it with
+  // as many `*`s is necessary. We strip them here so we can look
+  // up the module's description by it's canonical name.
+  const canonicalModuleName = moduleName.replace(/\*+$/, '');
+  const desc =
+    moduleDescriptions.find(desc => desc.name === canonicalModuleName);
+  const highlightColor = desc ? desc.color : 'blue';
+  const allProbs = (
+    [].concat(output.question || [])
+      .concat(output.passage || [])
+      .concat(output.number || [])
+      .concat(output.count || [])
+      .slice()
+  );
+
+  // For modules that have numeric output, we attempt to find the numbers in the passage
+  // and highlight them.
+  const numericProbs = getNumericOutput(canonicalModuleName, output);
+  if (numericProbs) {
+    // If there's already passage specific probabilities, do nothing.
+    if (output.passage) {
+      console.warn('Not attempting to highlight numbers in the passage');
+    } else {
+      output.passage = [];
+      for (let token of response.passage_tokens) {
+        const tokenAsNumber = parseFloat(token.trim());
+
+        // If the token isn't a number (it might be text, or punctuation, etc) then populate
+        // the index with a value that indicates there shouldn't be any highlighting
+        if (isNaN(tokenAsNumber)) {
+          output.passage.push(NO_PROB);
+          continue;
+        }
+
+        // See if the value exists in the numbers that the model considered. NOTE: there might
+        // be numbers in this set that aren't in the passage.
+        const numberIdx = response.numbers.findIndex(n => n === tokenAsNumber);
+        if (numberIdx === -1) {
+          output.passage.push(NO_PROB);
+          continue;
+        }
+
+        // The token is a number, and we have a probability that's likely associated with it.
+        const probForNumber = numericProbs[numberIdx];
+        output.passage.push(probForNumber);
+      }
+    }
+  }
+
+  return (
+    <>
+      {desc ? (
+        <ModuleDefinition>
+          <strong>{desc.signature}</strong> {desc.description}
+        </ModuleDefinition>
+      ) : null}
+      <WithAdjustableProbThreshold probs={allProbs}>{minProb => (
+        <>
+          <OutputField label="Question">
+            <Text
+                tokens={response.question_tokens}
+                output={output.question || []}
+                moduleName={moduleName}
+                highlightColor={highlightColor}
+                activeThreshold={minProb} />
+          </OutputField>
+          <OutputField label="Passage">
+            <Text
+                tokens={response.passage_tokens || []}
+                output={output.passage || []}
+                moduleName={moduleName}
+                highlightColor={highlightColor}
+                activeThreshold={minProb} />
+          </OutputField>
+          {numericProbs ? (
+            <OutputField label="Numbers">
+              <Text
+                  tokens={response.numbers}
+                  output={numericProbs}
+                  moduleName={moduleName}
+                  highlightColor={highlightColor}
+                  activeThreshold={minProb} />
+            </OutputField>
+          ) : null}
+        </>
+      )}
+      </WithAdjustableProbThreshold>
+    </>
+  );
 }
 
 const NMNOutputExplanation = ({ response }) => {
@@ -241,48 +327,14 @@ const NMNOutputExplanation = ({ response }) => {
                   {idx + 1}. <code>{moduleName}</code>
                 </React.Fragment>
               );
-              // When there's multiple instances of the same module in a single
-              // program, the module name is de-anonymized by prefixing it with
-              // as many `*`s is necessary. We strip them here so we can look
-              // up the module's description by it's canonical name.
-              const canonicalModuleName = moduleName.replace(/\*+$/, '');
-              const desc =
-                moduleDescriptions.find(desc => desc.name === canonicalModuleName);
-              const description = desc ? (
-                <ModuleDefinition>
-                  <strong>{desc.signature}</strong> {desc.description}
-                </ModuleDefinition>
-              ) : null;
-              switch (canonicalModuleName) {
-                case 'find':
-                // TODO: find-max-num will have a new, intermediate representation
-                case 'find-max-num':
-                case 'find-min-num':
-                case 'find-date':
-                case 'filter':
-                case 'relocate': {
-                  return (
-                    <Tabs.TabPane tab={tab} key={key}>
-                      {description}
-                      <ImportantInputText
-                          response={response}
-                          output={output}
-                          moduleName={moduleName}
-                          highlightColor={desc.color || 'blue'} />
-                    </Tabs.TabPane>
-                  );
-                }
-                default: {
-                  return (
-                    <Tabs.TabPane tab={tab} key={key}>
-                      {description}
-                      <RawResponse>
-                        <pre>{JSON.stringify(output, null, 2)}</pre>
-                      </RawResponse>
-                    </Tabs.TabPane>
-                  )
-                }
-              }
+              return (
+                <Tabs.TabPane tab={tab} key={key}>
+                  <ModuleOutputVisualization
+                      response={response}
+                      output={output}
+                      moduleName={moduleName} />
+                </Tabs.TabPane>
+              );
             })
           ))}
           <Tabs.TabPane tab={<code>DEBUG</code>} key="debug">
