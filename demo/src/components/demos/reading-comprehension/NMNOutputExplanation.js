@@ -225,16 +225,19 @@ const NMNOutputExplanation = ({ response }) => {
                   {idx + 1}. <code>{moduleName}</code>
                 </React.Fragment>
               );
-              // TODO: Comment this
-              const normalizedModuleName = moduleName.replace(/\*+$/, '');
+              // When there's multiple instances of the same module in a single
+              // program, the module name is de-anonymized by prefixing it with
+              // as many `*`s is necessary. We strip them here so we can look
+              // up the module's description by it's canonical name.
+              const canonicalModuleName = moduleName.replace(/\*+$/, '');
               const desc =
-                moduleDescriptions.find(desc => desc.name == normalizedModuleName);
+                moduleDescriptions.find(desc => desc.name === canonicalModuleName);
               const description = desc ? (
                 <ModuleDefinition>
                   <strong>{desc.signature}</strong> {desc.description}
                 </ModuleDefinition>
               ) : null;
-              switch (normalizedModuleName) {
+              switch (canonicalModuleName) {
                 case 'find':
                 // TODO: find-max-num will have a new, intermediate representation
                 case 'find-max-num':
