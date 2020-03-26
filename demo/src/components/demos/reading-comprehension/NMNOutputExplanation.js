@@ -165,7 +165,18 @@ const ImportantInputText = ({ response, output, moduleName, highlightColor }) =>
                            .sort((a, b) => a - b);
   const log = new LogScale(0, 1, [ probs[0], Math.max(probs[probs.length - 1], 1) ]);
   const defaultProb = probs[Math.floor(probs.length * 0.95)];
-  const [ minProb, setMinProb ] = React.useState(defaultProb);
+  const [ minProb, setMinProb ] = React.useState(defaultProb)
+
+  // NOTE: This is a temporary hack, which we're going to remove, but is helpful while developing the
+  // application:
+  // Find any output which we're not displaying, and show it as JSON so we know it exists
+  const allOutputPropertyNames = Object.getOwnPropertyNames(output);
+  const nonVisualizedPropertyNames = allOutputPropertyNames.filter(n => n !== 'question' && n !== 'passage');
+  const nonVisualizedOutput = nonVisualizedPropertyNames.reduce((out, prop) => {
+    out[prop] = output[prop];
+    return out;
+  }, {});
+
   return (
     <React.Fragment>
         <FormField>
@@ -201,6 +212,13 @@ const ImportantInputText = ({ response, output, moduleName, highlightColor }) =>
               activeThreshold={minProb}
               highlightColor={highlightColor} />
         </OutputField>
+        {nonVisualizedPropertyNames.length > 0 ? (
+          <OutputField label="Other">
+            <RawResponse>
+              {JSON.stringify(nonVisualizedOutput, null, 2)}
+            </RawResponse>
+          </OutputField>
+        ) : null}
     </React.Fragment>
   )
 }
