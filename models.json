@@ -20,7 +20,7 @@
         "max_request_length": 4590
     },
     "open-information-extraction": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/openie-model.2020.02.10.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/openie-model.2020.03.26.tar.gz",
         "predictor_name": "open-information-extraction",
         "max_request_length": 19681
     },
