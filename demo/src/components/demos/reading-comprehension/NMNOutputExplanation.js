@@ -115,8 +115,8 @@ const moduleDescriptions = [
     getHighlightColor(6)
   ),
   new ModuleDescription(
-    'time-diff',
-    'time-diff(P1, P2) → TD',
+    'date-diff',
+    'date-diff(P1, P2) → TD',
     'Difference between the dates associated with the paragraph spans.',
     getHighlightColor(7)
   ),
