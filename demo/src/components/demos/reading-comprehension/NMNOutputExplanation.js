@@ -228,13 +228,11 @@ const ModuleOutputVisualization = ({ response, output, moduleName }) => {
   const desc =
     moduleDescriptions.find(desc => desc.name === canonicalModuleName);
   const highlightColor = desc ? desc.color : 'blue';
-  const allProbs = (
-    [].concat(output.question || [])
-      .concat(output.passage || [])
-      .concat(output.number || [])
-      .concat(output.count || [])
-      .slice()
-  );
+  const allProbs =
+    Object.getOwnPropertyNames(output).reduce(
+      (all, outputName) => all.concat(output[outputName]),
+      []
+    );
 
   // For modules that have numeric output, we attempt to find the numbers in the passage
   // and highlight them.
