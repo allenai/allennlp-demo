@@ -89,11 +89,9 @@
         "max_request_length": 10000
     },
     "masked-lm": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2019.09.17.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2020.03.25.tar.gz",
         "predictor_name": "masked_language_model",
-        "max_request_length": 10000,
-        "memory": "4Gi",
-        "image": "gcr.io/ai2-reviz/allennlp-demo:584070b73f7eb6eb1f82af723295aec0a44ae3a9"
+        "max_request_length": 10000
     },
     "glove-sentiment-analysis": {
         "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
