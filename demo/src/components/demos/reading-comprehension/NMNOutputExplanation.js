@@ -150,16 +150,20 @@ const moduleDescriptions = [
 ]
 
 class LogScale {
+  // We shift the provided values by 1, as to handle the fact that our value
+  // range is from 0 to 1, inclusive. This is to avoid the fact that log(0) is
+  // -Infinity.
+  static SHIFT = 1;
   constructor(min, max, values) {
     this.range = [ min, max ];
-    this.values = values.map(v => Math.log(v));
+    this.values = values.map(v => Math.log(v + LogScale.SHIFT));
     this.factor = (this.values[1] - this.values[0]) / (this.range[1] - this.range[0]);
   }
   scale(value) {
-    return this.range[0] + (Math.log(value) - this.values[0]) / this.factor;
+    return this.range[0] + (Math.log(value + LogScale.SHIFT) - this.values[0]) / this.factor;
   }
   value(pos) {
-    return Math.exp((pos - this.range[0]) * this.factor + this.values[0]);
+    return Math.exp((pos - this.range[0]) * this.factor + this.values[0]) - LogScale.SHIFT;
   }
 }
 
@@ -168,7 +172,6 @@ const ImportantInputText = ({ response, output }) => {
     (output.question || []).concat(output.passage || [])
                            .slice()
                            .sort((a, b) => a - b);
-
   const log = new LogScale(0, 1, [ probs[0], Math.max(probs[probs.length - 1], 1) ]);
   const mid = log.value(0.5);
   const [ minProb, setMinProb ] = React.useState(mid);
