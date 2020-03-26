@@ -164,8 +164,8 @@ const ImportantInputText = ({ response, output, moduleName, highlightColor }) =>
                            .slice()
                            .sort((a, b) => a - b);
   const log = new LogScale(0, 1, [ probs[0], Math.max(probs[probs.length - 1], 1) ]);
-  const mid = log.value(0.5);
-  const [ minProb, setMinProb ] = React.useState(mid);
+  const defaultProb = probs[Math.floor(probs.length * 0.95)];
+  const [ minProb, setMinProb ] = React.useState(defaultProb);
   return (
     <React.Fragment>
         <FormField>
