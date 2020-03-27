@@ -24,7 +24,7 @@ import {
   INPUT_REDUCTION_ATTACKER,
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
-import NMNOutputExplanation from './reading-comprehension/NMNOutputExplanation';
+import * as nmn from './reading-comprehension/nmn';
 
 const title = "Reading Comprehension"
 
@@ -393,7 +393,7 @@ const Output = (props) => {
     case NMNModel.name: {
       return (
         <div className="model__content answer">
-          <NMNOutputExplanation response={props.responseData} />
+          <nmn.Output response={props.responseData} />
         </div>
       );
     }
