@@ -1,4 +1,4 @@
-allennlp-models
+git+https://github.com/dirkgr/allennlp-models.git@acb97e4166be92950ecd05c0e35007e0f190fcf8
 
 psycopg2-binary
 python-json-logger
