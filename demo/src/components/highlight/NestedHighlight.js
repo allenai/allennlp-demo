@@ -109,6 +109,7 @@ const InnerHighlight = props => {
     onMouseOver,
     onMouseUp,
     selectedId,
+    highlightColor
   } = props;
   return (
       data.map((token, idx) => {
@@ -116,7 +117,7 @@ const InnerHighlight = props => {
           <Highlight
             activeDepths={activeDepths}
             activeIds={activeIds}
-            color={getHighlightColor(token.clusterIndex)}
+            color={highlightColor || getHighlightColor(token.clusterIndex)}
             depth={depth}
             id={token.cluster}
             isClickable={isClickable}
@@ -167,7 +168,8 @@ const InnerHighlight = props => {
  *  onMouseOver?: (id: string) => void
  *  onMouseUp?: (id: string) => void
  *  selectedId?: string
- *  tokens: string[]
+ *  tokens: string[],
+ *  highlightColor?: string;
  * } props
  */
 const NestedHighlight = props => {
@@ -184,6 +186,7 @@ const NestedHighlight = props => {
     onMouseUp,
     selectedId,
     tokens,
+    highlightColor
   } = props;
   const data = transformToTree(tokens, clusters);
   return (
@@ -201,6 +204,7 @@ const NestedHighlight = props => {
         onMouseOver={onMouseOver}
         onMouseUp={onMouseUp}
         selectedId={selectedId}
+        highlightColor={highlightColor}
       />
     </HighlightContainer>
   );
