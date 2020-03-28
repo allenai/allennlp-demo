@@ -18,12 +18,12 @@ export const StepOutput = ({ inputs, step }) => {
   const moduleInfo = ModuleInfo.findInfoByName(step.moduleName);
   const allAttentionValues = step.getAllOutputAttentionValues().sort((a, b) => a - b);
   const len = allAttentionValues.length;
-  const defaultValue = allAttentionValues[Math.floor(len * 0.95)];
   const range = [0, 1];
-  const values = [
+  const defaultValue = len >= 2 ? allAttentionValues[Math.floor(len * 0.95)] : 0.5;
+  const values = len >= 2 ? [
     Math.min(0, allAttentionValues[0]),
     Math.max(allAttentionValues[len - 1], 1)
-  ];
+  ] : [ 0, 1 ];
   return (
     <>
       {moduleInfo ? (
