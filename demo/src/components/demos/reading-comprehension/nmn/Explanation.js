@@ -14,10 +14,7 @@ export class Output {
 export const OutputType = {
   PASSAGE: 'passage_attention',
   QUESTION: 'question_attention',
-
-  /* The count and number types are the same currently. */
-  NUMBER: 'number_attention',
-  COUNT: 'number_attention'
+  NUMBER: 'number_attention'
 };
 
 export class Step {
@@ -123,9 +120,6 @@ export class Explanation {
         }
         if (output.number) {
           outputs.push(new Output(OutputType.NUMBER, output.number));
-        }
-        if (output.count) {
-          outputs.push(new Output(OutputType.COUNT, output.count));
         }
         steps.push(new Step(moduleName, outputs));
       }
