@@ -1,21 +1,4 @@
 {
-    "reading-comprehension": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-model-2020.02.10-charpad.tar.gz",
-        "predictor_name": "reading-comprehension",
-        "max_request_length": 311108
-    },
-    "elmo-reading-comprehension": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2018.11.30-charpad.tar.gz",
-        "memory": "2Gi",
-        "predictor_name": "reading-comprehension",
-        "max_request_length": 311108,
-        "image": "gcr.io/ai2-reviz/allennlp-demo:584070b73f7eb6eb1f82af723295aec0a44ae3a9"
-     },
-    "naqanet-reading-comprehension": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/naqanet-2020.02.19.tar.gz",
-        "predictor_name": "reading-comprehension",
-        "max_request_length": 25819
-    },
     "nmn-drop": {
         "archive_file": "https://nmn-drop.s3.amazonaws.com/model.tar.gz",
         "predictor_name": "drop_demo_predictor",
