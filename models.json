@@ -44,7 +44,7 @@
         "predictor_name": "coreference-resolution",
         "max_request_length": 21097
     },
-    "ner": {
+    "named-entity-recognition": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/ner-model-2020.02.10.tar.gz",
         "predictor_name": "sentence-tagger",
         "max_request_length": 94864
