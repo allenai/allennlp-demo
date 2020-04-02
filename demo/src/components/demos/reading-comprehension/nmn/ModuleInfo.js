@@ -117,9 +117,14 @@ const allModules = [
   ),
   new ModuleInfo(
     'compare-date-gt',
-    'compare-date-gt(D1, D2) → P ',
+    'compare-date-gt(P1, P2) → P ',
     'Output the span associated with the later date.',
     getHighlightColor(13)
   ),
-
+  new ModuleInfo(
+    'year-diff',
+    'year-diff(P1, P2) → TY',
+    'Difference between the years associated with the paragraph spans.',
+    getHighlightColor(8)
+  ),
 ];
