@@ -62,12 +62,15 @@ export const StepOutput = ({ inputs, step }) => {
             let start = null;
             for(const index in output.values) {
               const value = output.values[index];
-              if (value >= min) {
-                if (!Array.isArray(valuesByTokenIndex[index])) {
-                  valuesByTokenIndex[index] = [];
-                }
-                valuesByTokenIndex[index].push({ label, value });
 
+              // Show values when hovering a token, regardless of whether it's above the current
+              // filter value.
+              if (!Array.isArray(valuesByTokenIndex[index])) {
+                valuesByTokenIndex[index] = [];
+              }
+              valuesByTokenIndex[index].push({ label, value });
+
+              if (value >= min) {
                 // Starting a new cluster
                 if (start === null) {
                   start = index;
