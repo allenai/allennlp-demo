@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Tabs } from 'antd';
+import { Tabs, Tooltip } from 'antd';
 
 import OutputField from '../../../OutputField';
-
 import NestedHighlight from '../../../highlight/NestedHighlight';
 import { ModuleInfo } from './ModuleInfo';
 import * as expln from './Explanation';
@@ -16,7 +15,13 @@ import { WithLogScaleSlider } from './WithLogScaleSlider';
  */
 export const StepOutput = ({ inputs, step }) => {
   const moduleInfo = ModuleInfo.findInfoByName(step.moduleName);
-  const allAttentionValues = step.getAllOutputAttentionValues().sort((a, b) => a - b);
+  const allAttentionValues = inputs.reduce((values, input) => {
+    // We only consider values for inputs that exist. Sometimes there's output with no
+    // associated input, which we discard as otherwise the scale would include values that
+    // aren't visualized.
+    const outputs = step.getOutputsForInput(input.name);
+    return values.concat(outputs.reduce((v, o) => v.concat(o.values), []));
+  }, []).sort((a, b) => a - b);
   const len = allAttentionValues.length;
   const range = [0, 1];
   const defaultValue = len >= 2 ? allAttentionValues[Math.floor(len * 0.95)] : 0.5;
@@ -24,6 +29,7 @@ export const StepOutput = ({ inputs, step }) => {
     Math.min(0, allAttentionValues[0]),
     Math.max(allAttentionValues[len - 1], 1)
   ] : [ 0, 1 ];
+  const nf = Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
   return (
     <>
       {moduleInfo ? (
@@ -36,12 +42,20 @@ export const StepOutput = ({ inputs, step }) => {
           range={range}
           values={values}
           defaultValue={defaultValue}>{min => (
-        inputs.map((input, index) => {
+        inputs.map((input, inputIdx) => {
           const outputs = step.getOutputsForInput(input.name);
+
+          // Don't display inputs that don't have output.
+          if (outputs.length === 0) {
+            return null;
+          }
 
           // Compute the clutsers that should be highlighted, given the selected minimum
           // attention value.
           const clusters = {};
+          // We also prepare a reverse map of values for each out by token index, as to
+          // display them in a tooltip that shows when hovering over an individual token.
+          const valuesByTokenIndex = {};
           for(const output of outputs) {
             const label = output.label || step.moduleName;
             const spans = [];
@@ -49,6 +63,11 @@ export const StepOutput = ({ inputs, step }) => {
             for(const index in output.values) {
               const value = output.values[index];
               if (value >= min) {
+                if (!Array.isArray(valuesByTokenIndex[index])) {
+                  valuesByTokenIndex[index] = [];
+                }
+                valuesByTokenIndex[index].push({ label, value });
+
                 // Starting a new cluster
                 if (start === null) {
                   start = index;
@@ -68,10 +87,29 @@ export const StepOutput = ({ inputs, step }) => {
             }
           }
           return (
-            <OutputField key={`${index}-${input.name}`} label={input.name}>
+            <OutputField key={`${inputIdx}/${input.name}`} label={input.name}>
               <SpacingFix>
                 <NestedHighlight
-                    tokens={input.tokens}
+                    tokens={input.tokens.map((t, i) => {
+                      const valuesForIdx = valuesByTokenIndex[i];
+
+                      // If there's no values for this token then don't wrap it in a <Tooltip />.
+                      if (!Array.isArray(valuesForIdx) || valuesForIdx.length === 0) {
+                        return t;
+                      }
+
+                      // Show a tooltip with the values for each token on hover.
+                      const title = (
+                        <>
+                          {valuesForIdx.map(({ label, value }, i) => (
+                            <div key={`${i}/${label}`}>
+                              {label}: {nf.format(value)}
+                            </div>
+                          ))}
+                        </>
+                      );
+                      return <Tooltip key={`${i}/${t}`} title={title}>{t}</Tooltip>;
+                    })}
                     clusters={clusters}
                     highlightColor={moduleInfo.color} />
               </SpacingFix>

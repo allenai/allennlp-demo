@@ -1,21 +1,15 @@
 export class Output {
   /**
-   * @param {string}            type
-   * @param {number[]}          values
-   * @param {string|undefined}  label
+   * @param {string}       inputName
+   * @param {number[]}     values
+   * @param {string|null}  label
    */
-  constructor(type, values, label = undefined) {
-    this.type = type;
+  constructor(inputName, values, label = null) {
+    this.inputName = inputName;
     this.values = values;
     this.label = label;
   }
 }
-
-export const OutputType = {
-  PASSAGE: 'passage_attention',
-  QUESTION: 'question_attention',
-  NUMBER: 'number_attention'
-};
 
 export class Step {
   /**
@@ -27,26 +21,8 @@ export class Step {
     this.outputs = outputs;
   }
 
-  /**
-   * Returns a list containing all attention values for all outputs.
-   *
-   * @returns {number[]}
-   */
-  getAllOutputAttentionValues() {
-    return this.outputs.reduce((values, o)=> values.concat(o.values), []);
-  }
-
   getOutputsForInput(inputName) {
-    switch(inputName) {
-      case InputName.QUESTION:
-        return this.outputs.filter(o => o.type === OutputType.QUESTION);
-      case InputName.PASSAGE:
-        return this.outputs.filter(o => o.type === OutputType.PASSAGE);
-      case InputName.NUMBERS:
-        return this.outputs.filter(o => o.type === OutputType.NUMBER);
-      default:
-        return [];
-    }
+    return this.outputs.filter(o => o.inputName === inputName);
   }
 }
 
@@ -59,12 +35,6 @@ export class Input {
     this.name = name;
     this.tokens = tokens;
   }
-}
-
-export const InputName = {
-  QUESTION: 'Question',
-  PASSAGE: 'Passage',
-  NUMBERS: 'Numbers'
 }
 
 export class Explanation {
@@ -88,39 +58,13 @@ export class Explanation {
    * @returns {Explanation}
    */
   static fromResponse(response) {
-    const inputs = [];
-
-    // TODO: This will be derived from response.inputs in the near future.
-    if (response.question_tokens) {
-      inputs.push(new Input(InputName.QUESTION, response.question_tokens));
-    }
-    if (response.passage_tokens) {
-      inputs.push(new Input(InputName.PASSAGE, response.passage_tokens));
-    }
-    if (response.numbers) {
-      inputs.push(new Input(InputName.NUMBERS, response.numbers));
-    }
+    const inputs = response.inputs.map(i => new Input(i.name, i.tokens));
 
     const steps = [];
     for(const step of response.program_execution) {
-      // Each entry in program_execution is a dictionary where each key is the name of a
-      // module and each value is the output for that module. At this point there's a single
-      // module per step, that said we simply map each module in each step to a separate step
-      // at this point. This might not be correct and can be changed later if that's true.
       const moduleNames = Object.getOwnPropertyNames(step);
       for (const moduleName of moduleNames) {
-        // TODO: This will be derived from a list of outputs in the near future.
-        const output = step[moduleName];
-        const outputs = [];
-        if (output.question) {
-          outputs.push(new Output(OutputType.QUESTION, output.question));
-        }
-        if (output.passage) {
-          outputs.push(new Output(OutputType.PASSAGE, output.passage));
-        }
-        if (output.number) {
-          outputs.push(new Output(OutputType.NUMBER, output.number));
-        }
+        const outputs = step[moduleName].map(o => new Output(o.input_name, o.values, o.label));
         steps.push(new Step(moduleName, outputs));
       }
     }
