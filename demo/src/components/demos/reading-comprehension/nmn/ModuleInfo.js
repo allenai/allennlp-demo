@@ -80,27 +80,46 @@ const allModules = [
     getHighlightColor(6)
   ),
   new ModuleInfo(
+    'compare-num-gt',
+    'compare-num-gt(P1, P2) → P ',
+    'Output the span associated with the larger number.',
+    getHighlightColor(7)
+  ),
+  new ModuleInfo(
     'date-diff',
     'date-diff(P1, P2) → TD',
     'Difference between the dates associated with the paragraph spans.',
-    getHighlightColor(7)
+    getHighlightColor(8)
   ),
   new ModuleInfo(
     'find-max-num',
     'find-max-num(P) → P',
     'Select the text span in the passage with the largest number.',
-    getHighlightColor(8)
+    getHighlightColor(9)
   ),
   new ModuleInfo(
     'find-min-num',
     'find-min-num(P) → P',
     'Select the text span in the passage with the smallest number.',
-    getHighlightColor(9)
+    getHighlightColor(10)
   ),
   new ModuleInfo(
     'span',
     'span(P) → S',
     'Identify a contiguous span from the attended tokens.',
-    getHighlightColor(10)
-  )
+    getHighlightColor(11)
+  ),
+  new ModuleInfo(
+    'compare-date-lt',
+    'compare-date-lt(P1, P2) → P ',
+    'Output the span associated with the earlier date.',
+    getHighlightColor(12)
+  ),
+  new ModuleInfo(
+    'compare-date-gt',
+    'compare-date-gt(D1, D2) → P ',
+    'Output the span associated with the later date.',
+    getHighlightColor(13)
+  ),
+
 ];
