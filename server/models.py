@@ -6,6 +6,10 @@ from scibert.models.bert_crf_tagger import BertCrfTagger
 
 from allennlp.predictors import Predictor
 from allennlp.models.archival import load_archive
+import allennlp_rc
+import allennlp_semparse
+from allennlp_semparse.predictors.wikitables_parser import WikiTablesParserPredictor
+from allennlp_semparse.models.wikitables.wikitables_erm_semantic_parser import WikiTablesErmSemanticParser
 
 from server.demo_model import DemoModel
 from server.gpt2 import Gpt2DemoModel

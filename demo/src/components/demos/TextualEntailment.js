@@ -21,13 +21,11 @@ import '../../css/TeComponent.css';
 
 import SaliencyMaps from '../Saliency'
 import InputReductionComponent from '../InputReduction'
-import HotflipComponent from '../Hotflip'
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
   SG_INTERPRETER,
-  INPUT_REDUCTION_ATTACKER,
-  HOTFLIP_ATTACKER
+  INPUT_REDUCTION_ATTACKER
 } from '../InterpretConstants'
 
 const apiUrl = () => `${API_ROOT}/predict/textual-entailment`
@@ -43,8 +41,7 @@ const description = (
   <span>
     <span>
     Textual Entailment (TE) takes a pair of sentences and predicts whether the facts in the first
-    necessarily imply the facts in the second one.  The AllenNLP toolkit provides the following TE visualization,
-    which can be run for any TE model you develop.
+    necessarily imply the facts in the second one.
     This page demonstrates a reimplementation of
     </span>
     <ExternalLink href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27" target="_blanke" rel="noopener">{' '} the decomposable attention model (Parikh et al, 2017) {' '}</ExternalLink>
@@ -157,7 +154,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     };
   }
   return (
-    <OutputField>
+    <OutputField label="Model Attacks">
       <Accordion accordion={false}>
         <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
       </Accordion>

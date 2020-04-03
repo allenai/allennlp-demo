@@ -19,7 +19,6 @@ steps:
     'build',
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
-    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui-build:latest',
     '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
     '.'
   ]
@@ -58,10 +57,10 @@ substitutions:
   _ENV: staging
 images: [
   'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
-  'gcr.io/$PROJECT_ID/$REPO_NAME:latest'
+  'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
 ]
 artifacts:
   objects:
     location: 'gs://skiff-archive/$REPO_NAME/$_ENV/$COMMIT_SHA/$BUILD_ID'
     paths: ['.skiff/webapp.json']
-timeout: 900s
+timeout: 1800s

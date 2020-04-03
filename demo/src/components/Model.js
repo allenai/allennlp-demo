@@ -73,7 +73,7 @@ class Model extends React.Component {
 
     interpretModel = (inputs, interpreter) => () => {
       const { apiUrlInterpret } = this.props
-      fetch(apiUrlInterpret(inputs), {
+      return fetch(apiUrlInterpret(inputs), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -96,7 +96,7 @@ class Model extends React.Component {
       }
 
       const { apiUrlAttack } = this.props
-      fetch(apiUrlAttack(inputs), {
+      return fetch(apiUrlAttack(inputs), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -167,7 +167,6 @@ export const Wrapper = styled.div`
   background: ${({theme}) => theme.palette.background.light};
   display: block;
   width: 100%;
-  overflow-y: auto;
 `;
 
 export default Model

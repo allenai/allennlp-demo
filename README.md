@@ -54,6 +54,11 @@ To run the demo locally for development, you will need to:
 
     Where you see "model1" and "model2" examples above, you would use actual model names which are listed as JSON object key names [here](https://github.com/allenai/allennlp-demo/blob/master/models.json).
 
+    e.g.
+    ```bash
+    ./app.py --model reading-comprehension
+    ```
+
     If you really want to load every model, you can do that with
 
     ```bash
@@ -95,7 +100,7 @@ Although (as in previous steps) the demo is able to run on a single machine
 the Skiff version is distributed using Kubernetes as follows:
 
 (1) there is a dedicated "demo front-end" container that doesn't load any models
-(2) the ingress controller routes e.g. /predict/machine-comprehension to a dedicated "machine comprehension" container
+(2) the ingress controller routes e.g. /predict/reading-comprehension to a dedicated "reading comprehension" container
 (3) that container loads only the machine comprehension model
 
 See the comments in `src/App.js` for more detail.
@@ -188,8 +193,14 @@ You will then need to add an entry to `models.json` that looks like
 
 ```
     "my-new-model": {
-        "image": "registry/location/of/docker/image"
+        "image": "myNewModelImage"
     }
+```
+
+That references an environment variable that will be pulled in by jsonnet. In the "config" step of .skiff/cloudbuild-deploy.yaml add a line like:
+
+```
+    '--ext-str', 'myNewModelImage=registry/location/of/docker/image',
 ```
 
 and finally modify `demo/src/models.js` to add its entry to the menu:

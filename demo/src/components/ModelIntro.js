@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '@allenai/varnish/components';
 
 /*******************************************************************************
   <ModelIntro /> Component
@@ -25,14 +26,7 @@ class ModelIntro extends React.Component {
       <div>
         <h2><span>{title}</span></h2>
         <p>
-          {descriptionEllipsed
-            ? (
-              this.state.showFullDescription
-                ? <span>{description} <span><a onClick={e => this.toggleShowMore()}>Show Less</a></span></span>
-                : <span>{descriptionEllipsed} <span><a onClick={e => this.toggleShowMore()}>Show More</a></span></span>
-            )
-            : <span>{description}</span>
-          }
+          <span>{description}</span>
         </p>
       </div>
     );

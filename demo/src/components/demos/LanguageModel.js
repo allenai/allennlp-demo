@@ -2,7 +2,7 @@ import React from 'react'
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Footer, ExternalLink } from '@allenai/varnish/components';
+import { ExternalLink } from '@allenai/varnish/components';
 
 import OutputField from '../OutputField'
 import { Accordion } from 'react-accessible-accordion';
@@ -139,7 +139,7 @@ const Token = styled.span`
   font-weight: 600;
 `
 
-const DEFAULT = "Joel is";
+const DEFAULT = "AllenNLP is";
 
 function addToUrl(output, choice) {
   if (window.frameElement) {
@@ -219,7 +219,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     hotflipData["final"][0] = cleanTokensForDisplay(hotflipData["final"][0]);
   }
   return (
-    <OutputField>
+    <OutputField label="Model Attacks">
       <Accordion accordion={false}>
         <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
       </Accordion>
@@ -272,6 +272,17 @@ class App extends React.Component {
       })
 
       this.debouncedChoose()
+    }
+    else { // Update text input without request to backend server
+      this.setState({
+          output: value,
+          words: null,
+          logits: null,
+          probabilities: null,
+          interpretData: null,
+          attackData: null,
+          loading: false
+      })
     }
   }
 
@@ -383,7 +394,7 @@ class App extends React.Component {
             <InputOutputColumn>
               <FormLabel>Sentence:</FormLabel>
                 <TextInput type="text"
-                          autosize={{ minRows: 5, maxRows: 10 }}
+                          autoSize={{ minRows: 5, maxRows: 10 }}
                           value={this.state.output}
                           onChange={this.setOutput}/>
                 {this.state.loading ? (
@@ -419,7 +430,7 @@ class App extends React.Component {
   }
 
   interpretModel = (inputs, interpreter) => () => {
-    fetch(apiUrlInterpret(inputs), {
+    return fetch(apiUrlInterpret(inputs), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -441,7 +452,7 @@ class App extends React.Component {
       attackInputs['target'] = {words: [[target]]}
     }
 
-    fetch(apiUrlAttack(inputs), {
+    return fetch(apiUrlAttack(inputs), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',

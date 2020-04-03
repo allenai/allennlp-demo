@@ -54,11 +54,11 @@ export default class HeatMap extends React.Component {
     });
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.setOpacity(this.props);
   }
 
-  componentWillReceiveProps(newProps) {
+  componentDidUpdate(newProps) {
     if(this.props.data !== newProps.data || this.props.normalization !== newProps.normalization) {
         this.setOpacity(newProps);
     }

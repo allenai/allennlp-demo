@@ -20,19 +20,23 @@ const description = (
   <span>
     <span>
     Coreference resolution is the task of finding all expressions that refer to the same entity
-    in a text. It is an important step for a lot of higher level NLP tasks that involve natural
+    in a text. It is an important step for many higher level NLP tasks that involve natural
     language understanding such as document summarization, question answering, and information extraction.
     </span>
     <ExternalLink href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener">{' '} End-to-end Neural Coreference Resolution ( Lee et al, 2017) {' '}</ExternalLink>
     <span>
     is a neural model which considers all possible spans in the document as potential mentions and
-    learns distributions over possible anteceedents for each span, using aggressive, learnt
+    learns distributions over possible anteceedents for each span, using aggressive
     pruning strategies to retain computational efficiency. It achieved state-of-the-art accuracies on
     </span>
     <ExternalLink href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener">{' '} the Ontonotes 5.0 dataset {' '}</ExternalLink>
     <span>
-    in early 2017.
+    in early 2017. The model here is based on that paper, but we have substituted the GloVe embeddings
+    that it uses with BERT embeddings. On Ontonotes this model achieves an F1 score of 72.13% on the test set.
     </span>
+    <p>
+      <b>Contributed by:</b> Zhaofeng Wu
+    </p>
   </span>
 );
 
@@ -210,7 +214,7 @@ const examples = [
       document: "Paul Allen was born on January 21, 1953, in Seattle, Washington, to Kenneth Sam Allen and Edna Faye Allen. Allen attended Lakeside School, a private school in Seattle, where he befriended Bill Gates, two years younger, with whom he shared an enthusiasm for computers. Paul and Bill used a teletype terminal at their high school, Lakeside, to develop their programming skills on several time-sharing computer systems."
     },
     {
-      document: "The legal pressures facing Michael Cohen are growing in a wide-ranging investigation of his personal business affairs and his work on behalf of his former client, President Trump.  In addition to his work for Mr. Trump, he pursued his own business interests, including ventures in real estate, personal loans and investments in taxi medallions."
+      document: "The legal pressures facing Michael Cohen are growing in a wide-ranging investigation of his personal business affairs and his work on behalf of his former client, President Trump. In addition to his work for Mr. Trump, he pursued his own business interests, including ventures in real estate, personal loans and investments in taxi medallions."
     },
     {
       document: "We are looking for a region of central Italy bordering the Adriatic Sea. The area is mostly mountainous and includes Mt. Corno, the highest peak of the mountain range. It also includes many sheep and an Italian entrepreneur has an idea about how to make a little money of them."

@@ -18,11 +18,6 @@ import {
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
 
-// APIs. These link to the functions in app.py
-const apiUrl = () => `${API_ROOT}/predict/sentiment-analysis`
-const apiUrlInterpret = () => `${API_ROOT}/interpret/sentiment-analysis`
-const apiUrlAttack = () => `${API_ROOT}/attack/sentiment-analysis`
-
 // title of the page
 const title = "Sentiment Analysis"
 
@@ -31,17 +26,63 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 // Text shown in the UI
 const description = (
-  <span> Sentiment Analysis predicts whether an input is positive or negative. The model is a simple LSTM using GloVe embeddings that is trained on the binary classification setting of the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>. It achieves about 87% accuracy on the test set.</span>
+  <span>
+    <span>
+    Sentiment Analysis predicts whether an input is positive or negative. The two models are based
+    on GloVe embeddings and <a href="https://arxiv.org/pdf/1907.11692.pdf">RoBERTa large</a>,
+    respectively, and are trained on the binary classification setting of
+    the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.
+    They achieves about 87% and 95.11% accuracy on the test set.
+    </span>
+    <p>
+      <b>Contributed by:</b> Zhaofeng Wu
+    </p>
+  </span>
 );
 const descriptionEllipsed = (
   <span> Sentiment Analysis predicts whether an input is positive or negative… </span>
 );
 
+const taskModels = [
+  {
+    name: "GloVe-LSTM",
+    desc: "Using GloVe embeddings and an LSTM layer."
+  },
+  {
+    name: "RoBERTa",
+    desc: "Using RoBERTa embeddings."
+  }
+]
+
+const taskEndpoints = {
+  "GloVe-LSTM": "glove-sentiment-analysis",
+  "RoBERTa": "roberta-sentiment-analysis"
+};
+
 // Input fields to the model.
 const fields = [
   {name: "sentence", label: "Input", type: "TEXT_INPUT",
-   placeholder: 'E.g. "amazing movie"'}
+   placeholder: 'E.g. "amazing movie"'},
+  {name: "model", label: "Model", type: "RADIO", options: taskModels, optional: true}
 ]
+
+const getUrl = (model, apiCall) => {
+  const selectedModel = model || (taskModels[0] && taskModels[0].name);
+  const endpoint = taskEndpoints[selectedModel]
+  return `${API_ROOT}/${apiCall}/${endpoint}`
+}
+
+const apiUrl = ({model}) => {
+  return getUrl(model, "predict")
+}
+
+const apiUrlInterpret = ({model}) => {
+  return getUrl(model, "interpret")
+}
+
+const apiUrlAttack = ({model}) => {
+  return getUrl(model, "attack")
+}
 
 const getGradData = ({ grad_input_1: gradInput1 }) => {
   return [gradInput1];
@@ -75,7 +116,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     reducedInput = {original: reductionData["original"], reduced: [reductionData["final"][0]]};
   }
   return (
-    <OutputField>
+    <OutputField label="Model Attacks">
       <Accordion accordion={false}>
         <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
         <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
@@ -86,11 +127,19 @@ const Attacks = ({attackData, attackModel, requestData}) => {
 
 // What is rendered as Output when the user hits buttons on the demo.
 const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
+  const model = requestData ? requestData.model : undefined;
+
   const [positiveClassProbability, negativeClassProbability] = responseData['probs']
   const prediction = negativeClassProbability < positiveClassProbability ? "Positive" : "Negative"
 
   let t = requestData;
   const tokens = t['sentence'].split(' '); // this model expects space-separated inputs
+
+  // The RoBERTa-large model is very slow to be attacked
+  const attacks = model && model.includes('RoBERTa') ?
+    " "
+  :
+    <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
 
   // The "Answer" output field has the models predictions. The other output fields are the
   // reusable HTML/JavaScript for the interpretation methods.
@@ -103,7 +152,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
     <OutputField>
       <Accordion accordion={false}>
           <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={interpretModel} requestData={requestData}/>
-          <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
+          {attacks}
       </Accordion>
     </OutputField>
   </div>
@@ -126,14 +175,14 @@ const usage = (
       <UsageCode>
         <SyntaxHighlight language="bash">
           {`echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz -`}
+allennlp predict https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz -`}
         </SyntaxHighlight>
       </UsageCode>
       <h5>As a library (Python):</h5>
       <UsageCode>
         <SyntaxHighlight language="python">
           {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz")
+predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz")
 predictor.predict(
   sentence="a very well-made, funny and entertaining picture."
 )`}
@@ -145,7 +194,7 @@ predictor.predict(
       <UsageCode>
         <SyntaxHighlight language="python">
           {`allennlp evaluate \\
-  https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz \\
+  https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz \\
   https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`}
         </SyntaxHighlight>
       </UsageCode>

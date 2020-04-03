@@ -2,7 +2,6 @@ import React from 'react'
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { Footer, ExternalLink } from '@allenai/varnish/components';
 
 import OutputField from '../OutputField'
 import { Accordion } from 'react-accessible-accordion';
@@ -153,7 +152,8 @@ const DEFAULT_MODEL = "345M"
 
 const description = (
   <span>
-Enter text with one or more "[MASK]" tokens and <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener noreferrer">BERT</a> will generate the most likely token to substitute for each "[MASK]".
+Masked language modeling is a fill-in-the-blank task, where a model uses the context surrounding a [MASK] token to try to guess what the [MASK] should be. The model shown here is <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener noreferrer">BERT</a>, the first large transformer to be trained on this task.
+Enter text with one or more "[MASK]" token and the model will generate the most likely substitution for each "[MASK]".
   </span>
 )
 
@@ -183,7 +183,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
     hotflipData["new_prediction"] = hotflipData["outputs"]["words"][0][0];
   }
   return (
-    <OutputField>
+    <OutputField label="Model Attacks">
       <Accordion accordion={false}>
         <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} targeted={true}/>
       </Accordion>
@@ -236,6 +236,17 @@ class App extends React.Component {
       })
 
       this.debouncedChoose()
+    }
+    else { // Update text input without request to backend server
+      this.setState({
+          output: value,
+          words: null,
+          logits: null,
+          probabilities: null,
+          interpretData: null,
+          attackData: null,
+          loading: false
+      })
     }
   }
 
@@ -360,7 +371,7 @@ class App extends React.Component {
             <InputOutputColumn>
               <FormLabel>Sentence:</FormLabel>
                 <TextInput type="text"
-                          autosize={{ minRows: 5, maxRows: 10 }}
+                          autoSize={{ minRows: 5, maxRows: 10 }}
                           value={this.state.output}
                           onChange={this.setOutput}/>
                 {this.state.loading ? (
@@ -387,7 +398,7 @@ class App extends React.Component {
   }
 
   interpretModel = (inputs, interpreter) => () => {
-    fetch(apiUrlInterpret(inputs), {
+    return fetch(apiUrlInterpret(inputs), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -409,7 +420,7 @@ class App extends React.Component {
       attackInputs['target'] = {words: [[target]]}
     }
 
-    fetch(apiUrlAttack(inputs), {
+    return fetch(apiUrlAttack(inputs), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',

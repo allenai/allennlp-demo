@@ -27,8 +27,6 @@ function copyToClipboard(text) {
 }
 
 class Permalink extends React.Component {
-
-
     render() {
         const { slug } = this.props;
 
@@ -45,7 +43,7 @@ class Permalink extends React.Component {
             <div className="model__content">
                 <FormField>
                     <FormLabel>Permalink:</FormLabel>
-                    <FormInput variant="text" disabled="true" className="permalink" id="permalink" value={permalink}/>
+                    <FormInput variant="text" disabled className="permalink" id="permalink" value={permalink}/>
                     <Button className="copy__to__clipboard" onClick={() => copyToClipboard(permalink)}>Copy to Clipboard</Button>
                 </FormField>
             </div>
