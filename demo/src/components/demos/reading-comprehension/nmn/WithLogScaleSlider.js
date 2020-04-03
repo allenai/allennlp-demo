@@ -31,7 +31,7 @@ export const WithLogScaleSlider = ({ values, range, defaultValue, children, labe
                 min={log.range[0]}
                 max={log.range[1]}
                 step={(log.range[1] - log.range[0]) / 100}
-                tipFormatter={v => (v > 0 ? log.value(v) : 0).toString()}
+                tipFormatter={v => log.value(v)}
                 onChange={v => setSelectedValue(log.value(v))}
                 value={log.scale(value)}
                 disabled={values.length === 0} />

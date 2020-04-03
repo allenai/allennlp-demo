@@ -109,8 +109,10 @@ const InnerHighlight = props => {
     onMouseOver,
     onMouseUp,
     selectedId,
-    highlightColor
+    highlightColor,
+    tokenSeparator
   } = props;
+  const lenData = data.length;
   return (
       data.map((token, idx) => {
         return typeof(token) === "object" && !(React.isValidElement(token)) ? (
@@ -147,7 +149,7 @@ const InnerHighlight = props => {
               />
           </Highlight>
         ) : (
-          <span key={idx}>{token}&nbsp;</span>
+          <span key={idx}>{token}{idx === lenData - 1 ? null : tokenSeparator || <>&nbsp;</>}</span>
         )
       })
   )
@@ -170,6 +172,7 @@ const InnerHighlight = props => {
  *  selectedId?: string
  *  tokens: string[],
  *  highlightColor?: string;
+ *  tokenSeparator?: string;
  * } props
  */
 const NestedHighlight = props => {
@@ -186,7 +189,8 @@ const NestedHighlight = props => {
     onMouseUp,
     selectedId,
     tokens,
-    highlightColor
+    highlightColor,
+    tokenSeparator
   } = props;
   const data = transformToTree(tokens, clusters);
   return (
@@ -205,6 +209,7 @@ const NestedHighlight = props => {
         onMouseUp={onMouseUp}
         selectedId={selectedId}
         highlightColor={highlightColor}
+        tokenSeparator={tokenSeparator}
       />
     </HighlightContainer>
   );
