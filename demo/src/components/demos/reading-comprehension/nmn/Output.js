@@ -4,6 +4,7 @@ import { Tabs, Tooltip } from 'antd';
 
 import OutputField from '../../../OutputField';
 import NestedHighlight from '../../../highlight/NestedHighlight';
+
 import { ModuleInfo } from './ModuleInfo';
 import * as expln from './Explanation';
 import { WithLogScaleSlider } from './WithLogScaleSlider';
@@ -125,7 +126,6 @@ export const StepOutput = ({ inputs, step }) => {
                       return <Tooltip key={`${i}/${t}`} title={title}>{t}</Tooltip>;
                     })}
                     clusters={clusters}
-                    highlightColor={moduleInfo.color}
                     tokenSeparator={tokenSeparator} />
               </SpacingFix>
             </OutputField>
