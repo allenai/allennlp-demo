@@ -9,12 +9,15 @@ export class ModuleInfo {
    * @param {string} signature
    * @param {string} description
    * @param {string} color
+   * @param {number} defaultMinAttn
+   * @param {string} tokenSeparator
    */
-  constructor(name, signature, description, color) {
+  constructor(name, signature, description, color, defaultMinAttn = 0.1) {
     this.name = name;
     this.signature = signature;
     this.description = description;
     this.color = color;
+    this.defaultMinAttn = defaultMinAttn;
   }
 
   /**
@@ -41,7 +44,8 @@ const allModules = [
     'find',
     'find(Q) → P',
     'For text spans in the question, find similar text spans in the passage.',
-    getHighlightColor(0)
+    getHighlightColor(0),
+    0.01,
   ),
   new ModuleInfo(
     'filter',

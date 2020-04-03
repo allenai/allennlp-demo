@@ -15,20 +15,8 @@ import { WithLogScaleSlider } from './WithLogScaleSlider';
  */
 export const StepOutput = ({ inputs, step }) => {
   const moduleInfo = ModuleInfo.findInfoByName(step.moduleName);
-  const allAttentionValues = inputs.reduce((values, input) => {
-    // We only consider values for inputs that exist. Sometimes there's output with no
-    // associated input, which we discard as otherwise the scale would include values that
-    // aren't visualized.
-    const outputs = step.getOutputsForInput(input.name);
-    return values.concat(outputs.reduce((v, o) => v.concat(o.values), []));
-  }, []).sort((a, b) => a - b);
-  const len = allAttentionValues.length;
   const range = [0, 1];
-  const defaultValue = len >= 2 ? allAttentionValues[Math.floor(len * 0.95)] : 0.5;
-  const values = len >= 2 ? [
-    Math.min(0, allAttentionValues[0]),
-    Math.max(allAttentionValues[len - 1], 1)
-  ] : [ 0, 1 ];
+  const values = [ 1e-8, 1 ];
   const nf = Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
   return (
     <>
@@ -41,15 +29,12 @@ export const StepOutput = ({ inputs, step }) => {
           label="Minimum Attention"
           range={range}
           values={values}
-          defaultValue={defaultValue}>{min => (
+          defaultValue={moduleInfo.defaultMinAttn}>{min => (
         inputs.map((input, inputIdx) => {
           const outputs = step.getOutputsForInput(input.name);
 
-          // Don't display inputs that don't have output.
-          if (outputs.length === 0) {
-            return null;
-          }
-
+          // We merge spans in the passage and question, but not elsewhere.
+          const shouldMergeSpans = input.name === 'question' || input.name === 'passage';
           // Compute the clutsers that should be highlighted, given the selected minimum
           // attention value.
           const clusters = {};
@@ -59,8 +44,12 @@ export const StepOutput = ({ inputs, step }) => {
           for(const output of outputs) {
             const label = output.label || step.moduleName;
             const spans = [];
+            const lenValues = output.values.length;
             let start = null;
-            for(const index in output.values) {
+            for(const rawIdx in output.values) {
+              // When we iterate through the indices in this fashion in JavaScript, each index
+              // is a string. Convert it to an integer so things work as expected.
+              const index = parseInt(rawIdx);
               const value = output.values[index];
 
               // Show values when hovering a token, regardless of whether it's above the current
@@ -70,16 +59,30 @@ export const StepOutput = ({ inputs, step }) => {
               }
               valuesByTokenIndex[index].push({ label, value });
 
-              if (value >= min) {
-                // Starting a new cluster
-                if (start === null) {
-                  start = index;
+
+              if (shouldMergeSpans) {
+                if (value >= min) {
+                  // Starting a new cluster
+                  if (start === null) {
+                    start = index;
+                  }
+
+                  // If we're on the last item, and it's active, and a span is currently open
+                  // we need to close it.
+                  if (index === lenValues - 1 && start !== null) {
+                    spans.push([ start, index ]);
+                    start = null;
+                  }
+                } else {
+                  // Ending the current cluster
+                  if (start !== null) {
+                    spans.push([ start, index - 1 ]);
+                    start = null;
+                  }
                 }
               } else {
-                // Ending the current cluster
-                if (start !== null) {
-                  spans.push([ start, index - 1 ]);
-                  start = null;
+                if (value >= min) {
+                  spans.push([ index, index ]);
                 }
               }
             }
@@ -89,6 +92,13 @@ export const StepOutput = ({ inputs, step }) => {
               clusters[label] = spans;
             }
           }
+
+          // For outputs that aren't the question or passage, use a custom token separator
+          const tokenSeparator = (
+            input.name === 'question' || input.name === 'passage'
+              ? undefined
+              : <>,&nbsp;</>
+          );
           return (
             <OutputField key={`${inputIdx}/${input.name}`} label={input.name}>
               <SpacingFix>
@@ -111,10 +121,12 @@ export const StepOutput = ({ inputs, step }) => {
                           ))}
                         </>
                       );
+
                       return <Tooltip key={`${i}/${t}`} title={title}>{t}</Tooltip>;
                     })}
                     clusters={clusters}
-                    highlightColor={moduleInfo.color} />
+                    highlightColor={moduleInfo.color}
+                    tokenSeparator={tokenSeparator} />
               </SpacingFix>
             </OutputField>
           );
