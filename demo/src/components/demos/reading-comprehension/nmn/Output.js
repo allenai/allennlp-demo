@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Checkbox, Tabs, Tooltip, Icon } from 'antd';
+import { Checkbox, Tabs, Popover, Icon } from 'antd';
 
 import OutputField from '../../../OutputField';
 import NestedHighlight from '../../../highlight/NestedHighlight';
@@ -108,13 +108,13 @@ export const StepOutput = ({ inputs, step }) => {
                     tokens={input.tokens.map((t, i) => {
                       const valuesForIdx = valuesByTokenIndex[i];
 
-                      // If there's no values for this token then don't wrap it in a <Tooltip />.
+                      // If there's no values for this token then don't wrap it in a <Popover />.
                       if (!Array.isArray(valuesForIdx) || valuesForIdx.length === 0) {
                         return t;
                       }
 
                       // Show a tooltip with the values for each token on hover.
-                      const title = (
+                      const content = (
                         <>
                           {valuesForIdx.map(({ label, value }, i) => (
                             <div key={`${i}/${label}`}>
@@ -124,7 +124,7 @@ export const StepOutput = ({ inputs, step }) => {
                         </>
                       );
 
-                      return <Tooltip key={`${i}/${t}`} title={title}>{t}</Tooltip>;
+                      return <Popover key={`${i}/${t}`} title={t} content={content}>{t}</Popover>;
                     })}
                     clusters={clusters}
                     tokenSeparator={tokenSeparator} />
@@ -148,8 +148,8 @@ export const MultiStepOutput = ({ inputs, steps }) => {
         {steps.map(step => {
           const moduleInfo = ModuleInfo.findInfoByName(step.moduleName);
           return (
-            <>
-              <Checkbox
+            <React.Fragment key={step.moduleName}>
+              <ModuleCheckbox
                   onChange={e => {
                     if (e.target.checked) {
                       setActiveSteps(activeSteps.concat([ step ]));
@@ -157,23 +157,15 @@ export const MultiStepOutput = ({ inputs, steps }) => {
                       setActiveSteps(activeSteps.filter(s => s !== step));
                     }
                   }}
-                  key={step.moduleName}
                   checked={activeSteps.find(s => s === step) ? true : false}>
                 <strong>{step.moduleName}</strong>
-                &nbsp;&nbsp;
                 {moduleInfo ? (
-                  <Tooltip title={
-                    <>
-                      <strong>{moduleInfo.signature}</strong><br />
-                      {moduleInfo.description}
-                    </>
-                  }>
-                    <Icon type="question-circle" />
-                  </Tooltip>
+                  <Popover title={moduleInfo.signature} content={moduleInfo.description}>
+                    <ModuleInfoIcon />
+                  </Popover>
                 ) : null}
-              </Checkbox>
-              &nbsp;&nbsp;&nbsp;&nbsp;
-            </>
+              </ModuleCheckbox>
+            </React.Fragment>
           )
         })}
       </OutputField>
@@ -264,13 +256,13 @@ export const MultiStepOutput = ({ inputs, steps }) => {
                     tokens={input.tokens.map((t, i) => {
                       const valuesForIdx = valuesByTokenIndex[i];
 
-                      // If there's no values for this token then don't wrap it in a <Tooltip />.
+                      // If there's no values for this token then don't wrap it in a <Popover />.
                       if (!Array.isArray(valuesForIdx) || valuesForIdx.length === 0) {
                         return t;
                       }
 
                       // Show a tooltip with the values for each token on hover.
-                      const title = (
+                      const content = (
                         <>
                           {valuesForIdx.map(({ label, value }, i) => (
                             <div key={`${i}/${label}`}>
@@ -280,7 +272,7 @@ export const MultiStepOutput = ({ inputs, steps }) => {
                         </>
                       );
 
-                      return <Tooltip key={`${i}/${t}`} title={title}>{t}</Tooltip>;
+                      return <Popover key={`${i}/${t}`} title={t} content={content}>{t}</Popover>;
                     })}
                     clusters={clusters}
                     tokenSeparator={tokenSeparator} />
@@ -331,6 +323,20 @@ export const Output = ({ response }) => {
     </React.Fragment>
   );
 }
+
+const ModuleCheckbox = styled(Checkbox)`
+  ${({ theme }) => `
+    &:not(:last-child) {
+      margin-right: ${theme.spacing.md};
+    }
+  `}
+`;
+
+const ModuleInfoIcon = styled(Icon).attrs(() => ({ type: 'question-circle'}))`
+    ${({ theme }) => `
+      margin-left: ${theme.spacing.xs};
+    `}
+`;
 
 const RawResponse = styled.code`
   ${({ theme }) => `
