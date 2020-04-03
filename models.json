@@ -37,7 +37,7 @@
         "max_request_length": 21097
     },
     "named-entity-recognition": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/ner-model-2020.02.10.tar.gz",
+        "archive_file": "https://s3.amazonaws.com/miked-public/ner_allen1.0_seed18310_neps5_lr0.00032.tar.gz",
         "predictor_name": "sentence-tagger",
         "max_request_length": 94864
     },

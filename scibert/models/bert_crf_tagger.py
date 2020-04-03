@@ -84,6 +84,7 @@ class BertCrfTagger(Model):
             Linear(self.text_field_embedder.get_output_dim(), self.num_tags)
         )
 
+
         # if  constrain_crf_decoding and calculate_span_f1 are not
         # provided, (i.e., they're None), set them to True
         # if label_encoding is provided and False if it isn't.
@@ -173,6 +174,7 @@ class BertCrfTagger(Model):
         # Just get the tags and ignore the score.
         predicted_tags = [x for x, y in best_paths]
 
+
         output = {"logits": logits, "mask": mask, "tags": predicted_tags}
 
         if tags is not None:
@@ -188,15 +190,15 @@ class BertCrfTagger(Model):
                     class_probabilities[i, j, tag_id] = 1
 
             for metric in self.metrics.values():
-                metric(class_probabilities, tags, mask.float())
+                metric(class_probabilities, tags, mask)
             if self.calculate_span_f1:
-                self._f1_metric(class_probabilities, tags, mask.float())
+                self._f1_metric(class_probabilities, tags, mask)
         if metadata is not None:
             output["words"] = [x["words"] for x in metadata]
         return output
 
     @overrides
-    def decode(self, output_dict: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+    def make_output_human_readable(self, output_dict: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
         """
         Converts the tag ids to the actual tags.
         ``output_dict["tags"]`` is a list of lists of tag_ids,
