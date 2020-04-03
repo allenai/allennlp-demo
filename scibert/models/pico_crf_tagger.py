@@ -104,7 +104,6 @@ class PicoCrfTagger(Model):
             output["words"] = [x["words"] for x in metadata]
         return output
 
-    @overrides
     def make_output_human_readable(self, output_dict: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
         """
         Converts the tag ids to the actual tags.

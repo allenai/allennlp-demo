@@ -97,7 +97,6 @@ class TextClassifier(Model):
             self.label_accuracy(logits, label)
         return output_dict
 
-    @overrides
     def make_output_human_readable(self, output_dict: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
         class_probabilities = F.softmax(output_dict['logits'], dim=-1)
         output_dict['class_probs'] = class_probabilities

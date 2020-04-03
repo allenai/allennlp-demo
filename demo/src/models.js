@@ -1,6 +1,5 @@
 import SemanticRoleLabeling from './components/demos/SemanticRoleLabeling';
 import OpenIe from './components/demos/OpenIe';
-import Event2Mind from './components/demos/Event2Mind';
 import TextualEntailment from './components/demos/TextualEntailment';
 import SentimentAnalysis from './components/demos/SentimentAnalysis';
 import ReadingComprehension from './components/demos/ReadingComprehension';
@@ -11,7 +10,6 @@ import DependencyParser from './components/demos/DependencyParser';
 import WikiTables from './components/demos/WikiTables';
 import Nlvr from './components/demos/Nlvr';
 import Atis from './components/demos/Atis';
-import QuarelZero from './components/demos/QuarelZero';
 import LanguageModel from './components/demos/LanguageModel';
 import MaskedLm from './components/demos/MaskedLm';
 import annotateIcon from './icons/annotate-14px.svg';
