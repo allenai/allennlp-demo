@@ -5,6 +5,6 @@
         "max_request_length": 25819,
         "overrides": "{\"model\": {\"debug\":true, \"beam_size\":1}}",
         "memory": "4Gi",
-        "image": "gcr.io/ai2-reviz/allennlp-demo-nmn-drop:f1d2db6c139cfbbc710b8a79e85fc5636bb03b0c"
+        "image": "gcr.io/ai2-reviz/allennlp-demo-nmn-drop:e4b50a135a514ab879fb4b591f9fa598d2ade6ad"
     }
 }
