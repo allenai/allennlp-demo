@@ -1,9 +1,9 @@
 {
     "nmn-drop": {
-        "archive_file": "https://nmn-drop.s3.amazonaws.com/model.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/drop-nmn-2020.04.04.tar.gz",
         "predictor_name": "drop_demo_predictor",
         "max_request_length": 25819,
-        "overrides": "{\"model\": { \"debug\":true}}",
+        "overrides": "{\"model\": {\"debug\":true, \"beam_size\":1}}",
         "memory": "4Gi",
         "image": "gcr.io/ai2-reviz/allennlp-demo-nmn-drop:f1d2db6c139cfbbc710b8a79e85fc5636bb03b0c"
     }
