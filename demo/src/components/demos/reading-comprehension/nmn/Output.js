@@ -23,6 +23,7 @@ export const StepOutput = ({ inputs, step }) => {
   // We'll be displaying outputs across different inputs, and would like their color to be
   // consistent from one input to another.
   const highlightColorByLabel = {};
+  let colorIdx = -1;
   return (
     <>
       {moduleInfo ? (
@@ -49,6 +50,11 @@ export const StepOutput = ({ inputs, step }) => {
 
           for(const output of outputs) {
             const label = output.label || step.moduleName;
+
+            if (highlightColorByLabel[label] === undefined) {
+              highlightColorByLabel[label] = getHighlightColor(++colorIdx);
+            }
+
             const spans = [];
             const lenValues = output.values.length;
             let start = null;
@@ -94,9 +100,6 @@ export const StepOutput = ({ inputs, step }) => {
             if (Array.isArray(clusters[label])) {
               clusters[label] = clusters[label].concat(spans);
             } else {
-              const colorIdx = Object.getOwnPropertyNames(highlightColorByLabel).length;
-              const color = getHighlightColor(colorIdx);
-              highlightColorByLabel[label] = color;
               clusters[label] = spans;
             }
           }
@@ -108,13 +111,11 @@ export const StepOutput = ({ inputs, step }) => {
               : <>,&nbsp;</>
           );
 
-          const labelsByClusterIdx = Object.getOwnPropertyNames(clusters);
           return (
             <OutputField key={`${inputIdx}/${input.name}`} label={input.name}>
               <SpacingFix>
                 <NestedHighlight
-                    highlightColor={clusterIdx =>
-                      highlightColorByLabel[labelsByClusterIdx[[clusterIdx]]]}
+                    highlightColor={token => highlightColorByLabel[token.cluster]}
                     tokens={input.tokens.map((t, i) => {
                       const valuesForIdx = valuesByTokenIndex[i];
 
@@ -168,32 +169,11 @@ export const Output = ({ response }) => {
               <StepOutput inputs={explanation.inputs} step={step} />
             </Tabs.TabPane>
           )}
-          <Tabs.TabPane tab={<code>DEBUG</code>} key="debug">
-            <RawResponse>
-              <pre>{JSON.stringify(response, null, 4)}</pre>
-            </RawResponse>
-          </Tabs.TabPane>
         </Tabs>
       </OutputField>
     </React.Fragment>
   );
 }
-
-const RawResponse = styled.code`
-  ${({ theme }) => `
-    display: block;
-    border-radius: 4px;
-    background: ${theme.color.A10};
-    border: 1px solid ${theme.color.B10};
-    color: ${theme.color.T4};
-    padding: ${theme.spacing.md};
-    white-space: wrap;
-
-    pre {
-      margin: 0;
-    }
-  `}
-`;
 
 const Info = styled.div`
   ${({ theme }) => `

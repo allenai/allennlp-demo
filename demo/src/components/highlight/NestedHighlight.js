@@ -120,7 +120,7 @@ const InnerHighlight = props => {
             activeIds={activeIds}
             color={
               (typeof highlightColor === 'function'
-                ? highlightColor(token.clusterIndex)
+                ? highlightColor(token)
                 : highlightColor) ||
               getHighlightColor(token.clusterIndex)}
             depth={depth}
@@ -174,7 +174,7 @@ const InnerHighlight = props => {
  *  onMouseUp?: (id: string) => void
  *  selectedId?: string
  *  tokens: string[],
- *  highlightColor?: string|(clusterIndex: number) => string;
+ *  highlightColor?: string|(token: object) => string;
  *  tokenSeparator?: string;
  * } props
  */
