@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Tabs, Popover } from 'antd';
 
 import OutputField from '../../../OutputField';
-import NestedHighlight from '../../../highlight/NestedHighlight';
+import NestedHighlight, { getHighlightColor } from '../../../highlight/NestedHighlight';
 
 import { ModuleInfo } from './ModuleInfo';
 import * as expln from './Explanation';
@@ -19,6 +19,10 @@ export const StepOutput = ({ inputs, step }) => {
   const range = [0, 1];
   const values = [ 1e-8, 1 ];
   const nf = Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
+
+  // We'll be displaying outputs across different inputs, and would like their color to be
+  // consistent from one input to another.
+  const highlightColorByLabel = {};
   return (
     <>
       {moduleInfo ? (
@@ -61,7 +65,6 @@ export const StepOutput = ({ inputs, step }) => {
               }
               valuesByTokenIndex[index].push({ label, value });
 
-
               if (shouldMergeSpans) {
                 if (value >= min) {
                   // Starting a new cluster
@@ -91,6 +94,9 @@ export const StepOutput = ({ inputs, step }) => {
             if (Array.isArray(clusters[label])) {
               clusters[label] = clusters[label].concat(spans);
             } else {
+              const colorIdx = Object.getOwnPropertyNames(highlightColorByLabel).length;
+              const color = getHighlightColor(colorIdx);
+              highlightColorByLabel[label] = color;
               clusters[label] = spans;
             }
           }
@@ -101,10 +107,14 @@ export const StepOutput = ({ inputs, step }) => {
               ? undefined
               : <>,&nbsp;</>
           );
+
+          const labelsByClusterIdx = Object.getOwnPropertyNames(clusters);
           return (
             <OutputField key={`${inputIdx}/${input.name}`} label={input.name}>
               <SpacingFix>
                 <NestedHighlight
+                    highlightColor={clusterIdx =>
+                      highlightColorByLabel[labelsByClusterIdx[[clusterIdx]]]}
                     tokens={input.tokens.map((t, i) => {
                       const valuesForIdx = valuesByTokenIndex[i];
 

@@ -2,7 +2,6 @@ import React from 'react';
 import { Highlight } from './Highlight';
 import HighlightContainer from './HighlightContainer';
 
-
 const highlightColors = [
   "blue",
   "green",
@@ -119,7 +118,11 @@ const InnerHighlight = props => {
           <Highlight
             activeDepths={activeDepths}
             activeIds={activeIds}
-            color={highlightColor || getHighlightColor(token.clusterIndex)}
+            color={
+              (typeof highlightColor === 'function'
+                ? highlightColor(token.clusterIndex)
+                : highlightColor) ||
+              getHighlightColor(token.clusterIndex)}
             depth={depth}
             id={token.cluster}
             isClickable={isClickable}
@@ -171,7 +174,7 @@ const InnerHighlight = props => {
  *  onMouseUp?: (id: string) => void
  *  selectedId?: string
  *  tokens: string[],
- *  highlightColor?: string;
+ *  highlightColor?: string|(clusterIndex: number) => string;
  *  tokenSeparator?: string;
  * } props
  */
