@@ -20,21 +20,22 @@ from server.db import InMemoryDemoDatabase
 from server.models import DemoModel
 
 TEST_ARCHIVE_FILES = {
-        'reading-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
-        'semantic-role-labeling': 'tests/fixtures/srl/model.tar.gz',
-        'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz'
+    'reading-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
+    'semantic-role-labeling': 'tests/fixtures/srl/model.tar.gz',
+    'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz'
 }
 
 PREDICTOR_NAMES = {
     'reading-comprehension': 'reading-comprehension',
-        'semantic-role-labeling': 'semantic-role-labeling',
-        'textual-entailment': 'textual-entailment'
+    'semantic-role-labeling': 'semantic-role-labeling',
+    'textual-entailment': 'textual-entailment'
 }
 
 PREDICTORS = {
-        name: Predictor.from_archive(load_archive(archive_file),
-                                     predictor_name=PREDICTOR_NAMES[name])
-        for name, archive_file in TEST_ARCHIVE_FILES.items()
+    name: Predictor.from_archive(
+        load_archive(archive_file),
+        predictor_name=PREDICTOR_NAMES[name])
+    for name, archive_file in TEST_ARCHIVE_FILES.items()
 }
 
 LIMITS = {
@@ -58,6 +59,7 @@ class CountingPredictor(Predictor):
         self.calls[key] += 1
         return copy.deepcopy(inputs)
 
+
 class FailingPredictor(Predictor):
     """
     Guaranteed to fail.
@@ -68,6 +70,7 @@ class FailingPredictor(Predictor):
 
     def predict_json(self, inputs: JsonDict) -> JsonDict:
         raise RuntimeError("Predicting is hard!")
+
 
 class TestFlask(AllenNlpTestCase):
     client = None
