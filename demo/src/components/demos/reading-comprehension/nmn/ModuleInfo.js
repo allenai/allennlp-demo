@@ -1,3 +1,5 @@
+export const DEFAULT_MIN_ATTN = 0.1;
+
 /**
  * Metadata about a single NMN module.
  */
@@ -9,7 +11,7 @@ export class ModuleInfo {
    * @param {number} defaultMinAttn
    * @param {string} tokenSeparator
    */
-  constructor(name, signature, description, defaultMinAttn = 0.1) {
+  constructor(name, signature, description, defaultMinAttn = DEFAULT_MIN_ATTN) {
     this.name = name;
     this.signature = signature;
     this.description = description;
@@ -21,20 +23,14 @@ export class ModuleInfo {
    * name, undefined is returned.
    *
    * @param   {string} name
-   * @returns {ModuleInfo}
+   * @returns {ModuleInfo|undefined}
    */
   static findInfoByName(name) {
     // When there's multiple instances of the same module in a single program, the module name is
     // de-anonymized by prefixing it with as many `*`s is necessary. We strip those prior to
     // searching.
     const canonicalName = name.replace(/\*+$/, '');
-    const info = allModules.find(info => info.name === canonicalName);
-
-    // Fallback to something sensible, so the UI doesn't error out in this scenario
-    if (!info) {
-      return new ModuleInfo(canonicalName, `${canonicalName}(?, ?) -> ?`, 'Sorry, no description yet.');
-    }
-    return info;
+    return allModules.find(info => info.name === canonicalName);
   }
 }
 

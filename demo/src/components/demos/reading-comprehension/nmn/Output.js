@@ -5,7 +5,7 @@ import { Tabs, Popover } from 'antd';
 import OutputField from '../../../OutputField';
 import NestedHighlight, { getHighlightColor } from '../../../highlight/NestedHighlight';
 
-import { ModuleInfo } from './ModuleInfo';
+import { ModuleInfo, DEFAULT_MIN_ATTN } from './ModuleInfo';
 import * as expln from './Explanation';
 import { WithLogScaleSlider } from './WithLogScaleSlider';
 
@@ -35,7 +35,7 @@ export const StepOutput = ({ inputs, step }) => {
           label="Minimum Attention"
           range={range}
           values={values}
-          defaultValue={moduleInfo.defaultMinAttn}>{min => (
+          defaultValue={moduleInfo.defaultMinAttn || DEFAULT_MIN_ATTN}>{min => (
         inputs.map((input, inputIdx) => {
           const outputs = step.getOutputsForInput(input.name);
 
