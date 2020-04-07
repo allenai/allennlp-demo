@@ -155,17 +155,20 @@ export const StepOutput = ({ inputs, step }) => {
  * @param {string}    program.name
  * @param {string}    program.identifier
  */
-export const ProgramExpression = ({ program, key }) => {
+export const ProgramExpression = ({ program, parentKey }) => {
   if (Array.isArray(program)) {
     const lastIdx = program.length -1;
     return (
       <>
-        ({program.map((p, i) => (
-          <>
-            <ProgramExpression program={p} key={`${key}/${i}`} />
-            {i !== lastIdx ? <>&nbsp;</> : null}
-          </>
-        ))})
+        ({program.map((p, i) => {
+          const key = parentKey ? `${parentKey}/${i}` : `${i}`;
+          return (
+            <React.Fragment key={key}>
+              <ProgramExpression program={p} parentKey={key} />
+              {i !== lastIdx ? <>&nbsp;</> : null}
+            </React.Fragment>
+          )
+        })})
       </>
     );
   } else {
