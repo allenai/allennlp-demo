@@ -1,4 +1,19 @@
 {
+    "reading-comprehension": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-model-2020.03.19.tar.gz",
+        "predictor_name": "reading-comprehension",
+        "max_request_length": 311108
+    },
+    "elmo-reading-comprehension": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2020.03.19.tar.gz",
+        "predictor_name": "reading-comprehension",
+        "max_request_length": 311108
+    },
+    "naqanet-reading-comprehension": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/naqanet-2020.02.19.tar.gz",
+        "predictor_name": "reading-comprehension",
+        "max_request_length": 25819
+    },
     "nmn-drop": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/drop-nmn-2020.04.04.tar.gz",
         "predictor_name": "drop_demo_predictor",
@@ -6,5 +21,95 @@
         "overrides": "{\"model\": {\"debug\":true, \"beam_size\":1}}",
         "memory": "4Gi",
         "image": "gcr.io/ai2-reviz/allennlp-demo-nmn-drop:035ab2adab142b65634cc2e36ac1c81bc822ce05"
+    },
+    "semantic-role-labeling": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.03.24.tar.gz",
+        "predictor_name": "semantic-role-labeling",
+        "max_request_length": 4590
+    },
+    "open-information-extraction": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/openie-model.2020.03.26.tar.gz",
+        "predictor_name": "open-information-extraction",
+        "max_request_length": 19681
+    },
+    "elmo-snli": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2020.02.10.tar.gz",
+        "predictor_name": "textual-entailment",
+        "max_request_length": 13129
+    },
+    "roberta-snli": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/snli-roberta-large-2020.02.27.tar.gz",
+        "predictor_name": "textual-entailment",
+        "max_request_length": 13129
+    },
+    "roberta-mnli": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/mnli-roberta-large-2020.02.27.tar.gz",
+        "predictor_name": "textual-entailment",
+        "max_request_length": 13129
+    },
+    "coreference-resolution": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz",
+        "predictor_name": "coreference-resolution",
+        "max_request_length": 21097
+    },
+    "named-entity-recognition": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/ner-model-2020.02.10.tar.gz",
+        "predictor_name": "sentence-tagger",
+        "max_request_length": 94864
+    },
+    "fine-grained-named-entity-recognition": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner-model-elmo-2018.12.21.tar.gz",
+        "predictor_name": "sentence-tagger",
+        "max_request_length": 22878,
+        "image": "gcr.io/ai2-reviz/allennlp-demo:584070b73f7eb6eb1f82af723295aec0a44ae3a9"
+    },
+    "constituency-parsing": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2020.02.10.tar.gz",
+        "predictor_name": "constituency-parser",
+        "max_request_length": 2236
+    },
+    "dependency-parsing": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2020.04.06.tar.gz",
+        "predictor_name": "biaffine-dependency-parser",
+        "max_request_length": 5675
+    },
+    "wikitables-parser": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2020.02.10.tar.gz",
+        "predictor_name": "wikitables-parser",
+        "max_request_length": 8177,
+        "image": "gcr.io/ai2-reviz/allennlp-demo:4a43b7f6ff8e90152526409dd904608ac2421c6d"
+    },
+    "nlvr-parser": {
+        "archive_file": "https://allennlp.s3.amazonaws.com/models/nlvr-erm-model-2020.02.10-rule-vocabulary-updated.tar.gz",
+        "predictor_name": "nlvr-parser",
+        "max_request_length": 1136,
+        "image": "gcr.io/ai2-reviz/allennlp-demo:4a43b7f6ff8e90152526409dd904608ac2421c6d"
+    },
+    "atis-parser": {
+        "archive_file": "https://allennlp.s3.amazonaws.com/models/atis-parser-2020.02.10.tar.gz",
+        "predictor_name": "atis-parser",
+        "max_request_length": 2236,
+        "image": "gcr.io/ai2-reviz/allennlp-demo:4a43b7f6ff8e90152526409dd904608ac2421c6d"
+    },
+    "next-token-lm": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/gpt2-next-word-lm-2020.02.19.tar.gz",
+        "predictor_name": "next_token_lm",
+        "max_request_length": 10000
+    },
+    "masked-lm": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2020.03.25.tar.gz",
+        "predictor_name": "masked_language_model",
+        "max_request_length": 10000
+    },
+    "glove-sentiment-analysis": {
+        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
+        "predictor_name": "text_classifier",
+        "max_request_length": 1000
+    },
+    "roberta-sentiment-analysis": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz",
+        "predictor_name": "text_classifier",
+        "max_request_length": 1000,
+        "memory": "4Gi"
     }
 }
