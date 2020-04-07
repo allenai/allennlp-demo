@@ -1,3 +1,4 @@
+export const DEFAULT_MIN_ATTN = 0.1;
 
 /**
  * Metadata about a single NMN module.
@@ -10,7 +11,7 @@ export class ModuleInfo {
    * @param {number} defaultMinAttn
    * @param {string} tokenSeparator
    */
-  constructor(name, signature, description, defaultMinAttn = 0.1) {
+  constructor(name, signature, description, defaultMinAttn = DEFAULT_MIN_ATTN) {
     this.name = name;
     this.signature = signature;
     this.description = description;
