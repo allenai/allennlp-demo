@@ -89,7 +89,7 @@
         "max_request_length": 10000
     },
     "masked-lm": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2020.03.25.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2019.09.17.tar.gz",
         "predictor_name": "masked_language_model",
         "max_request_length": 10000,
         "memory": "4Gi",
