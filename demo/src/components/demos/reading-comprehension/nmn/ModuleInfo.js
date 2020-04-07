@@ -1,4 +1,3 @@
-export const DEFAULT_MIN_ATTN = 0.1;
 
 /**
  * Metadata about a single NMN module.
@@ -11,7 +10,7 @@ export class ModuleInfo {
    * @param {number} defaultMinAttn
    * @param {string} tokenSeparator
    */
-  constructor(name, signature, description, defaultMinAttn = DEFAULT_MIN_ATTN) {
+  constructor(name, signature, description, defaultMinAttn = 0.1) {
     this.name = name;
     this.signature = signature;
     this.description = description;
@@ -41,7 +40,7 @@ const allModules = [
   new ModuleInfo(
     'find',
     'find(Q) → P',
-    'For text spans in the question, find similar text spans in the passage.',
+    'For text span in the question, find similar text spans in the passage.',
     0.01,
   ),
   new ModuleInfo(
@@ -52,17 +51,17 @@ const allModules = [
   new ModuleInfo(
     'relocate',
     'relocate(Q, P) → P',
-    'Find spans in the passage related to an argument in the question.',
+    'Based on the question, select the relevant argument for the input passage spans.',
   ),
   new ModuleInfo(
     'find-num',
     'find-num(P) → N',
-    'Find the number(s) associated to the input paragraph spans.',
+    'Find the number(s) associated to the input passage spans.',
   ),
   new ModuleInfo(
     'find-date',
     'find-date(P) → D',
-    'Find the date(s) associated to the input paragraph spans.',
+    'Find the date(s) associated to the input passage spans.',
   ),
   new ModuleInfo(
     'count',
@@ -81,23 +80,23 @@ const allModules = [
   ),
   new ModuleInfo(
     'number-difference',
-    'number-difference(P1, P2) -> N',
-    'Return the difference between numbers associated with paragraph spans.'
+    'number-difference(N1, N2) -> N',
+    'Return the difference between the two input numbers.'
   ),
   new ModuleInfo(
-    'date-diff',
-    'date-diff(P1, P2) → TD',
-    'Difference between the dates associated with the paragraph spans.',
+    'number-addition',
+    'number-difference(N1, N2) -> N',
+    'Return the summation between the two input numbers.'
   ),
   new ModuleInfo(
     'find-max-num',
     'find-max-num(P) → P',
-    'Select the text span in the passage with the largest number.',
+    'Output the span associated to the largest number amongst the input spans.',
   ),
   new ModuleInfo(
     'find-min-num',
     'find-min-num(P) → P',
-    'Select the text span in the passage with the smallest number.',
+    'Output the span associated to the smallest number amongst the input spans.',
   ),
   new ModuleInfo(
     'span',
@@ -106,17 +105,17 @@ const allModules = [
   ),
   new ModuleInfo(
     'compare-date-lt',
-    'compare-date-lt(P1, P2) → P',
+    'compare-date-lt(P1, P2) → P ',
     'Output the span associated with the earlier date.',
   ),
   new ModuleInfo(
     'compare-date-gt',
-    'compare-date-gt(P1, P2) → P',
+    'compare-date-gt(P1, P2) → P ',
     'Output the span associated with the later date.',
   ),
   new ModuleInfo(
     'year-diff',
     'year-diff(P1, P2) → TY',
-    'Difference between the years associated with the paragraph spans.',
+    'Difference in years between the dates associated with the input passage spans.',
   ),
 ];
