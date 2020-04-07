@@ -126,14 +126,11 @@ const Attacks = ({attackData, attackModel, requestData}) => {
 }
 
 // What is rendered as Output when the user hits buttons on the demo.
-const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
+const Output = ({ tokens, responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   const model = requestData ? requestData.model : undefined;
 
   const [positiveClassProbability, negativeClassProbability] = responseData['probs']
   const prediction = negativeClassProbability < positiveClassProbability ? "Positive" : "Negative"
-
-  let t = requestData;
-  const tokens = t['sentence'].split(' '); // this model expects space-separated inputs
 
   // The RoBERTa-large model is very slow to be attacked
   const attacks = model && model.includes('RoBERTa') ?

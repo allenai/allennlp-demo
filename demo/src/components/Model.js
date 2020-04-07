@@ -54,7 +54,7 @@ class Model extends React.Component {
         this.props.updateData(inputs, json)
         //
         // requestData, responseData
-
+        this.setState({tokens: json['tokens']});
         if (window.frameElement) {
           // Based on http://www.awongcm.io/blog/2018/11/25/using-iframes-api-to-toggle-client-side-routing-of-react-router-for-legacy-web-apps/
           window.frameElement.ownerDocument.defaultView.history.pushState({}, '', newPath)
