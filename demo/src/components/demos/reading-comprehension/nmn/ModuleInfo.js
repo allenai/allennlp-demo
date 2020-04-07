@@ -1,4 +1,3 @@
-
 /**
  * Metadata about a single NMN module.
  */
@@ -22,14 +21,20 @@ export class ModuleInfo {
    * name, undefined is returned.
    *
    * @param   {string} name
-   * @returns {ModuleInfo|undefined}
+   * @returns {ModuleInfo}
    */
   static findInfoByName(name) {
     // When there's multiple instances of the same module in a single program, the module name is
     // de-anonymized by prefixing it with as many `*`s is necessary. We strip those prior to
     // searching.
     const canonicalName = name.replace(/\*+$/, '');
-    return allModules.find(info => info.name === canonicalName);
+    const info = allModules.find(info => info.name === canonicalName);
+
+    // Fallback to something sensible, so the UI doesn't error out in this scenario
+    if (!info) {
+      return new ModuleInfo(canonicalName, `${canonicalName}(?, ?) -> ?`, 'Sorry, no description yet.');
+    }
+    return info;
   }
 }
 
