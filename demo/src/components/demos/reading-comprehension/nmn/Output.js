@@ -149,6 +149,37 @@ export const StepOutput = ({ inputs, step }) => {
 }
 
 /**
+ *
+ * @param {object|[]} program             Either a single module that represents a single step / frame
+ *                                        of the program, or a (potentially nested) array of modules.
+ * @param {string}    program.name
+ * @param {string}    program.identifier
+ */
+export const ProgramExpression = ({ program, key }) => {
+  if (Array.isArray(program)) {
+    const lastIdx = program.length -1;
+    return (
+      <>
+        ({program.map((p, i) => (
+          <>
+            <ProgramExpression program={p} key={`${key}/${i}`} />
+            {i !== lastIdx ? <>&nbsp;</> : null}
+          </>
+        ))})
+      </>
+    );
+  } else {
+    return (
+      <span>
+        {program.name}
+        <sub>{program.identifier}</sub>
+      </span>
+    );
+  }
+}
+
+
+/**
  * @param {object} props
  * @param {object} props.response The raw response from the inference API.
  */
@@ -158,7 +189,7 @@ export const Output = ({ response }) => {
     <React.Fragment>
       <OutputField label="Answer">{explanation.answer}</OutputField>
       <OutputField label="Program">
-        <code>{explanation.lisp}</code>
+        <code><ProgramExpression program={response.program_nested_expression} /></code>
       </OutputField>
       <OutputField label="Execution Steps">
         <Tabs animated={false}>
