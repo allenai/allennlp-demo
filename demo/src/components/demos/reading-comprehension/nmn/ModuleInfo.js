@@ -106,12 +106,12 @@ const allModules = [
   ),
   new ModuleInfo(
     'compare-date-lt',
-    'compare-date-lt(P1, P2) → P ',
+    'compare-date-lt(P1, P2) → P',
     'Output the span associated with the earlier date.',
   ),
   new ModuleInfo(
     'compare-date-gt',
-    'compare-date-gt(P1, P2) → P ',
+    'compare-date-gt(P1, P2) → P',
     'Output the span associated with the later date.',
   ),
   new ModuleInfo(
