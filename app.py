@@ -47,7 +47,7 @@ logger.addHandler(handler)
 logger.propagate = False
 
 supported_interpret_models = {'named-entity-recognition',
-                              'fine-grained-named-entity-recognition',
+                              'fine-grained-ner',
                               'glove-sentiment-analysis',
                               'roberta-sentiment-analysis',
                               'elmo-snli',
