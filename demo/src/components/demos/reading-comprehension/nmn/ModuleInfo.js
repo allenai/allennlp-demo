@@ -80,6 +80,11 @@ const allModules = [
     'Output the span associated with the larger number.',
   ),
   new ModuleInfo(
+    'number-difference',
+    'number-difference(P1, P2) -> N',
+    'Return the difference between numbers associated with paragraph spans.'
+  ),
+  new ModuleInfo(
     'date-diff',
     'date-diff(P1, P2) → TD',
     'Difference between the dates associated with the paragraph spans.',
@@ -101,12 +106,12 @@ const allModules = [
   ),
   new ModuleInfo(
     'compare-date-lt',
-    'compare-date-lt(P1, P2) → P ',
+    'compare-date-lt(P1, P2) → P',
     'Output the span associated with the earlier date.',
   ),
   new ModuleInfo(
     'compare-date-gt',
-    'compare-date-gt(P1, P2) → P ',
+    'compare-date-gt(P1, P2) → P',
     'Output the span associated with the later date.',
   ),
   new ModuleInfo(
