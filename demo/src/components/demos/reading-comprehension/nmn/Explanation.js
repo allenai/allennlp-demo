@@ -39,14 +39,12 @@ export class Input {
 
 export class Explanation {
   /**
-   * @param {string}  answer
-   * @param {string}  lisp
-   * @param {Input[]} inputs
-   * @param {Step[]}  steps
+   * @param {string}    answer
+   * @param {Input[]}   inputs
+   * @param {Step[]}    steps
    */
-  constructor(answer, lisp, inputs, steps) {
+  constructor(answer, inputs, steps) {
     this.answer = answer;
-    this.lisp = lisp;
     this.inputs = inputs;
     this.steps = steps;
   }
@@ -71,7 +69,6 @@ export class Explanation {
 
     return new Explanation(
       response.answer,
-      response.program_lisp,
       inputs,
       steps
     );
