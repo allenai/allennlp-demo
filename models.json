@@ -49,7 +49,7 @@
         "predictor_name": "sentence-tagger",
         "max_request_length": 94864
     },
-    "fine-grained-named-entity-recognition": {
+    "fine-grained-ner": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner-model-elmo-2018.12.21.tar.gz",
         "predictor_name": "sentence-tagger",
         "max_request_length": 22878,
