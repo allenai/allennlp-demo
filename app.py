@@ -313,6 +313,9 @@ def make_app(build_dir: str,
             else:
                 answer = prediction['answer']
             log_blob["outputs"]["answer"] = answer
+        elif model_name == "nmn-drop":
+            answer = prediction['answer']
+            log_blob["outputs"]["answer"] = answer
         elif model_name == "coreference-resolution":
             log_blob["outputs"]["clusters"] = prediction["clusters"]
             log_blob["outputs"]["document"] = prediction["document"]

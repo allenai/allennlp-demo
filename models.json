@@ -14,6 +14,14 @@
         "predictor_name": "reading-comprehension",
         "max_request_length": 25819
     },
+    "nmn-drop": {
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/drop-nmn-2020.04.04.tar.gz",
+        "predictor_name": "drop_demo_predictor",
+        "max_request_length": 25819,
+        "overrides": "{\"model\": {\"debug\":true, \"beam_size\":1}}",
+        "memory": "4Gi",
+        "image": "gcr.io/ai2-reviz/allennlp-demo-nmn-drop:035ab2adab142b65634cc2e36ac1c81bc822ce05"
+    },
     "semantic-role-labeling": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.03.24.tar.gz",
         "predictor_name": "semantic-role-labeling",

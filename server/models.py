@@ -3,6 +3,7 @@ import json
 
 from allennlp.predictors import Predictor
 from allennlp.models.archival import load_archive
+from allennlp.common import util
 
 from allennlp_models import coref
 from allennlp_models import rc
@@ -39,6 +40,9 @@ def load_demo_models(models_file: str,
         model = blob[task_name]
         model_type = model.get("type", "allennlp")
 
+        if task_name == "nmn-drop":
+            util.import_submodules("semqa")
+
         # If ever we introduce additional model types,
         # we'll need to add corresponding logic here.
         if model_type == "allennlp":
@@ -51,7 +55,8 @@ def load_demo_models(models_file: str,
         demo_models[task_name] = load(
                     archive_file=model["archive_file"],
                     predictor_name=model["predictor_name"],
-                    max_request_length=model["max_request_length"]
+                    max_request_length=model["max_request_length"],
+                    overrides=model.get("overrides", "")
         )
 
     return demo_models

@@ -24,6 +24,7 @@ import {
   INPUT_REDUCTION_ATTACKER,
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
+import * as nmn from './reading-comprehension/nmn';
 
 const title = "Reading Comprehension"
 
@@ -37,6 +38,11 @@ const description = (
   </span>
   )
 
+const NMNModel = {
+  name: "NMN (trained on DROP)",
+  desc: "A neural module network trained on DROP."
+};
+
 const taskModels = [
   {
     name: "ELMo-BiDAF (trained on SQuAD)",
@@ -49,13 +55,15 @@ const taskModels = [
   {
     name: "NAQANet (trained on DROP)",
     desc: "An augmented version of QANet that adds rudimentary numerical reasoning ability,<br/>trained on DROP (Dua et al., 2019), as published in the original DROP paper."
-  }
+  },
+  NMNModel
 ]
 
 const taskEndpoints = {
   "ELMo-BiDAF (trained on SQuAD)": "elmo-reading-comprehension",
   "BiDAF (trained on SQuAD)": "reading-comprehension",
-  "NAQANet (trained on DROP)": "naqanet-reading-comprehension"
+  "NAQANet (trained on DROP)": "naqanet-reading-comprehension",
+  "NMN (trained on DROP)": "nmn-drop"
 };
 
 const fields = [
@@ -303,8 +311,8 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
                 {question}
               </OutputField>
 
-              <MySaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel = {interpretModel} requestData = {requestData}/>
-              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+              <MySaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel={interpretModel} requestData={requestData}/>
+              <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
               <Attention {...responseData}/>
             </section>
           )
@@ -381,11 +389,21 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
 }
 
 const Output = (props) => {
-  return (
-    <div className="model__content answer">
-      <AnswerByType {...props}/>
-    </div>
-  )
+  switch (props.requestData.model) {
+    case NMNModel.name: {
+      return (
+        <div className="model__content answer">
+          <nmn.Output response={props.responseData} />
+        </div>
+      );
+    }
+    default:
+      return (
+        <div className="model__content answer">
+          <AnswerByType {...props} />
+        </div>
+      )
+  }
 }
 
 const addSnippet = (example) => {
