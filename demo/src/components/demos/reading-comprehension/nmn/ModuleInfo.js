@@ -41,7 +41,7 @@ const allModules = [
   new ModuleInfo(
     'find',
     'find(Q) → P',
-    'For text span in the question, find similar text spans in the passage.',
+    'For the selected span in the question, find similar spans in the passage.',
     0.01,
   ),
   new ModuleInfo(
@@ -92,12 +92,12 @@ const allModules = [
   new ModuleInfo(
     'find-max-num',
     'find-max-num(P) → P',
-    'Output the span associated to the largest number amongst the input spans.',
+    'Among the input spans, select the span associated with the largest number.',
   ),
   new ModuleInfo(
     'find-min-num',
     'find-min-num(P) → P',
-    'Output the span associated to the smallest number amongst the input spans.',
+    'Among the input spans, select the span associated with the smallest number.',
   ),
   new ModuleInfo(
     'span',
