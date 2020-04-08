@@ -383,3 +383,10 @@ The demo uses react-router, so we wrap our component in `withRouter` and export 
 ```js
 export default withRouter(props => <Model {...props} {...modelProps}/>)
 ```
+
+## Special Cases
+
+The NMN Reading Comprehension demo requires a model that doesn't use the latest
+version of AllenNLP. For instructions on building an image with the code for
+that model's API, visit [this link](https://github.com/nitishgupta/allennlp-demo/blob/work-nmn/README_NMN.md).
+
