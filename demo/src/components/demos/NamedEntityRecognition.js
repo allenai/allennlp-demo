@@ -79,7 +79,7 @@ const taskModels = [
 
 const taskEndpoints = {
   "elmo-ner": "named-entity-recognition",
-  "fine-grained-ner": "fine-grained-ner"
+  "fine-grained-ner": "fine-grained-named-entity-recognition"
 };
 
 const fields = [
