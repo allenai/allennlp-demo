@@ -25,7 +25,7 @@
         "max_request_length": 19681
     },
     "elmo-snli": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2020.02.10.tar.gz",
+        "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2020.04.09.tar.gz",
         "predictor_name": "textual-entailment",
         "max_request_length": 13129
     },
