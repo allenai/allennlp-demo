@@ -6,10 +6,12 @@ from scibert.models.bert_crf_tagger import BertCrfTagger
 
 from allennlp.predictors import Predictor
 from allennlp.models.archival import load_archive
-import allennlp_rc
-import allennlp_semparse
-from allennlp_semparse.predictors.wikitables_parser import WikiTablesParserPredictor
-from allennlp_semparse.models.wikitables.wikitables_erm_semantic_parser import WikiTablesErmSemanticParser
+from allennlp.common import util
+
+from allennlp_models import coref
+from allennlp_models import rc
+from allennlp_models import syntax
+from allennlp_models import lm
 
 from server.demo_model import DemoModel
 from server.gpt2 import Gpt2DemoModel
@@ -41,6 +43,9 @@ def load_demo_models(models_file: str,
         model = blob[task_name]
         model_type = model.get("type", "allennlp")
 
+        if task_name == "nmn-drop":
+            util.import_submodules("semqa")
+
         # If ever we introduce additional model types,
         # we'll need to add corresponding logic here.
         if model_type == "allennlp":
@@ -53,7 +58,8 @@ def load_demo_models(models_file: str,
         demo_models[task_name] = load(
                     archive_file=model["archive_file"],
                     predictor_name=model["predictor_name"],
-                    max_request_length=model["max_request_length"]
+                    max_request_length=model["max_request_length"],
+                    overrides=model.get("overrides", "")
         )
 
     return demo_models

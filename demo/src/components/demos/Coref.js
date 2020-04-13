@@ -5,12 +5,11 @@ import { ExternalLink } from '@allenai/varnish/components';
 import { FormField } from '../Form';
 import { API_ROOT } from '../../api-config';
 import Model from '../Model'
-import HighlightContainer from '../highlight/HighlightContainer';
-import { Highlight, getHighlightColor } from '../highlight/Highlight';
 import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
+import NestedHighlight, { withHighlightClickHandling } from '../highlight/NestedHighlight';
 
 const apiUrl = () => `${API_ROOT}/predict/coreference-resolution`
 
@@ -23,7 +22,7 @@ const description = (
     in a text. It is an important step for many higher level NLP tasks that involve natural
     language understanding such as document summarization, question answering, and information extraction.
     </span>
-    <ExternalLink href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener">{' '} End-to-end Neural Coreference Resolution ( Lee et al, 2017) {' '}</ExternalLink>
+    <ExternalLink href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener">{' '} End-to-end Neural Coreference Resolution (Lee et al, 2017) {' '}</ExternalLink>
     <span>
     is a neural model which considers all possible spans in the document as potential mentions and
     learns distributions over possible anteceedents for each span, using aggressive
@@ -32,10 +31,12 @@ const description = (
     <ExternalLink href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener">{' '} the Ontonotes 5.0 dataset {' '}</ExternalLink>
     <span>
     in early 2017. The model here is based on that paper, but we have substituted the GloVe embeddings
-    that it uses with BERT embeddings. On Ontonotes this model achieves an F1 score of 72.13% on the test set.
+    that it uses with
+    <ExternalLink href = "https://www.semanticscholar.org/paper/SpanBERT%3A-Improving-Pre-training-by-Representing-Joshi-Chen/81f5810fbbab9b7203b9556f4ce3c741875407bc" target="_blank" rel="noopener">{' '} SpanBERT embeddings</ExternalLink>
+    . On Ontonotes this model achieves an F1 score of 78.87% on the test set.
     </span>
     <p>
-      <b>Contributed by:</b> Zhaofeng Wu
+      <b>Contributed by:</b> <ExternalLink href = "https://zhaofengwu.github.io" target="_blank" rel="noopener">Zhaofeng Wu</ExternalLink>
     </p>
   </span>
 );
@@ -51,162 +52,39 @@ const fields = [
      placeholder: "We 're not going to skimp on quality , but we are very focused to make next year . The only problem is that some of the fabrics are wearing out - since I was a newbie I skimped on some of the fabric and the poor quality ones are developing holes . For some , an awareness of this exit strategy permeates the enterprise , allowing them to skimp on the niceties they would more or less have to extend toward a person they were likely to meet again ." }
 ]
 
-// Helper function for transforming response data into a tree object
-const transformToTree = (tokens, clusters) => {
-  // Span tree data transform code courtesy of Michael S.
-  function contains(span, index) {
-    return index >= span[0] && index <= span[1];
-  }
-
-  let insideClusters = [
-    {
-      cluster: -1,
-      contents: [],
-      end: -1
-    }
-  ];
-
-  tokens.forEach((token, i) => {
-    // Find all the new clusters we are entering at the current index
-    let newClusters = [];
-    clusters.forEach((cluster, j) => {
-      // Make sure we're not already in this cluster
-      if (!insideClusters.map((c) => c.cluster).includes(j)) {
-        cluster.forEach((span) => {
-          if (contains(span, i)) {
-              newClusters.push({ end: span[1], cluster: j });
-          }
-        });
-      }
-    });
-
-    // Enter each new cluster, starting with the leftmost
-    newClusters.sort(function(a, b) { return b.end - a.end }).forEach((newCluster) => {
-      // Descend into the new cluster
-      insideClusters.push(
-        {
-          cluster: newCluster.cluster,
-          contents: [],
-          end: newCluster.end
-        }
-      );
-    });
-
-    // Add the current token into the current cluster
-    insideClusters[insideClusters.length-1].contents.push(token);
-
-    // Exit each cluster we're at the end of
-    while (insideClusters.length > 0 && insideClusters[insideClusters.length-1].end === i) {
-      const topCluster = insideClusters.pop();
-      insideClusters[insideClusters.length-1].contents.push(topCluster);
-    }
-  });
-
-  return insideClusters[0].contents;
-}
-
-// Stateful
-class Output extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      selectedCluster: -1,
-      activeIds: [],
-      activeDepths: {ids:[],depths:[]},
-      selectedId: null,
-      isClicking: false
-    };
-
-    this.handleHighlightMouseDown = this.handleHighlightMouseDown.bind(this);
-    this.handleHighlightMouseOver = this.handleHighlightMouseOver.bind(this);
-    this.handleHighlightMouseOut = this.handleHighlightMouseOut.bind(this);
-    this.handleHighlightMouseUp = this.handleHighlightMouseUp.bind(this);
-  }
-
-  handleHighlightMouseDown(id, depth) {
-    let depthTable = this.state.activeDepths;
-    depthTable.ids.push(id);
-    depthTable.depths.push(depth);
-
-    this.setState({
-      selectedId: null,
-      activeIds: [id],
-      activeDepths: depthTable,
-      isClicking: true
-    });
-  }
-
-  handleHighlightMouseUp(id, prevState) {
-    const depthTable = this.state.activeDepths;
-    const deepestIndex = depthTable.depths.indexOf(Math.max(...depthTable.depths));
-
-    this.setState(prevState => ({
-      selectedId: depthTable.ids[deepestIndex],
-      isClicking: false,
-      activeDepths: {ids:[],depths:[]},
-      activeIds: [...prevState.activeIds, id],
-    }));
-  }
-
-  handleHighlightMouseOver(id, prevState) {
-    this.setState(prevState => ({
-      activeIds: [...prevState.activeIds, id],
-    }));
-  }
-
-  handleHighlightMouseOut(id, prevState) {
-    this.setState(prevState => ({
-      activeIds: prevState.activeIds.filter(i => (i === this.state.selectedId)),
-    }));
-  }
-
-  render() {
-    const { activeIds, activeDepths, isClicking, selectedId } = this.state;
-
-    const { responseData } = this.props
-    const { document, clusters } = responseData
-
-    const spanTree = transformToTree(document, clusters);
-
-    // This is the function that calls itself when we recurse over the span tree.
-    const spanWrapper = (data, depth) => {
-      return data.map((token, idx) =>
-        typeof(token) === "object" ? (
-          <Highlight
-            key={idx}
-            activeDepths={activeDepths}
-            activeIds={activeIds}
-            color={getHighlightColor(token.cluster)}
-            depth={depth}
-            id={token.cluster}
-            isClickable={true}
-            isClicking={isClicking}
-            label={token.cluster}
-            labelPosition="left"
-            onMouseDown={this.handleHighlightMouseDown}
-            onMouseOver={this.handleHighlightMouseOver}
-            onMouseOut={this.handleHighlightMouseOut}
-            onMouseUp={this.handleHighlightMouseUp}
-            selectedId={selectedId}>
-            {/* Call Self */}
-            {spanWrapper(token.contents, depth + 1)}
-          </Highlight>
-        ) : (
-          <span key={idx}>{token} </span>
-        )
-      );
-    }
-
-    return (
-      <div className="model__content answer">
-        <FormField>
-          <HighlightContainer isClicking={isClicking}>
-            {spanWrapper(spanTree, 0)}
-          </HighlightContainer>
-        </FormField>
-      </div>
-    );
-  }
+const Output = (props) => {
+  const {
+    responseData,
+    activeIds,
+    activeDepths,
+    isClicking,
+    selectedId,
+    onMouseDown,
+    onMouseOut,
+    onMouseOver,
+    onMouseUp,
+  } = props;
+  const { document, clusters } = responseData
+  return (
+    <div className="model__content answer">
+      <FormField>
+        <NestedHighlight
+          activeDepths={activeDepths}
+          activeIds={activeIds}
+          clusters={clusters}
+          tokens={document}
+          isClickable
+          isClicking={isClicking}
+          labelPosition="left"
+          onMouseDown={onMouseDown}
+          onMouseOut={onMouseOut}
+          onMouseOver={onMouseOver}
+          onMouseUp={onMouseUp}
+          selectedId={selectedId}
+        />
+      </FormField>
+    </div>
+  );
 }
 
 const examples = [
@@ -229,14 +107,14 @@ const usage = (
       <UsageCode>
         <SyntaxHighlight language="bash">
           {`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
-  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz -`} />
+  allennlp predict https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz -`} />
         </SyntaxHighlight>
       </UsageCode>
       <strong>As a library (Python):</strong>
       <UsageCode>
         <SyntaxHighlight language="python">
           {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
+predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz")
 predictor.predict(
   document="The woman reading a newspaper sat on the bench with her dog."
 )`}
@@ -264,6 +142,6 @@ predictor.predict(
   </React.Fragment>
 )
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output: withHighlightClickHandling(Output), usage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

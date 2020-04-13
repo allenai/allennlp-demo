@@ -24,6 +24,7 @@ import {
   INPUT_REDUCTION_ATTACKER,
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
+import * as nmn from './reading-comprehension/nmn';
 
 const title = "Reading Comprehension"
 
@@ -37,6 +38,11 @@ const description = (
   </span>
   )
 
+const NMNModel = {
+  name: "NMN (trained on DROP)",
+  desc: "A neural module network trained on DROP."
+};
+
 const taskModels = [
   {
     name: "ELMo-BiDAF (trained on SQuAD)",
@@ -49,13 +55,15 @@ const taskModels = [
   {
     name: "NAQANet (trained on DROP)",
     desc: "An augmented version of QANet that adds rudimentary numerical reasoning ability,<br/>trained on DROP (Dua et al., 2019), as published in the original DROP paper."
-  }
+  },
+  NMNModel
 ]
 
 const taskEndpoints = {
   "ELMo-BiDAF (trained on SQuAD)": "elmo-reading-comprehension",
   "BiDAF (trained on SQuAD)": "reading-comprehension",
-  "NAQANet (trained on DROP)": "naqanet-reading-comprehension"
+  "NAQANet (trained on DROP)": "naqanet-reading-comprehension",
+  "NMN (trained on DROP)": "nmn-drop"
 };
 
 const fields = [
@@ -303,8 +311,8 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
                 {question}
               </OutputField>
 
-              <MySaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel = {interpretModel} requestData = {requestData}/>
-              <Attacks attackData={attackData} attackModel = {attackModel} requestData = {requestData}/>
+              <MySaliencyMaps interpretData={interpretData} questionTokens={questionTokens} passageTokens={passageTokens} interpretModel={interpretModel} requestData={requestData}/>
+              <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
               <Attention {...responseData}/>
             </section>
           )
@@ -381,11 +389,21 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
 }
 
 const Output = (props) => {
-  return (
-    <div className="model__content answer">
-      <AnswerByType {...props}/>
-    </div>
-  )
+  switch (props.requestData.model) {
+    case NMNModel.name: {
+      return (
+        <div className="model__content answer">
+          <nmn.Output response={props.responseData} />
+        </div>
+      );
+    }
+    default:
+      return (
+        <div className="model__content answer">
+          <AnswerByType {...props} />
+        </div>
+      )
+  }
 }
 
 const addSnippet = (example) => {
@@ -433,7 +451,7 @@ const examples = [
 
   ['Argmax', [
         {
-          passage: "Hoping to rebound from their fourth-quarter collapse to the Panthers, the Vikings flew to Soldier Field to face Jay Cutler and the Chicago Bears in a Week 16 rematch to conclude the 40th season of Monday Night Football. Due to the Saints losing to Tampa Bay 20-17 in overtime the previous day, the Vikings needed to win their last two games and have the Saints lose to Carolina the next week in order to clinch homefield advantage. In the first quarter, the Bears drew first blood as kicker Robbie Gould nailed a 22-yard field goal for the only score of the period. In the second quarter, the Bears increased their lead with Gould nailing a 42-yard field goal. They increased their lead with Cutler firing a 7-yard TD pass to tight end Greg Olsen. The Bears then closed out the first half with Gould's 41-yard field goal. In the third quarter, the Vikes started to rally with running back Adrian Peterson's 1-yard touchdown run (with the extra point attempt blocked). The Bears increased their lead over the Vikings with Cutler's 2-yard TD pass to tight end Desmond Clark. The Vikings then closed out the quarter with quarterback Brett Favre firing a 6-yard TD pass to tight end Visanthe Shiancoe. An exciting fourth quarter ensued. The Vikings started out the quarter's scoring with kicker Ryan Longwell's 41-yard field goal, along with Adrian Peterson's second 1-yard TD run. The Bears then responded with Cutler firing a 20-yard TD pass to wide receiver Earl Bennett. The Vikings then completed the remarkable comeback with Favre finding wide receiver Sidney Rice on a 6-yard TD pass on 4th-and-goal with 15 seconds left in regulation. The Bears then took a knee to force overtime. In overtime, the Bears won the toss and marched down the field, stopping at the 35-yard line. However, the potential game-winning 45-yard field goal attempt by Gould went wide right, giving the Vikings a chance to win. After an exchange of punts, the Vikings had the ball at the 26-yard line with 11 minutes left in the period. On the first play of scrimmage, Favre fired a screen pass to Peterson who caught it and went 16 yards, before being confronted by Hunter Hillenmeyer, who caused Peterson to fumble the ball, which was then recovered by Bears' linebacker Nick Roach. The Bears then won on Jay Cutler's game-winning 39-yard TD pass to wide receiver Devin Aromashodu. With the loss, not only did the Vikings fall to 11-4, they also surrendered homefield advantage to the Saints.",
+          passage: "In the first quarter, the Bears drew first blood as kicker Robbie Gould nailed a 22-yard field goal for the only score of the period. In the second quarter, the Bears increased their lead with Gould nailing a 42-yard field goal. They increased their lead with Cutler firing a 7-yard TD pass to tight end Greg Olsen. The Bears then closed out the first half with Gould's 41-yard field goal. In the third quarter, the Vikes started to rally with running back Adrian Peterson's 1-yard touchdown run (with the extra point attempt blocked). The Bears increased their lead over the Vikings with Cutler's 2-yard TD pass to tight end Desmond Clark. The Vikings then closed out the quarter with quarterback Brett Favre firing a 6-yard TD pass to tight end Visanthe Shiancoe. An exciting fourth quarter ensued. The Vikings started out the quarter's scoring with kicker Ryan Longwell's 41-yard field goal, along with Adrian Peterson's second 1-yard TD run. The Bears then responded with Cutler firing a 20-yard TD pass to wide receiver Earl Bennett. The Vikings then completed the remarkable comeback with Favre finding wide receiver Sidney Rice on a 6-yard TD pass on 4th-and-goal with 15 seconds left in regulation. The Bears then took a knee to force overtime. In overtime, the Bears won the toss and marched down the field, stopping at the 35-yard line. However, the potential game-winning 45-yard field goal attempt by Gould went wide right, giving the Vikings a chance to win. After an exchange of punts, the Vikings had the ball at the 26-yard line with 11 minutes left in the period. On the first play of scrimmage, Favre fired a screen pass to Peterson who caught it and went 16 yards, before being confronted by Hunter Hillenmeyer, who caused Peterson to fumble the ball, which was then recovered by Bears' linebacker Nick Roach. The Bears then won on Jay Cutler's game-winning 39-yard TD pass to wide receiver Devin Aromashodu. With the loss, not only did the Vikings fall to 11-4, they also surrendered homefield advantage to the Saints.",
           question: "Who threw the longest touchdown pass of the game?",
         },
         {

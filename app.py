@@ -50,7 +50,9 @@ supported_interpret_models = {'named-entity-recognition',
                               'fine-grained-named-entity-recognition',
                               'glove-sentiment-analysis',
                               'roberta-sentiment-analysis',
-                              'textual-entailment',
+                              'elmo-snli',
+                              'roberta-snli',
+                              'roberta-mnli',
                               'reading-comprehension',
                               'elmo-reading-comprehension',
                               'naqanet-reading-comprehension',
@@ -310,6 +312,9 @@ def make_app(build_dir: str,
                 answer = prediction['best_span_str']
             else:
                 answer = prediction['answer']
+            log_blob["outputs"]["answer"] = answer
+        elif model_name == "nmn-drop":
+            answer = prediction['answer']
             log_blob["outputs"]["answer"] = answer
         elif model_name == "coreference-resolution":
             log_blob["outputs"]["clusters"] = prediction["clusters"]

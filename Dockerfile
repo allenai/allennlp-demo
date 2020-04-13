@@ -1,6 +1,6 @@
 # This Dockerfile is used to serve the AllenNLP demo.
 
-FROM allennlp/commit:17c2ff1ce2cb5e84ab9a0f524e6c01362c242cae
+FROM allennlp/commit:adeb1b1278619ff2d74d4fd82825e50a36f95ff4
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /stage/allennlp
