@@ -243,8 +243,8 @@ local ingress = {
 };
 
 local readinessProbe = {
-    failureThreshold: 2,
-    periodSeconds: 10,
+    failureThreshold: 6,
+    periodSeconds: 20,
     initialDelaySeconds: 15,
     httpGet: {
         path: '/health',
