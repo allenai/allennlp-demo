@@ -242,9 +242,9 @@ local ingress = {
     }
 };
 
-local readinessProbe = {
-    failureThreshold: 6,
-    periodSeconds: 20,
+local livenessProbe = {
+    failureThreshold: 24,
+    periodSeconds: 5,
     initialDelaySeconds: 15,
     httpGet: {
         path: '/health',
@@ -316,7 +316,7 @@ local deployment = {
                         name: config.appName,
                         image: image,
                         args: [ '--no-models' ],
-                        readinessProbe: readinessProbe,
+                        livenessProbe: livenessProbe,
                         resources: {
                             requests: {
                                 // Our machines currently have 2 vCPUs, so this
