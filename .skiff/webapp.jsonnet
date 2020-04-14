@@ -376,7 +376,7 @@ local model_deployment(model_name) = {
                         name: model_name,
                         image: get_image(model_name),
                         args: [ '--model', model_name ],
-                        readinessProbe: readinessProbe,
+                        livenessProbe: livenessProbe,
                         resources: {
                             requests: {
                                 cpu: get_cpu(model_name),
