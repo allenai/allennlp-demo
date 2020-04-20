@@ -213,7 +213,7 @@ const Output = props => {
                     break;
                 }
               }
-      
+
               if (viz == null) {
                 return (
                   <NoOutputMessage>
@@ -243,6 +243,23 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
 
+const modelUrl = 'https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz'
+
+const installCommand = "pip install --pre allennlp allennlp-models"
+
+const bashCommand =
+    `${installCommand}
+echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
+allennlp predict --include-package allennlp_models ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+import allennlp_models.syntax.srl
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  sentence="Did Uriah honestly think he could beat the game in under three hours?"
+)`
+
 const usage = (
   <React.Fragment>
     <UsageSection>
@@ -250,18 +267,13 @@ const usage = (
       <strong>On the command line (bash):</strong>
       <UsageCode>
           <SyntaxHighlight language="bash">
-          {`echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
-  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz -`}
+          { bashCommand }
         </SyntaxHighlight>
       </UsageCode>
       <strong>As a library (Python):</strong>
       <UsageCode>
         <SyntaxHighlight language="python">
-          {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz")
-predictor.predict(
-  sentence="Did Uriah honestly think he could beat the game in under three hours?"
-)`}
+          { pythonCommand }
         </SyntaxHighlight>
       </UsageCode>
     </UsageSection>
