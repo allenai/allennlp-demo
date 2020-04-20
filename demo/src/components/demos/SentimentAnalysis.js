@@ -164,6 +164,19 @@ const examples = [
   { sentence: "visually imaginative, thematically instructive and thoroughly delightful, it takes us on a roller-coaster ride from innocence to experience without even a hint of that typical kiddie-flick sentimentality."}
 ]
 
+const modelUrl = "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz"
+
+const bashCommand =
+    `echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
+allennlp predict --include-package allennlp_models ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  sentence="a very well-made, funny and entertaining picture."
+)`
+
 const usage = (
   <React.Fragment>
     <UsageSection>
@@ -171,18 +184,13 @@ const usage = (
       <h5>On the command line (bash):</h5>
       <UsageCode>
         <SyntaxHighlight language="bash">
-          {`echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
-allennlp predict https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz -`}
+          { bashCommand }
         </SyntaxHighlight>
       </UsageCode>
       <h5>As a library (Python):</h5>
       <UsageCode>
         <SyntaxHighlight language="python">
-          {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz")
-predictor.predict(
-  sentence="a very well-made, funny and entertaining picture."
-)`}
+          { pythonCommand }
         </SyntaxHighlight>
       </UsageCode>
     </UsageSection>

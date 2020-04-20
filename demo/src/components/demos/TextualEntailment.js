@@ -378,6 +378,21 @@ const examples = [
   },
 ]
 
+const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/snli-roberta-large-2020.02.27.tar.gz'
+
+const bashCommand =
+    `pip install --pre allennlp allennlp-models
+echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
+allennlp predict --include-package allennlp_models --predictor textual-entailment ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+predictor = Predictor.from_path("${modelUrl}", predictor_name="textual-entailment")
+predictor.predict(
+  hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
+  premise="Two women are wandering along the shore drinking iced tea."
+)`
+
 const usage = (
   <React.Fragment>
     <UsageSection>
@@ -385,19 +400,13 @@ const usage = (
       <strong>On the command line (bash):</strong>
       <UsageCode>
         <SyntaxHighlight language="bash">
-          {`echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
-  allennlp predict --predictor textual-entailment https://storage.googleapis.com/allennlp-public-models/mnli-roberta-large-2020.02.27.tar.gz -`} />
+          { bashCommand }
         </SyntaxHighlight>
       </UsageCode>
       <strong>As a library (Python):</strong>
       <UsageCode>
         <SyntaxHighlight language="python">
-          {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/mnli-roberta-large-2020.02.27.tar.gz", predictor_name="textual-entailment")
-predictor.predict(
-  hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
-  premise="Two women are wandering along the shore drinking iced tea."
-)`}
+          { pythonCommand }
         </SyntaxHighlight>
       </UsageCode>
     </UsageSection>
