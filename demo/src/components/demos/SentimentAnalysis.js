@@ -167,11 +167,13 @@ const examples = [
 const modelUrl = "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz"
 
 const bashCommand =
-    `echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
+    `pip install --pre allennlp allennlp-models
+echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
 allennlp predict --include-package allennlp_models ${modelUrl} -`
 
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
+import allennlp_models.sentiment
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   sentence="a very well-made, funny and entertaining picture."

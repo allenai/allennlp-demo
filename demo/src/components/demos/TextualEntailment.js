@@ -387,6 +387,7 @@ allennlp predict --include-package allennlp_models --predictor textual-entailmen
 
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
+import allennlp_models.nli
 predictor = Predictor.from_path("${modelUrl}", predictor_name="textual-entailment")
 predictor.predict(
   hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
