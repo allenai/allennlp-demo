@@ -381,8 +381,7 @@ const examples = [
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/snli-roberta-large-2020.02.27.tar.gz'
 
 const bashCommand =
-    `pip install --pre allennlp allennlp-models
-echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
+    `echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
 allennlp predict --include-package allennlp_models --predictor textual-entailment ${modelUrl} -`
 
 const pythonCommand =
@@ -397,6 +396,12 @@ predictor.predict(
 const usage = (
   <React.Fragment>
     <UsageSection>
+      <h3>Installing AllenNLP</h3>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+        </SyntaxHighlight>
+      </UsageCode>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
       <UsageCode>

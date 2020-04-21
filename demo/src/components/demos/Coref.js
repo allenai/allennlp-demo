@@ -102,8 +102,7 @@ const examples = [
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz'
 
 const bashCommand =
-    `pip install --pre allennlp allennlp-models
-echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
+    `echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
 allennlp predict --include-package allennlp_models ${modelUrl} -`
 
 const pythonCommand =
@@ -117,6 +116,12 @@ predictor.predict(
 const usage = (
   <React.Fragment>
     <UsageSection>
+      <h3>Installing AllenNLP</h3>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+        </SyntaxHighlight>
+      </UsageCode>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
       <UsageCode>

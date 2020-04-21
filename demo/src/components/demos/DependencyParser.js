@@ -65,8 +65,7 @@ const apiUrl = () => `${API_ROOT}/predict/dependency-parsing`
 const modelUrl = "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2020.04.06.tar.gz"
 
 const bashCommand =
-    `pip install --pre allennlp allennlp-models
-echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
+    `echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
 allennlp predict --include-package allennlp_models ${modelUrl} -`
 
 const pythonCommand =
@@ -80,6 +79,12 @@ predictor.predict(
 const usage = (
   <React.Fragment>
     <UsageSection>
+      <h3>Installing AllenNLP</h3>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+        </SyntaxHighlight>
+      </UsageCode>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
       <UsageCode>
