@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from '@allenai/varnish/components';
 
 /*******************************************************************************
   <ModelIntro /> Component
