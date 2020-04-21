@@ -22,16 +22,24 @@ import addIcon from './icons/add-14px.svg';
 // This is the order in which they will appear in the menu
 const modelGroups = [
     {
+        label: "Answer a question",
+        iconSrc: questionIcon,
+        defaultOpen: true,
+        models: [
+            {model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension}
+        ]
+    },
+    {
         label: "Annotate a sentence",
         iconSrc: annotateIcon,
         defaultOpen: true,
         models: [
-            {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SemanticRoleLabeling},
             {model: "named-entity-recognition", name: "Named Entity Recognition", component: NamedEntityRecognition},
-            {model: "constituency-parsing", name: "Constituency Parsing", component: ConstituencyParser},
-            {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParser},
             {model: "open-information-extraction", name: "Open Information Extraction", component: OpenIe},
-            {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis}
+            {model: "sentiment-analysis", name: "Sentiment Analysis", component: SentimentAnalysis},
+            {model: "dependency-parsing", name: "Dependency Parsing", component: DependencyParser},
+            {model: "constituency-parsing", name: "Constituency Parsing", component: ConstituencyParser},
+            {model: "semantic-role-labeling", name: "Semantic Role Labeling", component: SemanticRoleLabeling},
         ]
     },
     {
@@ -40,14 +48,6 @@ const modelGroups = [
         defaultOpen: true,
         models: [
             {model: "coreference-resolution", name: "Coreference Resolution", component: Coref}
-        ]
-    },
-    {
-        label: "Answer a question",
-        iconSrc: questionIcon,
-        defaultOpen: true,
-        models: [
-            {model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension}
         ]
     },
     {
