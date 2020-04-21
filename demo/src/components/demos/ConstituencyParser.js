@@ -64,8 +64,7 @@ const apiUrl = () => `${API_ROOT}/predict/constituency-parsing`
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2020.02.10.tar.gz'
 
 const bashCommand =
-    `pip install --pre allennlp allennlp-models
-echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
+    `echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
 allennlp predict --include-package allennlp_models ${modelUrl} -`
 
 const pythonCommand =
@@ -78,6 +77,12 @@ predictor.predict(
 
 const usage = (
   <React.Fragment>
+      <h3>Installing AllenNLP</h3>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+        </SyntaxHighlight>
+      </UsageCode>
     <UsageSection>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>

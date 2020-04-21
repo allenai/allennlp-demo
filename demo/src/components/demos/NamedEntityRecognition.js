@@ -347,8 +347,7 @@ const apiUrlAttack = ({model}) => {
 const modelUrl = "https://storage.googleapis.com/allennlp-public-models/ner-model-2020.02.10.tar.gz"
 
 const bashCommand =
-    `pip install --pre allennlp allennlp-models
-echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
+    `echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
 allennlp predict --include-package allennlp_models ${modelUrl} -`
 
 const pythonCommand =
@@ -362,6 +361,12 @@ predictor.predict(
 const usage = (
   <React.Fragment>
     <UsageSection>
+      <h3>Installing AllenNLP</h3>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+        </SyntaxHighlight>
+      </UsageCode>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
       <UsageCode>

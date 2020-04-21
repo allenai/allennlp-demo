@@ -245,11 +245,8 @@ const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
 
 const modelUrl = 'https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz'
 
-const installCommand = "pip install --pre allennlp allennlp-models"
-
 const bashCommand =
-    `${installCommand}
-echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
+    `echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
 allennlp predict --include-package allennlp_models ${modelUrl} -`
 
 const pythonCommand =
@@ -263,6 +260,12 @@ predictor.predict(
 const usage = (
   <React.Fragment>
     <UsageSection>
+      <h3>Installing AllenNLP</h3>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+        </SyntaxHighlight>
+      </UsageCode>
       <UsageHeader>Prediction</UsageHeader>
       <strong>On the command line (bash):</strong>
       <UsageCode>

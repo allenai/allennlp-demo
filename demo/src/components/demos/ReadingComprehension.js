@@ -575,6 +575,12 @@ const apiUrlAttack = ({model}) => {
 const usage = (
   <React.Fragment>
     <UsageSection>
+      <h3>Installing AllenNLP</h3>
+      <UsageCode>
+        <SyntaxHighlight language="bash">
+          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+        </SyntaxHighlight>
+      </UsageCode>
       <h3>Prediction</h3>
       <h5>On the command line (bash):</h5>
       <UsageCode>
