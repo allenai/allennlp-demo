@@ -99,6 +99,21 @@ const examples = [
     }
   ]
 
+const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz'
+
+const bashCommand =
+    `pip install --pre allennlp allennlp-models
+echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
+allennlp predict --include-package allennlp_models ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+import allennlp_models.coref
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  document="The woman reading a newspaper sat on the bench with her dog."
+)`
+
 const usage = (
   <React.Fragment>
     <UsageSection>
@@ -106,18 +121,13 @@ const usage = (
       <strong>On the command line (bash):</strong>
       <UsageCode>
         <SyntaxHighlight language="bash">
-          {`echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
-  allennlp predict https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz -`} />
+          { bashCommand }
         </SyntaxHighlight>
       </UsageCode>
       <strong>As a library (Python):</strong>
       <UsageCode>
         <SyntaxHighlight language="python">
-          {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz")
-predictor.predict(
-  document="The woman reading a newspaper sat on the bench with her dog."
-)`}
+          { pythonCommand }
         </SyntaxHighlight>
       </UsageCode>
     </UsageSection>

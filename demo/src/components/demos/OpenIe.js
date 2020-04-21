@@ -232,6 +232,20 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/open-information-extraction`
 
+const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/openie-model.2020.03.26.tar.gz'
+
+const bashCommand =
+    `pip install --pre allennlp allennlp-models
+echo '{"sentence": "John decided to run for office next month."}' | \\
+allennlp predict --include-package allennlp_models ${modelUrl} - --predictor=open-information-extraction` 
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+import allennlp_models.syntax.srl
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  sentence="John decided to run for office next month."
+)`
+
 const usage = (
   <React.Fragment>
     <UsageSection>
@@ -239,18 +253,13 @@ const usage = (
       <strong>On the command line (bash):</strong>
       <UsageCode>
         <SyntaxHighlight language="bash">
-          {`echo '{"sentence": "John decided to run for office next month."}' | \\
-  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz - --predictor=open-information-extraction`} />
+          { bashCommand }
         </SyntaxHighlight>
       </UsageCode>
       <strong>As a library (Python):</strong>
       <UsageCode>
         <SyntaxHighlight language="python">
-          {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/openie-model.2018-08-20.tar.gz")
-predictor.predict(
-  sentence="John decided to run for office next month."
-)`} />
+          { pythonCommand }
         </SyntaxHighlight>
       </UsageCode>
     </UsageSection>

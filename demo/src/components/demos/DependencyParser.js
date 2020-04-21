@@ -62,6 +62,21 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/dependency-parsing`
 
+const modelUrl = "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2020.04.06.tar.gz"
+
+const bashCommand =
+    `pip install --pre allennlp allennlp-models
+echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
+allennlp predict --include-package allennlp_models ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+import allennlp_models.syntax.biaffine_dependency_parser
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  sentence="If I bring 10 dollars tomorrow, can you buy me lunch?"
+)`
+
 const usage = (
   <React.Fragment>
     <UsageSection>
@@ -69,18 +84,13 @@ const usage = (
       <strong>On the command line (bash):</strong>
       <UsageCode>
         <SyntaxHighlight language="bash">
-          {`echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
-  allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz -`} />
+            { bashCommand }
         </SyntaxHighlight>
       </UsageCode>
       <strong>As a library (Python):</strong>
       <UsageCode>
         <SyntaxHighlight language="python">
-          {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz")
-predictor.predict(
-  sentence="If I bring 10 dollars tomorrow, can you buy me lunch?"
-)`}
+            { pythonCommand }
         </SyntaxHighlight>
       </UsageCode>
     </UsageSection>

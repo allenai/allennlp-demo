@@ -344,6 +344,21 @@ const apiUrlAttack = ({model}) => {
     return getUrl(model, "attack")
 }
 
+const modelUrl = "https://storage.googleapis.com/allennlp-public-models/ner-model-2020.02.10.tar.gz"
+
+const bashCommand =
+    `pip install --pre allennlp allennlp-models
+echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
+allennlp predict --include-package allennlp_models ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+import ner.crf_tagger
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"
+)`
+
 const usage = (
   <React.Fragment>
     <UsageSection>
@@ -351,18 +366,13 @@ const usage = (
       <strong>On the command line (bash):</strong>
       <UsageCode>
         <SyntaxHighlight language="bash">
-          {`echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
-allennlp predict https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz -`}
+          { bashCommand }
         </SyntaxHighlight>
       </UsageCode>
       <strong>As a library (Python):</strong>
       <UsageCode>
         <SyntaxHighlight language="python">
-          {`from allennlp.predictors.predictor import Predictor
-predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz")
-predictor.predict(
-  sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"
-)`}
+          { pythonCommand }
         </SyntaxHighlight>
       </UsageCode>
     </UsageSection>
