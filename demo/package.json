@@ -14,7 +14,7 @@
     "react-accessible-accordion": "2.4.5",
     "react-app-rewire-styled-components": "3.0.2",
     "react-app-rewired": "2.1.0",
-    "react-dom": "^16.9.0",
+    "react-dom": "^16.13.0",
     "react-proptypes": "1.0.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "2.0.3",
