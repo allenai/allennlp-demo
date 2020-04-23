@@ -22,7 +22,7 @@ jobs:
           image_tag: latest,${{ github.sha }}
 
     - name: Run tests
-      run: docker run --entrypoint= allennlp-demo pytest tests/
+      run: docker run --entrypoint= allennlp/allennlp-demo pytest tests/
 
     - name: Pip freeze
-      run: docker run --entrypoint= allennlp-demo pip freeze
+      run: docker run --entrypoint= allennlp/allennlp-demo pip freeze
