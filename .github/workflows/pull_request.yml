@@ -1,0 +1,26 @@
+name: PR
+
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  docker:
+    name: Docker
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build image
+      run: |
+        docker build \
+            --pull \
+            -t allennlp-demo -
+
+    - name: Run tests
+      run: docker run allennlp-demo pytest tests/
+
+    - name: Pip freeze
+      run: docker run pip freeze
