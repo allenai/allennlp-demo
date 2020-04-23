@@ -319,8 +319,7 @@ Notice that the keys of the examples correspond to the field names.
 __Step 4: Endpoint__
 
 The endpoint should be specified as a function that takes `requestData` and returns a URL.
-In most cases this will be a constant function; however, if you wanted your demo to query different endpoints
-based on its inputs, that logic would live here:
+In most cases this will be a constant function; however, if you wanted your demo to query different endpoints based on its inputs, that logic would live here:
 
 ```js
 const apiUrl = () => `http://my-api-server:8000/predict/reading-comprehension`
@@ -389,4 +388,3 @@ export default withRouter(props => <Model {...props} {...modelProps}/>)
 The NMN Reading Comprehension demo requires a model that doesn't use the latest
 version of AllenNLP. For instructions on building an image with the code for
 that model's API, visit [this link](https://github.com/nitishgupta/allennlp-demo/blob/work-nmn/README_NMN.md).
-
