@@ -13,8 +13,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Build image
-      run: docker build -t allennlp-demo .
+    - name: Build image with cache
+      uses: whoan/docker-build-with-cache-action@v5
+      with:
+          username: allennlpuser
+          password: "${{ secrets.DOCKERHUB_ALLENNLPUSER_PASSWORD }}"
+          image_name: allennlp-demo
+          image_tag: latest,${{ github.sha }}
 
     - name: Run tests
       run: docker run --entrypoint= allennlp-demo pytest tests/
