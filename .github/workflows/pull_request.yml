@@ -20,4 +20,4 @@ jobs:
       run: docker run --entrypoint= allennlp-demo pytest tests/
 
     - name: Pip freeze
-      run: docker run --entrypoint= pip freeze
+      run: docker run --entrypoint= allennlp-demo pip freeze
