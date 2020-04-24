@@ -17,7 +17,7 @@
     "react-dom": "^16.13.1",
     "react-proptypes": "1.0.0",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "2.0.3",
+    "react-scripts": "3.4.1",
     "react-syntax-highlighter": "^11.0.2",
     "react-tooltip": "3.11.2",
     "react-vis": "^1.11.6",
