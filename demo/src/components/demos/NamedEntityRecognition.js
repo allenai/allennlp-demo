@@ -352,7 +352,7 @@ allennlp predict --include-package allennlp_models ${modelUrl} -`
 
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
-import ner.crf_tagger
+import allennlp_models.ner.crf_tagger
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"
