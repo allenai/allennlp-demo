@@ -29,7 +29,7 @@ steps:
     'push',
     'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
   ]
-  waitFor: [ 'push' ]
+  waitFor: [ 'build' ]
 # Build an image that serves the files required for the UI from disk via
 # NGINX
 - id: 'ui.pull'
@@ -39,7 +39,7 @@ steps:
     '-c',
     'docker pull gcr.io/$PROJECT_ID/$REPO_NAME-ui:latest || exit 0'
   ]
-  waitFor: [ '-']
+  waitFor: [ '-' ]
 - id: 'ui.build'
   name: 'gcr.io/cloud-builders/docker'
   args: [
