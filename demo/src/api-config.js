@@ -1,18 +1,4 @@
-/**
- * The backend always runs on port 8000. In production we also
- * serve the frontend from there. However, for development
- * we want to `npm run serve` the unminified js on port 3000.
- * This allows us to get the correct API root either way.
- */
-
-let apiRoot;
-
-const origin = window && window.location && window.location.origin;
-
-if (origin.includes(':3000')) {
-    apiRoot = origin.replace(":3000", ":8000");
-} else {
-    apiRoot = origin;
-}
-
-export const API_ROOT = apiRoot;
+// The origin (scheme, hostname and port) of the API. Defaults to
+// a value that works locally. For deployed environments this is set
+// at build time. See: .skiff/cloudbuild-deploy.yaml.
+export const API_ROOT = process.env.API_ROOT || 'http://localhost:8000';

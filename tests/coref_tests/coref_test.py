@@ -38,13 +38,10 @@ class TestFlask(AllenNlpTestCase):
 
     def setUp(self):
         super().setUp()
-        self.TEST_DIR = pathlib.Path(tempfile.mkdtemp())
-        # Create index.html in TEST_DIR
-        (self.TEST_DIR / 'index.html').touch()  # pylint: disable=no-member
 
         if self.client is None:
 
-            self.app = make_app(build_dir=self.TEST_DIR, models={})
+            self.app = make_app(models={})
             self.app.predictors = PREDICTORS
             self.app.max_request_lengths = LIMITS
             self.app.testing = True

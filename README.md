@@ -70,9 +70,11 @@ To run the demo locally for development, you will need to:
 
 ## Running with Docker
 
-Here is an example for how to manually build the Docker image and run the demo on port 8000.
-As above, you probably don't want to load every model,
-so you should specify the specific models you want in your `docker run` command.
+We use `docker` to package the application and serve it using Kubernetes. Below are instructions
+for running things locally in a fashion that's close to how we do things in production, which
+can be useful for troubleshooting weird issues.
+
+**First, start up the backend / API for a model like so:**
 
 ```bash
 export GIT_HASH=`git log -1 --pretty=format:"%H"`
@@ -82,12 +84,24 @@ docker run -p 8000:8000 \
            -v $HOME/.allennlp:/root/.allennlp \
            --rm \
            allennlp/demo:$GIT_HASH \
-           --model model1 --model model2
+           --model reading-comprehension
 ```
 
-Where you see "model1" and "model2" examples above, you would use actual model names which are listed as JSON object key names [here](https://github.com/allenai/allennlp-demo/blob/master/models.json).
+Youc an change `reading-comprehension` to the name of the model [here](https://github.com/allenai/allennlp-demo/blob/master/models.json) that you'd like to run. You probably shouldn't try to
+run all of them, as it's quite slow.
 
 Note that the `run` process may get killed prematurely if there is insufficient memory allocated to Docker. As of September 14, 2018, setting a memory limit of 10GB was sufficient to run the demo. See [Docker Docs](https://docs.docker.com/docker-for-mac/#advanced) for more on setting memory allocation preferences.
+
+**Next, in a separate terminal, start up the UI:**
+
+```bash
+export GIT_HASH=`git log -1 --pretty=format:"%H"`
+docker build -t allennlp/demo-ui:$GIT_HASH .
+docker run -p 8080:80 --rm allennlp/demo-ui:$GIT_HASH
+```
+
+Now open up [http://localhost:8080`](http://localhost:8080). You can hit the API directly on
+port `:8000`.
 
 ## Deploying
 
