@@ -5,9 +5,6 @@ WORKDIR /ui
 COPY package.json package-lock.json ./
 RUN npm install
 
-ARG API_ROOT
-ENV API_ROOT ${API_ROOT}
-
 COPY config-overrides.js .
 COPY public public
 COPY src src

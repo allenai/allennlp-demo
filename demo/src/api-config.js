@@ -1,4 +1,4 @@
-// The origin (scheme, hostname and port) of the API. Defaults to
-// a value that works locally. For deployed environments this is set
-// at build time. See: .skiff/cloudbuild-deploy.yaml.
-export const API_ROOT = process.env.API_ROOT || 'http://localhost:8000';
+// Locally the API is always on port 8000. In deployed environments we can safely assume it's
+// at the same origin as the UI.
+const isLocal = window.location.hostname === 'localhost';
+export const API_ROOT = isLocal ? 'http://localhost:8000' : window.location.origin;

@@ -47,7 +47,6 @@ steps:
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui:$COMMIT_SHA',
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui:latest',
     '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui:latest',
-    '--build-arg', 'API_ROOT=/',
     '.'
   ]
   dir: 'demo'
