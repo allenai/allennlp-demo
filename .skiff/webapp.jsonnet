@@ -326,7 +326,7 @@ local deployment = {
                         resources: {
                             requests: {
                                 cpu: '50m',
-                                memory: '100m'
+                                memory: '100Mi'
                             }
                         },
                         env: env_variables
