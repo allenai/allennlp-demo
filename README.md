@@ -77,13 +77,12 @@ can be useful for troubleshooting weird issues.
 **First, start up the backend / API for a model like so:**
 
 ```bash
-export GIT_HASH=`git log -1 --pretty=format:"%H"`
-docker build -t allennlp/demo:$GIT_HASH .
+docker build -t allennlp/demo:latest
 mkdir -p $HOME/.allennlp
 docker run -p 8000:8000 \
            -v $HOME/.allennlp:/root/.allennlp \
            --rm \
-           allennlp/demo:$GIT_HASH \
+           allennlp/demo:latest \
            --model reading-comprehension
 ```
 
