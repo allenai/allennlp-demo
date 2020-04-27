@@ -5,7 +5,7 @@
   "dependencies": {
     "@allenai/varnish": "0.8.12",
     "ajv": "^6.12.2",
-    "antd": "^3.26.15",
+    "antd": "^3.26.16",
     "colormap": "^2.3.1",
     "hierplane": "^0.1.0",
     "lodash": "^4.17.11",
