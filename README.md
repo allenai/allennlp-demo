@@ -88,7 +88,8 @@ docker run -p 8000:8000 \
 ```
 
 You can change `reading-comprehension` to the name of the model [here](https://github.com/allenai/allennlp-demo/blob/master/models.json) that you'd like to run. You probably shouldn't try to
-run all of them, as it's quite slow.
+run all of them, as they will take a long time to download and require a significant
+amount of memory.
 
 Note that the `run` process may get killed prematurely if there is insufficient memory allocated to Docker. As of September 14, 2018, setting a memory limit of 10GB was sufficient to run the demo. See [Docker Docs](https://docs.docker.com/docker-for-mac/#advanced) for more on setting memory allocation preferences.
 
