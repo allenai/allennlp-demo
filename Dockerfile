@@ -1,12 +1,8 @@
 # This Dockerfile is used to serve the AllenNLP demo.
-
 FROM allennlp/commit:adeb1b1278619ff2d74d4fd82825e50a36f95ff4
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /stage/allennlp
-
-# Install npm early so layer is cached when mucking with the demo
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && apt-get install -y nodejs
 
 # Install python dependencies
 COPY requirements.txt requirements.txt
@@ -17,10 +13,6 @@ RUN spacy download en_core_web_sm
 
 COPY scripts/ scripts/
 COPY server/models.py server/models.py
-
-# Now install and build the demo
-COPY demo/ demo/
-RUN ./scripts/build_demo.py
 
 COPY tests/ tests/
 COPY app.py app.py

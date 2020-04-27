@@ -77,13 +77,10 @@ class TestFlask(AllenNlpTestCase):
 
     def setUp(self):
         super().setUp()
-        self.TEST_DIR = pathlib.Path(tempfile.mkdtemp())
-        # Create index.html in TEST_DIR
-        (self.TEST_DIR / 'index.html').touch()  # pylint: disable=no-member
 
         if self.client is None:
 
-            self.app = make_app(build_dir=self.TEST_DIR, models={})
+            self.app = make_app(models={})
             self.app.predictors = PREDICTORS
             self.app.max_request_lengths = LIMITS
             self.app.testing = True
@@ -189,7 +186,7 @@ class TestFlask(AllenNlpTestCase):
 
     def test_disable_caching(self):
         predictor = CountingPredictor()
-        application = make_app(build_dir=self.TEST_DIR, models={}, cache_size=0)
+        application = make_app(models={}, cache_size=0)
         application.predictors = {"counting": predictor}
         application.max_request_lengths["counting"] = 100
         application.testing = True
@@ -211,16 +208,8 @@ class TestFlask(AllenNlpTestCase):
             assert predictor.calls[key] == i + 1
             assert len(predictor.calls) == 1
 
-    def test_missing_static_dir(self):
-        fake_dir = self.TEST_DIR / 'this' / 'directory' / 'does' / 'not' / 'exist'
-
-        with self.assertRaises(SystemExit) as context:
-            make_app(fake_dir, models={})
-
-        assert context.exception.code == -1  # pylint: disable=no-member
-
     def test_permalinks_fail_gracefully_with_no_database(self):
-        application = make_app(build_dir=self.TEST_DIR, models={})
+        application = make_app(models={})
         predictor = CountingPredictor()
         application.predictors = {"counting": predictor}
         application.max_request_lengths["counting"] = 100
@@ -243,7 +232,7 @@ class TestFlask(AllenNlpTestCase):
 
     def test_permalinks_work(self):
         db = InMemoryDemoDatabase()
-        application = make_app(build_dir=self.TEST_DIR, demo_db=db, models={})
+        application = make_app(demo_db=db, models={})
         predictor = CountingPredictor()
         application.predictors = {"counting": predictor}
         application.max_request_lengths["counting"] = 100
@@ -274,7 +263,7 @@ class TestFlask(AllenNlpTestCase):
 
     def test_db_resilient_to_prediction_failure(self):
         db = InMemoryDemoDatabase()
-        application = make_app(build_dir=self.TEST_DIR, demo_db=db, models={})
+        application = make_app(demo_db=db, models={})
         predictor = FailingPredictor()
         application.predictors = {"failing": predictor}
         application.max_request_lengths["failing"] = 100
@@ -308,7 +297,7 @@ class TestFlask(AllenNlpTestCase):
                                                LIMITS['reading-comprehension'])
         }
 
-        app = make_app(build_dir=self.TEST_DIR, models=models)
+        app = make_app(models=models)
         app.testing = True
 
 

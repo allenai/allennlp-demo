@@ -47,6 +47,7 @@ local model_names = std.objectFields(models);
 // These values are provided at runtime.
 local env = std.extVar('env');
 local image = std.extVar('image');
+local uiImage = std.extVar('uiImage');
 local sha = std.extVar('sha');
 
 // Use 2 replicas in prod, only 1 in staging.
@@ -231,7 +232,7 @@ local ingress = {
                         {
                             backend: {
                                 serviceName: fullyQualifiedName,
-                                servicePort: config.httpPort
+                                servicePort: 80
                             },
                             path: '/.*'
                         }
@@ -314,18 +315,18 @@ local deployment = {
                 containers: [
                     {
                         name: config.appName,
-                        image: image,
-                        args: [ '--no-models' ],
-                        readinessProbe: readinessProbe,
+                        image: uiImage,
+                        readinessProbe: {
+                            httpGet: {
+                                path: '/',
+                                port: 80,
+                                scheme: 'HTTP'
+                            }
+                        },
                         resources: {
                             requests: {
-                                // Our machines currently have 2 vCPUs, so this
-                                // will allow 4 apps to run per machine
-                                cpu: '0.2',
-                                // Each machine has 13 GB of RAM. We target 4
-                                // apps per machine, so we reserve 3 GB of RAM
-                                // for each (whether they use it our not).
-                                memory: '1Gi'
+                                cpu: '50m',
+                                memory: '100Mi'
                             }
                         },
                         env: env_variables
@@ -405,7 +406,7 @@ local service = {
         selector: ui_server_labels,
         ports: [
             {
-                port: config.httpPort,
+                port: 80,
                 name: 'http'
             }
         ]
