@@ -30,7 +30,7 @@ jobs:
       run: docker run --entrypoint= allennlp/demo pip freeze
 
     - name: Push image
-      if: gitub.repository == "allenai/allennlp-demo" && github.event_name == "push"
+      if: github.repository == "allenai/allennlp-demo" && github.event_name == "push"
       uses: whoan/docker-build-with-cache-action@v5.0.1
       with:
         username: allennlpuser
