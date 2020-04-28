@@ -1,6 +1,9 @@
-name: PR
+name: CI
 
 on:
+  push:
+    branches:
+    - master
   pull_request:
     branches:
     - master
@@ -13,16 +16,24 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Build image with cache
+    - name: Build image
       uses: whoan/docker-build-with-cache-action@v5.0.1
       with:
-          username: allennlpuser
-          password: "${{ secrets.DOCKERHUB_ALLENNLPUSER_PASSWORD }}"
-          image_name: allennlp/demo
-          image_tag: latest,${{ github.sha }}
+        image_name: allennlp/demo
+        image_tag: latest,${{ github.sha }}
+        push_image_and_stages: false
 
     - name: Run tests
       run: docker run --entrypoint= allennlp/demo pytest tests/
 
     - name: Pip freeze
       run: docker run --entrypoint= allennlp/demo pip freeze
+
+    - name: Push image
+      if: gitub.repository == "allenai/allennlp-demo" && github.event_name == "push"
+      uses: whoan/docker-build-with-cache-action@v5.0.1
+      with:
+        username: allennlpuser
+        password: "${{ secrets.DOCKERHUB_ALLENNLPUSER_PASSWORD }}"
+        image_name: allennlp/demo
+        image_tag: latest,${{ github.sha }}
