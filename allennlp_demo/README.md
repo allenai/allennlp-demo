@@ -26,7 +26,6 @@ dependencies and copy over code from `common/` as needed.
 To build an image for a single model, run the command below, replacing `bidaf`
 with the model you'd like to build:
 
-
 ```bash
 cd allennlp_demo
 docker build -f bidaf/Dockerfile -t allennlp-demo-bidaf:latest .
@@ -57,4 +56,3 @@ FLASK_ENV=development python bidaf/api.py
 
 This will start a server listening at [http://localhost:8000](http://localhost:8000)
 that's restarted whenever you change the code.
-
