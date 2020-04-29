@@ -382,7 +382,7 @@ const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/snli-rob
 
 const bashCommand =
     `echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
-allennlp predict --include-package allennlp_models --predictor textual-entailment ${modelUrl} -`
+allennlp predict --predictor textual-entailment ${modelUrl} -`
 
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
@@ -399,7 +399,7 @@ const usage = (
       <h3>Installing AllenNLP</h3>
       <UsageCode>
         <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
         </SyntaxHighlight>
       </UsageCode>
       <UsageHeader>Prediction</UsageHeader>
