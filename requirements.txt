@@ -1,4 +1,4 @@
-git+https://github.com/allenai/allennlp-models.git@baf3a1ec3b74273a4ffa2112d37fb88e8b3dd39c
+git+https://github.com/allenai/allennlp-models.git@4e7698b878eea5c7dcda88caeffea0e9125b5f77
 
 psycopg2-binary
 python-json-logger
