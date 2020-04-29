@@ -1,6 +1,6 @@
 import sys
 import os
-# This adds ../../ to the PYTHONPATH, so that allennlp_demo imports work.
+# This adds ../ to the PYTHONPATH, so that allennlp_demo imports work.
 sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))))
 
 from allennlp.version import VERSION
