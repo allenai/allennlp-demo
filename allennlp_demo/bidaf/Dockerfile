@@ -10,7 +10,8 @@ RUN pip install -r bidaf/requirements.txt
 
 RUN spacy download en_core_web_sm
 
-COPY . .
+COPY common common
+COPY bidaf bidaf
 
 ENTRYPOINT [ "python" ]
 CMD [ "bidaf/api.py" ]
