@@ -17,6 +17,7 @@ class RequestLogEntry():
     ip: str
     forwarded_for: Optional[str]
     time: float
+    cached: bool
 
 class JsonLogFormatter(logging.Formatter):
     """
@@ -35,15 +36,11 @@ class JsonLogFormatter(logging.Formatter):
                                 "message": r.getMessage(),
                                 "exception": self.formatException(r.exc_info),
                                 "stack": self.formatStack(r.stack_info) })
-
-        # We create a special named logger for request logs, so that they can be output with a
-        # different format.
-        if r.name == "request":
-            rl = r.__dict__.get("request", {})
-            return json.dumps({ "logname": r.name, "severity": r.levelname, **rl })
-
-        # ...and finally any other log messages look like so:
-        return json.dumps({ "logname": r.name, "severity": r.levelname, "message": r.getMessage() })
+        m = r.msg
+        if not isinstance(m, str):
+            return json.dumps({ "logname": r.name, "severity": r.levelname, **m })
+        else:
+            return json.dumps({ "logname": r.name, "severity": r.levelname, "message": m })
 
 def init(app: Flask):
     """
@@ -71,8 +68,8 @@ def init(app: Flask):
     def log_request(r: Response) -> Response:
         t = time.perf_counter() - g.start
         rl = RequestLogEntry(r.status_code, request.method, request.path, request.args,
-                             request.remote_addr, request.headers.get('X-Forwarded-For'), t)
-        extra = { "request": asdict(rl) }
-        logging.getLogger("request").info("", extra=extra)
+                             request.remote_addr, request.headers.get('X-Forwarded-For'), t,
+                             r.headers.get('X-Cache-Hit', "0") == "1")
+        logging.getLogger("request").info(asdict(rl))
         return r
 

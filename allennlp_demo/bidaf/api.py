@@ -1,5 +1,7 @@
 import sys
 import os
+import json
+import logging
 # This adds ../ to the PYTHONPATH, so that allennlp_demo imports work.
 sys.path.insert(0, os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))))
 
@@ -9,8 +11,10 @@ from allennlp.common import JsonDict
 from allennlp_demo.common import logs, config
 from allennlp_plugins import allennlp_models
 from dataclasses import asdict
-from flask import Flask, jsonify, request
+from functools import lru_cache
+from flask import Flask, jsonify, request, after_this_request, Response
 from flask.logging import default_handler
+from typing import Dict
 
 if __name__ == '__main__':
     app = Flask(__name__)
@@ -23,9 +27,29 @@ if __name__ == '__main__':
     def info() -> str:
         return jsonify({ **asdict(model), "allennlp": VERSION })
 
+    @lru_cache(maxsize=128)
+    def caching_predict(data: str):
+        return predictor.predict_json(json.loads(data))
+
     @app.route('/predict', methods=['POST'])
     def predict() -> JsonDict:
-        return predictor.predict_json(request.get_json())
+        no_cache = "nocache" in request.args
+        if no_cache:
+            return predictor.predict_json(request.get_json())
+
+        # This allows us to determine if the response we're serving was cached. It's safe to
+        # do because we use a single-threaded server.
+        pre_hits = caching_predict.cache_info().hits
+        r = caching_predict(request.data)
+        cinfo = caching_predict.cache_info()
+
+        # If it's a cache hit add a HTTP header
+        if cinfo.hits - pre_hits == 1:
+            @after_this_request
+            def add_cache_hit_header(r: Response):
+                r.headers['X-Cache-Hit'] = "1"
+                return r
+        return r
 
     # For simplicity, we use Flask's built in server. This isn't recommended, per:
     # https://flask.palletsprojects.com/en/1.1.x/tutorial/deploy/#run-with-a-production-server
