@@ -7,11 +7,13 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: [
     'build',
+    '-f', 'bidaf/Dockerfile',
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:latest',
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:$COMMIT_SHA',
     '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:latest',
     '.',
   ]
+  dir: 'allennlp_demo'
 - id: 'push'
   name: 'gcr.io/cloud-builders/docker'
   args: [ 'push', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:$COMMIT_SHA' ]
@@ -29,11 +31,11 @@ steps:
     '--tla-str', 'buildId=$BUILD_ID',
     'bidaf.jsonnet'
   ]
-  dir: '.skiff'
+  dir: 'allennlp_demo/bidaf/.skiff'
 - id: 'deploy'
   name: 'gcr.io/ai2-reviz/rudder'
   args: [ 'deploy', '-f', 'bidaf.yaml' ]
-  dir: '.skiff'
+  dir: 'allennlp_demo/bidaf/.skiff'
 substitutions:
   _ENV: prod
 images: [
@@ -43,4 +45,4 @@ images: [
 artifacts:
   objects:
     location: 'gs://skiff-archive/$REPO_NAME/bidaf/$_ENV/$BUILD_ID/$COMMIT_SHA'
-    paths: ['.skiff/bidaf.yaml']
+    paths: ['allennlp_demo/bidaf/.skiff/bidaf.yaml']
