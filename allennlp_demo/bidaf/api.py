@@ -27,4 +27,13 @@ if __name__ == '__main__':
     def predict() -> JsonDict:
         return predictor.predict_json(request.get_json())
 
+    # For simplicity, we use Flask's built in server. This isn't recommended, per:
+    # https://flask.palletsprojects.com/en/1.1.x/tutorial/deploy/#run-with-a-production-server
+    #
+    # That said we think this is preferable because:
+    #   - It's simple. No need to install another WSGI server and add logic for enabling it in
+    #     the right context.
+    #   - Our workload is CPU bound, so event loop based WSGI servers don't get us much.
+    #   - We use Kubernetes to scale horizontally, and run an NGINX proxy at the front-door, which
+    #     adds the resiliency and other things we need for production.
     app.run(host="0.0.0.0", port=8000)
