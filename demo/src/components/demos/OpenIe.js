@@ -236,7 +236,7 @@ const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/openie-m
 
 const bashCommand =
     `echo '{"sentence": "John decided to run for office next month."}' | \\
-allennlp predict --include-package allennlp_models ${modelUrl} - --predictor=open-information-extraction`
+allennlp predict ${modelUrl} - --predictor=open-information-extraction`
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
 import allennlp_models.syntax.srl
@@ -251,7 +251,7 @@ const usage = (
       <h3>Installing AllenNLP</h3>
       <UsageCode>
         <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
         </SyntaxHighlight>
       </UsageCode>
       <UsageHeader>Prediction</UsageHeader>

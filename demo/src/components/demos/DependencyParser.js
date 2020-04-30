@@ -66,7 +66,7 @@ const modelUrl = "https://storage.googleapis.com/allennlp-public-models/biaffine
 
 const bashCommand =
     `echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
-allennlp predict --include-package allennlp_models ${modelUrl} -`
+allennlp predict ${modelUrl} -`
 
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
@@ -82,7 +82,7 @@ const usage = (
       <h3>Installing AllenNLP</h3>
       <UsageCode>
         <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1
+          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
         </SyntaxHighlight>
       </UsageCode>
       <UsageHeader>Prediction</UsageHeader>
