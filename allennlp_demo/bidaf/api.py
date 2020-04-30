@@ -27,7 +27,7 @@ if __name__ == '__main__':
     def info() -> str:
         return jsonify({ **asdict(model), "allennlp": VERSION })
 
-    @lru_cache(maxsize=128)
+    @lru_cache(maxsize=1024)
     def caching_predict(data: str):
         return predictor.predict_json(json.loads(data))
 
