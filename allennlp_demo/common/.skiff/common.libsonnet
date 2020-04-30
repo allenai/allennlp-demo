@@ -10,9 +10,8 @@ local config = import '../../../skiff.json';
 
 {
     ModelEndpoint(modelId, image, cause, sha, cpu, memory, env, branch, repo, buildId):
-        // We deploy everything in a single namespace so names need to be fully qualified to
-        // prevent collissions. We don't use the canonical `config.appName` to avoid long
-        // names for things.
+        // Different environments are deployed to the same namespace. This serves to prevent
+        // collissions.
         local fullyQualifiedName = 'mapi-' + modelId + '-' + env;
 
         // Every resource is tagged with the same set of labels. These labels serve the
@@ -30,7 +29,7 @@ local config = import '../../../skiff.json';
             apiVersion: 'v1',
             kind: 'Namespace',
             metadata: {
-                name: config.appName,
+                name: config.appName + '-mapi-' + modelId,
                 labels: namespaceLabels
             }
         };
