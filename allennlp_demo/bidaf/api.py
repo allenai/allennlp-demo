@@ -29,7 +29,7 @@ if __name__ == "__main__":
         return jsonify({ **asdict(model), "allennlp": VERSION })
 
     @lru_cache(maxsize=1024)
-    def caching_predict(data: str):
+    def caching_predict(data: str) -> JsonDict:
         return predictor.predict_json(json.loads(data))
 
     @app.route("/predict", methods=["POST"])
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     class UnknownInterpreterError(RuntimeError):
         pass
 
-    def interpret(interpreter: str, data: str):
+    def interpret(interpreter: str, data: str) -> JsonDict:
         if interpreter == "simple":
             i = SimpleGradient(predictor)
             return i.saliency_interpret_from_json(json.loads(data))
@@ -69,7 +69,7 @@ if __name__ == "__main__":
             raise UnknownInterpreterError(f"Unknown Interpreter: {interpreter}")
 
     @lru_cache(maxsize=1024)
-    def caching_interpret(interpreter: str, data: str):
+    def caching_interpret(interpreter: str, data: str) -> JsonDict:
         return interpret(interpreter, data)
 
     @app.route("/interpret/<string:interpreter>", methods=["POST"])
