@@ -48,7 +48,7 @@ You can use [Miniconda](https://docs.conda.io/en/latest/miniconda.html) to
 setup an environment for local development:
 
 ```
-conda create -n allennlp-demo-bidaf python=3.6.10
+conda create -n allennlp-demo-bidaf python=3.7.7
 conda activate allennlp-demo-bidaf
 pip install -r bidaf/requirements.txt
 FLASK_ENV=development python bidaf/api.py

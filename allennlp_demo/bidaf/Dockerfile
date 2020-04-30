@@ -1,7 +1,7 @@
 # This Dockerfile is specific to the bidaf model, but is meant to be executed in the `allennlp_demo`
 # directory, so that the build context includes common libraries that are shared across models.
 # This is why paths here include the bidaf/ prefix.
-FROM python:3.6.10-stretch
+FROM python:3.7.7-stretch
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /allennlp_demo

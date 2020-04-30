@@ -11,7 +11,7 @@ The API is used by the [AllenNLP demo](https://demo.allennlp.org).
    environment:
 
     ```bash
-    conda create -n bidaf python=3.6.10
+    conda create -n bidaf python=3.7.7
     conda activate bidaf
     pip install -r requirements.txt
     ```
