@@ -19,7 +19,7 @@ local common = import '../../common/.skiff/common.libsonnet';
  * @param buildId   {string}    The Google Cloud Build id.
  */
 function(image, cause, sha, env, branch, repo, buildId)
-    // This/sets/theTKubernetes resource requests associated with our endpoint.
+    // This tells Kubernetes what resources we need to run.
     // For more information see:
     // https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes
     local cpu = '50m';

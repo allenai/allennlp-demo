@@ -10,10 +10,10 @@ local config = import '../../../skiff.json';
 
 {
     ModelEndpoint(modelId, image, cause, sha, cpu, memory, env, branch, repo, buildId):
-        // Since we deploy resources for different environments in the same namespace,
-        // we need to give things a fully qualified name that includes the environment
-        // as to avoid unintentional collission / redefinition.
-        local fullyQualifiedName = config.appName + '-' + modelId + '-' + env;
+        // We deploy everything in a single namespace so names need to be fully qualified to
+        // prevent collissions. We don't use the canonical `config.appName` to avoid long
+        // names for things.
+        local fullyQualifiedName = 'mapi-' + modelId + '-' + env;
 
         // Every resource is tagged with the same set of labels. These labels serve the
         // following purposes:
@@ -36,7 +36,8 @@ local config = import '../../../skiff.json';
         };
 
         local labels = namespaceLabels + {
-            env: env
+            env: env,
+            model: modelId
         };
 
         // By default multiple instances of your application could get scheduled
@@ -183,7 +184,7 @@ local config = import '../../../skiff.json';
                 '.apps.allenai.org';
         local hosts = [
             if env == 'prod' then
-                config.appName + topLevelDomain
+                topLevelDomain
             else
                 config.appName + '.' + env + topLevelDomain
         ];
