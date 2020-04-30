@@ -287,13 +287,6 @@ local db_env_variables = [
     }
 ];
 
-local env_variables = db_env_variables + [
-    {
-        name: 'GIT_SHA',
-        value: sha
-    }
-];
-
 local deployment = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Deployment',
@@ -328,12 +321,9 @@ local deployment = {
                                 cpu: '50m',
                                 memory: '100Mi'
                             }
-                        },
-                        env: env_variables
-                    },
-                    cloudsql_proxy_container
+                        }
+                    }
                 ],
-                volumes: cloudsql_volumes
             }
         }
     }
@@ -384,7 +374,7 @@ local model_deployment(model_name) = {
                                 memory: get_memory(model_name)
                             }
                         },
-                        env: env_variables
+                        env: db_env_variables
                     },
                     cloudsql_proxy_container
                 ],
