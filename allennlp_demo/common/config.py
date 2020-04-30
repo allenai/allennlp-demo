@@ -10,7 +10,6 @@ class Model:
     id: str
     archive_file: str
     predictor_name: str
-    max_request_length: int
 
     @staticmethod
     def from_file(path: str) -> 'Model':
