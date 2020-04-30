@@ -1,0 +1,46 @@
+steps:
+- id: 'pull'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/bash'
+  args: [ '-c', 'docker pull gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:latest || exit 0' ]
+- id: 'build'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:latest',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:$COMMIT_SHA',
+    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:latest',
+    '.',
+  ]
+- id: 'push'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [ 'push', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:$COMMIT_SHA' ]
+- id: 'config'
+  name: 'gcr.io/ai2-reviz/jsonnet'
+  args: [
+    '-y',
+    '--output-file', 'bidaf.yaml',
+    '--tla-str', 'env=$_ENV',
+    '--tla-str', 'image=gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:$COMMIT_SHA',
+    '--tla-str', 'sha=$COMMIT_SHA',
+    '--tla-str', 'cause=Automated Skiff Deploy SHA:$COMMIT_SHA BUILD:$BUILD_ID',
+    '--tla-str', 'branch=$BRANCH_NAME',
+    '--tla-str', 'repo=$REPO_NAME',
+    '--tla-str', 'buildId=$BUILD_ID',
+    'bidaf.jsonnet'
+  ]
+  dir: '.skiff'
+- id: 'deploy'
+  name: 'gcr.io/ai2-reviz/rudder'
+  args: [ 'deploy', '-f', 'bidaf.yaml' ]
+  dir: '.skiff'
+substitutions:
+  _ENV: prod
+images: [
+  'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:$COMMIT_SHA',
+  'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-api:latest',
+]
+artifacts:
+  objects:
+    location: 'gs://skiff-archive/$REPO_NAME/bidaf/$_ENV/$BUILD_ID/$COMMIT_SHA'
+    paths: ['.skiff/bidaf.yaml']

@@ -38,7 +38,7 @@
 
 // This file is generated once at template creation time and unlikely to change
 // from that point forward.
-local config = import 'config.json';
+local config = import '../skiff.json';
 
 // Load the models
 local models = import '../models.json';
