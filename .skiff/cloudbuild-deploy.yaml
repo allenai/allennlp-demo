@@ -4,7 +4,7 @@
 # variable).
 #
 steps:
-# Pull the current latest image, so we can use its cached layers.
+# Build the Python API. All models (currently) run in the same image.
 - id: 'pull'
   name: 'gcr.io/cloud-builders/docker'
   entrypoint: '/bin/bash'
@@ -12,7 +12,7 @@ steps:
     '-c',
     'docker pull gcr.io/$PROJECT_ID/$REPO_NAME:latest || exit 0'
   ]
-# Build the Docker image and tag with the current SHA and latest.
+  waitFor: [ '-' ]
 - id: 'build'
   name: 'gcr.io/cloud-builders/docker'
   args: [
@@ -22,45 +22,78 @@ steps:
     '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
     '.'
   ]
-# Push the image tagged by the SHA
+  waitFor: [ 'pull' ]
 - id: 'push'
   name: 'gcr.io/cloud-builders/docker'
   args: [
     'push',
     'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
   ]
-# Generate our Kubernetes configuration
+  waitFor: [ 'build' ]
+# Build an image that serves the files required for the UI from disk via
+# NGINX
+- id: 'ui.pull'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/bash'
+  args: [
+    '-c',
+    'docker pull gcr.io/$PROJECT_ID/$REPO_NAME-ui:latest || exit 0'
+  ]
+  waitFor: [ '-' ]
+- id: 'ui.build'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui:$COMMIT_SHA',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui:latest',
+    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui:latest',
+    '.'
+  ]
+  dir: 'demo'
+  waitFor: [ 'ui.pull' ]
+- id: 'ui.push'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'push',
+    'gcr.io/$PROJECT_ID/$REPO_NAME-ui:$COMMIT_SHA',
+  ]
+  waitFor: [ 'ui.build' ]
+# Generate the Kubernetes config
 - id: 'config'
   name: 'gcr.io/ai2-reviz/jsonnet'
   args: [
-    'eval',
     '-y',
-    '--output-file', './webapp.json',
+    '--output-file', './webapp.yaml',
     '--ext-str', 'env=$_ENV',
     '--ext-str', 'image=gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
+    '--ext-str', 'uiImage=gcr.io/$PROJECT_ID/$REPO_NAME-ui:$COMMIT_SHA',
     '--ext-str', 'sha=$COMMIT_SHA',
     '--ext-str', 'buildId=$BUILD_ID',
     '--ext-str', 'repo=$REPO_NAME',
     './webapp.jsonnet'
   ]
   dir: '.skiff'
+  waitFor: [ '-' ]
 # Deploy the image to Kubernetes
 - id: 'deploy'
   name: 'gcr.io/ai2-reviz/rudder'
   args: [
     'deploy',
     '-f',
-    'webapp.json'
+    'webapp.yaml'
   ]
   dir: '.skiff'
+  waitFor: [ 'push', 'ui.push', 'config' ]
 substitutions:
   _ENV: staging
 images: [
   'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
   'gcr.io/$PROJECT_ID/$REPO_NAME:latest',
+  'gcr.io/$PROJECT_ID/$REPO_NAME-ui:$COMMIT_SHA',
+  'gcr.io/$PROJECT_ID/$REPO_NAME-ui:latest'
 ]
 artifacts:
   objects:
     location: 'gs://skiff-archive/$REPO_NAME/$_ENV/$COMMIT_SHA/$BUILD_ID'
-    paths: ['.skiff/webapp.json']
+    paths: [ '.skiff/webapp.yaml' ]
 timeout: 1800s

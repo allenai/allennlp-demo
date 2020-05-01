@@ -27,6 +27,7 @@ from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.predictors import Predictor
 from allennlp.interpret.saliency_interpreters import SaliencyInterpreter, SimpleGradient, IntegratedGradient, SmoothGradient
 from allennlp.interpret.attackers import Attacker, InputReduction, Hotflip
+from allennlp.version import VERSION
 
 from server.permalinks import int_to_slug, slug_to_int
 from server.db import DemoDatabase, PostgresDemoDatabase
@@ -96,7 +97,7 @@ def main(demo_dir: str,
     if demo_db is None:
         logger.warning("database credentials not provided, so not using database (permalinks disabled)")
 
-    app = make_app(build_dir=f"{demo_dir}/build", demo_db=demo_db, models=models)
+    app = make_app(demo_db=demo_db, models=models)
     CORS(app)
 
     http_server = WSGIServer(('0.0.0.0', port), app, log=logger, error_log=logger)
@@ -105,15 +106,11 @@ def main(demo_dir: str,
     http_server.serve_forever()
 
 
-def make_app(build_dir: str,
-             models: Dict[str, DemoModel],
+def make_app(models: Dict[str, DemoModel],
              demo_db: Optional[DemoDatabase] = None,
              cache_size: int = 128,
              interpret_cache_size: int = 500,
              attack_cache_size: int = 500) -> Flask:
-    if not os.path.exists(build_dir):
-        logger.error("app directory %s does not exist, aborting", build_dir)
-        sys.exit(-1)
 
     app = Flask(__name__)  # pylint: disable=invalid-name
     start_time = datetime.now(pytz.utc)
@@ -192,8 +189,11 @@ def make_app(build_dir: str,
                                          target=json.loads(target))
 
     @app.route('/')
-    def index() -> Response: # pylint: disable=unused-variable
-        return send_file(os.path.join(build_dir, 'index.html'))
+    def index() -> str: # pylint: disableunused-variable
+        loaded_modules = {}
+        for n, m in models.items():
+            loaded_modules[n] = m.__dict__
+        return jsonify({ "allennlp_version": VERSION, "models": loaded_modules })
 
     @app.route('/permadata/<model_name>', methods=['POST', 'OPTIONS'])
     def permadata(model_name: str) -> Response:  # pylint: disable=unused-variable
@@ -484,30 +484,6 @@ def make_app(build_dir: str,
         app.add_url_rule(f"/{model_name}", view_func=return_page)
         app.add_url_rule(f"/{model_name}/<permalink>", view_func=return_page)
 
-
-    @app.route('/', defaults={ 'path': '' })
-    @app.route('/<path:path>')
-    def static_proxy(path: str) -> Response: # pylint: disable=unused-variable
-        if os.path.isfile(os.path.join(build_dir, path)):
-            return send_from_directory(build_dir, path)
-        else:
-            # Send the index.html page back to the client as a catch-all, since
-            # we're an SPA and JavaScript acts to handle routes the server
-            # doesn't.
-            return send_file(os.path.join(build_dir, 'index.html'))
-
-    @app.route('/static/js/<path:path>')
-    def static_js_proxy(path: str) -> Response: # pylint: disable=unused-variable
-        return send_from_directory(os.path.join(build_dir, 'static/js'), path)
-
-    @app.route('/static/css/<path:path>')
-    def static_css_proxy(path: str) -> Response: # pylint: disable=unused-variable
-        return send_from_directory(os.path.join(build_dir, 'static/css'), path)
-
-    @app.route('/static/media/<path:path>')
-    def static_media_proxy(path: str) -> Response: # pylint: disable=unused-variable
-        return send_from_directory(os.path.join(build_dir, 'static/media'), path)
-
     return app
 
 if __name__ == "__main__":
@@ -521,11 +497,10 @@ if __name__ == "__main__":
 
     models_group = parser.add_mutually_exclusive_group()
     models_group.add_argument('--model', type=str, action='append', default=[], help='if specified, only load these models')
-    models_group.add_argument('--no-models', dest='no_models', action='store_true', help='start just the front-end with no models')
 
     args = parser.parse_args()
 
-    models = load_demo_models(args.models_file, args.model, model_names_only=args.no_models)
+    models = load_demo_models(args.models_file, args.model)
 
     main(demo_dir=args.demo_dir,
          port=args.port,

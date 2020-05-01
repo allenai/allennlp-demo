@@ -9,6 +9,7 @@ from allennlp_models import coref
 from allennlp_models import rc
 from allennlp_models import syntax
 from allennlp_models import lm
+from allennlp_models import nli
 
 from server.demo_model import DemoModel
 from server.gpt2 import Gpt2DemoModel
@@ -21,17 +22,12 @@ from server.gpt2 import Gpt2DemoModel
 # will be served at the `/predict/<name-of-task>` API endpoint.
 
 def load_demo_models(models_file: str,
-                     task_names: List[str] = None,
-                     model_names_only: bool = False) -> Dict[str, DemoModel]:
+                     task_names: List[str] = None) -> Dict[str, DemoModel]:
     with open(models_file) as f:
         blob = json.load(f)
 
     # If no task names specified, load all of them
     task_names = task_names or blob.keys()
-
-    # No models, so return None for everything
-    if model_names_only:
-        return {task_name: None for task_name in task_names}
 
     # Otherwise
     demo_models = {}
