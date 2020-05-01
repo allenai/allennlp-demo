@@ -1,10 +1,6 @@
 # pylint: disable=no-self-use,invalid-name
-import copy
 import json
 import os
-import pathlib
-import tempfile
-from collections import defaultdict
 
 from flask import Response
 
@@ -33,7 +29,7 @@ LIMITS = {
         'coreference-resolution': 21097
 }
 
-class TestFlask(AllenNlpTestCase):
+class TestCoref(AllenNlpTestCase):
     client = None
 
     def setUp(self):
