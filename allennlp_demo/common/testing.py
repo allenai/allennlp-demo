@@ -5,7 +5,6 @@ import json
 from secrets import token_urlsafe
 from typing import Mapping, List
 from flask.testing import FlaskClient
-from flask import Response
 
 class ModelEndpointTests:
     """
@@ -23,8 +22,7 @@ class ModelEndpointTests:
         return [ "hotflip", "input-reduction" ]
 
     def test_predict(self, client: FlaskClient):
-        client.post()
-        resp: Response = client.post("/predict", query_string={ "no_cache": True },
+        resp = client.post("/predict", query_string={ "no_cache": True },
                                      json=self.rc_input())
         assert resp.status_code == 200
         assert resp.json is not None

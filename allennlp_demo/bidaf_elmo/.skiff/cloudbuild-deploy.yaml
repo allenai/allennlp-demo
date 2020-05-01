@@ -1,48 +1,51 @@
 steps:
-- id: 'pull'
-  name: 'gcr.io/cloud-builders/docker'
-  entrypoint: '/bin/bash'
-  args: [ '-c', 'docker pull gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest || exit 0' ]
-- id: 'build'
-  name: 'gcr.io/cloud-builders/docker'
+- id: pull
+  name: gcr.io/cloud-builders/docker
+  entrypoint: /bin/bash
+  args: [ -c, docker pull gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:latest || exit 0 ]
+- id: build
+  name: gcr.io/cloud-builders/docker
   args: [
-    'build',
-    '-f', 'bidaf_elmo/Dockerfile',
-    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest',
-    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:$COMMIT_SHA',
-    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest',
-    '.',
+    build,
+    -f, $_MODEL_ID/Dockerfile,
+    -t, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:latest,
+    -t, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:$COMMIT_SHA,
+    --cache-from, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:latest,
+    .,
   ]
-  dir: 'allennlp_demo'
-- id: 'push'
-  name: 'gcr.io/cloud-builders/docker'
-  args: [ 'push', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:$COMMIT_SHA' ]
-- id: 'config'
-  name: 'gcr.io/ai2-reviz/jsonnet'
+  dir: allennlp_demo
+- id: push
+  name: gcr.io/cloud-builders/docker
+  args: [ push, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:$COMMIT_SHA ]
+- id: config
+  name: gcr.io/ai2-reviz/jsonnet
   args: [
-    '-y',
-    '--output-file', 'bidaf-elmo.yaml',
-    '--tla-str', 'env=$_ENV',
-    '--tla-str', 'image=gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:$COMMIT_SHA',
-    '--tla-str', 'sha=$COMMIT_SHA',
-    '--tla-str', 'cause=Automated Skiff Deploy SHA:$COMMIT_SHA BUILD:$BUILD_ID',
-    '--tla-str', 'branch=$BRANCH_NAME',
-    '--tla-str', 'repo=$REPO_NAME',
-    '--tla-str', 'buildId=$BUILD_ID',
-    'bidaf-elmo.jsonnet'
+    -y,
+    --output-file, $_MODEL_ID.yaml,
+    --tla-str, env=$_ENV,
+    --tla-str, image=gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:$COMMIT_SHA,
+    --tla-str, sha=$COMMIT_SHA,
+    --tla-str, cause=Automated Skiff Deploy SHA:$COMMIT_SHA BUILD:$BUILD_ID,
+    --tla-str, branch=$BRANCH_NAME,
+    --tla-str, repo=$REPO_NAME,
+    --tla-str, buildId=$BUILD_ID,
+    $_MODEL_ID.jsonnet
   ]
-  dir: 'allennlp_demo/bidaf_elmo/.skiff'
-- id: 'deploy'
-  name: 'gcr.io/ai2-reviz/rudder'
-  args: [ 'deploy', '-f', 'bidaf-elmo.yaml' ]
-  dir: 'allennlp_demo/bidaf_elmo/.skiff'
+  dir: allennlp_demo/$_MODEL_ID/.skiff
+- id: deploy
+  name: gcr.io/ai2-reviz/rudder
+  args: [ deploy, -f, $_MODEL_ID.yaml ]
+  dir: allennlp_demo/$_MODEL_ID/.skiff
 substitutions:
   _ENV: prod
+  _MODEL_ID: bidaf_elmo
 images: [
-  'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:$COMMIT_SHA',
-  'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest',
+  gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:$COMMIT_SHA,
+  gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:latest,
 ]
 artifacts:
   objects:
-    location: 'gs://skiff-archive/$REPO_NAME/bidaf-elmo/$_ENV/$BUILD_ID/$COMMIT_SHA'
-    paths: ['allennlp_demo/bidaf-elmo/.skiff/bidaf-elmo.yaml']
+    location: gs://skiff-archive/$REPO_NAME/$_MODEL_ID/$_ENV/$BUILD_ID/$COMMIT_SHA
+    paths:
+    -  allennlp_demo/$_MODEL_ID/.skiff/$_MODEL_ID.yaml
+timeout: 900s
