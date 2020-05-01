@@ -8,17 +8,6 @@
 local common = import '../../common/.skiff/common.libsonnet';
 local model = import '../model.json';
 
-/**
- * @param image     {string}    The image tag to deploy.
- * @param cause     {string}    A message describing the reason for the deployment.
- * @param sha       {string}    The git sha.
- * @param env       {string}    A unique identifier for the environment. This determines the
- *                              the hostname that'll be used, the number of replicas, and more.
- *                              If set the 'prod' this deploys to demo.allennlp.org.
- * @param branch    {string}    The branch name.
- * @param repo      {string}    The repo name.
- * @param buildId   {string}    The Google Cloud Build id.
- */
 function(image, cause, sha, env, branch, repo, buildId)
     // This tells Kubernetes what resources we need to run.
     // For more information see:
