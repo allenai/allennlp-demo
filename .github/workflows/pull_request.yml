@@ -27,7 +27,7 @@ jobs:
       run: docker run --entrypoint= allennlp/demo pip freeze
 
     - name: Run tests
-      run: docker run --entrypoint= allennlp/demo pytest tests/
+      run: docker run --entrypoint= allennlp/demo env CLEAR_CACHE_AFTER_TEST=true pytest tests/
 
     - name: Push image
       if: github.repository == 'allenai/allennlp-demo' && github.event_name == 'push'

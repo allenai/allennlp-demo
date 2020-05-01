@@ -35,11 +35,20 @@ def setup():
 def test_loading(setup, model_name):
     from server.models import load_demo_models
     models = load_demo_models("models.json", [model_name])
-    from app import make_app
-    app = make_app(models)
-    app.testing = True
-    client = app.test_client()
-    assert client is not None
+    try:
+        from app import make_app
+        app = make_app(models)
+        app.testing = True
+        client = app.test_client()
+        assert client is not None
+        # TODO: pass some sample input to the client and make sure the output matches
+    finally:
+        if os.environ.get("CLEAR_CACHE_AFTER_TEST"):
+            # Delete the model file afterwards. The GitHub runners don't have enough space for all of them.
+            from allennlp.common.file_utils import get_from_cache
+            cached_file = get_from_cache(models[model_name].archive_file)
+            import glob
+            for filename in glob.glob(cached_file + "*"):
+                os.remove(filename)
 
-    # TODO: pass some sample input to the client and make sure the output matches
 
