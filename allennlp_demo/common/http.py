@@ -129,6 +129,10 @@ class ModelEndpoint:
         configure_logging(self.app)
 
     def configure_error_handling(self) -> None:
+        def handle_invalid_json(err: json.JSONDecodeError):
+            return jsonify({ "error": str(err) }), 400
+        self.app.register_error_handler(json.JSONDecodeError, handle_invalid_json)
+
         def handle_404(err: NotFoundError):
             return jsonify({ "error": str(err) }), 404
         self.app.register_error_handler(NotFoundError, handle_404)
