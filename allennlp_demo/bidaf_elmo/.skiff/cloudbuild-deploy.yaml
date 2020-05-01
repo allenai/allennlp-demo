@@ -38,7 +38,7 @@ steps:
   dir: allennlp_demo/$_MODEL_ID/.skiff
 substitutions:
   _ENV: prod
-  _MODEL_ID: bidaf
+  _MODEL_ID: bidaf_elmo
 images: [
   gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:$COMMIT_SHA,
   gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:latest,
@@ -47,4 +47,5 @@ artifacts:
   objects:
     location: gs://skiff-archive/$REPO_NAME/$_MODEL_ID/$_ENV/$BUILD_ID/$COMMIT_SHA
     paths:
-    - allennlp_demo/$_MODEL_ID/.skiff/$_MODEL_ID.yaml
+    -  allennlp_demo/$_MODEL_ID/.skiff/$_MODEL_ID.yaml
+timeout: 900s
