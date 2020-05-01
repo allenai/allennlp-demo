@@ -241,7 +241,7 @@ local config = import '../../../skiff.json';
                                         serviceName: service.metadata.name,
                                         servicePort: apiPort
                                     },
-                                    path: '/api/' + modelId + '(/(.*))?'
+                                    path: '/api/' + modelId + '(/(.*))?$'
                                 }
                             ]
                         }
