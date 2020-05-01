@@ -243,7 +243,7 @@ const examples = [
 
 const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
 
-const modelUrl = 'https://s3-us-west-2.amazonaws.com/allennlp/models/bert-base-srl-2019.06.17.tar.gz'
+const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.03.24.tar.gz'
 
 const bashCommand =
     `echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
