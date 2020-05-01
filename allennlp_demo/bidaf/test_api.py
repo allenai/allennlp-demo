@@ -1,5 +1,3 @@
-import os
-import requests
 import pytest
 
 from allennlp_demo.common.testing import ModelEndpointTests
