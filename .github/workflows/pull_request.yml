@@ -23,11 +23,11 @@ jobs:
         image_tag: latest,${{ github.sha }}
         push_image_and_stages: false
 
-    - name: Run tests
-      run: docker run --entrypoint= allennlp/demo pytest tests/
-
     - name: Pip freeze
       run: docker run --entrypoint= allennlp/demo pip freeze
+
+    - name: Run tests
+      run: docker run --entrypoint= allennlp/demo pytest tests/
 
     - name: Push image
       if: github.repository == 'allenai/allennlp-demo' && github.event_name == 'push'
