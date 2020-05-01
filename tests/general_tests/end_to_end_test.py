@@ -1,45 +1,45 @@
 import json
+import logging
 import os
+import pytest
 
-from allennlp.common import JsonDict
-from allennlp.common.testing import AllenNlpTestCase
-from flask import Response
+with open("models.json") as f:
+    _model_names = [
+        model_name
+        for model_name, model_spec in json.load(f).items()
+        if "image" not in model_spec    # We don't want to try models pinned to a Docker image.
+    ]
 
 
-class TestEndToEnd(AllenNlpTestCase):
-    client = None
+@pytest.fixture(scope="module")
+def setup():
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s", level=logging.DEBUG
+    )
+    # Disabling some of the more verbose logging statements that typically aren't very helpful
+    # in tests.
+    logging.getLogger("allennlp.common.params").disabled = True
+    logging.getLogger("allennlp.nn.initializers").disabled = True
+    logging.getLogger("allennlp.modules.token_embedders.embedding").setLevel(logging.INFO)
+    logging.getLogger("urllib3.connectionpool").disabled = True
 
-    def setUp(self):
-        super().setUp()
+    yield
 
-        if self.client is None:
-            with open("models.json") as f:
-                model_names = [
-                    model_name
-                    for model_name, model_spec in json.load(f).items()
-                    if "image" not in model_spec    # We don't want to try models pinned to a Docker image.
-                ]
-
-            from server.models import load_demo_models
-            self.models = load_demo_models("models.json", model_names)
-            from app import make_app
-            self.app = make_app(self.models)
-            self.app.testing = True
-            self.client = self.app.test_client()
-
-    def post_json(self, endpoint: str, data: JsonDict) -> Response:
-        return self.client.post(
-            endpoint,
-            content_type="application/json",
-            data=json.dumps(data))
-
-    def test_nothing(self):
-        pass
-
-    def tearDown(self):
-        super().tearDown()
+    for filename in ['access.log', 'error.log']:
         try:
-            os.remove('access.log')
-            os.remove('error.log')
+            os.remove(filename)
         except FileNotFoundError:
             pass
+
+@pytest.mark.parametrize("model_name", _model_names)
+def test_loading(setup, model_name):
+    from server.models import load_demo_models
+    models = load_demo_models("models.json", [model_name])
+    from app import make_app
+    app = make_app(models)
+    app.testing = True
+    client = app.test_client()
+    assert client is not None
+
+    # TODO: pass some sample input to the client and make sure the output matches
+
