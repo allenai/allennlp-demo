@@ -1,8 +1,14 @@
 import os
 import requests
+import pytest
 
 from allennlp_demo.common.testing import ModelEndpointTests
+from allennlp_demo.bidaf.api import BidafModelEndpoint
 
-# For this endpoint we can simply use the standard tests.
-class TestBidafEndpoint(ModelEndpointTests):
+@pytest.fixture
+def client():
+    endpoint = BidafModelEndpoint()
+    return endpoint.app.test_client()
+
+class TestBidafModelEndpoint(ModelEndpointTests):
     pass
