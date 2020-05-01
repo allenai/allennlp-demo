@@ -35,3 +35,7 @@ curl -X POST -H 'Content-Type: application/json' \
     -d '{ "question": "Why do dogs bark?", "passage": "Dogs bark because they like to." }' \
     http://localhost:8000/predict
 ```
+
+## Tests
+
+You can run the tests by running `pytest`.
