@@ -7,7 +7,7 @@ steps:
   name: 'gcr.io/cloud-builders/docker'
   args: [
     'build',
-    '-f', 'bidaf-elmo/Dockerfile',
+    '-f', 'bidaf_elmo/Dockerfile',
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest',
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:$COMMIT_SHA',
     '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest',
