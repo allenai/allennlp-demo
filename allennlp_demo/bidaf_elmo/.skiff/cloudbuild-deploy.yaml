@@ -31,11 +31,11 @@ steps:
     '--tla-str', 'buildId=$BUILD_ID',
     'bidaf-elmo.jsonnet'
   ]
-  dir: 'allennlp_demo/bidaf-elmo/.skiff'
+  dir: 'allennlp_demo/bidaf_elmo/.skiff'
 - id: 'deploy'
   name: 'gcr.io/ai2-reviz/rudder'
   args: [ 'deploy', '-f', 'bidaf-elmo.yaml' ]
-  dir: 'allennlp_demo/bidaf-elmo/.skiff'
+  dir: 'allennlp_demo/bidaf_elmo/.skiff'
 substitutions:
   _ENV: prod
 images: [
