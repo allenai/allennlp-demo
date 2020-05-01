@@ -33,6 +33,9 @@ class TestEndToEnd(AllenNlpTestCase):
             content_type="application/json",
             data=json.dumps(data))
 
+    def test_nothing(self):
+        pass
+
     def tearDown(self):
         super().tearDown()
         try:
