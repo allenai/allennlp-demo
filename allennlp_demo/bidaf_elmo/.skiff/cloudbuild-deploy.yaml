@@ -1,0 +1,48 @@
+steps:
+- id: 'pull'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/bash'
+  args: [ '-c', 'docker pull gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest || exit 0' ]
+- id: 'build'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build',
+    '-f', 'bidaf-elmo/Dockerfile',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest',
+    '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:$COMMIT_SHA',
+    '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest',
+    '.',
+  ]
+  dir: 'allennlp_demo'
+- id: 'push'
+  name: 'gcr.io/cloud-builders/docker'
+  args: [ 'push', 'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:$COMMIT_SHA' ]
+- id: 'config'
+  name: 'gcr.io/ai2-reviz/jsonnet'
+  args: [
+    '-y',
+    '--output-file', 'bidaf-elmo.yaml',
+    '--tla-str', 'env=$_ENV',
+    '--tla-str', 'image=gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:$COMMIT_SHA',
+    '--tla-str', 'sha=$COMMIT_SHA',
+    '--tla-str', 'cause=Automated Skiff Deploy SHA:$COMMIT_SHA BUILD:$BUILD_ID',
+    '--tla-str', 'branch=$BRANCH_NAME',
+    '--tla-str', 'repo=$REPO_NAME',
+    '--tla-str', 'buildId=$BUILD_ID',
+    'bidaf-elmo.jsonnet'
+  ]
+  dir: 'allennlp_demo/bidaf-elmo/.skiff'
+- id: 'deploy'
+  name: 'gcr.io/ai2-reviz/rudder'
+  args: [ 'deploy', '-f', 'bidaf-elmo.yaml' ]
+  dir: 'allennlp_demo/bidaf-elmo/.skiff'
+substitutions:
+  _ENV: prod
+images: [
+  'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:$COMMIT_SHA',
+  'gcr.io/$PROJECT_ID/$REPO_NAME-bidaf-elmo-api:latest',
+]
+artifacts:
+  objects:
+    location: 'gs://skiff-archive/$REPO_NAME/bidaf-elmo/$_ENV/$BUILD_ID/$COMMIT_SHA'
+    paths: ['allennlp_demo/bidaf-elmo/.skiff/bidaf-elmo.yaml']
