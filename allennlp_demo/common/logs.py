@@ -42,7 +42,7 @@ class JsonLogFormatter(logging.Formatter):
         else:
             return json.dumps({ "logname": r.name, "severity": r.levelname, "message": m })
 
-def init(app: Flask):
+def configure_logging(app: Flask):
     """
     Setup logging in a way that makes sense for demo API endpoints.
     """
