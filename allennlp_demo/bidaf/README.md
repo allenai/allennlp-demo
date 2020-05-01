@@ -25,7 +25,7 @@ The API is used by the [AllenNLP demo](https://demo.allennlp.org).
 3. Make sure it's working:
 
     ```bash
-    curl http://localhost:8000
+    pytest
     ```
 
 You can get predictions like so:

@@ -46,7 +46,7 @@ class NotFoundError(RuntimeError):
 
 class UnknownInterpreterError(NotFoundError):
     def __init__(self, interpreter_id: str):
-        super().__init__(f"No Interpreter with id {interpreter_id}")
+        super().__init__(f"No interpreter with id {interpreter_id}")
 
 class UnknownAttackerError(NotFoundError):
     def __init__(self, attacker_id: str):
