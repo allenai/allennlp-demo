@@ -10,6 +10,6 @@ def client():
     return endpoint.app.test_client()
 
 class TestBidafElmoModelEndpoint(ModelEndpointTests):
-    def attacker_ids() -> List[str]:
+    def attacker_ids(self) -> List[str]:
         # The hotflip attack for this model is currently broken.
         return [ aid for aid in super().attacker_ids() if aid != "hotflip" ]
