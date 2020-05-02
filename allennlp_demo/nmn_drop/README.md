@@ -15,7 +15,7 @@ docker build -f nmn_drop/Dockerfile -t nmn:latest && \
 If the server is already running, you can use this command to run the tests:
 
 ```bash
-docker exec --it nmn pytest
+docker exec --it nmn pytest -x -ra
 ```
 
 If it's not, you can run them like so:
@@ -23,5 +23,5 @@ If it's not, you can run them like so:
 ```bash
 docker
 docker build -f nmn_drop/Dockerfile -t nmn:latest && \
-    docker run --rm -it --name nmn --entrypoint pytest 8000:8000 nmn:latest nmn_drop
+    docker run --rm -it --name nmn --entrypoint pytest 8000:8000 nmn:latest -x -ra nmn_drop
 ```

@@ -11,6 +11,14 @@ def client():
     return endpoint.app.test_client()
 
 class TestNMNDropModelEndpoint(ModelEndpointTests):
+    # The demo doesn't use the attack endpoints, so the tests are disabled.
+    def attacker_ids(self) -> List[str]:
+        return []
+
+    # The same goes for the interpret ones.
+    def interpreter_ids(self) -> List[str]:
+        return []
+
     def test_predict(self, client: FlaskClient):
         resp = client.post("/predict", query_string={ "no_cache": True },
                            json=self.rc_input())

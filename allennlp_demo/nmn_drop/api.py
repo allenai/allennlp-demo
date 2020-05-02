@@ -13,6 +13,15 @@ class NMNDropModelEndpoint(http.ModelEndpoint):
         c = config.Model.from_file(os.path.join(os.path.dirname(__file__), "model.json"))
         super().__init__(c, load_plugins=False)
 
+    # The demo doesn't use the attack endpoints, so they're disabled for now.
+    def attacker_ids(self) -> List[str]:
+        return []
+
+    # The same goes for the interpret endpoints.
+    def interpreter_ids(self) -> List[str]:
+        return []
+
+
 if __name__ == "__main__":
     endpoint = NMNDropModelEndpoint()
     endpoint.run()
