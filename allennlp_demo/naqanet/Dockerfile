@@ -10,6 +10,7 @@ RUN pip install -r naqanet/requirements.txt
 
 RUN spacy download en_core_web_sm
 
+COPY __init__.py .
 COPY common common
 COPY naqanet naqanet
 

@@ -3,12 +3,12 @@ import json
 from flask import Flask, Request, Response, after_this_request, request, jsonify
 from typing import Callable, Mapping
 from allennlp.version import VERSION
-from allennlp_plugins import allennlp_models
 from allennlp_demo.common import config
 from allennlp_demo.common.logs import configure_logging
 from allennlp.predictors.predictor import Predictor, JsonDict
 from allennlp.interpret.saliency_interpreters import SaliencyInterpreter, SimpleGradient, SmoothGradient, IntegratedGradient
 from allennlp.interpret.attackers import Attacker, Hotflip, InputReduction
+from allennlp.models.archival import load_archive
 from functools import lru_cache
 from dataclasses import asdict
 
@@ -59,20 +59,28 @@ class ModelEndpoint:
 
     This class can be extended to implement custom functionality.
     """
-    def __init__(self, model: config.Model):
+    def __init__(self, model: config.Model, load_plugins: bool = True):
         self.model = model
         self.app = Flask(model.id)
         self.configure_logging()
 
-        self.predictor = Predictor.from_path(model.archive_file, model.predictor_name)
+        # TODO: I'm no Python expert, but this seems a bit risky. There's all sorts of side-effect
+        # that importing at runtime could entail. That said we know we only import this once
+        # while instantiating an endpoint, so maybe it's ok. I'll ask about this before merging.
+        if load_plugins:
+            import allennlp_plugins.allennlp_models
 
-        self.interpreters = self.load_intepreters()
-        self.attackers = self.load_attackers()
+        o = json.dumps(model.overrides) if model.overrides is not None else ""
+        archive = load_archive(model.archive_file, overrides=o)
+        self.predictor = Predictor.from_archive(archive, model.predictor_name)
+
+        self.interpreters = self.interpreter_ids()
+        self.attackers = self.attacker_ids()
 
         self.configure_error_handling()
         self.setup_routes()
 
-    def load_intepreters(self) -> Mapping[str, SaliencyInterpreter]:
+    def interpreter_ids(self) -> Mapping[str, SaliencyInterpreter]:
         """
         Returns a mapping of interpreters keyed by a unique identifier. Requests to
         `/interpret/:id` will invoke the interpreter with the provided `:id`. Override this method
@@ -82,7 +90,7 @@ class ModelEndpoint:
                  "smooth": SmoothGradient(self.predictor),
                  "integrated": IntegratedGradient(self.predictor) }
 
-    def load_attackers(self) -> Mapping[str, Attacker]:
+    def attacker_ids(self) -> Mapping[str, Attacker]:
         """
         Returns a mapping of attackers keyed by a unique identifier. Requests to `/attack/:id`
         will invoke the attacker with the provided `:id`. Override this method to add or remove
