@@ -74,13 +74,13 @@ class ModelEndpoint:
         archive = load_archive(model.archive_file, overrides=o)
         self.predictor = Predictor.from_archive(archive, model.predictor_name)
 
-        self.interpreters = self.interpreter_ids()
-        self.attackers = self.attacker_ids()
+        self.interpreters = self.load_interpreters()
+        self.attackers = self.load_attackers()
 
         self.configure_error_handling()
         self.setup_routes()
 
-    def interpreter_ids(self) -> Mapping[str, SaliencyInterpreter]:
+    def load_interpreters(self) -> Mapping[str, SaliencyInterpreter]:
         """
         Returns a mapping of interpreters keyed by a unique identifier. Requests to
         `/interpret/:id` will invoke the interpreter with the provided `:id`. Override this method
@@ -90,7 +90,7 @@ class ModelEndpoint:
                  "smooth": SmoothGradient(self.predictor),
                  "integrated": IntegratedGradient(self.predictor) }
 
-    def attacker_ids(self) -> Mapping[str, Attacker]:
+    def load_attackers(self) -> Mapping[str, Attacker]:
         """
         Returns a mapping of attackers keyed by a unique identifier. Requests to `/attack/:id`
         will invoke the attacker with the provided `:id`. Override this method to add or remove
