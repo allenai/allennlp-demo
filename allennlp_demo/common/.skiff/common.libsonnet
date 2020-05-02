@@ -9,7 +9,24 @@
 local config = import '../../../skiff.json';
 
 {
-    ModelEndpoint(modelId, image, cause, sha, cpu, memory, env, branch, repo, buildId):
+    /**
+     * @param modelId       {string}    A unique identifier for the model. This will be used as a
+     *                                  prefix in the URL path for the endpoint. The model's
+     *                                  endpoints will be accessible at `/api/${modelId/*`.
+     * @param image         {string}    The image tag to deploy.
+     * @param cause         {string}    A message describing the reason for the deployment.
+     * @param sha           {string}    The git sha.
+     * @param env           {string}    A unique identifier for the environment. This determines the
+     *                                  the hostname that'll be used, the number of replicas, and more.
+     *                                  If set the 'prod' this deploys to demo.allennlp.org.
+     * @param branch        {string}    The branch name.
+     * @param repo          {string}    The repo name.
+     * @param buildId       {string}    The Google Cloud Build ID.
+     * @param startupTime   {number}    The amount of time in seconds the container should take to
+     *                                  start. If this is set too low your container will get into
+     *                                  a restart loop when it's started. Defaults to 120 seconds.
+     */
+    ModelEndpoint(modelId, image, cause, sha, cpu, memory, env, branch, repo, buildId, startupTime=120):
         // Different environments are deployed to the same namespace. This serves to prevent
         // collissions.
         local fullyQualifiedName = 'mapi-' + modelId + '-' + env;
@@ -140,7 +157,7 @@ local config = import '../../../skiff.json';
                                     },
                                     periodSeconds: 10,
                                     failureThreshold: 6,
-                                    initialDelaySeconds: 120
+                                    initialDelaySeconds: startupTime,
                                 },
                                 resources: {
                                     requests: {
@@ -224,7 +241,7 @@ local config = import '../../../skiff.json';
                                         serviceName: service.metadata.name,
                                         servicePort: apiPort
                                     },
-                                    path: '/api/' + modelId + '(/(.*))?'
+                                    path: '/api/' + modelId + '(/(.*))?$'
                                 }
                             ]
                         }

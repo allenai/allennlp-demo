@@ -61,7 +61,7 @@ class ModelEndpoint:
     """
     def __init__(self, model: config.Model):
         self.model = model
-        self.app = Flask(__name__)
+        self.app = Flask(model.id)
         self.configure_logging()
 
         self.predictor = Predictor.from_path(model.archive_file, model.predictor_name)

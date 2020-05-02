@@ -56,3 +56,10 @@ FLASK_ENV=development python bidaf/api.py
 
 This will start a server listening at [http://localhost:8000](http://localhost:8000)
 that's restarted whenever you change the code.
+
+Each endpoint has tests. To run them run `pytest` in the model endpoint's working directory:
+
+```bash
+cd bidaf/
+pytest
+```
