@@ -23,7 +23,7 @@ class ModelEndpointTests:
 
     def test_predict(self, client: FlaskClient):
         resp = client.post("/predict", query_string={ "no_cache": True },
-                                     json=self.rc_input())
+                           json=self.rc_input())
         assert resp.status_code == 200
         assert resp.json is not None
         assert len(resp.json["best_span"]) > 0
