@@ -15,8 +15,6 @@ from server.gpt2 import Gpt2DemoModel
 
 
 def load_demo_models(models_file: str, task_names: List[str] = None) -> Dict[str, DemoModel]:
-    util.import_module_and_submodules("allennlp_models")
-
     with open(models_file) as f:
         blob = json.load(f)
 
@@ -31,7 +29,7 @@ def load_demo_models(models_file: str, task_names: List[str] = None) -> Dict[str
         model_type = model.get("type", "allennlp")
 
         if task_name == "nmn-drop":
-            util.import_submodules("semqa")
+            util.import_module_and_submodules("semqa")
 
         # If ever we introduce additional model types,
         # we'll need to add corresponding logic here.
