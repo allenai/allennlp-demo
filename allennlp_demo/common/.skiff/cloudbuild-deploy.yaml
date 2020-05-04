@@ -21,7 +21,7 @@ steps:
   name: gcr.io/ai2-reviz/jsonnet
   args: [
     -y,
-    --output-file, $_MODEL_ID.yaml,
+    --output-file, webapp.yaml,
     --tla-str, env=$_ENV,
     --tla-str, image=gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_ID-api:$COMMIT_SHA,
     --tla-str, sha=$COMMIT_SHA,
@@ -29,12 +29,12 @@ steps:
     --tla-str, branch=$BRANCH_NAME,
     --tla-str, repo=$REPO_NAME,
     --tla-str, buildId=$BUILD_ID,
-    $_MODEL_ID.jsonnet
+    webapp.jsonnet
   ]
   dir: allennlp_demo/$_MODEL_ID/.skiff
 - id: deploy
   name: gcr.io/ai2-reviz/rudder
-  args: [ deploy, -f, $_MODEL_ID.yaml ]
+  args: [ deploy, -f, webapp.yaml ]
   dir: allennlp_demo/$_MODEL_ID/.skiff
 substitutions:
   _ENV: prod
@@ -47,5 +47,5 @@ artifacts:
   objects:
     location: gs://skiff-archive/$REPO_NAME/$_MODEL_ID/$_ENV/$BUILD_ID/$COMMIT_SHA
     paths:
-    -  allennlp_demo/$_MODEL_ID/.skiff/$_MODEL_ID.yaml
+    -  allennlp_demo/$_MODEL_ID/.skiff/webapp.yaml
 timeout: 900s
