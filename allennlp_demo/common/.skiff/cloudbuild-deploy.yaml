@@ -7,7 +7,7 @@ steps:
   name: gcr.io/cloud-builders/docker
   args: [
     build,
-    -f, $_MODEL_PATH/Dockerfile,
+    -f, allennlp_demo/$_MODEL_PATH/Dockerfile,
     -t, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH-api:latest,
     -t, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH-api:$COMMIT_SHA,
     --cache-from, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH-api:latest,
