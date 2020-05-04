@@ -56,7 +56,7 @@ selected a model, follow these steps to port it to the new solution:
 
     ```bash
     cd allennlp_demo
-    docker build -f allennlp_demo/oscar_drop/Dockerfile -t oscar_drop:latest . && \
+    docker build . -f allennlp_demo/oscar_drop/Dockerfile -t oscar_drop:latest && \
         docker run --rm -it --entrypoint pytest oscar_drop:latest -x -ra
     ```
 
