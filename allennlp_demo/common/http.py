@@ -3,12 +3,12 @@ import json
 from flask import Flask, Request, Response, after_this_request, request, jsonify
 from typing import Callable, Mapping
 from allennlp.version import VERSION
-from allennlp_plugins import allennlp_models
 from allennlp_demo.common import config
 from allennlp_demo.common.logs import configure_logging
 from allennlp.predictors.predictor import Predictor, JsonDict
 from allennlp.interpret.saliency_interpreters import SaliencyInterpreter, SimpleGradient, SmoothGradient, IntegratedGradient
 from allennlp.interpret.attackers import Attacker, Hotflip, InputReduction
+from allennlp.models.archival import load_archive
 from functools import lru_cache
 from dataclasses import asdict
 
@@ -64,15 +64,17 @@ class ModelEndpoint:
         self.app = Flask(model.id)
         self.configure_logging()
 
-        self.predictor = Predictor.from_path(model.archive_file, model.predictor_name)
+        o = json.dumps(model.overrides) if model.overrides is not None else ""
+        archive = load_archive(model.archive_file, overrides=o)
+        self.predictor = Predictor.from_archive(archive, model.predictor_name)
 
-        self.interpreters = self.load_intepreters()
+        self.interpreters = self.load_interpreters()
         self.attackers = self.load_attackers()
 
         self.configure_error_handling()
         self.setup_routes()
 
-    def load_intepreters(self) -> Mapping[str, SaliencyInterpreter]:
+    def load_interpreters(self) -> Mapping[str, SaliencyInterpreter]:
         """
         Returns a mapping of interpreters keyed by a unique identifier. Requests to
         `/interpret/:id` will invoke the interpreter with the provided `:id`. Override this method

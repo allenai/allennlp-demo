@@ -1,6 +1,7 @@
 import json
 
 from dataclasses import dataclass
+from typing import Mapping, Optional
 
 @dataclass(frozen=True)
 class Model:
@@ -10,6 +11,7 @@ class Model:
     id: str
     archive_file: str
     predictor_name: str
+    overrides: Optional[Mapping] = None
 
     @staticmethod
     def from_file(path: str) -> 'Model':
