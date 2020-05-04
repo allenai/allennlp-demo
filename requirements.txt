@@ -14,3 +14,15 @@ pytz>=2017.3
 
 # Pinned because werkzeug.contrib.fixers is deprecated in 1.0.
 werkzeug<=0.16.1
+
+# Checks style, syntax, and other useful errors.
+flake8
+
+# Static type checking
+mypy==0.770
+
+# Automatic code formatting
+black
+
+# Running tests.
+pytest

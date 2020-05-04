@@ -9,6 +9,35 @@ on:
     - master
 
 jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - uses: actions/cache@v1
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}
+
+    - name: Install requirements
+      run: |
+        pip install -r requirements.txt
+
+    - name: Lint
+      run: |
+        make lint
+
+    - name: Type check
+      run: |
+        make typecheck
+
   docker:
     name: Docker
     runs-on: ubuntu-latest
