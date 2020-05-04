@@ -1,3 +1,4 @@
+# See the Docker image for the version of AllenNLP
 allennlp-models==1.0.0rc3
 Flask==1.1.2
 pytest==5.4.1

@@ -5,14 +5,15 @@ FROM python:3.7.7-stretch
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /allennlp_demo
+RUN ls
 COPY allennlp_demo/constituency-parser/requirements.txt constituency-parser/requirements.txt
-RUN pip install -r allennlp_demo/constituency-parser/requirements.txt
+RUN pip install -r constituency-parser/requirements.txt
 
 RUN spacy download en_core_web_sm
 
-COPY __init__.py .
-COPY common common
-COPY constituency-parser constituency-parser
+COPY allennlp_demo/__init__.py .
+COPY allennlp_demo/common common
+COPY allennlp_demo/constituency-parser constituency-parser
 
 # Ensure `/allennlp_demo` module can be found by Python.
 ENV PYTHONPATH /
