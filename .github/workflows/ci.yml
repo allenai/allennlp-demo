@@ -50,7 +50,7 @@ jobs:
         make allennlp_demo/bidaf/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest'
 
   docker:
-    name: Docker
+    name: Old
     runs-on: ubuntu-latest
 
     steps:
