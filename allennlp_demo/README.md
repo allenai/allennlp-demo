@@ -23,18 +23,10 @@ dependencies and copy over code from `common/` as needed.
 
 ## Building
 
-To build an image for a single model, run the command below from the root of this repo, replacing `bidaf` with the model you'd like to build:
+To build and run an image for a single model, run the command below from the root of this repo, replacing `bidaf` with the model you'd like to build:
 
 ```bash
-docker build -f allennlp_demo/bidaf/Dockerfile -t allennlp-demo-bidaf:latest .
-```
-
-You can run that image locally like so:
-
-```
-docker run --rm -it -p 8000:8000 \
-    -v $HOME/.allennlp:/.root/.allennlp \
-    allennlp-demo-bidaf:latest
+make allennlp_demo/bidaf/Dockerfile
 ```
 
 ## Local Development
