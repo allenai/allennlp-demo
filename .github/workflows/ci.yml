@@ -47,7 +47,7 @@ jobs:
 
     - name: Build and test image
       run: |
-        make allennlp_demo/bidaf/Dockerfile ARGS='-m pytest'
+        make allennlp_demo/bidaf/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest'
 
   docker:
     name: Docker
