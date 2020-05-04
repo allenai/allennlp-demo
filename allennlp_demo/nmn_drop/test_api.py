@@ -5,10 +5,12 @@ from allennlp_demo.nmn_drop.api import NMNDropModelEndpoint
 from allennlp_demo.common.testing import ModelEndpointTests
 from typing import List
 
+
 @pytest.fixture
 def client():
     endpoint = NMNDropModelEndpoint()
     return endpoint.app.test_client()
+
 
 class TestNMNDropModelEndpoint(ModelEndpointTests):
     # The demo doesn't use the attack endpoints, so the tests are disabled.
@@ -20,8 +22,7 @@ class TestNMNDropModelEndpoint(ModelEndpointTests):
         return []
 
     def test_predict(self, client: FlaskClient):
-        resp = client.post("/predict", query_string={ "no_cache": True },
-                           json=self.rc_input())
+        resp = client.post("/predict", query_string={"no_cache": True}, json=self.rc_input())
         assert resp.status_code == 200
         assert resp.json is not None
         assert resp.json["answer"] is not None
@@ -31,4 +32,3 @@ class TestNMNDropModelEndpoint(ModelEndpointTests):
     @pytest.mark.skip(reason="The input used causes this test to fail.")
     def test_cache(self):
         pass
-

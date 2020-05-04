@@ -23,16 +23,11 @@ dependencies and copy over code from `common/` as needed.
 
 ## Building
 
-To build an image for a single model, run the command below, replacing `bidaf`
-with the model you'd like to build:
+To build an image for a single model, run the command below from the root of this repo, replacing `bidaf` with the model you'd like to build:
 
 ```bash
-cd allennlp_demo
-docker build -f bidaf/Dockerfile -t allennlp-demo-bidaf:latest .
+docker build -f allennlp_demo/bidaf/Dockerfile -t allennlp-demo-bidaf:latest .
 ```
-
-The build must be executed in the `allennlp_demo` directory. This is a temporary
-necessity that'll go away once we finish migrating.
 
 You can run that image locally like so:
 
@@ -50,8 +45,8 @@ setup an environment for local development:
 ```
 conda create -n allennlp-demo-bidaf python=3.7.7
 conda activate allennlp-demo-bidaf
-pip install -r bidaf/requirements.txt
-FLASK_ENV=development python bidaf/api.py
+pip install -r allennlp_demo/bidaf/requirements.txt
+FLASK_ENV=development python allennlp_demo/bidaf/api.py
 ```
 
 This will start a server listening at [http://localhost:8000](http://localhost:8000)
@@ -60,6 +55,5 @@ that's restarted whenever you change the code.
 Each endpoint has tests. To run them run `pytest` in the model endpoint's working directory:
 
 ```bash
-cd bidaf/
-pytest
+pytest allennlp_demo/bidaf
 ```

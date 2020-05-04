@@ -1,6 +1,7 @@
 __pycache__
 demo/build/
 **/*.pyc
+.mypy_cache
 
 # Logs
 logs
