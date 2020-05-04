@@ -46,9 +46,9 @@ def test_loading(setup, model_name):
         if os.environ.get("CLEAR_CACHE_AFTER_TEST"):
             # Delete the model file afterwards. The GitHub runners don't have enough space for all of them.
             from allennlp.common.file_utils import get_from_cache
+            print(f"*** Trying to delete {models[model_name].archive_file}")
             cached_file = get_from_cache(models[model_name].archive_file)
             import glob
             for filename in glob.glob(cached_file + "*"):
+                print(f"*** Deleting {filename}")
                 os.remove(filename)
-
-
