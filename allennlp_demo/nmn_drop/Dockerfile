@@ -26,8 +26,8 @@ RUN git clone https://github.com/nitishgupta/nmn-drop nmn-drop && \
     ln -s nmn-drop/datasets . && \
     ln -s nmn-drop/pattn2count_ckpt .
 
-# This allows the libraries we just added to `/lib` to be loaded by name.
-ENV PYTHONPATH /lib
+# This allows the libraries we just added to `/lib` as well as `/allennlp_demo` to be loaded by name.
+ENV PYTHONPATH /lib:/
 
 WORKDIR /allennlp_demo
 

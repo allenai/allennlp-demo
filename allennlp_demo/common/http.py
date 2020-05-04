@@ -36,11 +36,11 @@ def with_cache_hit_response_headers(fn: Callable, *args):
     """
     # This allows us to determine if the response we're serving was cached. It's safe to
     # do because we use a single-threaded server.
-    pre_hits = fn.cache_info().hits
+    pre_hits = fn.cache_info().hits  # type: ignore
     r = fn(*args)
 
     # If it was a cache hit add a HTTP header to the response
-    if fn.cache_info().hits - pre_hits == 1:
+    if fn.cache_info().hits - pre_hits == 1:  # type: ignore
 
         @after_this_request
         def add_header(resp: Response) -> Response:

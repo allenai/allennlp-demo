@@ -1,3 +1,5 @@
+from typing import Tuple, Any
+
 from allennlp.predictors import Predictor
 from pytorch_pretrained_bert.tokenization_gpt2 import GPT2Tokenizer
 from pytorch_pretrained_bert.modeling_gpt2 import GPT2LMHeadModel
@@ -22,7 +24,9 @@ class Gpt2Predictor(Predictor):
         Each cache element is about 8MB, so size accordingly.
         """
         # Cache stores tuples, so default value is a tuple
-        self._cache = LRUCache(cache_size, default_value=(None, None))
+        self._cache: LRUCache[str, Tuple[Any, Any]] = LRUCache(
+            cache_size, default_value=(None, None)
+        )
         self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
         self.model = GPT2LMHeadModel.from_pretrained(model_name)
 

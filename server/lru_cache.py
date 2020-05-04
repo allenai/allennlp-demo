@@ -32,5 +32,5 @@ class LRUCache(Generic[K, V]):
             self._cache.pop(key)
         except KeyError:
             if len(self._cache) >= self._capacity:
-                self._cache.popitem(last=False)
+                self._cache.popitem(last=False)  # type: ignore  # mypy bug
         self._cache[key] = value

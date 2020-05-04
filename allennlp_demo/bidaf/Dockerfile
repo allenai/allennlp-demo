@@ -14,5 +14,8 @@ COPY __init__.py .
 COPY common common
 COPY bidaf bidaf
 
+# Ensure `/allennlp_demo` module can be found by Python.
+ENV PYTHONPATH /
+
 ENTRYPOINT [ "python" ]
 CMD [ "bidaf/api.py" ]

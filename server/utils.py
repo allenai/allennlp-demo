@@ -1,5 +1,4 @@
-from flask import Response, current_app
-from pythonjsonlogger import jsonlogger
+from flask import Response
 
 
 def with_no_cache_headers(request: Response) -> Response:

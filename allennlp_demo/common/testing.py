@@ -1,5 +1,4 @@
 import os
-import pytest
 import json
 
 from secrets import token_urlsafe

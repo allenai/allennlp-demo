@@ -4,7 +4,7 @@ import json
 import logging
 import time
 
-from flask import Flask, request, Request, Response, g
+from flask import Flask, request, Response, g
 from dataclasses import dataclass, asdict
 from typing import Optional
 

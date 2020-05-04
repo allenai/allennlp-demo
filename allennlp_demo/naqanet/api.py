@@ -1,17 +1,14 @@
-import sys
 import os
 
-# This adds ../ to the PYTHONPATH, so that allennlp_demo imports work.
-sys.path.insert(
-    0, os.path.dirname(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
-)
+from allennlp.common.util import import_module_and_submodules
 
-import allennlp_plugins.allennlp_models
 from allennlp_demo.common import config, http
 
 
 class NAQANetModelEndpoint(http.ModelEndpoint):
     def __init__(self):
+        # TODO: should just import the exact submodule we need.
+        import_module_and_submodules("allennlp_models")
         c = config.Model.from_file(os.path.join(os.path.dirname(__file__), "model.json"))
         super().__init__(c)
 

@@ -1,18 +1,16 @@
-# pylint: disable=no-self-use,invalid-name
 import copy
 import json
 import os
-import pathlib
-import tempfile
 from collections import defaultdict
-import pytest
-
-from flask import Response
+from typing import Optional
 
 from allennlp.common.util import JsonDict
 from allennlp.common.testing import AllenNlpTestCase
 from allennlp.models.archival import load_archive
 from allennlp.predictors import Predictor
+from flask import Response
+import pytest
+from werkzeug.test import Client
 
 import app
 from app import make_app
@@ -73,7 +71,7 @@ class FailingPredictor(Predictor):
 
 
 class TestFlask(AllenNlpTestCase):
-    client = None
+    client: Optional[Client] = None
 
     def setUp(self):
         super().setUp()

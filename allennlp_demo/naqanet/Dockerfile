@@ -14,5 +14,8 @@ COPY __init__.py .
 COPY common common
 COPY naqanet naqanet
 
+# Ensure `/allennlp_demo` module can be found by Python.
+ENV PYTHONPATH /
+
 ENTRYPOINT [ "python" ]
 CMD [ "naqanet/api.py" ]

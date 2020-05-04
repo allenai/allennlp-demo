@@ -1,12 +1,9 @@
-# pylint: disable=no-self-use,invalid-name
-import copy
 import json
 import os
-import pathlib
-import tempfile
-from collections import defaultdict
+from typing import Optional
 
 from flask import Response
+from werkzeug.test import Client
 
 from allennlp.common.util import JsonDict
 from allennlp.common.testing import AllenNlpTestCase
@@ -28,7 +25,7 @@ LIMITS = {"coreference-resolution": 21097}
 
 
 class TestFlask(AllenNlpTestCase):
-    client = None
+    client: Optional[Client] = None
 
     def setUp(self):
         super().setUp()
@@ -56,7 +53,12 @@ class TestFlask(AllenNlpTestCase):
         response = self.post_json(
             "/predict/coreference-resolution",
             data={
-                "document": "We are looking for a region of central Italy bordering the Adriatic Sea. The area is mostly mountainous and includes Mt. Corno, the highest peak of the mountain range. It also includes many sheep and an Italian entrepreneur has an idea about how to make a little money of them."
+                "document": (
+                    "We are looking for a region of central Italy bordering the "
+                    "Adriatic Sea. The area is mostly mountainous and includes Mt. Corno, the "
+                    "highest peak of the mountain range. It also includes many sheep and an "
+                    "Italian entrepreneur has an idea about how to make a little money of them."
+                )
             },
         )
         assert response.status_code == 200

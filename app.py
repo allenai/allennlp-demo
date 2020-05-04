@@ -4,7 +4,7 @@
 A `Flask <http://flask.pocoo.org/>`_ server that serves up our demo.
 """
 from datetime import datetime
-from typing import Dict, Optional, List, Iterable
+from typing import Dict, Optional
 import argparse
 import json
 import logging
@@ -14,7 +14,7 @@ import time
 from functools import lru_cache
 from collections import defaultdict
 
-from flask import Flask, request, Response, jsonify, send_file, send_from_directory
+from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 from gevent.pywsgi import WSGIServer
 from werkzeug.contrib.fixers import ProxyFix
@@ -134,7 +134,8 @@ def make_app(
     app.max_request_lengths = {}  # requests longer than these will be rejected to prevent OOME
     app.attackers = defaultdict(dict)
     app.interpreters = defaultdict(dict)
-    app.wsgi_app = ProxyFix(app.wsgi_app)  # sets the requester IP with the X-Forwarded-For header
+    # Set the requester IP with the X-Forwarded-For header.
+    app.wsgi_app = ProxyFix(app.wsgi_app)  # type: ignore
 
     for name, demo_model in models.items():
         if demo_model is not None:
@@ -519,20 +520,8 @@ def make_app(
         )
 
     @app.route("/health")
-    def health() -> Response:  # pylint: disable=unused-variable
-        return "healthy"
-
-    # As an SPA, we need to return index.html for /model-name and /model-name/permalink
-    def return_page(
-        permalink: str = None,
-    ) -> Response:  # pylint: disable=unused-argument, unused-variable
-        """return the page"""
-        return send_file(os.path.join(build_dir, "index.html"))
-
-    for model_name in models:
-        logger.info(f"setting up default routes for {model_name}")
-        app.add_url_rule(f"/{model_name}", view_func=return_page)
-        app.add_url_rule(f"/{model_name}/<permalink>", view_func=return_page)
+    def health() -> Response:
+        return "healthy"  # type: ignore
 
     return app
 

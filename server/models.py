@@ -1,15 +1,7 @@
 from typing import Dict, List
 import json
 
-from allennlp.predictors import Predictor
-from allennlp.models.archival import load_archive
 from allennlp.common import util
-
-from allennlp_models import coref
-from allennlp_models import rc
-from allennlp_models import syntax
-from allennlp_models import lm
-from allennlp_models import nli
 
 from server.demo_model import DemoModel
 from server.gpt2 import Gpt2DemoModel
@@ -23,6 +15,8 @@ from server.gpt2 import Gpt2DemoModel
 
 
 def load_demo_models(models_file: str, task_names: List[str] = None) -> Dict[str, DemoModel]:
+    util.import_module_and_submodules("allennlp_models")
+
     with open(models_file) as f:
         blob = json.load(f)
 
