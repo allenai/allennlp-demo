@@ -6,8 +6,9 @@ import torch
 from server.demo_model import DemoModel
 from server.lru_cache import LRUCache
 
-SMALL_MODEL = 'gpt2'
-MEDIUM_MODEL = 'https://storage.googleapis.com/allennlp/models/gpt2-345M-dump'
+SMALL_MODEL = "gpt2"
+MEDIUM_MODEL = "https://storage.googleapis.com/allennlp/models/gpt2-345M-dump"
+
 
 class Gpt2Predictor(Predictor):
     """
@@ -15,20 +16,18 @@ class Gpt2Predictor(Predictor):
     however, our demo only expects an AllenNLP ``Predictor``. Accordingly,
     we implement a ``Predictor`` that wraps the HuggingFace GPT-2 implementation.
     """
-    def __init__(self,
-                 model_name: str = MEDIUM_MODEL,
-                 cache_size: int = 0) -> None:
+
+    def __init__(self, model_name: str = MEDIUM_MODEL, cache_size: int = 0) -> None:
         """
         Each cache element is about 8MB, so size accordingly.
         """
         # Cache stores tuples, so default value is a tuple
         self._cache = LRUCache(cache_size, default_value=(None, None))
-        self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+        self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
         self.model = GPT2LMHeadModel.from_pretrained(model_name)
 
         # The end of text marker.
         self.END_OF_TEXT = self.tokenizer.encoder["<|endoftext|>"]
-
 
     def predict_json(self, inputs: dict) -> dict:
         previous_str = inputs["previous"]
@@ -39,15 +38,14 @@ class Gpt2Predictor(Predictor):
         probabilities = torch.nn.functional.softmax(logits)
 
         best_logits, best_indices = logits.topk(topk)
-        best_words = [self.tokenizer.decode([idx.item()])
-                      for idx in best_indices]
+        best_words = [self.tokenizer.decode([idx.item()]) for idx in best_indices]
         best_probabilities = probabilities[best_indices].tolist()
 
         return {
             "logits": best_logits.tolist(),
             "probabilities": best_probabilities,
             "words": best_words,
-            "output": previous_str + (next_str or "")
+            "output": previous_str + (next_str or ""),
         }
 
     def _predict(self, previous: str, next: str = None) -> torch.Tensor:

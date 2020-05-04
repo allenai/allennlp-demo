@@ -16,8 +16,10 @@ class DemoModel:
 
     These limits affect less than 1% of queries for each model.
     """
-    def __init__(self, archive_file: str, predictor_name: str, max_request_length: int,
-                 overrides: str = "") -> None:
+
+    def __init__(
+        self, archive_file: str, predictor_name: str, max_request_length: int, overrides: str = ""
+    ) -> None:
         self.archive_file = archive_file
         self.predictor_name = predictor_name
         self.max_request_length = max_request_length

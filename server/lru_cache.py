@@ -4,11 +4,12 @@ Based on https://www.kunxi.org/2014/05/lru-cache-in-python
 from typing import Dict, TypeVar, Generic, Optional
 from collections import OrderedDict
 
-K = TypeVar('K')
-V = TypeVar('V')
+K = TypeVar("K")
+V = TypeVar("V")
+
 
 class LRUCache(Generic[K, V]):
-    def __init__(self, capacity: int, default_value = None):
+    def __init__(self, capacity: int, default_value=None):
         self._capacity = capacity
         self._cache: Dict[K, V] = OrderedDict()
         self._default_value = default_value

@@ -20,28 +20,26 @@ from server.db import InMemoryDemoDatabase
 from server.models import DemoModel
 
 TEST_ARCHIVE_FILES = {
-    'reading-comprehension': 'tests/fixtures/bidaf/model.tar.gz',
-    'semantic-role-labeling': 'tests/fixtures/srl/model.tar.gz',
-    'textual-entailment': 'tests/fixtures/decomposable_attention/model.tar.gz'
+    "reading-comprehension": "tests/fixtures/bidaf/model.tar.gz",
+    "semantic-role-labeling": "tests/fixtures/srl/model.tar.gz",
+    "textual-entailment": "tests/fixtures/decomposable_attention/model.tar.gz",
 }
 
 PREDICTOR_NAMES = {
-    'reading-comprehension': 'reading-comprehension',
-    'semantic-role-labeling': 'semantic-role-labeling',
-    'textual-entailment': 'textual-entailment'
+    "reading-comprehension": "reading-comprehension",
+    "semantic-role-labeling": "semantic-role-labeling",
+    "textual-entailment": "textual-entailment",
 }
 
 PREDICTORS = {
-    name: Predictor.from_archive(
-        load_archive(archive_file),
-        predictor_name=PREDICTOR_NAMES[name])
+    name: Predictor.from_archive(load_archive(archive_file), predictor_name=PREDICTOR_NAMES[name])
     for name, archive_file in TEST_ARCHIVE_FILES.items()
 }
 
 LIMITS = {
-        'reading-comprehension': 311108,
-        'semantic-role-labeling': 4590,
-        'textual-entailment': 13129
+    "reading-comprehension": 311108,
+    "semantic-role-labeling": 4590,
+    "textual-entailment": 13129,
 }
 
 
@@ -50,8 +48,9 @@ class CountingPredictor(Predictor):
     bogus predictor that just returns a copy of its inputs
     and also counts how many times it was called with a given input
     """
+
     # pylint: disable=abstract-method
-    def __init__(self):                 # pylint: disable=super-init-not-called
+    def __init__(self):  # pylint: disable=super-init-not-called
         self.calls = defaultdict(int)
 
     def predict_json(self, inputs: JsonDict) -> JsonDict:
@@ -64,8 +63,9 @@ class FailingPredictor(Predictor):
     """
     Guaranteed to fail.
     """
+
     # pylint: disable=abstract-method
-    def __init__(self):                 # pylint: disable=super-init-not-called
+    def __init__(self):  # pylint: disable=super-init-not-called
         pass
 
     def predict_json(self, inputs: JsonDict) -> JsonDict:
@@ -87,15 +87,13 @@ class TestFlask(AllenNlpTestCase):
             self.client = self.app.test_client()
 
     def post_json(self, endpoint: str, data: JsonDict) -> Response:
-        return self.client.post(endpoint,
-                                content_type="application/json",
-                                data=json.dumps(data))
+        return self.client.post(endpoint, content_type="application/json", data=json.dumps(data))
 
     def tearDown(self):
         super().tearDown()
         try:
-            os.remove('access.log')
-            os.remove('error.log')
+            os.remove("access.log")
+            os.remove("error.log")
         except FileNotFoundError:
             pass
 
@@ -105,40 +103,51 @@ class TestFlask(AllenNlpTestCase):
         assert "reading-comprehension" in set(data["models"])
 
     def test_unknown_model(self):
-        response = self.post_json("/predict/bogus_model",
-                                  data={"input": "broken"})
+        response = self.post_json("/predict/bogus_model", data={"input": "broken"})
         assert response.status_code == 400
         data = response.get_data()
         assert b"unknown model" in data and b"bogus_model" in data
 
     def test_reading_comprehension(self):
-        response = self.post_json("/predict/reading-comprehension",
-                                  data={"passage": "the super bowl was played in seattle",
-                                        "question": "where was the super bowl played?"})
+        response = self.post_json(
+            "/predict/reading-comprehension",
+            data={
+                "passage": "the super bowl was played in seattle",
+                "question": "where was the super bowl played?",
+            },
+        )
 
         assert response.status_code == 200
         results = json.loads(response.data)
         assert "best_span" in results
 
     def test_textual_entailment(self):
-        response = self.post_json("/predict/textual-entailment",
-                                  data={"premise": "the super bowl was played in seattle",
-                                        "hypothesis": "the super bowl was played in ohio"})
+        response = self.post_json(
+            "/predict/textual-entailment",
+            data={
+                "premise": "the super bowl was played in seattle",
+                "hypothesis": "the super bowl was played in ohio",
+            },
+        )
         assert response.status_code == 200
         results = json.loads(response.data)
         assert "label_probs" in results
 
     def test_semantic_role_labeling(self):
-        response = self.post_json("/predict/semantic-role-labeling",
-                                  data={"sentence": "the super bowl was played in seattle"})
+        response = self.post_json(
+            "/predict/semantic-role-labeling",
+            data={"sentence": "the super bowl was played in seattle"},
+        )
         assert response.status_code == 200
         results = json.loads(response.get_data())
         assert "verbs" in results
 
     @pytest.mark.skip(reason="Test fixtures is out of date.")
     def test_open_information_extraction(self):
-        response = self.post_json("/predict/open-information-extraction",
-                                  data={"sentence": "the super bowl was played in seattle"})
+        response = self.post_json(
+            "/predict/open-information-extraction",
+            data={"sentence": "the super bowl was played in seattle"},
+        )
         assert response.status_code == 200
         results = json.loads(response.get_data())
         assert "verbs" in results
@@ -198,9 +207,9 @@ class TestFlask(AllenNlpTestCase):
         assert not predictor.calls
 
         for i in range(5):
-            response = client.post("/predict/counting",
-                                   content_type="application/json",
-                                   data=json.dumps(data))
+            response = client.post(
+                "/predict/counting", content_type="application/json", data=json.dumps(data)
+            )
             assert response.status_code == 200
             assert json.loads(response.get_data()) == data
 
@@ -218,7 +227,9 @@ class TestFlask(AllenNlpTestCase):
 
         # Make a prediction, no permalinks.
         data = {"some": "input"}
-        response = client.post("/predict/counting", content_type="application/json", data=json.dumps(data))
+        response = client.post(
+            "/predict/counting", content_type="application/json", data=json.dumps(data)
+        )
 
         assert response.status_code == 200
 
@@ -292,14 +303,15 @@ class TestFlask(AllenNlpTestCase):
 
     def test_microservice(self):
         models = {
-            'reading-comprehension': DemoModel(TEST_ARCHIVE_FILES['reading-comprehension'],
-                                               'reading-comprehension',
-                                               LIMITS['reading-comprehension'])
+            "reading-comprehension": DemoModel(
+                TEST_ARCHIVE_FILES["reading-comprehension"],
+                "reading-comprehension",
+                LIMITS["reading-comprehension"],
+            )
         }
 
         app = make_app(models=models)
         app.testing = True
-
 
         client = app.test_client()
 
@@ -309,19 +321,23 @@ class TestFlask(AllenNlpTestCase):
         assert data["models"] == ["reading-comprehension"]
 
         # Should return results for that model
-        response = client.post("/predict/reading-comprehension",
-                               content_type="application/json",
-                               data="""{"passage": "the super bowl was played in seattle",
-                                        "question": "where was the super bowl played?"}""")
+        response = client.post(
+            "/predict/reading-comprehension",
+            content_type="application/json",
+            data="""{"passage": "the super bowl was played in seattle",
+                                        "question": "where was the super bowl played?"}""",
+        )
         assert response.status_code == 200
         results = json.loads(response.data)
         assert "best_span" in results
 
         # Other models should be unknown
-        response = client.post("/predict/textual-entailment",
-                               content_type="application/json",
-                               data="""{"premise": "the super bowl was played in seattle",
-                                        "hypothesis": "the super bowl was played in ohio"}""")
+        response = client.post(
+            "/predict/textual-entailment",
+            content_type="application/json",
+            data="""{"premise": "the super bowl was played in seattle",
+                                        "hypothesis": "the super bowl was played in ohio"}""",
+        )
         assert response.status_code == 400
         data = response.get_data()
         assert b"unknown model" in data and b"textual-entailment" in data

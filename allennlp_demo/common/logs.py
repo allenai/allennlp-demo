@@ -8,8 +8,9 @@ from flask import Flask, request, Request, Response, g
 from dataclasses import dataclass, asdict
 from typing import Optional
 
+
 @dataclass(frozen=True)
-class RequestLogEntry():
+class RequestLogEntry:
     status: int
     method: str
     path: str
@@ -19,10 +20,12 @@ class RequestLogEntry():
     time: float
     cached: bool
 
+
 class JsonLogFormatter(logging.Formatter):
     """
     Outputs JSON logs with a structure that works well with Google Cloud Logging.
     """
+
     def format(self, r: logging.LogRecord) -> str:
         # Exceptions get special handling.
         if r.exc_info is not None:
@@ -33,14 +36,21 @@ class JsonLogFormatter(logging.Formatter):
 
             # Otherwise we still output them as JSON
             m = r.getMessage() % r.__dict__
-            return json.dumps({ "logname": r.name, "severity": r.levelname,
-                                "message": m, "exception": self.formatException(r.exc_info),
-                                "stack": self.formatStack(r.stack_info) })
+            return json.dumps(
+                {
+                    "logname": r.name,
+                    "severity": r.levelname,
+                    "message": m,
+                    "exception": self.formatException(r.exc_info),
+                    "stack": self.formatStack(r.stack_info),
+                }
+            )
         if not isinstance(r.msg, str):
-            return json.dumps({ "logname": r.name, "severity": r.levelname, **r.msg })
+            return json.dumps({"logname": r.name, "severity": r.levelname, **r.msg})
         else:
             m = r.getMessage() % r.__dict__
-            return json.dumps({ "logname": r.name, "severity": r.levelname, "message": m })
+            return json.dumps({"logname": r.name, "severity": r.levelname, "message": m})
+
 
 def configure_logging(app: Flask):
     """
@@ -67,9 +77,15 @@ def configure_logging(app: Flask):
     @app.after_request
     def log_request(r: Response) -> Response:
         t = time.perf_counter() - g.start
-        rl = RequestLogEntry(r.status_code, request.method, request.path, request.args,
-                             request.remote_addr, request.headers.get("X-Forwarded-For"), t,
-                             r.headers.get("X-Cache-Hit", "0") == "1")
+        rl = RequestLogEntry(
+            r.status_code,
+            request.method,
+            request.path,
+            request.args,
+            request.remote_addr,
+            request.headers.get("X-Forwarded-For"),
+            t,
+            r.headers.get("X-Cache-Hit", "0") == "1",
+        )
         logging.getLogger("request").info(asdict(rl))
         return r
-

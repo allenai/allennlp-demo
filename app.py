@@ -25,7 +25,12 @@ import pytz
 
 from allennlp.common.util import JsonDict, peak_memory_mb
 from allennlp.predictors import Predictor
-from allennlp.interpret.saliency_interpreters import SaliencyInterpreter, SimpleGradient, IntegratedGradient, SmoothGradient
+from allennlp.interpret.saliency_interpreters import (
+    SaliencyInterpreter,
+    SimpleGradient,
+    IntegratedGradient,
+    SmoothGradient,
+)
 from allennlp.interpret.attackers import Attacker, InputReduction, Hotflip
 from allennlp.version import VERSION
 
@@ -47,18 +52,20 @@ handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 logger.propagate = False
 
-supported_interpret_models = {'named-entity-recognition',
-                              'fine-grained-named-entity-recognition',
-                              'glove-sentiment-analysis',
-                              'roberta-sentiment-analysis',
-                              'elmo-snli',
-                              'roberta-snli',
-                              'roberta-mnli',
-                              'reading-comprehension',
-                              'elmo-reading-comprehension',
-                              'naqanet-reading-comprehension',
-                              'masked-lm',
-                              'next-token-lm'}
+supported_interpret_models = {
+    "named-entity-recognition",
+    "fine-grained-named-entity-recognition",
+    "glove-sentiment-analysis",
+    "roberta-sentiment-analysis",
+    "elmo-snli",
+    "roberta-snli",
+    "roberta-mnli",
+    "reading-comprehension",
+    "elmo-reading-comprehension",
+    "naqanet-reading-comprehension",
+    "masked-lm",
+    "next-token-lm",
+}
 
 
 class ServerError(Exception):
@@ -74,15 +81,18 @@ class ServerError(Exception):
 
     def to_dict(self):
         error_dict = dict(self.payload or ())
-        error_dict['message'] = self.message
+        error_dict["message"] = self.message
         return error_dict
 
-def main(demo_dir: str,
-         port: int,
-         cache_size: int,
-         interpret_cache_size: int,
-         attack_cache_size: int,
-         models: Dict[str, DemoModel]) -> None:
+
+def main(
+    demo_dir: str,
+    port: int,
+    cache_size: int,
+    interpret_cache_size: int,
+    attack_cache_size: int,
+    models: Dict[str, DemoModel],
+) -> None:
     """Run the server programmatically"""
     logger.info("Starting a flask server on port %i.", port)
 
@@ -95,32 +105,36 @@ def main(demo_dir: str,
     # there is an exception when connecting to the database.
     demo_db = PostgresDemoDatabase.from_environment()
     if demo_db is None:
-        logger.warning("database credentials not provided, so not using database (permalinks disabled)")
+        logger.warning(
+            "database credentials not provided, so not using database (permalinks disabled)"
+        )
 
     app = make_app(demo_db=demo_db, models=models)
     CORS(app)
 
-    http_server = WSGIServer(('0.0.0.0', port), app, log=logger, error_log=logger)
+    http_server = WSGIServer(("0.0.0.0", port), app, log=logger, error_log=logger)
 
     logger.info("Server started on port %i.  Please visit: http://localhost:%i", port, port)
     http_server.serve_forever()
 
 
-def make_app(models: Dict[str, DemoModel],
-             demo_db: Optional[DemoDatabase] = None,
-             cache_size: int = 128,
-             interpret_cache_size: int = 500,
-             attack_cache_size: int = 500) -> Flask:
+def make_app(
+    models: Dict[str, DemoModel],
+    demo_db: Optional[DemoDatabase] = None,
+    cache_size: int = 128,
+    interpret_cache_size: int = 500,
+    attack_cache_size: int = 500,
+) -> Flask:
 
     app = Flask(__name__)  # pylint: disable=invalid-name
     start_time = datetime.now(pytz.utc)
     start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S %Z")
 
     app.predictors = {}
-    app.max_request_lengths = {} # requests longer than these will be rejected to prevent OOME
+    app.max_request_lengths = {}  # requests longer than these will be rejected to prevent OOME
     app.attackers = defaultdict(dict)
     app.interpreters = defaultdict(dict)
-    app.wsgi_app = ProxyFix(app.wsgi_app) # sets the requester IP with the X-Forwarded-For header
+    app.wsgi_app = ProxyFix(app.wsgi_app)  # sets the requester IP with the X-Forwarded-For header
 
     for name, demo_model in models.items():
         if demo_model is not None:
@@ -130,18 +144,18 @@ def make_app(models: Dict[str, DemoModel],
             app.max_request_lengths[name] = demo_model.max_request_length
 
             if name in supported_interpret_models:
-                app.interpreters[name]['simple_gradient'] = SimpleGradient(predictor)
-                app.interpreters[name]['integrated_gradient'] = IntegratedGradient(predictor)
-                app.interpreters[name]['smooth_gradient'] = SmoothGradient(predictor)
+                app.interpreters[name]["simple_gradient"] = SimpleGradient(predictor)
+                app.interpreters[name]["integrated_gradient"] = IntegratedGradient(predictor)
+                app.interpreters[name]["smooth_gradient"] = SmoothGradient(predictor)
                 app.attackers[name]["input_reduction"] = InputReduction(predictor)
-                if name == 'masked-lm':
-                    app.attackers[name]["hotflip"] = Hotflip(predictor, 'bert')
+                if name == "masked-lm":
+                    app.attackers[name]["hotflip"] = Hotflip(predictor, "bert")
                 elif name == "next-token-lm":
-                    app.attackers[name]["hotflip"] = Hotflip(predictor, 'gpt2')
-                elif 'named-entity-recognition' in name:
+                    app.attackers[name]["hotflip"] = Hotflip(predictor, "gpt2")
+                elif "named-entity-recognition" in name:
                     # We haven't implemented hotflip for NER.
                     continue
-                elif name == 'textual-entailment':
+                elif name == "textual-entailment":
                     # The SNLI model only has ELMo embeddings, which don't work with hotflip on
                     # their own.
                     continue
@@ -179,23 +193,31 @@ def make_app(models: Dict[str, DemoModel],
         return interpreter.saliency_interpret_from_json(json.loads(data))
 
     @lru_cache(maxsize=attack_cache_size)
-    def _caching_attack(attacker: Attacker, data: str, input_field_to_attack: str, grad_input_field: str, target: str) -> JsonDict:
+    def _caching_attack(
+        attacker: Attacker,
+        data: str,
+        input_field_to_attack: str,
+        grad_input_field: str,
+        target: str,
+    ) -> JsonDict:
         """
         Just a wrapper around ``model.attack_from_json`` that allows us to use a cache decorator.
         """
-        return attacker.attack_from_json(inputs=json.loads(data),
-                                         input_field_to_attack=input_field_to_attack,
-                                         grad_input_field=grad_input_field,
-                                         target=json.loads(target))
+        return attacker.attack_from_json(
+            inputs=json.loads(data),
+            input_field_to_attack=input_field_to_attack,
+            grad_input_field=grad_input_field,
+            target=json.loads(target),
+        )
 
-    @app.route('/')
-    def index() -> str: # pylint: disableunused-variable
+    @app.route("/")
+    def index() -> str:  # pylint: disableunused-variable
         loaded_modules = {}
         for n, m in models.items():
             loaded_modules[n] = m.__dict__
-        return jsonify({ "allennlp_version": VERSION, "models": loaded_modules })
+        return jsonify({"allennlp_version": VERSION, "models": loaded_modules})
 
-    @app.route('/permadata/<model_name>', methods=['POST', 'OPTIONS'])
+    @app.route("/permadata/<model_name>", methods=["POST", "OPTIONS"])
     def permadata(model_name: str) -> Response:  # pylint: disable=unused-variable
         """
         If the user requests a permalink, the front end will POST here with the payload
@@ -208,7 +230,7 @@ def make_app(models: Dict[str, DemoModel],
 
         # If we don't have a database configured, there are no permalinks.
         if demo_db is None:
-            raise ServerError('Permalinks are not enabled', 400)
+            raise ServerError("Permalinks are not enabled", 400)
 
         # Convert the provided slug to an integer id.
         slug = request.get_json()["slug"]
@@ -222,19 +244,21 @@ def make_app(models: Dict[str, DemoModel],
             permadata = demo_db.get_result(perma_id)
         except psycopg2.Error:
             logger.exception("Unable to get results from database: perma_id %s", perma_id)
-            raise ServerError('Database trouble', 500)
+            raise ServerError("Database trouble", 500)
 
         if permadata is None:
             # No data found, invalid id?
             raise ServerError("Unrecognized permalink: {}".format(slug), 400)
 
-        return jsonify({
+        return jsonify(
+            {
                 "modelName": permadata.model_name,
                 "requestData": permadata.request_data,
-                "responseData": permadata.response_data
-        })
+                "responseData": permadata.response_data,
+            }
+        )
 
-    @app.route('/predict/<model_name>', methods=['POST', 'OPTIONS'])
+    @app.route("/predict/<model_name>", methods=["POST", "OPTIONS"])
     def predict(model_name: str) -> Response:  # pylint: disable=unused-variable
         """make a prediction using the specified model and return the results"""
         if request.method == "OPTIONS":
@@ -256,8 +280,10 @@ def make_app(models: Dict[str, DemoModel],
 
         serialized_request = json.dumps(data)
         if len(serialized_request) > max_request_length:
-            raise ServerError(f"Max request length exceeded for model {model_name}! " +
-                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+            raise ServerError(
+                f"Max request length exceeded for model {model_name}! "
+                + f"Max: {max_request_length} Actual: {len(serialized_request)}"
+            )
 
         logger.info("request: %s", json.dumps({"model": model_name, "inputs": data}))
 
@@ -270,10 +296,12 @@ def make_app(models: Dict[str, DemoModel],
         if record_to_database and demo_db is not None:
             try:
                 perma_id = None
-                perma_id = demo_db.insert_request(headers=dict(request.headers),
-                                                  requester=request.remote_addr,
-                                                  model_name=model_name,
-                                                  inputs=data)
+                perma_id = demo_db.insert_request(
+                    headers=dict(request.headers),
+                    requester=request.remote_addr,
+                    model_name=model_name,
+                    inputs=data,
+                )
 
             except Exception:  # pylint: disable=broad-except
                 # TODO(joelgrus): catch more specific errors
@@ -308,13 +336,13 @@ def make_app(models: Dict[str, DemoModel],
         # The model predictions are extremely verbose, so we only log the most human-readable
         # parts of them.
         if "comprehension" in model_name:
-            if 'best_span_str' in prediction:
-                answer = prediction['best_span_str']
+            if "best_span_str" in prediction:
+                answer = prediction["best_span_str"]
             else:
-                answer = prediction['answer']
+                answer = prediction["answer"]
             log_blob["outputs"]["answer"] = answer
         elif model_name == "nmn-drop":
-            answer = prediction['answer']
+            answer = prediction["answer"]
             log_blob["outputs"]["answer"] = answer
         elif model_name == "coreference-resolution":
             log_blob["outputs"]["clusters"] = prediction["clusters"]
@@ -337,20 +365,20 @@ def make_app(models: Dict[str, DemoModel],
         elif model_name == "constituency-parsing":
             log_blob["outputs"]["trees"] = prediction["trees"]
         elif model_name == "wikitables-parser":
-             log_blob['outputs']['logical_form'] = prediction['logical_form']
-             log_blob['outputs']['answer'] = prediction['answer']
+            log_blob["outputs"]["logical_form"] = prediction["logical_form"]
+            log_blob["outputs"]["answer"] = prediction["answer"]
         elif model_name == "nlvr-parser":
-             log_blob['outputs']['logical_form'] = prediction['logical_form'][0]
-             log_blob['outputs']['answer'] = prediction['denotations'][0][0]
+            log_blob["outputs"]["logical_form"] = prediction["logical_form"][0]
+            log_blob["outputs"]["answer"] = prediction["denotations"][0][0]
         elif model_name == "atis-parser":
-            log_blob['outputs']['predicted_sql_query'] = prediction['predicted_sql_query']
+            log_blob["outputs"]["predicted_sql_query"] = prediction["predicted_sql_query"]
         # TODO(brendanr): Add event2mind log_blob here?
 
         logger.info("prediction: %s", json.dumps(log_blob))
 
         return jsonify(prediction)
 
-    @app.route('/attack/<model_name>', methods=['POST','OPTIONS'])
+    @app.route("/attack/<model_name>", methods=["POST", "OPTIONS"])
     def attack(model_name: str) -> Response:
         """
         Modify input to change prediction of model
@@ -374,27 +402,40 @@ def make_app(models: Dict[str, DemoModel],
             raise ServerError("unknown model: {}".format(model_name), status_code=400)
         attacker = model_attackers.get(attacker_name)
         if attacker is None:
-            raise ServerError("unknown attacker for model: {} {}".format(attacker_name, model_name), status_code=400)
+            raise ServerError(
+                "unknown attacker for model: {} {}".format(attacker_name, model_name),
+                status_code=400,
+            )
 
         max_request_length = app.max_request_lengths[lowered_model_name]
         serialized_request = json.dumps(data)
         if len(serialized_request) > max_request_length:
-            raise ServerError(f"Max request length exceeded for model {model_name}! " +
-                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+            raise ServerError(
+                f"Max request length exceeded for model {model_name}! "
+                + f"Max: {max_request_length} Actual: {len(serialized_request)}"
+            )
 
         pre_hits = _caching_attack.cache_info().hits  # pylint: disable=no-value-for-parameter
 
         if use_cache and attack_cache_size > 0:
             # lru_cache insists that all function arguments be hashable,
             # so unfortunately we have to stringify the data.
-            attack = _caching_attack(attacker, json.dumps(data), input_field_to_attack, grad_input_field, json.dumps(target))
+            attack = _caching_attack(
+                attacker,
+                json.dumps(data),
+                input_field_to_attack,
+                grad_input_field,
+                json.dumps(target),
+            )
 
         else:
             # if cache_size is 0, skip caching altogether
-            attack = attacker.attack_from_json(inputs=data,
-                                               input_field_to_attack=input_field_to_attack,
-                                               grad_input_field=grad_input_field,
-                                               target=target)
+            attack = attacker.attack_from_json(
+                inputs=data,
+                input_field_to_attack=input_field_to_attack,
+                grad_input_field=grad_input_field,
+                target=target,
+            )
 
         post_hits = _caching_attack.cache_info().hits  # pylint: disable=no-value-for-parameter
 
@@ -404,7 +445,7 @@ def make_app(models: Dict[str, DemoModel],
 
         return jsonify(attack)
 
-    @app.route('/interpret/<model_name>', methods=['POST', 'OPTIONS'])
+    @app.route("/interpret/<model_name>", methods=["POST", "OPTIONS"])
     def interpret(model_name: str) -> Response:
         """
         Interpret prediction of the model
@@ -425,14 +466,19 @@ def make_app(models: Dict[str, DemoModel],
             raise ServerError("no interpreters for model: {}".format(model_name), status_code=400)
         interpreter = model_interpreters.get(interpreter_name)
         if interpreter is None:
-            raise ServerError("unknown interpreter for model: {} {}".format(interpreter_name, model_name), status_code=400)
+            raise ServerError(
+                "unknown interpreter for model: {} {}".format(interpreter_name, model_name),
+                status_code=400,
+            )
 
         max_request_length = app.max_request_lengths[lowered_model_name]
 
         serialized_request = json.dumps(data)
         if len(serialized_request) > max_request_length:
-            raise ServerError(f"Max request length exceeded for interpreter {model_name}! " +
-                              f"Max: {max_request_length} Actual: {len(serialized_request)}")
+            raise ServerError(
+                f"Max request length exceeded for interpreter {model_name}! "
+                + f"Max: {max_request_length} Actual: {len(serialized_request)}"
+            )
 
         pre_hits = _caching_interpret.cache_info().hits  # pylint: disable=no-value-for-parameter
 
@@ -452,32 +498,36 @@ def make_app(models: Dict[str, DemoModel],
 
         return jsonify(interpretation)
 
-    @app.route('/models')
+    @app.route("/models")
     def list_models() -> Response:  # pylint: disable=unused-variable
         """list the available models"""
         return jsonify({"models": list(app.predictors.keys())})
 
-    @app.route('/info')
+    @app.route("/info")
     def info() -> Response:  # pylint: disable=unused-variable
         """List metadata about the running webserver"""
         uptime = str(datetime.now(pytz.utc) - start_time)
-        git_version = os.environ.get('ALLENNLP_DEMO_SOURCE_COMMIT') or ""
-        return jsonify({
+        git_version = os.environ.get("ALLENNLP_DEMO_SOURCE_COMMIT") or ""
+        return jsonify(
+            {
                 "start_time": start_time_str,
                 "uptime": uptime,
                 "git_version": git_version,
                 "peak_memory_mb": peak_memory_mb(),
-                "githubUrl": "http://github.com/allenai/allennlp-demo/commit/" + git_version})
+                "githubUrl": "http://github.com/allenai/allennlp-demo/commit/" + git_version,
+            }
+        )
 
-    @app.route('/health')
+    @app.route("/health")
     def health() -> Response:  # pylint: disable=unused-variable
         return "healthy"
 
-
-  # As an SPA, we need to return index.html for /model-name and /model-name/permalink
-    def return_page(permalink: str = None) -> Response:  # pylint: disable=unused-argument, unused-variable
+    # As an SPA, we need to return index.html for /model-name and /model-name/permalink
+    def return_page(
+        permalink: str = None,
+    ) -> Response:  # pylint: disable=unused-argument, unused-variable
         """return the page"""
-        return send_file(os.path.join(build_dir, 'index.html'))
+        return send_file(os.path.join(build_dir, "index.html"))
 
     for model_name in models:
         logger.info(f"setting up default routes for {model_name}")
@@ -486,25 +536,53 @@ def make_app(models: Dict[str, DemoModel],
 
     return app
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("start the allennlp demo")
-    parser.add_argument('--port', type=int, default=8000, help='port to serve the demo on')
-    parser.add_argument('--demo-dir', type=str, default='demo/', help="directory where the demo HTML is located")
-    parser.add_argument('--cache-size', type=int, default=128, help="how many results to keep in memory")
-    parser.add_argument('--interpret-cache-size', type=int, default=500, help="how many interpretation results to keep in memory")
-    parser.add_argument('--attack-cache-size', type=int, default=500, help="how many attack results to keep in memory")
-    parser.add_argument('--models-file', type=str, default='models.json', help="json file containing the details of the models to load")
+    parser.add_argument("--port", type=int, default=8000, help="port to serve the demo on")
+    parser.add_argument(
+        "--demo-dir", type=str, default="demo/", help="directory where the demo HTML is located"
+    )
+    parser.add_argument(
+        "--cache-size", type=int, default=128, help="how many results to keep in memory"
+    )
+    parser.add_argument(
+        "--interpret-cache-size",
+        type=int,
+        default=500,
+        help="how many interpretation results to keep in memory",
+    )
+    parser.add_argument(
+        "--attack-cache-size",
+        type=int,
+        default=500,
+        help="how many attack results to keep in memory",
+    )
+    parser.add_argument(
+        "--models-file",
+        type=str,
+        default="models.json",
+        help="json file containing the details of the models to load",
+    )
 
     models_group = parser.add_mutually_exclusive_group()
-    models_group.add_argument('--model', type=str, action='append', default=[], help='if specified, only load these models')
+    models_group.add_argument(
+        "--model",
+        type=str,
+        action="append",
+        default=[],
+        help="if specified, only load these models",
+    )
 
     args = parser.parse_args()
 
     models = load_demo_models(args.models_file, args.model)
 
-    main(demo_dir=args.demo_dir,
-         port=args.port,
-         cache_size=args.cache_size,
-         interpret_cache_size=args.interpret_cache_size,
-         attack_cache_size=args.attack_cache_size,
-         models=models)
+    main(
+        demo_dir=args.demo_dir,
+        port=args.port,
+        cache_size=args.cache_size,
+        interpret_cache_size=args.interpret_cache_size,
+        attack_cache_size=args.attack_cache_size,
+        models=models,
+    )

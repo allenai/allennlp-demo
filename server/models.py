@@ -21,8 +21,8 @@ from server.gpt2 import Gpt2DemoModel
 # that have the same ``Predictor`` wrapper. The corresponding model
 # will be served at the `/predict/<name-of-task>` API endpoint.
 
-def load_demo_models(models_file: str,
-                     task_names: List[str] = None) -> Dict[str, DemoModel]:
+
+def load_demo_models(models_file: str, task_names: List[str] = None) -> Dict[str, DemoModel]:
     with open(models_file) as f:
         blob = json.load(f)
 
@@ -49,10 +49,10 @@ def load_demo_models(models_file: str,
             raise ValueError(f"unknown model type: {model_type}")
 
         demo_models[task_name] = load(
-                    archive_file=model["archive_file"],
-                    predictor_name=model["predictor_name"],
-                    max_request_length=model["max_request_length"],
-                    overrides=model.get("overrides", "")
+            archive_file=model["archive_file"],
+            predictor_name=model["predictor_name"],
+            max_request_length=model["max_request_length"],
+            overrides=model.get("overrides", ""),
         )
 
     return demo_models
