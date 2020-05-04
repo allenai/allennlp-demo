@@ -11,7 +11,7 @@ class NMNDropModelEndpoint(http.ModelEndpoint):
     def __init__(self):
         import_submodules("semqa")
         c = config.Model.from_file(os.path.join(os.path.dirname(__file__), "model.json"))
-        super().__init__(c, load_plugins=False)
+        super().__init__(c)
 
     # The demo doesn't use the attack endpoints, so they're disabled for now.
     def load_attackers(self) -> Mapping:

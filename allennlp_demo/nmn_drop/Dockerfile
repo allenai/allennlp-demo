@@ -11,9 +11,12 @@ RUN pip install -r nmn_drop/requirements.txt
 RUN spacy download en_core_web_sm
 RUN spacy download en_core_web_lg
 
-# TODO: We should convert `nmn-drop` into a package we can install via `pip install` instead.
-# Also, I can't help but notice that `nmn-drop` is periliously clous to `nmn_drop`. This will
-# certainly cause confusion at some point.
+# There's some extra code we need. We put it here so it's separated from the
+# demo code.
+WORKDIR /lib
+
+# TODO: We should convert `nmn-drop` into a package we can install via
+# `pip install` instead.
 RUN git clone https://github.com/nitishgupta/nmn-drop nmn-drop && \
     cd nmn-drop && \
     git checkout 108234c2675e2ba9feb20861082ad70663d7e6b4 && \
@@ -22,6 +25,9 @@ RUN git clone https://github.com/nitishgupta/nmn-drop nmn-drop && \
     ln -s nmn-drop/utils . && \
     ln -s nmn-drop/datasets . && \
     ln -s nmn-drop/pattn2count_ckpt .
+
+# This allows the libraries we just added to `/lib` to be loaded by name.
+ENV PYTHONPATH /lib
 
 WORKDIR /allennlp_demo
 

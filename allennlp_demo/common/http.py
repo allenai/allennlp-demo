@@ -59,16 +59,10 @@ class ModelEndpoint:
 
     This class can be extended to implement custom functionality.
     """
-    def __init__(self, model: config.Model, load_plugins: bool = True):
+    def __init__(self, model: config.Model):
         self.model = model
         self.app = Flask(model.id)
         self.configure_logging()
-
-        # TODO: I'm no Python expert, but this seems a bit risky. There's all sorts of side-effect
-        # that importing at runtime could entail. That said we know we only import this once
-        # while instantiating an endpoint, so maybe it's ok. I'll ask about this before merging.
-        if load_plugins:
-            import allennlp_plugins.allennlp_models
 
         o = json.dumps(model.overrides) if model.overrides is not None else ""
         archive = load_archive(model.archive_file, overrides=o)
