@@ -55,6 +55,5 @@ that's restarted whenever you change the code.
 Each endpoint has tests. To run them run `pytest` in the model endpoint's working directory:
 
 ```bash
-cd allennlp_demo/bidaf/
-pytest
+pytest allennlp_demo/bidaf
 ```
