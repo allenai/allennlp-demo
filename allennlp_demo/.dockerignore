@@ -3,3 +3,4 @@
 **/Dockerfile
 **/*.pyc
 **/*.md
+**/.mypy_cache
