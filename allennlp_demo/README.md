@@ -29,6 +29,12 @@ To build and run an image for a single model, run the command below from the roo
 make allennlp_demo/bidaf/Dockerfile
 ```
 
+If you just want to run the tests for a single model, do this:
+
+```bash
+make allennlp_demo/bidaf/Dockerfile ARGS='-m pytest'
+```
+
 ## Local Development
 
 You can use [Miniconda](https://docs.conda.io/en/latest/miniconda.html) to
