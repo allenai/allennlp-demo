@@ -38,6 +38,17 @@ jobs:
       run: |
         make typecheck
 
+  bidaf:
+    name: Model (bidaf)
+    runs-on: [self-hosted]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build and test image
+      run: |
+        make allennlp_demo/bidaf/Dockerfile ARGS='-m pytest'
+
   docker:
     name: Docker
     runs-on: ubuntu-latest
