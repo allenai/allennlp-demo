@@ -5,7 +5,7 @@ FROM allennlp/commit:ff0d44a5e21d5e6256c73b5b9f216a87c5743f91
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /allennlp_demo
-COPY nmn_drop/requirements.txt nmn_drop/requirements.txt
+COPY allennlp_demo/nmn_drop/requirements.txt nmn_drop/requirements.txt
 RUN pip install -r nmn_drop/requirements.txt
 
 RUN spacy download en_core_web_sm
@@ -31,9 +31,9 @@ ENV PYTHONPATH /lib:/
 
 WORKDIR /allennlp_demo
 
-COPY __init__.py .
-COPY common common
-COPY nmn_drop nmn_drop
+COPY allennlp_demo/__init__.py .
+COPY allennlp_demo/common common
+COPY allennlp_demo/nmn_drop nmn_drop
 
 ENTRYPOINT [ "python" ]
 CMD [ "nmn_drop/api.py" ]

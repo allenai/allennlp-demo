@@ -5,14 +5,14 @@ FROM python:3.7.7-stretch
 LABEL maintainer="allennlp-contact@allenai.org"
 
 WORKDIR /allennlp_demo
-COPY bidaf_elmo/requirements.txt bidaf_elmo/requirements.txt
+COPY allennlp_demo/bidaf_elmo/requirements.txt bidaf_elmo/requirements.txt
 RUN pip install -r bidaf_elmo/requirements.txt
 
 RUN spacy download en_core_web_sm
 
-COPY __init__.py .
-COPY common common
-COPY bidaf_elmo bidaf_elmo
+COPY allennlp_demo/__init__.py .
+COPY allennlp_demo/common common
+COPY allennlp_demo/bidaf_elmo bidaf_elmo
 
 # Ensure `/allennlp_demo` module can be found by Python.
 ENV PYTHONPATH /
