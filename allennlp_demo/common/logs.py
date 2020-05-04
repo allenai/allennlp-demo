@@ -32,14 +32,14 @@ class JsonLogFormatter(logging.Formatter):
                 return self.formatException(r.exc_info)
 
             # Otherwise we still output them as JSON
+            m = r.getMessage() % r.__dict__
             return json.dumps({ "logname": r.name, "severity": r.levelname,
-                                "message": r.getMessage(),
-                                "exception": self.formatException(r.exc_info),
+                                "message": m, "exception": self.formatException(r.exc_info),
                                 "stack": self.formatStack(r.stack_info) })
-        m = r.msg
-        if not isinstance(m, str):
-            return json.dumps({ "logname": r.name, "severity": r.levelname, **m })
+        if not isinstance(r.msg, str):
+            return json.dumps({ "logname": r.name, "severity": r.levelname, **r.msg })
         else:
+            m = r.getMessage() % r.__dict__
             return json.dumps({ "logname": r.name, "severity": r.levelname, "message": m })
 
 def configure_logging(app: Flask):
