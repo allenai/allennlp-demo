@@ -6,11 +6,17 @@ from allennlp.version import VERSION
 from allennlp_demo.common import config
 from allennlp_demo.common.logs import configure_logging
 from allennlp.predictors.predictor import Predictor, JsonDict
-from allennlp.interpret.saliency_interpreters import SaliencyInterpreter, SimpleGradient, SmoothGradient, IntegratedGradient
+from allennlp.interpret.saliency_interpreters import (
+    SaliencyInterpreter,
+    SimpleGradient,
+    SmoothGradient,
+    IntegratedGradient,
+)
 from allennlp.interpret.attackers import Attacker, Hotflip, InputReduction
 from allennlp.models.archival import load_archive
 from functools import lru_cache
 from dataclasses import asdict
+
 
 def no_cache(request: Request) -> bool:
     """
@@ -19,6 +25,7 @@ def no_cache(request: Request) -> bool:
     This provides a consistent mechanism across all endpoints for disabling the cache.
     """
     return "no_cache" in request.args
+
 
 def with_cache_hit_response_headers(fn: Callable, *args):
     """
@@ -29,28 +36,33 @@ def with_cache_hit_response_headers(fn: Callable, *args):
     """
     # This allows us to determine if the response we're serving was cached. It's safe to
     # do because we use a single-threaded server.
-    pre_hits = fn.cache_info().hits
+    pre_hits = fn.cache_info().hits  # type: ignore
     r = fn(*args)
 
     # If it was a cache hit add a HTTP header to the response
-    if fn.cache_info().hits - pre_hits == 1:
+    if fn.cache_info().hits - pre_hits == 1:  # type: ignore
+
         @after_this_request
         def add_header(resp: Response) -> Response:
-            resp.headers['X-Cache-Hit'] = "1"
+            resp.headers["X-Cache-Hit"] = "1"
             return resp
 
     return r
 
+
 class NotFoundError(RuntimeError):
     pass
+
 
 class UnknownInterpreterError(NotFoundError):
     def __init__(self, interpreter_id: str):
         super().__init__(f"No interpreter with id {interpreter_id}")
 
+
 class UnknownAttackerError(NotFoundError):
     def __init__(self, attacker_id: str):
         super().__init__(f"No attacker with id {attacker_id}")
+
 
 class ModelEndpoint:
     """
@@ -59,6 +71,7 @@ class ModelEndpoint:
 
     This class can be extended to implement custom functionality.
     """
+
     def __init__(self, model: config.Model):
         self.model = model
         self.app = Flask(model.id)
@@ -80,9 +93,11 @@ class ModelEndpoint:
         `/interpret/:id` will invoke the interpreter with the provided `:id`. Override this method
         to add or remove interpreters.
         """
-        return { "simple": SimpleGradient(self.predictor),
-                 "smooth": SmoothGradient(self.predictor),
-                 "integrated": IntegratedGradient(self.predictor) }
+        return {
+            "simple": SimpleGradient(self.predictor),
+            "smooth": SmoothGradient(self.predictor),
+            "integrated": IntegratedGradient(self.predictor),
+        }
 
     def load_attackers(self) -> Mapping[str, Attacker]:
         """
@@ -92,14 +107,13 @@ class ModelEndpoint:
         """
         hotflip = Hotflip(self.predictor)
         hotflip.initialize()
-        return { "hotflip": hotflip,
-                 "input-reduction": InputReduction(self.predictor) }
+        return {"hotflip": hotflip, "input-reduction": InputReduction(self.predictor)}
 
     def info(self) -> str:
         """
         Returns basic information about the model and the version of AllenNLP.
         """
-        return jsonify({ **asdict(self.model), "allennlp": VERSION })
+        return jsonify({**asdict(self.model), "allennlp": VERSION})
 
     def predict(self, inputs: JsonDict) -> JsonDict:
         """
@@ -132,11 +146,13 @@ class ModelEndpoint:
 
     def configure_error_handling(self) -> None:
         def handle_invalid_json(err: json.JSONDecodeError):
-            return jsonify({ "error": str(err) }), 400
+            return jsonify({"error": str(err)}), 400
+
         self.app.register_error_handler(json.JSONDecodeError, handle_invalid_json)
 
         def handle_404(err: NotFoundError):
-            return jsonify({ "error": str(err) }), 404
+            return jsonify({"error": str(err)}), 404
+
         self.app.register_error_handler(NotFoundError, handle_404)
 
     def setup_routes(self) -> None:
@@ -144,6 +160,7 @@ class ModelEndpoint:
         Binds HTTP paths to verbs supported by a standard model endpoint. You can override this
         method to define additional routes or change the default ones.
         """
+
         @self.app.route("/")
         def info_handler():
             return self.info()
@@ -166,8 +183,9 @@ class ModelEndpoint:
         def interpet_handler(interpreter_id: str):
             if no_cache(request):
                 return jsonify(self.interpret(interpreter_id, request.get_json()))
-            return jsonify(with_cache_hit_response_headers(interpret_with_cache, interpreter_id,
-                                                           request.data))
+            return jsonify(
+                with_cache_hit_response_headers(interpret_with_cache, interpreter_id, request.data)
+            )
 
         @lru_cache(maxsize=1024)
         def attack_with_cache(attacker_id: str, attack: str) -> JsonDict:
@@ -177,8 +195,9 @@ class ModelEndpoint:
         def attack_handler(attacker_id: str):
             if no_cache(request):
                 return jsonify(self.attack(attacker_id, request.get_json()))
-            return jsonify(with_cache_hit_response_headers(attack_with_cache, attacker_id,
-                                                           request.data))
+            return jsonify(
+                with_cache_hit_response_headers(attack_with_cache, attacker_id, request.data)
+            )
 
     def run(self, port: int = 8000) -> None:
         # For simplicity, we use Flask's built in server. This isn't recommended, per:

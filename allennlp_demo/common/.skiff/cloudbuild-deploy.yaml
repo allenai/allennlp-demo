@@ -13,7 +13,6 @@ steps:
     --cache-from, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH-api:latest,
     .,
   ]
-  dir: allennlp_demo
 - id: push
   name: gcr.io/cloud-builders/docker
   args: [ push, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH-api:$COMMIT_SHA ]

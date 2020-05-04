@@ -1,3 +1,6 @@
-__pycache__
-
-*.pyc
+**/.skiff
+**/__pycache__
+**/Dockerfile
+**/*.pyc
+**/*.md
+**/.mypy_cache
