@@ -52,11 +52,11 @@ selected a model, follow these steps to port it to the new solution:
    `allennlp_demo.bidaf` import with `allennlp_demo.oscar_drop`.
 
 7. At this point it's time to build a Docker image and run the tests. You should
-   do this in the `allennlp_demo` directory.
+   do this in the root directory.
 
     ```bash
     cd allennlp_demo
-    docker build -f oscar_drop/Dockerfile -t oscar_drop:latest && \
+    docker build -f allennlp_demo/oscar_drop/Dockerfile -t oscar_drop:latest . && \
         docker run --rm -it --entrypoint pytest oscar_drop:latest -x -ra
     ```
 
