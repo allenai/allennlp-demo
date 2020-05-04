@@ -42,7 +42,11 @@ selected a model, follow these steps to port it to the new solution:
       the grouch to anything else.
 
 5. Next edit `api.py`. Replace all instances of `Bidaf` with `OscarDROP` so
-   that `BidafModelEndpoint` becomes `OscarDROPModelEndpoint`.
+   that `BidafModelEndpoint` becomes `OscarDROPModelEndpoint`. At this point
+   you should also scan `app.py` for any code or behavior that's specific
+   to the model you're porting. If the model requires custom behavior you'll
+   need to code that into this file. This might require `common/` changes,
+   in which case just make sure you run the tests for each endpoint.
 
 6. Now open up `test_api.py` and do the same. You'll also need to replace the
    `allennlp_demo.bidaf` import with `allennlp_demo.oscar_drop`.
