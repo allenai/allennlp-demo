@@ -76,13 +76,32 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        make allennlp_demo/bidaf/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest'
+        make allennlp_demo/bidaf/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest -v'
 
-  bidaf_elmo:
-    name: Model (bidaf_elmo)
+  # TODO: these tests take way too long.
+  # bidaf_elmo:
+  #   name: Model (bidaf_elmo)
+  #   runs-on: [self-hosted]
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Build and test image
+  #     run: |
+  #       make allennlp_demo/bidaf_elmo/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest -v'
+
+  naqanet:
+    name: Model (naqanet)
     runs-on: [self-hosted]
     steps:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        make allennlp_demo/bidaf_elmo/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest'
+        make allennlp_demo/naqanet/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest -v'
+
+  nmn_drop:
+    name: Model (nmn_drop)
+    runs-on: [self-hosted]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test image
+      run: |
+        make allennlp_demo/nmn_drop/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest -v'
