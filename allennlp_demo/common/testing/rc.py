@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from typing import List
 
 from secrets import token_urlsafe
@@ -21,13 +22,13 @@ def make_rc_endpoint_test_case():
         as necessary.
         """
 
+        FIXTURES_ROOT: Path = (Path(__file__).parent / "fixtures").resolve()
+
         endpoint: ModelEndpoint
 
         def setUp(self):
             super().setUp()
-            with open(
-                self.PROJECT_ROOT / "allennlp_demo" / "common" / "testing" / "fixtures" / "rc.json"
-            ) as fh:
+            with open(self.FIXTURES_ROOT / "rc.json") as fh:
                 self.rc_input = json.load(fh)
 
         def interpreter_ids(self) -> List[str]:
