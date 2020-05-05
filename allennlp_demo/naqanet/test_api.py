@@ -14,7 +14,7 @@ class TestNAQANetModelEndpoint(make_rc_endpoint_test_case()):  # type: ignore
         return [aid for aid in super().attacker_ids() if aid != "hotflip"]
 
     def test_predict(self):
-        resp = self.client.post("/predict", query_string={"no_cache": True}, json=self.rc_input())
+        resp = self.client.post("/predict", query_string={"no_cache": True}, json=self.rc_input)
         assert resp.status_code == 200
         assert resp.json is not None
         assert "answer" in resp.json
