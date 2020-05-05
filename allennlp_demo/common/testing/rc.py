@@ -4,7 +4,7 @@ from typing import List
 from secrets import token_urlsafe
 
 from allennlp_demo.common.http import ModelEndpoint
-from .model_endpoint_test_case import ModelEndpointTestCase
+from allennlp_demo.common.testing.model_endpoint_test_case import ModelEndpointTestCase
 
 
 def make_rc_endpoint_test_case():
