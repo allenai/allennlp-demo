@@ -8,6 +8,9 @@ from allennlp.common.util import JsonDict
 from allennlp.common.testing import AllenNlpTestCase
 from allennlp.models.archival import load_archive
 from allennlp.predictors import Predictor
+from allennlp_models.rc import bidaf  # noqa: F401
+from allennlp_models.syntax import srl  # noqa: F401
+from allennlp_models import nli  # noqa: F401
 from flask import Response
 import pytest
 from werkzeug.test import Client
@@ -15,7 +18,7 @@ from werkzeug.test import Client
 import app
 from app import make_app
 from server.db import InMemoryDemoDatabase
-from server.models import DemoModel
+from server.demo_model import DemoModel
 
 TEST_ARCHIVE_FILES = {
     "reading-comprehension": "tests/fixtures/bidaf/model.tar.gz",

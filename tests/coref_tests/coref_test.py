@@ -2,6 +2,7 @@ import json
 import os
 from typing import Optional
 
+from allennlp_models import coref  # noqa: F401
 from flask import Response
 from werkzeug.test import Client
 
