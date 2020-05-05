@@ -19,4 +19,4 @@ COPY allennlp_demo/constituency_parser constituency_parser
 ENV PYTHONPATH /
 
 ENTRYPOINT [ "python" ]
-CMD [ "constituency-parser/api.py" ]
+CMD [ "constituency_parser/api.py" ]

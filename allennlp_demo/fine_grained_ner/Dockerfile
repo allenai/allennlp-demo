@@ -19,4 +19,4 @@ COPY allennlp_demo/fine_grained_ner fine_grained_ner
 ENV PYTHONPATH /
 
 ENTRYPOINT [ "python" ]
-CMD [ "fine_graine_ner/api.py" ]
+CMD [ "fine_grained_ner/api.py" ]
