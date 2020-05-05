@@ -1,7 +1,5 @@
 from typing import List
 
-from flask.testing import FlaskClient
-
 from allennlp_demo.common.testing import make_rc_endpoint_test_case
 from allennlp_demo.naqanet.api import NAQANetModelEndpoint
 
