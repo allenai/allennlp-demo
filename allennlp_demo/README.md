@@ -26,13 +26,13 @@ dependencies and copy over code from `common/` as needed.
 To build and run an image for a single model, run the command below from the root of this repo, replacing `bidaf` with the model you'd like to build:
 
 ```bash
-make allennlp_demo/bidaf/Dockerfile
+make bidaf-run
 ```
 
 If you just want to run the tests for a single model, do this:
 
 ```bash
-make allennlp_demo/bidaf/Dockerfile ARGS='-m pytest'
+make bidaf-test
 ```
 
 ## Local Development

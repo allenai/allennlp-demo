@@ -16,9 +16,17 @@ typecheck :
 		--no-site-packages \
 		--cache-dir=/dev/null
 
-allennlp_demo/%/Dockerfile : context.tar.gz FORCE
-	docker build -f $@ -t allennlp-demo-$*:$(DOCKER_LABEL) - < context.tar.gz
+.PHONY :
+%-build : allennlp_demo/%/Dockerfile context.tar.gz
+	docker build -f $< -t allennlp-demo-$*:$(DOCKER_LABEL) - < context.tar.gz
+
+.PHONY :
+%-run : %-build
 	docker run --rm -p $(DOCKER_PORT):8000 -v $$HOME/.allennlp:/root/.allennlp allennlp-demo-$*:$(DOCKER_LABEL) $(ARGS)
+
+.PHONY :
+%-test : %-build
+	docker run --rm -v $$HOME/.allennlp:/root/.allennlp allennlp-demo-$*:$(DOCKER_LABEL) -m pytest -v --color=yes
 
 context.tar.gz : FORCE
 	tar -czvf $@ $(DEMO_SRCS)
