@@ -4,7 +4,7 @@ from allennlp_demo.bidaf_elmo.api import BidafElmoModelEndpoint
 from allennlp_demo.common.testing import make_rc_endpoint_test_case
 
 
-class TestBidafElmoModelEndpoint(make_rc_endpoint_test_case()):
+class TestBidafElmoModelEndpoint(make_rc_endpoint_test_case()):  # type: ignore
     endpoint = BidafElmoModelEndpoint()
 
     def attacker_ids(self) -> List[str]:

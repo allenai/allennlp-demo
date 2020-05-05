@@ -6,7 +6,7 @@ from allennlp_demo.common.testing import make_rc_endpoint_test_case
 from allennlp_demo.naqanet.api import NAQANetModelEndpoint
 
 
-class TestNAQANetModelEndpoint(make_rc_endpoint_test_case):
+class TestNAQANetModelEndpoint(make_rc_endpoint_test_case()):  # type: ignore
     endpoint = NAQANetModelEndpoint()
 
     def attacker_ids(self) -> List[str]:
