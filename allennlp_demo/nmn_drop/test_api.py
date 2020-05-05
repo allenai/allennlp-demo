@@ -6,7 +6,7 @@ from allennlp_demo.nmn_drop.api import NMNDropModelEndpoint
 from allennlp_demo.common.testing import make_rc_endpoint_test_case
 
 
-class TestNMNDropModelEndpoint(make_rc_endpoint_test_case):  # type: ignore
+class TestNMNDropModelEndpoint(make_rc_endpoint_test_case()):  # type: ignore
     endpoint = NMNDropModelEndpoint()
 
     # The demo doesn't use the attack endpoints, so the tests are disabled.
