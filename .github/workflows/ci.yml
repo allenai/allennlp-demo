@@ -76,7 +76,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        make allennlp_demo/bidaf/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest -v'
+        # Note the DOCKER_PORT needs to be different for each demo so that they can
+        # run in parallel.
+        make allennlp_demo/bidaf/Dockerfile \
+            DOCKER_PORT=8000 \
+            DOCKER_LABEL=$GITHUB_SHA \
+            ARGS='-m pytest -v'
 
   # TODO: these tests take way too long.
   # bidaf_elmo:
@@ -86,7 +91,10 @@ jobs:
   #   - uses: actions/checkout@v2
   #   - name: Build and test image
   #     run: |
-  #       make allennlp_demo/bidaf_elmo/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest -v'
+  #       make allennlp_demo/bidaf_elmo/Dockerfile \
+  #           DOCKER_PORT=8001 \
+  #           DOCKER_LABEL=$GITHUB_SHA \
+  #           ARGS='-m pytest -v'
 
   naqanet:
     name: Model (naqanet)
@@ -95,7 +103,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        make allennlp_demo/naqanet/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest -v'
+        make allennlp_demo/naqanet/Dockerfile \
+            DOCKER_PORT=8002 \
+            DOCKER_LABEL=$GITHUB_SHA \
+            ARGS='-m pytest -v'
 
   nmn_drop:
     name: Model (nmn_drop)
@@ -104,4 +115,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        make allennlp_demo/nmn_drop/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest -v'
+        make allennlp_demo/nmn_drop/Dockerfile \
+            DOCKER_PORT=8003 \
+            DOCKER_LABEL=$GITHUB_SHA \
+            ARGS='-m pytest -v'
