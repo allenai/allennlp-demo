@@ -1,17 +1,12 @@
-import pytest
-
-from allennlp_demo.bidaf_elmo.api import BidafElmoModelEndpoint
-from allennlp_demo.common.testing import ModelEndpointTests
 from typing import List
 
+from allennlp_demo.bidaf_elmo.api import BidafElmoModelEndpoint
+from allennlp_demo.common.testing import make_rc_endpoint_test_case
 
-@pytest.fixture
-def client():
+
+class TestBidafElmoModelEndpoint(make_rc_endpoint_test_case()):
     endpoint = BidafElmoModelEndpoint()
-    return endpoint.app.test_client()
 
-
-class TestBidafElmoModelEndpoint(ModelEndpointTests):
     def attacker_ids(self) -> List[str]:
         # The hotflip attack for this model is currently broken.
         return [aid for aid in super().attacker_ids() if aid != "hotflip"]

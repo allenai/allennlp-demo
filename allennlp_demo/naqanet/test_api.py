@@ -1,18 +1,14 @@
-import pytest
-
-from flask.testing import FlaskClient
-from allennlp_demo.common.testing import ModelEndpointTests
-from allennlp_demo.naqanet.api import NAQANetModelEndpoint
 from typing import List
 
+from flask.testing import FlaskClient
 
-@pytest.fixture
-def client():
+from allennlp_demo.common.testing import make_rc_endpoint_test_case
+from allennlp_demo.naqanet.api import NAQANetModelEndpoint
+
+
+class TestNAQANetModelEndpoint(make_rc_endpoint_test_case):
     endpoint = NAQANetModelEndpoint()
-    return endpoint.app.test_client()
 
-
-class TestNAQANetModelEndpoint(ModelEndpointTests):
     def attacker_ids(self) -> List[str]:
         # The hotflip attack for this model is currently broken.
         return [aid for aid in super().attacker_ids() if aid != "hotflip"]

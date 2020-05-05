@@ -84,19 +84,20 @@ jobs:
         make allennlp_demo/bidaf/Dockerfile \
             DOCKER_PORT=8000 \
             DOCKER_LABEL=$GITHUB_SHA \
-            ARGS="-m pytest -v"
+            ARGS="-m pytest -v --color=yes"
 
-  bidaf_elmo:
-    name: Model (bidaf_elmo)
-    runs-on: [self-hosted]
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build and test image
-      run: |
-        make allennlp_demo/bidaf_elmo/Dockerfile \
-            DOCKER_PORT=8001 \
-            DOCKER_LABEL=$GITHUB_SHA \
-            ARGS="-c \"from allennlp_demo.bidaf_elmo.api import BidafElmoModelEndpoint; BidafElmoModelEndpoint()\""
+  # TODO: takes too long to run right now.
+  # bidaf_elmo:
+  #   name: Model (bidaf_elmo)
+  #   runs-on: [self-hosted]
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Build and test image
+  #     run: |
+  #       make allennlp_demo/bidaf_elmo/Dockerfile \
+  #           DOCKER_PORT=8001 \
+  #           DOCKER_LABEL=$GITHUB_SHA \
+  #           ARGS="-m pytest -v --color=yes"
 
   naqanet:
     name: Model (naqanet)
@@ -108,7 +109,7 @@ jobs:
         make allennlp_demo/naqanet/Dockerfile \
             DOCKER_PORT=8002 \
             DOCKER_LABEL=$GITHUB_SHA \
-            ARGS="-m pytest -v"
+            ARGS="-m pytest -v --color=yes"
 
   nmn_drop:
     name: Model (nmn_drop)
@@ -120,4 +121,4 @@ jobs:
         make allennlp_demo/nmn_drop/Dockerfile \
             DOCKER_PORT=8003 \
             DOCKER_LABEL=$GITHUB_SHA \
-            ARGS="-m pytest -v"
+            ARGS="-m pytest -v --color=yes"

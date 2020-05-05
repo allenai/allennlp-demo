@@ -1,18 +1,14 @@
-import pytest
-
-from flask.testing import FlaskClient
-from allennlp_demo.nmn_drop.api import NMNDropModelEndpoint
-from allennlp_demo.common.testing import ModelEndpointTests
 from typing import List
 
+import pytest
 
-@pytest.fixture
-def client():
+from allennlp_demo.nmn_drop.api import NMNDropModelEndpoint
+from allennlp_demo.common.testing import make_rc_endpoint_test_case
+
+
+class TestNMNDropModelEndpoint(make_rc_endpoint_test_case):
     endpoint = NMNDropModelEndpoint()
-    return endpoint.app.test_client()
 
-
-class TestNMNDropModelEndpoint(ModelEndpointTests):
     # The demo doesn't use the attack endpoints, so the tests are disabled.
     def attacker_ids(self) -> List[str]:
         return []
@@ -21,8 +17,8 @@ class TestNMNDropModelEndpoint(ModelEndpointTests):
     def interpreter_ids(self) -> List[str]:
         return []
 
-    def test_predict(self, client: FlaskClient):
-        resp = client.post("/predict", query_string={"no_cache": True}, json=self.rc_input())
+    def test_predict(self):
+        resp = self.client.post("/predict", query_string={"no_cache": True}, json=self.rc_input)
         assert resp.status_code == 200
         assert resp.json is not None
         assert resp.json["answer"] is not None
