@@ -1,5 +1,5 @@
 {
     "id": "dependency-parser",
     "archive_file": "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2020.04.06.tar.gz",
-    "predictor_name": "dependency-parser"
+    "predictor_name": "biaffine-dependency-parser"
 }

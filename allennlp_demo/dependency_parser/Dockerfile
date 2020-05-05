@@ -19,4 +19,4 @@ COPY allennlp_demo/dependency_parser dependency_parser
 ENV PYTHONPATH /
 
 ENTRYPOINT [ "python" ]
-CMD [ "dependency-parser/api.py" ]
+CMD [ "dependency_parser/api.py" ]
