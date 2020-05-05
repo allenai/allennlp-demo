@@ -9,6 +9,7 @@ on:
     - master
 
 jobs:
+  # Runs common light-weight checks like linting and type checking.
   checks:
     name: Checks
     runs-on: ubuntu-latest
@@ -29,7 +30,6 @@ jobs:
     - name: Install requirements
       run: |
         pip install -r requirements.txt
-
     - name: Lint
       run: |
         make lint
@@ -38,18 +38,9 @@ jobs:
       run: |
         make typecheck
 
-  bidaf:
-    name: Model (bidaf)
-    runs-on: [self-hosted]
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Build and test image
-      run: |
-        make allennlp_demo/bidaf/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest'
-
-  docker:
+  # This is for the old demo.
+  # TODO: remove this once we're fully switched over.
+  old:
     name: Old
     runs-on: ubuntu-latest
 
@@ -77,3 +68,21 @@ jobs:
         password: "${{ secrets.DOCKERHUB_ALLENNLPUSER_PASSWORD }}"
         image_name: allennlp/demo
         image_tag: latest,${{ github.sha }}
+
+  bidaf:
+    name: Model (bidaf)
+    runs-on: [self-hosted]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test image
+      run: |
+        make allennlp_demo/bidaf/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest'
+
+  bidaf_elmo:
+    name: Model (bidaf_elmo)
+    runs-on: [self-hosted]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test image
+      run: |
+        make allennlp_demo/bidaf_elmo/Dockerfile DOCKER_LABEL=$GITHUB_SHA ARGS='-m pytest'
