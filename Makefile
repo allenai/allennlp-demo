@@ -18,7 +18,7 @@ typecheck :
 
 allennlp_demo/%/Dockerfile : context.tar.gz FORCE
 	docker build -f $@ -t allennlp-demo-$*:$(DOCKER_LABEL) - < context.tar.gz
-	docker run --rm -p 8000:$(DOCKER_PORT) -v $$HOME/.allennlp:/root/.allennlp allennlp-demo-$*:$(DOCKER_LABEL) $(ARGS)
+	docker run --rm -p $(DOCKER_PORT):8000 -v $$HOME/.allennlp:/root/.allennlp allennlp-demo-$*:$(DOCKER_LABEL) $(ARGS)
 
 context.tar.gz : FORCE
 	tar -czvf $@ $(DEMO_SRCS)
