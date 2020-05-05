@@ -71,6 +71,9 @@ jobs:
 
   bidaf:
     name: Model (bidaf)
+    # We run these tests on self-hosted runners because they require huge model
+    # files. We wouldn't be able to cache all of these using the cache available to GitHub-hosted
+    # runners, and downloading them from source each time would be become very expensive for us.
     runs-on: [self-hosted]
     steps:
     - uses: actions/checkout@v2
@@ -81,20 +84,19 @@ jobs:
         make allennlp_demo/bidaf/Dockerfile \
             DOCKER_PORT=8000 \
             DOCKER_LABEL=$GITHUB_SHA \
-            ARGS='-m pytest -v'
+            ARGS="-m pytest -v"
 
-  # TODO: these tests take way too long.
-  # bidaf_elmo:
-  #   name: Model (bidaf_elmo)
-  #   runs-on: [self-hosted]
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: Build and test image
-  #     run: |
-  #       make allennlp_demo/bidaf_elmo/Dockerfile \
-  #           DOCKER_PORT=8001 \
-  #           DOCKER_LABEL=$GITHUB_SHA \
-  #           ARGS='-m pytest -v'
+  bidaf_elmo:
+    name: Model (bidaf_elmo)
+    runs-on: [self-hosted]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test image
+      run: |
+        make allennlp_demo/bidaf_elmo/Dockerfile \
+            DOCKER_PORT=8001 \
+            DOCKER_LABEL=$GITHUB_SHA \
+            ARGS="-c \"from allennlp_demo.bidaf_elmo.api import BidafElmoModelEndpoint; BidafElmoModelEndpoint()\""
 
   naqanet:
     name: Model (naqanet)
@@ -106,7 +108,7 @@ jobs:
         make allennlp_demo/naqanet/Dockerfile \
             DOCKER_PORT=8002 \
             DOCKER_LABEL=$GITHUB_SHA \
-            ARGS='-m pytest -v'
+            ARGS="-m pytest -v"
 
   nmn_drop:
     name: Model (nmn_drop)
@@ -118,4 +120,4 @@ jobs:
         make allennlp_demo/nmn_drop/Dockerfile \
             DOCKER_PORT=8003 \
             DOCKER_LABEL=$GITHUB_SHA \
-            ARGS='-m pytest -v'
+            ARGS="-m pytest -v"
