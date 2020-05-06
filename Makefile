@@ -26,7 +26,6 @@ typecheck :
 		allennlp_demo/__init__.py \
 		allennlp_demo/Dockerfile \
 		allennlp_demo/requirements.txt \
-		allennlp_demo/entrypoint.sh \
 		allennlp_demo/common allennlp_demo/$*/
 
 %-build : %-context.tar.gz
@@ -46,7 +45,7 @@ endif
 	docker run --rm \
 		-p $(DOCKER_PORT):8000 \
 		-v $$HOME/.allennlp:/root/.allennlp \
-		allennlp-demo-$*:$(DOCKER_LABEL) $(ARGS)
+		allennlp-demo-$*:$(DOCKER_LABEL)
 
 %-test : %-build
 	docker run --rm \
