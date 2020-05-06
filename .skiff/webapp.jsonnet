@@ -155,7 +155,7 @@ local cloudsql_volumes = [
 ];
 
 // Each model typically has its own service running that handles several different endpoints
-// (/predict, /task, /attack, etc.).  This is a convenience function that will route
+// (/predict, /attack, etc.).  This is a convenience function that will route
 // all of those endpoints to the model service, instead of the main frontend.
 // TODO(mattg): we might want to change this some day so that all model backend services start with
 // /model/[model-name], so that we only have to have one route per backend, instead of this mess of
