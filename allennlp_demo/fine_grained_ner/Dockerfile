@@ -2,21 +2,19 @@
 # directory, so that the build context includes common libraries that are shared across models.
 # This is why paths here include the fine-grained-ner/ prefix.
 FROM allennlp/commit:ff0d44a5e21d5e6256c73b5b9f216a87c5743f91
-LABEL maintainer="allennlp-contact@allenai.org"
 
-WORKDIR /allennlp_demo
-RUN ls
-COPY allennlp_demo/fine_grained_ner/requirements.txt fine_grained_ner/requirements.txt
-RUN pip install -r fine_grained_ner/requirements.txt
+WORKDIR /app/
+COPY allennlp_demo/fine_grained_ner/requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm
 
-COPY allennlp_demo/__init__.py .
-COPY allennlp_demo/common common
-COPY allennlp_demo/fine_grained_ner fine_grained_ner
+COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
+COPY allennlp_demo/common allennlp_demo/common
+COPY allennlp_demo/fine_grained_ner allennlp_demo/fine_grained_ner
 
 # Ensure `/allennlp_demo` module can be found by Python.
-ENV PYTHONPATH /
+ENV PYTHONPATH /app/
 
 ENTRYPOINT [ "python" ]
-CMD [ "fine_grained_ner/api.py" ]
+CMD [ "allennlp_demo/fine_grained_ner/api.py" ]

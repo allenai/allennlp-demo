@@ -29,17 +29,19 @@ typecheck :
 		allennlp_demo/common allennlp_demo/$*/
 
 %-build : %-context.tar.gz
-ifeq ($(wildcard allennlp_demo/$*/Dockerfile),)
-	docker build \
-		-f allennlp_demo/Dockerfile \
-		-t allennlp-demo-$*:$(DOCKER_LABEL) \
-		--build-arg DEMO=$* - < $*-context.tar.gz
-else
-	docker build \
-		-f allennlp_demo/$*/Dockerfile \
-		-t allennlp-demo-$*:$(DOCKER_LABEL) \
-		- < $*-context.tar.gz
-endif
+	@if [ -f allennlp_demo/$*/Dockerfile ]; then \
+		echo "Using custom build from allennlp_demo/$*/Dockefile"; \
+		docker build \
+			-f allennlp_demo/$*/Dockerfile \
+			-t allennlp-demo-$*:$(DOCKER_LABEL) \
+			- < $*-context.tar.gz; \
+	else \
+		echo "Using default build from allennlp_demo/Dockerfile"; \
+		docker build \
+			-f allennlp_demo/Dockerfile \
+			-t allennlp-demo-$*:$(DOCKER_LABEL) \
+			--build-arg DEMO=$* - < $*-context.tar.gz; \
+	fi
 
 %-run : %-build
 	docker run --rm \
