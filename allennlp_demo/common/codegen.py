@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 This module contains helpers to generate the necessary boilerplate when adding new demos.
 """

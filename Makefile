@@ -37,7 +37,7 @@ allennlp_demo/%/Dockerfile : \
 		echo "$@ tracked by git, leaving untouched"; \
 	else \
 		echo "Generating $@"; \
-		python allennlp_demo/common/codegen.py $* dockerfile > $@; \
+		python3.7 allennlp_demo/common/codegen.py $* dockerfile > $@; \
 	fi
 
 %-context.tar.gz : \
