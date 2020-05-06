@@ -1,14 +1,6 @@
-import pytest
-
-from allennlp_demo.common.testing import ModelEndpointTests
+from allennlp_demo.common.testing import ModelEndpointTestCase
 from allennlp_demo.constituency_parser.api import ConstituencyParserModelEndpoint
 
 
-@pytest.fixture
-def client():
+class TestConstituencyParserModelEndpoint(ModelEndpointTestCase):
     endpoint = ConstituencyParserModelEndpoint()
-    return endpoint.app.test_client()
-
-
-class TestConstituencyParserModelEndpoint(ModelEndpointTests):
-    pass

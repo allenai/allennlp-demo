@@ -19,6 +19,19 @@ typecheck :
 		--no-site-packages \
 		--cache-dir=/dev/null
 
+.PHONY : test
+test :
+	pytest -v --color=yes allennlp_demo/tests/
+
+allennlp_demo/%/Dockerfile : \
+		allennlp_demo/common/codegen.py \
+		allennlp_demo/%/__init__.py \
+		allennlp_demo/%/api.py \
+		allennlp_demo/%/test_api.py \
+		allennlp_demo/%/model.json \
+		allennlp_demo/%/requirements.txt
+	python allennlp_demo/common/codegen.py $* dockerfile > $@
+
 %-build : allennlp_demo/%/Dockerfile context.tar.gz
 	docker build -f $< -t allennlp-demo-$*:$(DOCKER_LABEL) - < context.tar.gz
 
