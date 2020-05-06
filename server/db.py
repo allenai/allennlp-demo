@@ -23,9 +23,7 @@ class DemoDatabase:
     In the future it could also be used to store user-submitted feedback about predictions.
     """
 
-    def insert_request(
-        self, requester: str, model_name: str, inputs: JsonDict
-    ) -> Optional[int]:
+    def insert_request(self, requester: str, model_name: str, inputs: JsonDict) -> Optional[int]:
         """
         Add the request to the database so that it can later
         be retrieved via permalink.
@@ -137,9 +135,7 @@ class PostgresDemoDatabase(DemoDatabase):
             logger.info("Relevant environment variables not found, so no demo database")
             return None
 
-    def insert_request(
-        self, requester: str, model_name: str, inputs: JsonDict
-    ) -> Optional[int]:
+    def insert_request(self, requester: str, model_name: str, inputs: JsonDict) -> Optional[int]:
         try:
             self._health_check()
             with self.conn.cursor() as curs:
@@ -191,10 +187,8 @@ class InMemoryDemoDatabase(DemoDatabase):
     def __init__(self):
         self.data: List[Permadata] = []
 
-    def insert_request(
-        self, requester: str, model_name: str, inputs: JsonDict
-    ) -> Optional[int]:
-        self.data.append(Permadata(model_name, inputs, {}))
+    def insert_request(self, requester: str, model_name: str, inputs: JsonDict) -> Optional[int]:
+        self.data.append(Permadata(model_name, inputs))
         return len(self.data) - 1
 
     def get_result(self, perma_id: int) -> Optional[Permadata]:

@@ -251,12 +251,7 @@ def make_app(
             # No data found, invalid id?
             raise ServerError("Unrecognized permalink: {}".format(slug), 400)
 
-        return jsonify(
-            {
-                "modelName": permadata.model_name,
-                "requestData": permadata.request_data
-            }
-        )
+        return jsonify({"modelName": permadata.model_name, "requestData": permadata.request_data})
 
     @app.route("/predict/<model_name>", methods=["POST", "OPTIONS"])
     def predict(model_name: str) -> Response:  # pylint: disable=unused-variable
@@ -297,9 +292,7 @@ def make_app(
             try:
                 perma_id = None
                 perma_id = demo_db.insert_request(
-                    requester=request.remote_addr,
-                    model_name=model_name,
-                    inputs=data,
+                    requester=request.remote_addr, model_name=model_name, inputs=data,
                 )
 
             except Exception:  # pylint: disable=broad-except
