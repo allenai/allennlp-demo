@@ -1,12 +1,8 @@
-# This Dockerfile is specific to the nmn_drop model, but is meant to be executed in the `allennlp_demo`
-# directory, so that the build context includes common libraries that are shared across models.
-# This is why paths here include the nmn_drop/ prefix.
 FROM allennlp/commit:ff0d44a5e21d5e6256c73b5b9f216a87c5743f91
-LABEL maintainer="allennlp-contact@allenai.org"
 
-WORKDIR /allennlp_demo
-COPY allennlp_demo/nmn_drop/requirements.txt nmn_drop/requirements.txt
-RUN pip install -r nmn_drop/requirements.txt
+WORKDIR /app/
+COPY allennlp_demo/nmn_drop/requirements.txt allennlp_demo/nmn_drop/requirements.txt
+RUN pip install -r allennlp_demo/nmn_drop/requirements.txt
 
 RUN spacy download en_core_web_sm
 RUN spacy download en_core_web_lg
@@ -26,14 +22,15 @@ RUN git clone https://github.com/nitishgupta/nmn-drop nmn-drop && \
     ln -s nmn-drop/datasets . && \
     ln -s nmn-drop/pattn2count_ckpt .
 
+
+WORKDIR /app/
+
+COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
+COPY allennlp_demo/common allennlp_demo/common
+COPY allennlp_demo/nmn_drop allennlp_demo/nmn_drop
+
 # This allows the libraries we just added to `/lib` as well as `/allennlp_demo` to be loaded by name.
-ENV PYTHONPATH /lib:/
-
-WORKDIR /allennlp_demo
-
-COPY allennlp_demo/__init__.py .
-COPY allennlp_demo/common common
-COPY allennlp_demo/nmn_drop nmn_drop
+ENV PYTHONPATH /lib:/app/
 
 ENTRYPOINT [ "python" ]
-CMD [ "nmn_drop/api.py" ]
+CMD [ "allennlp_demo/nmn_drop/api.py" ]
