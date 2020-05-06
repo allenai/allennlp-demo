@@ -31,6 +31,8 @@ class Model extends React.Component {
 
       this.setState({outputState: "working", interpretData: undefined, attackData: undefined});
 
+      // If we're not supposed to generate a new permalink, add the `record=false` query string
+      // argument.
       let url;
       if (disablePermadata) {
         const u = new URL(apiUrl(inputs));
