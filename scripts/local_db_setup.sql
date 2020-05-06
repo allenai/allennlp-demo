@@ -7,9 +7,7 @@
 CREATE TABLE public.queries (
     id bigint NOT NULL,
     model_name character varying(50),
-    headers text,
     request_data text,
-    response_data text,
     "timestamp" timestamp without time zone,
     requester character varying(255) DEFAULT NULL::character varying
 );
