@@ -50,3 +50,9 @@ th {
   margin-top: 0;
   padding-top: 0;
 }
+
+html,
+body,
+footer {
+  background: #fff !important;
+}

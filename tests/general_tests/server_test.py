@@ -268,10 +268,9 @@ class TestFlask(AllenNlpTestCase):
         response = post("/permadata/counting", data={"slug": slug})
         assert response.status_code == 200
         result2 = json.loads(response.get_data())
-        assert set(result2.keys()) == {"modelName", "requestData", "responseData"}
+        assert set(result2.keys()) == {"modelName", "requestData"}
         assert result2["modelName"] == "counting"
         assert result2["requestData"] == data
-        assert result2["responseData"] == result
 
     def test_db_resilient_to_prediction_failure(self):
         db = InMemoryDemoDatabase()
@@ -297,10 +296,9 @@ class TestFlask(AllenNlpTestCase):
         response = post("/permadata/counting", data={"slug": slug})
         assert response.status_code == 200
         result = json.loads(response.get_data())
-        assert set(result.keys()) == {"modelName", "requestData", "responseData"}
+        assert set(result.keys()) == {"modelName", "requestData"}
         assert result["modelName"] == "failing"
         assert result["requestData"] == data
-        assert result["responseData"] == {}
 
     def test_microservice(self):
         models = {

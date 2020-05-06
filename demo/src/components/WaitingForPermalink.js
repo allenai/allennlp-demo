@@ -1,11 +1,22 @@
 import React from 'react';
+import { Spin, Icon } from 'antd';
+import styled from 'styled-components';
 
 class WaitingForPermalink extends React.Component {
-
     render() {
-        // TODO(joelgrus): come up with a better "waiting" component.
-        return (<div>WAITING</div>);
+        return (
+            <LoadingContainer>
+                <Spin indicator={<Icon type="loading"  style={{ fontSize: '2rem' }} />} />
+            </LoadingContainer>
+        );
     }
 }
+
+const LoadingContainer = styled.div`
+    ${({ theme }) => `
+        padding: ${theme.spacing.xl};
+        font-size: ${theme.typography.bodyJumbo.fontSize};
+    `}
+`;
 
 export default WaitingForPermalink;

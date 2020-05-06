@@ -166,11 +166,11 @@ class SingleTaskDemo extends React.Component {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({"slug": slug})
-      }).then(function(response) {
+      }).then((response) => {
         return response.json();
       }).then((json) => {
-        const { requestData, responseData } = json;
-        this.setState({requestData, responseData});
+        const { requestData } = json;
+        this.setState({requestData});
       }).catch((error) => {
         this.setState({outputState: "error"});
         console.error(error);
@@ -182,7 +182,7 @@ class SingleTaskDemo extends React.Component {
     const { slug, selectedModel, requestData, responseData } = this.state;
     const updateData = (requestData, responseData) => this.setState({requestData, responseData})
 
-    if (slug && !responseData) {
+    if (slug && !requestData) {
       // We're still waiting for permalink data, so just return the placeholder component.
       return (<WaitingForPermalink/>)
     } else if (modelComponents[selectedModel]) {
