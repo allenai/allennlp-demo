@@ -1,8 +1,4 @@
 SRC = app.py scripts/ server/ allennlp_demo/ tests/
-COMMON_SRC = $(wildcard allennlp_demo/*.py) \
-			 $(wildcard allennlp_demo/common/*.py) \
-			 $(wildcard allennlp_demo/common/testing/*.py) \
-			 $(wildcard allennlp_demo/common/testing/fixtures/*)
 DOCKER_LABEL = latest
 DOCKER_PORT = 8000
 
@@ -13,6 +9,7 @@ lint :
 .PHONY : format
 format :
 	black --check $(SRC)
+
 .PHONY : typecheck
 typecheck :
 	mypy $(SRC) \
