@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from unittest import TestCase
 from typing import Optional
 
 from flask.testing import FlaskClient
@@ -8,7 +7,7 @@ from flask.testing import FlaskClient
 from allennlp_demo.common.http import ModelEndpoint
 
 
-class ModelEndpointTestCase(TestCase):
+class ModelEndpointTestCase:
     """
     A base class to run model endpoint tests.
 
@@ -29,3 +28,17 @@ class ModelEndpointTestCase(TestCase):
         if self._client is None:
             self._client = self.endpoint.app.test_client()
         return self._client
+
+    @classmethod
+    def setup_class(cls):
+        pass
+
+    @classmethod
+    def teardown_class(cls):
+        pass
+
+    def setup_method(self):
+        pass
+
+    def teardown_method(self):
+        pass
