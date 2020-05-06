@@ -67,7 +67,9 @@ class Model extends React.Component {
         this.props.updateData(inputs, json)
 
         // Update the URL
-        this.props.history.push(location)
+        if (!disablePermadata) {
+          this.props.history.push(location)
+        }
 
         this.setState({outputState: "received"})
 
