@@ -34,7 +34,7 @@ jobs:
     - name: Format
       if: always()
       run: |
-        make lint
+        make format
 
     - name: Lint
       if: always()
