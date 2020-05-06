@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.7
 
 """
 This module contains helpers to generate the necessary boilerplate when adding new demos.
