@@ -1,3 +1,11 @@
+## 🚧 WARNING: DEPRECATED ##
+
+This is the code responsible for the AllenNLP demo in it's current form.
+We're actively reimplementing the code that's here.
+
+Given this the docs might not work. You probably don't want to spend too much
+time here, there's a lot of cobwebs.
+
 # AllenNLP Demo
 
 This repository contains the [AllenNLP demo](https://demo.allennlp.org).
