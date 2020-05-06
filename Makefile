@@ -1,4 +1,4 @@
-SRC = app.py scripts/ server/ allennlp_demo/ tests/
+SRC = allennlp_demo/
 DEMO_SRCS = $(shell find allennlp_demo -type f ! -name '*.pyc' ! -path '*.mypy_cache/*')
 DOCKER_LABEL = latest
 DOCKER_PORT = 8000
