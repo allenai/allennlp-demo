@@ -1,15 +1,7 @@
 from typing import Dict, List
 import json
 
-from allennlp.predictors import Predictor
-from allennlp.models.archival import load_archive
 from allennlp.common import util
-
-from allennlp_models import coref
-from allennlp_models import rc
-from allennlp_models import syntax
-from allennlp_models import lm
-from allennlp_models import nli
 
 from server.demo_model import DemoModel
 from server.gpt2 import Gpt2DemoModel
@@ -21,8 +13,10 @@ from server.gpt2 import Gpt2DemoModel
 # that have the same ``Predictor`` wrapper. The corresponding model
 # will be served at the `/predict/<name-of-task>` API endpoint.
 
-def load_demo_models(models_file: str,
-                     task_names: List[str] = None) -> Dict[str, DemoModel]:
+
+def load_demo_models(models_file: str, task_names: List[str] = None) -> Dict[str, DemoModel]:
+    util.import_module_and_submodules("allennlp_models")
+
     with open(models_file) as f:
         blob = json.load(f)
 
@@ -37,7 +31,7 @@ def load_demo_models(models_file: str,
         model_type = model.get("type", "allennlp")
 
         if task_name == "nmn-drop":
-            util.import_submodules("semqa")
+            util.import_module_and_submodules("semqa")
 
         # If ever we introduce additional model types,
         # we'll need to add corresponding logic here.
@@ -49,10 +43,10 @@ def load_demo_models(models_file: str,
             raise ValueError(f"unknown model type: {model_type}")
 
         demo_models[task_name] = load(
-                    archive_file=model["archive_file"],
-                    predictor_name=model["predictor_name"],
-                    max_request_length=model["max_request_length"],
-                    overrides=model.get("overrides", "")
+            archive_file=model["archive_file"],
+            predictor_name=model["predictor_name"],
+            max_request_length=model["max_request_length"],
+            overrides=model.get("overrides", ""),
         )
 
     return demo_models

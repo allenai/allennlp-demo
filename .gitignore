@@ -1,6 +1,7 @@
 __pycache__
 demo/build/
 **/*.pyc
+.mypy_cache
 
 # Logs
 logs
@@ -63,3 +64,6 @@ typings/
 
 # next.js build output
 .next
+
+# docker build context
+context.tar.gz

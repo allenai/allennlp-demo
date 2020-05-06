@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  # Runs common light-weight checks like linting and type checking.
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - uses: actions/cache@v1
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}
+
+    - name: Install requirements
+      run: |
+        pip install -r requirements.txt
+    - name: Lint
+      run: |
+        make lint
+
+    - name: Type check
+      run: |
+        make typecheck
+
+  # This is for the old demo.
+  # TODO: remove this once we're fully switched over.
+  old:
+    name: Old
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build image
+      uses: whoan/docker-build-with-cache-action@v5.0.1
+      with:
+        image_name: allennlp/demo
+        image_tag: latest,${{ github.sha }}
+        push_image_and_stages: false
+
+    - name: Run tests
+      run: docker run --entrypoint= allennlp/demo pytest tests/
+
+    - name: Pip freeze
+      run: docker run --entrypoint= allennlp/demo pip freeze
+
+    - name: Push image
+      if: github.repository == 'allenai/allennlp-demo' && github.event_name == 'push'
+      uses: whoan/docker-build-with-cache-action@v5.0.1
+      with:
+        username: allennlpuser
+        password: "${{ secrets.DOCKERHUB_ALLENNLPUSER_PASSWORD }}"
+        image_name: allennlp/demo
+        image_tag: latest,${{ github.sha }}
+
+  bidaf:
+    name: Model (bidaf)
+    # We run these tests on self-hosted runners because they require huge model
+    # files. We wouldn't be able to cache all of these using the cache available to GitHub-hosted
+    # runners, and downloading them from source each time would be become very expensive for us.
+    runs-on: [self-hosted]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test image
+      run: |
+        make bidaf-test DOCKER_LABEL=$GITHUB_SHA
+
+  # TODO: takes too long to run right now.
+  # bidaf_elmo:
+  #   name: Model (bidaf_elmo)
+  #   runs-on: [self-hosted]
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Build and test image
+  #     run: |
+  #       make bidaf_elmo-test DOCKER_LABEL=$GITHUB_SHA
+
+  naqanet:
+    name: Model (naqanet)
+    runs-on: [self-hosted]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test image
+      run: |
+        make naqanet-test DOCKER_LABEL=$GITHUB_SHA
+
+  nmn_drop:
+    name: Model (nmn_drop)
+    runs-on: [self-hosted]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test image
+      run: |
+        make nmn_drop-test DOCKER_LABEL=$GITHUB_SHA

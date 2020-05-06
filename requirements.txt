@@ -1,4 +1,4 @@
-git+https://github.com/allenai/allennlp-models.git@04a2c738fdc0506d63169d93271f6fd248eb0026
+git+https://github.com/allenai/allennlp-models.git@34204ed738a7a99d784cf8c5d54b72d919fafc98
 
 psycopg2-binary
 python-json-logger
@@ -14,3 +14,15 @@ pytz>=2017.3
 
 # Pinned because werkzeug.contrib.fixers is deprecated in 1.0.
 werkzeug<=0.16.1
+
+# Checks style, syntax, and other useful errors.
+flake8
+
+# Static type checking
+mypy==0.770
+
+# Automatic code formatting
+black
+
+# Running tests.
+pytest
