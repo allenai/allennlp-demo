@@ -11,7 +11,7 @@ from allennlp.common.util import JsonDict
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 Permadata = NamedTuple(
-    "Permadata", [("model_name", str), ("request_data", JsonDict), ("response_data", JsonDict)]
+    "Permadata", [("model_name", str), ("request_data", JsonDict)]
 )
 
 

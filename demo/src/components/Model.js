@@ -5,6 +5,7 @@ import { PaneTop, PaneBottom } from './Pane'
 import ModelIntro from './ModelIntro';
 import DemoInput from './DemoInput'
 import { Tabs } from 'antd';
+import qs from 'querystring';
 
 class Model extends React.Component {
     constructor(props) {
@@ -25,12 +26,22 @@ class Model extends React.Component {
       this.attackModel = this.attackModel.bind(this)
     }
 
-    runModel(inputs) {
+    runModel(inputs, disablePermadata = false) {
       const { selectedModel, apiUrl } = this.props
 
       this.setState({outputState: "working", interpretData: undefined, attackData: undefined});
 
-      fetch(apiUrl(inputs), {
+      let url;
+      if (disablePermadata) {
+        const u = new URL(apiUrl(inputs));
+        const queryString = { ...qs.parse(u.search), record: false };
+        u.search = qs.stringify(queryString);
+        url = u.toString();
+      } else {
+        url = apiUrl(inputs);
+      }
+
+      fetch(url, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -52,16 +63,9 @@ class Model extends React.Component {
         }
 
         this.props.updateData(inputs, json)
-        //
-        // requestData, responseData
 
-        if (window.frameElement) {
-          // Based on http://www.awongcm.io/blog/2018/11/25/using-iframes-api-to-toggle-client-side-routing-of-react-router-for-legacy-web-apps/
-          window.frameElement.ownerDocument.defaultView.history.pushState({}, '', newPath)
-        } else {
-          // This is not in an iframe, so just push the location
-          this.props.history.push(location)
-        }
+        // Update the URL
+        this.props.history.push(location)
 
         this.setState({outputState: "received"})
 
@@ -110,6 +114,12 @@ class Model extends React.Component {
         stateUpdate['attackData'] = {...stateUpdate['attackData'], [attacker]: json}
         this.setState(stateUpdate)
       })
+    }
+
+    componentDidMount() {
+      if (this.state.requestData && !this.state.responseData) {
+        this.runModel(this.state.requestData, true);
+      }
     }
 
     render() {

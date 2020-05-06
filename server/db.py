@@ -24,17 +24,11 @@ class DemoDatabase:
     """
 
     def insert_request(
-        self, headers: JsonDict, requester: str, model_name: str, inputs: JsonDict
+        self, requester: str, model_name: str, inputs: JsonDict
     ) -> Optional[int]:
         """
         Add the request to the database so that it can later
         be retrieved via permalink.
-        """
-        raise NotImplementedError
-
-    def update_response(self, perma_id: int, outputs: JsonDict) -> None:
-        """
-        Updates the record in the database so that it includes the model's response.
         """
         raise NotImplementedError
 
@@ -55,19 +49,14 @@ class DemoDatabase:
 
 # SQL for inserting requests into the database.
 INSERT_SQL = """
-        INSERT INTO queries (model_name, requester, headers, request_data, timestamp)
-        VALUES (%(model_name)s, %(requester)s, %(headers)s, %(request_data)s, %(timestamp)s)
+        INSERT INTO queries (model_name, requester, request_data, timestamp)
+        VALUES (%(model_name)s, %(requester)s, %(request_data)s, %(timestamp)s)
         RETURNING id
-        """
-
-# SQL for updating records to include predictions
-UPDATE_SQL = """
-        UPDATE queries SET response_data = %(response_data)s WHERE id = %(id)s
         """
 
 # SQL for retrieving a prediction from the database.
 RETRIEVE_SQL = """
-        SELECT model_name, request_data, response_data
+        SELECT model_name, request_data
         FROM queries
         WHERE id = (%s)
         """
@@ -149,7 +138,7 @@ class PostgresDemoDatabase(DemoDatabase):
             return None
 
     def insert_request(
-        self, headers: JsonDict, requester: str, model_name: str, inputs: JsonDict
+        self, requester: str, model_name: str, inputs: JsonDict
     ) -> Optional[int]:
         try:
             self._health_check()
@@ -161,7 +150,6 @@ class PostgresDemoDatabase(DemoDatabase):
                     {
                         "model_name": model_name,
                         "requester": requester,
-                        "headers": json.dumps(headers),
                         "request_data": json.dumps(inputs),
                         "timestamp": datetime.datetime.now(),
                     },
@@ -174,17 +162,6 @@ class PostgresDemoDatabase(DemoDatabase):
         except (psycopg2.Error, AttributeError):
             logger.exception("Unable to insert permadata")
             return None
-
-    def update_response(self, perma_id: int, outputs: JsonDict) -> None:
-        try:
-            self._health_check()
-            with self.conn.cursor() as curs:
-                logger.info("updating the database for perma_id %s", perma_id)
-
-                curs.execute(UPDATE_SQL, {"id": perma_id, "response_data": json.dumps(outputs)})
-
-        except (psycopg2.Error, AttributeError):
-            logger.exception("Unable to update response for perma_id %s", perma_id)
 
     def get_result(self, perma_id: int) -> Optional[Permadata]:
         try:
@@ -199,8 +176,8 @@ class PostgresDemoDatabase(DemoDatabase):
                 return None
 
             # Otherwise, return a ``Permadata`` instance.
-            model_name, request_data, response_data = row
-            return Permadata(model_name, json.loads(request_data), json.loads(response_data))
+            model_name, request_data = row
+            return Permadata(model_name, json.loads(request_data))
         except (psycopg2.Error, AttributeError):
             logger.exception("Unable to retrieve result")
             return None
@@ -215,13 +192,10 @@ class InMemoryDemoDatabase(DemoDatabase):
         self.data: List[Permadata] = []
 
     def insert_request(
-        self, headers: JsonDict, requester: str, model_name: str, inputs: JsonDict
+        self, requester: str, model_name: str, inputs: JsonDict
     ) -> Optional[int]:
         self.data.append(Permadata(model_name, inputs, {}))
         return len(self.data) - 1
-
-    def update_response(self, perma_id: int, outputs: JsonDict) -> None:
-        self.data[perma_id] = self.data[perma_id]._replace(response_data=outputs)
 
     def get_result(self, perma_id: int) -> Optional[Permadata]:
         try:
