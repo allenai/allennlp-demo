@@ -57,7 +57,7 @@ selected a model, follow these steps to port it to the new solution:
     ```bash
     cd allennlp_demo
     docker build . -f allennlp_demo/oscar_drop/Dockerfile -t oscar_drop:latest && \
-        docker run --rm -it --entrypoint pytest oscar_drop:latest -x -ra
+        docker run  -v $HOME/.allennlp:/root/.allennlp --rm -it --entrypoint pytest oscar_drop:latest -x -ra
     ```
 
 8. If the tests pass, move on to the next step. If they don't, then you'll need
@@ -119,4 +119,3 @@ selected a model, follow these steps to port it to the new solution:
 
 At this point the new endpoint is deployed alongside the old one. The effort
 to port the UI to use these new endpoints will be executed separately.
-
