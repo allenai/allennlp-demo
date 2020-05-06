@@ -68,7 +68,7 @@ local namespace = {
     kind: 'Namespace',
     metadata: {
         name: namespace_name,
-        labels: labels
+        labels: namespace_labels
     }
 };
 
@@ -118,11 +118,10 @@ local cloudsql_volumes = [
     }
 ];
 
-// Each model typically has its own service running that handles several different endpoints
-// (/predict, /attack, etc.).  This is a convenience function that will route
-// all of those endpoints to the model service, instead of the main frontend.
-local model_path(model_name, endpoint, url_extra='') = {
-    path: '/' + endpoint + '/' + model_name + url_extra,
+// Generates the path that should be routed to the backend for the specified
+// model.
+local model_path(model_name, endpoint) = {
+    path: '/' + endpoint + '/' + model_name,
     backend: {
         serviceName: fqn + '-' + model_name,
         servicePort: api_port
@@ -321,8 +320,6 @@ local ingress = {
             'certmanager.k8s.io/cluster-issuer': 'letsencrypt-prod',
             'kubernetes.io/ingress.class': 'nginx',
             'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
-            'nginx.ingress.kubernetes.io/enable-cors': 'false',
-            'nginx.ingress.kubernetes.io/use-regex': 'true',
             'apps.allenai.org/build': build_id,
             'apps.allenai.org/sha': sha,
             'apps.allenai.org/repo': repo
