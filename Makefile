@@ -29,7 +29,7 @@ typecheck :
 		allennlp_demo/common allennlp_demo/$*/
 
 %-build : %-context.tar.gz
-ifeq ($(wildcard allennlp_demo/%/Dockerfile),)
+ifeq ($(wildcard allennlp_demo/$*/Dockerfile),)
 	docker build \
 		-f allennlp_demo/Dockerfile \
 		-t allennlp-demo-$*:$(DOCKER_LABEL) \
