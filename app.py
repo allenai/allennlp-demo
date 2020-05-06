@@ -218,8 +218,8 @@ def make_app(
             loaded_modules[n] = m.__dict__
         return jsonify({"allennlp_version": VERSION, "models": loaded_modules})
 
-    @app.route("/permadata/<model_name>", methods=["POST", "OPTIONS"])
-    def permadata(model_name: str) -> Response:  # pylint: disable=unused-variable
+    @app.route("/permadata", methods=["POST", "OPTIONS"])
+    def permadata() -> Response:  # pylint: disable=unused-variable
         """
         If the user requests a permalink, the front end will POST here with the payload
             { slug: slug }
@@ -251,7 +251,7 @@ def make_app(
             # No data found, invalid id?
             raise ServerError("Unrecognized permalink: {}".format(slug), 400)
 
-        return jsonify({"modelName": permadata.model_name, "requestData": permadata.request_data})
+        return jsonify({"requestData": permadata.request_data})
 
     @app.route("/predict/<model_name>", methods=["POST", "OPTIONS"])
     def predict(model_name: str) -> Response:  # pylint: disable=unused-variable
@@ -538,6 +538,9 @@ if __name__ == "__main__":
         default="models.json",
         help="json file containing the details of the models to load",
     )
+    parser.add_argument(
+        "--no-models", action="store_true", help="if specified don't load any models"
+    )
 
     models_group = parser.add_mutually_exclusive_group()
     models_group.add_argument(
@@ -550,7 +553,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    models = load_demo_models(args.models_file, args.model)
+    if not args.no_models:
+        models = load_demo_models(args.models_file, args.model)
+    else:
+        models = {}
 
     main(
         demo_dir=args.demo_dir,

@@ -155,7 +155,7 @@ local cloudsql_volumes = [
 ];
 
 // Each model typically has its own service running that handles several different endpoints
-// (/predict, /permadata, /task, /attack, etc.).  This is a convenience function that will route
+// (/predict, /attack, etc.).  This is a convenience function that will route
 // all of those endpoints to the model service, instead of the main frontend.
 // TODO(mattg): we might want to change this some day so that all model backend services start with
 // /model/[model-name], so that we only have to have one route per backend, instead of this mess of
@@ -166,81 +166,6 @@ local model_path(model_name, endpoint, url_extra='') = {
         serviceName: fullyQualifiedName + '-' + model_name,
         servicePort: config.httpPort
     },
-};
-
-
-
-local ingress = {
-    apiVersion: 'extensions/v1beta1',
-    kind: 'Ingress',
-    metadata: {
-        name: fullyQualifiedName + '-ingress',
-        namespace: namespaceName,
-        labels: labels,
-        annotations: {
-            'certmanager.k8s.io/cluster-issuer': 'letsencrypt-prod',
-            'kubernetes.io/ingress.class': 'nginx',
-            'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
-            'nginx.ingress.kubernetes.io/enable-cors': 'false',
-            'nginx.ingress.kubernetes.io/use-regex': 'true',
-            'apps.allenai.org/build': std.extVar('buildId'),
-            'apps.allenai.org/sha': std.extVar('sha'),
-            'apps.allenai.org/repo': std.extVar('repo')
-        }
-    },
-    spec: {
-        tls: [
-            {
-                secretName: fullyQualifiedName + '-tls',
-                hosts: hosts
-            }
-        ],
-        rules: [
-            {
-                host: host,
-                http: {
-                    paths: [
-                        // The backend for each model is served at /predict/{model_name} (in its
-                        // own service) so we need to generate an ingress path entry that points
-                        // that path to that service.
-                        model_path(model_name, 'predict')
-                        for model_name in model_names
-                    ] + [
-                        // Attacking is handled by the model backend.
-                        model_path(model_name, 'attack')
-                        for model_name in model_names
-                    ] + [
-                        // Interpreting is handled by the model backend.
-                        model_path(model_name, 'interpret')
-                        for model_name in model_names
-                    ] + [
-                        // The (chromeless) frontend for each model is served at /task/{model_name}
-                        // (in its own service) so we need to generate an ingress path entry that
-                        // points that path to that service.
-                        // The extra bit on the url is because this will sometimes have permadata
-                        // on it also.
-                        // TODO: allow the frontend and the backend to be different services?
-                        model_path(model_name, 'task', "(/[.*])?")
-                        for model_name in model_names
-                    ] + [
-                        // We also want to pass through the permadata/ requests to each model,
-                        // because different models might handle them in different ways (or not at
-                        // all).
-                        model_path(model_name, 'permadata')
-                        for model_name in model_names
-                    ] + [
-                        {
-                            backend: {
-                                serviceName: fullyQualifiedName,
-                                servicePort: 80
-                            },
-                            path: '/.*'
-                        }
-                    ]
-                }
-            } for host in hosts
-        ]
-    }
 };
 
 local readinessProbe = {
@@ -329,6 +254,69 @@ local deployment = {
     }
 };
 
+local permadata_labels = labels + {
+    'role': 'permadata-server'
+};
+
+local permadata_deployment = {
+    apiVersion: 'extensions/v1beta1',
+    kind: 'Deployment',
+    metadata: {
+        labels: permadata_labels,
+        name: fullyQualifiedName + '-permadata',
+        namespace: namespaceName,
+    },
+    spec: {
+        revisionHistoryLimit: 3,
+        replicas: num_replicas,
+        template: {
+            metadata: {
+                name: fullyQualifiedName + '-permadata',
+                namespace: namespaceName,
+                labels: permadata_labels
+            },
+            spec: {
+                containers: [
+                    {
+                        name: 'permadata',
+                        image: image,
+                        args: [ '--no-models' ],
+                        readinessProbe: readinessProbe,
+                        resources: {
+                            requests: {
+                                cpu: '50m',
+                                memory: '500Mi'
+                            }
+                        },
+                        env: db_env_variables
+                    },
+                    cloudsql_proxy_container
+                ],
+                volumes: cloudsql_volumes
+            }
+        }
+    }
+};
+
+local permadata_service = {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+        name: fullyQualifiedName + '-permadata',
+        namespace: namespaceName,
+        labels: permadata_labels
+    },
+    spec: {
+        selector: permadata_labels,
+        ports: [
+            {
+                port: config.httpPort,
+                name: 'http'
+            }
+        ]
+    }
+};
+
 // We allow each model's JSON to specify how much memory and CPU it needs.
 // If not specified, we fall back to defaults.
 local DEFAULT_CPU = "0.2";
@@ -340,8 +328,6 @@ local get_memory(model_name) = if std.objectHas(models[model_name], "memory") th
 // A model can specify its own docker image by providing an environment
 // variable with the image name. It needs to run a server on config.port
 // that serves up the model at /predict/{model_name}
-// and that serves up the front-end at /task/{model_name}
-// and that (optionally) serves up permalinks at /permadata/{model_name},
 local get_image(model_name) = if std.objectHas(models[model_name], "image") then models[model_name]["image"] else image;
 
 local model_deployment(model_name) = {
@@ -423,11 +409,77 @@ local model_service(model_name) = {
     }
 };
 
+local ingress = {
+    apiVersion: 'extensions/v1beta1',
+    kind: 'Ingress',
+    metadata: {
+        name: fullyQualifiedName + '-ingress',
+        namespace: namespaceName,
+        labels: labels,
+        annotations: {
+            'certmanager.k8s.io/cluster-issuer': 'letsencrypt-prod',
+            'kubernetes.io/ingress.class': 'nginx',
+            'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
+            'nginx.ingress.kubernetes.io/enable-cors': 'false',
+            'nginx.ingress.kubernetes.io/use-regex': 'true',
+            'apps.allenai.org/build': std.extVar('buildId'),
+            'apps.allenai.org/sha': std.extVar('sha'),
+            'apps.allenai.org/repo': std.extVar('repo')
+        }
+    },
+    spec: {
+        tls: [
+            {
+                secretName: fullyQualifiedName + '-tls',
+                hosts: hosts
+            }
+        ],
+        rules: [
+            {
+                host: host,
+                http: {
+                    paths: [
+                        // The backend for each model is served at /predict/{model_name} (in its
+                        // own service) so we need to generate an ingress path entry that points
+                        // that path to that service.
+                        model_path(model_name, 'predict')
+                        for model_name in model_names
+                    ] + [
+                        // Attacking is handled by the model backend.
+                        model_path(model_name, 'attack')
+                        for model_name in model_names
+                    ] + [
+                        // Interpreting is handled by the model backend.
+                        model_path(model_name, 'interpret')
+                        for model_name in model_names
+                    ] + [
+                        {
+                            path: '/permadata',
+                            backend: {
+                                serviceName: permadata_service.metadata.name,
+                                servicePort: config.httpPort
+                            }
+                        },
+                        {
+                            backend: {
+                                serviceName: fullyQualifiedName,
+                                servicePort: 80
+                            }
+                        }
+                    ]
+                }
+            } for host in hosts
+        ]
+    }
+};
+
 [
     namespace,
     ingress,
     deployment,
     service,
+    permadata_deployment,
+    permadata_service,
 ] + [
     model_deployment(model_name)
     for model_name in model_names

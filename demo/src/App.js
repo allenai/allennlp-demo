@@ -159,7 +159,7 @@ class SingleTaskDemo extends React.Component {
     if (slug && !responseData) {
       // Make an ajax call to get the permadata,
       // and then use it to update the state.
-      fetch(`${API_ROOT}/permadata/${model}`, {
+      fetch(`${API_ROOT}/permadata`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
