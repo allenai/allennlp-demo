@@ -39,7 +39,7 @@ steps:
     '-y',
     '--output-file', './webapp.yaml',
     '--ext-str', 'env=$_ENV',
-    '--ext-str', 'image=gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA',
+    '--ext-str', 'image=gcr.io/$PROJECT_ID/$REPO_NAME-ui:$COMMIT_SHA',
     '--ext-str', 'sha=$COMMIT_SHA',
     '--ext-str', 'buildId=$BUILD_ID',
     '--ext-str', 'repo=$REPO_NAME',
