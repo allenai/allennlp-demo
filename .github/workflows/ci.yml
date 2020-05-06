@@ -30,11 +30,19 @@ jobs:
     - name: Install requirements
       run: |
         pip install -r requirements.txt
+
+    - name: Format
+      if: always()
+      run: |
+        make format
+
     - name: Lint
+      if: always()
       run: |
         make lint
 
     - name: Type check
+      if: always()
       run: |
         make typecheck
 
