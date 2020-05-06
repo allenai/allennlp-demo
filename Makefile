@@ -1,5 +1,8 @@
 SRC = app.py scripts/ server/ allennlp_demo/ tests/
-DEMO_SRCS = $(shell find allennlp_demo -type f ! -name '*.pyc' ! -path '*.mypy_cache/*')
+COMMON_SRC = $(wildcard allennlp_demo/*.py) \
+			 $(wildcard allennlp_demo/common/*.py) \
+			 $(wildcard allennlp_demo/common/testing/*.py) \
+			 $(wildcard allennlp_demo/common/testing/fixtures/*)
 DOCKER_LABEL = latest
 DOCKER_PORT = 8000
 
@@ -34,19 +37,24 @@ allennlp_demo/%/Dockerfile : \
 		echo "$@ tracked by git, leaving untouched"; \
 	else \
 		echo "Generating $@"; \
-		python allennlp_demo/common/codegen.py $* dockerfile > $@
+		python allennlp_demo/common/codegen.py $* dockerfile > $@; \
 	fi
 
-%-build : allennlp_demo/%/Dockerfile context.tar.gz
-	docker build -f $< -t allennlp-demo-$*:$(DOCKER_LABEL) - < context.tar.gz
+%-context.tar.gz : \
+		allennlp_demo/%/Dockerfile  \
+		allennlp_demo/%/__init__.py \
+		allennlp_demo/%/api.py \
+		allennlp_demo/%/test_api.py \
+		allennlp_demo/%/model.json \
+		allennlp_demo/%/requirements.txt \
+		$(COMMON_SRC)
+	tar -czvf $@ $^
+
+%-build : allennlp_demo/%/Dockerfile %-context.tar.gz
+	docker build -f $< -t allennlp-demo-$*:$(DOCKER_LABEL) - < $*-context.tar.gz
 
 %-run : %-build
 	docker run --rm -p $(DOCKER_PORT):8000 -v $$HOME/.allennlp:/root/.allennlp allennlp-demo-$*:$(DOCKER_LABEL) $(ARGS)
 
 %-test : %-build
 	docker run --rm -v $$HOME/.allennlp:/root/.allennlp allennlp-demo-$*:$(DOCKER_LABEL) -m pytest -v --color=yes
-
-context.tar.gz : FORCE
-	tar -czvf $@ $(DEMO_SRCS)
-
-FORCE :
