@@ -55,3 +55,7 @@ Each endpoint has tests. To run them run `pytest` in the model endpoint's workin
 ```bash
 pytest allennlp_demo/bidaf
 ```
+
+We also use [`flake8`](http://flake8.pycqa.org/) to lint our code base, [`black`](https://black.readthedocs.io) to check formatting, and [`mypy`](http://mypy-lang.org/) to run typechecks.
+
+You can run each of these checks, respectively, with `make lint`, `make format`, and `make typecheck`.
