@@ -164,7 +164,7 @@ const examples = [
   { sentence: "visually imaginative, thematically instructive and thoroughly delightful, it takes us on a roller-coaster ride from innocence to experience without even a hint of that typical kiddie-flick sentimentality."}
 ]
 
-const modelUrl = "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz"
+const modelUrl = "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.05.04.tar.gz"
 
 const bashCommand =
     `echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
