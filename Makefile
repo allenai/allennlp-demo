@@ -30,7 +30,12 @@ allennlp_demo/%/Dockerfile : \
 		allennlp_demo/%/test_api.py \
 		allennlp_demo/%/model.json \
 		allennlp_demo/%/requirements.txt
-	python allennlp_demo/common/codegen.py $* dockerfile > $@
+	@if [ "$$(git ls-files $@ | wc -l)" -ge 1 ]; then \
+		echo "$@ tracked by git, leaving untouched"; \
+	else \
+		echo "Generating $@"; \
+		python allennlp_demo/common/codegen.py $* dockerfile > $@
+	fi
 
 %-build : allennlp_demo/%/Dockerfile context.tar.gz
 	docker build -f $< -t allennlp-demo-$*:$(DOCKER_LABEL) - < context.tar.gz
