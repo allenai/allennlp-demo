@@ -6,6 +6,9 @@ DOCKER_PORT = 8000
 .PHONY : lint
 lint :
 	flake8 $(SRC)
+
+.PHONY : format
+format :
 	black --check $(SRC)
 
 .PHONY : typecheck
