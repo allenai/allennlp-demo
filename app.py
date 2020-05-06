@@ -539,9 +539,7 @@ if __name__ == "__main__":
         help="json file containing the details of the models to load",
     )
     parser.add_argument(
-        "--no-models",
-        action="store_true",
-        help="if specified don't load any models"
+        "--no-models", action="store_true", help="if specified don't load any models"
     )
 
     models_group = parser.add_mutually_exclusive_group()
@@ -555,7 +553,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.no_models == False:
+    if not args.no_models:
         models = load_demo_models(args.models_file, args.model)
     else:
         models = {}
