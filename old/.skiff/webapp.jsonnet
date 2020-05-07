@@ -1,56 +1,23 @@
 /**
- * This file is a template that's used to generate the Kubernetes manifest
- * for your application. It's a jsonnet file, which you can learn more
- * about via https://jsonnet.org/.
- *
- * This file defines the manifest for a simple web application. It's composed
- * by the following pieces:
- *  - Your Namespace, a way to group the resources related to your application
- *    so that they're nicely isolated from those related to other apps.
- *  - An Ingress definition, which tells Kubernetes what traffic to route to
- *    your web application and what protocols to use. It also sets up TLS,
- *    which ensures communications between the client and your app are securely
- *    encrypted.
- *  - A Deployment, which tells Kubernetes to run multiple versions of your
- *    application and what code to run.
- *  - A Service, which tells Kubernetes that your application can be exposed
- *    to traffic outside of the cluster.
- *
- * This file expects the following external variables to be defined:
- *  - image {string}    An identifier for the docker image to run. Any valid
- *                      docker tag and/or sha is appropriate, i.e. my-app:latest
- *                      or my-app:sha256.
- *  - env   {string}    An identifier for the environment. If the value is 'prod',
- *                      then the top-level domain, 'appName.apps.allenai.org'
- *                      is associated with the deployment.
- *  - sha   {string}    The GIT SHA of the code being built and deployed.
- *
- * This file exptects a config.json file to exist in the same directory with
- * the following parameters:
- *  - appName   {string}    A unique name identifying the application.
- *  - httpPort  {number}    The port on which your application listens for HTTP
- *                          traffic.
- *  - contact   {string}    An @allenai.org email address that can be contacted
- *                          for matters related to the application. Note, the
- *                          '@allenai.org' suffix is not present in the value,
- *                          as Kubernetes labels don't accept the '@' character.
+ * This template is used to generate Kubernetes manifests for running the
+ * old model serving solution.
  */
 
-// This file is generated once at template creation time and unlikely to change
-// from that point forward.
-local config = import '../skiff.json';
+local config = import '../../skiff.json';
 
-// Load the models
 local models = import '../models.json';
 local model_names = std.objectFields(models);
 
-// These values are provided at runtime.
 local env = std.extVar('env');
 local image = std.extVar('image');
-local uiImage = std.extVar('uiImage');
+local build_id = std.extVar('buildId');
+local repo = std.extVar('repo');
 local sha = std.extVar('sha');
 
-// Use 2 replicas in prod, only 1 in staging.
+local api_port = 8000;
+
+// Use less replicas in non-prod environments as their availability requirements
+// are less stringent.
 local num_replicas = (
     if env == 'prod' then
         2
@@ -58,53 +25,50 @@ local num_replicas = (
         1
 );
 
-local topLevelDomain = '.apps.allenai.org';
-
-// Only register demo.allennlp.org for production environments, there's
-// no wildcard entry (*.allennlp.org) directing URLs with the environment
-// as a subdomain to the Skiff cluster. If a URL is included here that
-// isn't routed to the cluster a TLS certificate can't be issued.
+// For production environments we use `demos.allennlp.org` and the regular
+// `apps.allenai.org` hostname used by Skiff applications.
+local tld = '.apps.allenai.org';
 local hosts =
     if env == 'prod' then
-        [ config.appName + topLevelDomain, 'demo.allennlp.org' ]
+        [ config.appName + tld, 'demo.allennlp.org' ]
     else
-        [ config.appName + '.' + env + topLevelDomain ];
+        [ config.appName + '.' + env + tld ];
 
 // Each app gets it's own namespace
-local namespaceName = config.appName;
+local namespace_name = config.appName;
 
 // Since we deploy resources for different environments in the same namespace,
 // we need to give things a fully qualified name that includes the environment
-// as to avoid unintentional collission / redefinition.
-local fullyQualifiedName = config.appName + '-' + env;
+// as to avoid unintentional collision.
+local fqn = config.appName + '-' + env;
 
 // Every resource is tagged with the same set of labels. These labels serve the
 // following purposes:
 //  - They make it easier to query the resources, i.e.
 //      kubectl get pod -l app=my-app,env=staging
 //  - The service definition uses them to find the pods it directs traffic to.
-local labels = {
+local namespace_labels = {
     app: config.appName,
-    env: env,
     contact: config.contact,
     team: config.team
 };
 
-local model_labels(model_name) = labels + {
-    model: model_name,
-    role: 'model-server'
+local labels = namespace_labels + {
+    env: env
 };
 
-local ui_server_labels = labels + {
-    role: 'ui-server'
+local model_labels(model_name) = labels + {
+    model: model_name,
+    env: env,
+    role: 'model-server'
 };
 
 local namespace = {
     apiVersion: 'v1',
     kind: 'Namespace',
     metadata: {
-        name: namespaceName,
-        labels: labels
+        name: namespace_name,
+        labels: namespace_labels
     }
 };
 
@@ -154,17 +118,13 @@ local cloudsql_volumes = [
     }
 ];
 
-// Each model typically has its own service running that handles several different endpoints
-// (/predict, /attack, etc.).  This is a convenience function that will route
-// all of those endpoints to the model service, instead of the main frontend.
-// TODO(mattg): we might want to change this some day so that all model backend services start with
-// /model/[model-name], so that we only have to have one route per backend, instead of this mess of
-// registering every endpoint separately.
-local model_path(model_name, endpoint, url_extra='') = {
-    path: '/' + endpoint + '/' + model_name + url_extra,
+// Generates the path that should be routed to the backend for the specified
+// model.
+local model_path(model_name, endpoint) = {
+    path: '/' + endpoint + '/' + model_name,
     backend: {
-        serviceName: fullyQualifiedName + '-' + model_name,
-        servicePort: config.httpPort
+        serviceName: fqn + '-' + model_name,
+        servicePort: api_port
     },
 };
 
@@ -174,7 +134,7 @@ local readinessProbe = {
     initialDelaySeconds: 15,
     httpGet: {
         path: '/health',
-        port: config.httpPort,
+        port: api_port,
         scheme: 'HTTP'
     }
 };
@@ -212,48 +172,8 @@ local db_env_variables = [
     }
 ];
 
-local deployment = {
-    apiVersion: 'extensions/v1beta1',
-    kind: 'Deployment',
-    metadata: {
-        labels: ui_server_labels,
-        name: fullyQualifiedName,
-        namespace: namespaceName,
-    },
-    spec: {
-        revisionHistoryLimit: 3,
-        replicas: num_replicas,
-        template: {
-            metadata: {
-                name: fullyQualifiedName,
-                namespace: namespaceName,
-                labels: ui_server_labels
-            },
-            spec: {
-                containers: [
-                    {
-                        name: config.appName,
-                        image: uiImage,
-                        readinessProbe: {
-                            httpGet: {
-                                path: '/',
-                                port: 80,
-                                scheme: 'HTTP'
-                            }
-                        },
-                        resources: {
-                            requests: {
-                                cpu: '50m',
-                                memory: '100Mi'
-                            }
-                        }
-                    }
-                ],
-            }
-        }
-    }
-};
-
+// We deploy a single version of the Python application, without any models
+// loaded, that's responsible for serving permadata from the database.
 local permadata_labels = labels + {
     'role': 'permadata-server'
 };
@@ -263,16 +183,16 @@ local permadata_deployment = {
     kind: 'Deployment',
     metadata: {
         labels: permadata_labels,
-        name: fullyQualifiedName + '-permadata',
-        namespace: namespaceName,
+        name: fqn + '-permadata',
+        namespace: namespace_name,
     },
     spec: {
         revisionHistoryLimit: 3,
         replicas: num_replicas,
         template: {
             metadata: {
-                name: fullyQualifiedName + '-permadata',
-                namespace: namespaceName,
+                name: fqn + '-permadata',
+                namespace: namespace_name,
                 labels: permadata_labels
             },
             spec: {
@@ -302,15 +222,15 @@ local permadata_service = {
     apiVersion: 'v1',
     kind: 'Service',
     metadata: {
-        name: fullyQualifiedName + '-permadata',
-        namespace: namespaceName,
+        name: fqn + '-permadata',
+        namespace: namespace_name,
         labels: permadata_labels
     },
     spec: {
         selector: permadata_labels,
         ports: [
             {
-                port: config.httpPort,
+                port: api_port,
                 name: 'http'
             }
         ]
@@ -335,16 +255,16 @@ local model_deployment(model_name) = {
     kind: 'Deployment',
     metadata: {
         labels: model_labels(model_name),
-        name: fullyQualifiedName + "-" + model_name,
-        namespace: namespaceName,
+        name: fqn + "-" + model_name,
+        namespace: namespace_name,
     },
     spec: {
         revisionHistoryLimit: 3,
         replicas: num_replicas,
         template: {
             metadata: {
-                name: fullyQualifiedName + "-" + model_name,
-                namespace: namespaceName,
+                name: fqn + "-" + model_name,
+                namespace: namespace_name,
                 labels: model_labels(model_name)
             },
             spec: {
@@ -370,39 +290,19 @@ local model_deployment(model_name) = {
     }
 };
 
-local service = {
-    apiVersion: 'v1',
-    kind: 'Service',
-    metadata: {
-        name: fullyQualifiedName,
-        namespace: namespaceName,
-        labels: ui_server_labels
-    },
-    spec: {
-        selector: ui_server_labels,
-        ports: [
-            {
-                port: 80,
-                name: 'http'
-            }
-        ]
-    }
-};
-
-
 local model_service(model_name) = {
     apiVersion: 'v1',
     kind: 'Service',
     metadata: {
-        name: fullyQualifiedName + "-" + model_name,
-        namespace: namespaceName,
+        name: fqn + "-" + model_name,
+        namespace: namespace_name,
         labels: model_labels(model_name)
     },
     spec: {
         selector: model_labels(model_name),
         ports: [
             {
-                port: config.httpPort,
+                port: api_port,
                 name: 'http'
             }
         ]
@@ -413,24 +313,22 @@ local ingress = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Ingress',
     metadata: {
-        name: fullyQualifiedName + '-ingress',
-        namespace: namespaceName,
+        name: fqn + '-ingress',
+        namespace: namespace_name,
         labels: labels,
         annotations: {
             'certmanager.k8s.io/cluster-issuer': 'letsencrypt-prod',
             'kubernetes.io/ingress.class': 'nginx',
             'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
-            'nginx.ingress.kubernetes.io/enable-cors': 'false',
-            'nginx.ingress.kubernetes.io/use-regex': 'true',
-            'apps.allenai.org/build': std.extVar('buildId'),
-            'apps.allenai.org/sha': std.extVar('sha'),
-            'apps.allenai.org/repo': std.extVar('repo')
+            'apps.allenai.org/build': build_id,
+            'apps.allenai.org/sha': sha,
+            'apps.allenai.org/repo': repo
         }
     },
     spec: {
         tls: [
             {
-                secretName: fullyQualifiedName + '-tls',
+                secretName: fqn + '-tls',
                 hosts: hosts
             }
         ],
@@ -457,16 +355,10 @@ local ingress = {
                             path: '/permadata',
                             backend: {
                                 serviceName: permadata_service.metadata.name,
-                                servicePort: config.httpPort
-                            }
-                        },
-                        {
-                            backend: {
-                                serviceName: fullyQualifiedName,
-                                servicePort: 80
+                                servicePort: api_port
                             }
                         }
-                    ]
+                   ]
                 }
             } for host in hosts
         ]
@@ -476,8 +368,6 @@ local ingress = {
 [
     namespace,
     ingress,
-    deployment,
-    service,
     permadata_deployment,
     permadata_service,
 ] + [
