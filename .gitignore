@@ -1,5 +1,5 @@
 __pycache__
-demo/build/
+ui/build/
 **/*.pyc
 .mypy_cache
 
