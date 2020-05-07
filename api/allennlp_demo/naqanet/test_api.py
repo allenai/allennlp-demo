@@ -14,10 +14,6 @@ class TestNAQANetModelEndpoint(RcModelEndpointTestCase):
         # The hotflip attack for this model is currently broken.
         return [aid for aid in super().attacker_ids() if aid != "hotflip"]
 
-    @overrides
-    def test_predict(self):
-        resp = self.client.post("/predict", query_string={"no_cache": True}, json=self.rc_input)
-        assert resp.status_code == 200
-        assert resp.json is not None
-        assert "answer" in resp.json
-        assert len(resp.json["passage_question_attention"]) > 0
+    def check_predict_result(self, result):
+        assert "answer" in result
+        assert len(result["passage_question_attention"]) > 0
