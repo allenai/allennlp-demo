@@ -8,7 +8,7 @@ local config = import '../../skiff.json';
 local env = std.extVar('env');
 local image = std.extVar('image');
 local sha = std.extVar('sha');
-local build_id = std.extVar('build_id');
+local build_id = std.extVar('buildId');
 local repo = std.extVar('repo');
 
 // Use less replicas in non-prod environments as their availability requirements
