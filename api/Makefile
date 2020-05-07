@@ -28,7 +28,7 @@ typecheck :
 	else \
 		echo "Using default build from allennlp_demo/Dockerfile"; \
 		docker build \
-			--build-arg DEMO=$* \
+			--build-arg MODULE=$* \
 			-t $(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG) .; \
 	fi
 

@@ -3,7 +3,7 @@
 FROM allennlp/allennlp:v1.0.0rc3
 
 # Name / sub-directory name of the demo.
-ARG DEMO
+ARG MODULE
 
 WORKDIR /app/
 
@@ -14,7 +14,7 @@ RUN spacy download en_core_web_sm
 
 COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
 COPY allennlp_demo/common allennlp_demo/common
-COPY allennlp_demo/${DEMO} allennlp_demo/${DEMO}
+COPY allennlp_demo/${MODULE} allennlp_demo/${MODULE}
 
 # Ensure allennlp_demo module can be found by Python.
 ENV PYTHONPATH /app/
@@ -26,12 +26,12 @@ ENV PYTHONUNBUFFERED 1
 # You might be wondering why we can't just do
 #
 #> ENTRYPOINT [ "python" ]
-#> CMD [ "allennlp_demo/${DEMO}/api.py" ]
+#> CMD [ "allennlp_demo/${MODULE}/api.py" ]
 #
 # The reason is that Python will interpret the string in CMD literally as just
-# "allennlp_demo/${DEMO}/api.py" without substituting environment variables.
+# "allennlp_demo/${MODULE}/api.py" without substituting environment variables.
 # Environment variable evaluation is a something that a shell handles, so we need
 # to wrap the `python` command in a shell (`/bin/bash` in this case).
-ENV DEMO ${DEMO}
+ENV MODULE ${MODULE}
 ENTRYPOINT [ "/bin/bash" ]
-CMD [ "-c", "python allennlp_demo/${DEMO}/api.py" ]
+CMD [ "-c", "python allennlp_demo/${MODULE}/api.py" ]
