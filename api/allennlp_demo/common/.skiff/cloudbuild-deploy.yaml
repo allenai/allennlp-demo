@@ -8,7 +8,7 @@ steps:
   name: gcr.io/cloud-builders/docker
   entrypoint: make
   args: [
-    $_MODEL_PATH-build DOCKER_BASE_NAME=gcr.io/$PROJECT_ID/$REPO_NAME DOCKER_TAG=$COMMIT_SHA,
+    $_MODEL_PATH-build, DOCKER_BASE_NAME=gcr.io/$PROJECT_ID/$REPO_NAME, DOCKER_TAG=$COMMIT_SHA
   ]
 - id: tag-latest
   name: gcr.io/cloud-builders/docker
