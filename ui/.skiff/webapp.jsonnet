@@ -49,7 +49,7 @@ local labels = {
 };
 
 local ui_labels = labels + {
-    role: 'ui-server'
+    role: 'ui-server',
     env: env
 };
 

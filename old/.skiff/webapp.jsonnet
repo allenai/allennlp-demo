@@ -10,7 +10,7 @@ local model_names = std.objectFields(models);
 
 local env = std.extVar('env');
 local image = std.extVar('image');
-local build_id = std.extVar('buildId')
+local build_id = std.extVar('buildId');
 local repo = std.extVar('repo');
 local sha = std.extVar('sha');
 
