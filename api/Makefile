@@ -1,5 +1,6 @@
 SRC = allennlp_demo/
-DOCKER_LABEL = latest
+DOCKER_BASE_NAME = allennlp-demo
+DOCKER_TAG = latest
 DOCKER_PORT = 8000
 
 .PHONY : lint
@@ -23,23 +24,23 @@ typecheck :
 		echo "Using custom build from allennlp_demo/$*/Dockefile"; \
 		docker build \
 			-f allennlp_demo/$*/Dockerfile \
-			-t allennlp-demo-$*:$(DOCKER_LABEL) .; \
+			-t $(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG) .; \
 	else \
 		echo "Using default build from allennlp_demo/Dockerfile"; \
 		docker build \
 			--build-arg DEMO=$* \
-			-t allennlp-demo-$*:$(DOCKER_LABEL) .; \
+			-t $(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG) .; \
 	fi
 
 %-run : %-build
 	docker run --rm \
 		-p $(DOCKER_PORT):8000 \
 		-v $$HOME/.allennlp:/root/.allennlp \
-		allennlp-demo-$*:$(DOCKER_LABEL)
+		$(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG)
 
 %-test : %-build
 	docker run --rm \
 		-v $$HOME/.allennlp:/root/.allennlp \
 		--entrypoint=python \
-		allennlp-demo-$*:$(DOCKER_LABEL) \
+		$(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG) \
 		-m pytest -v --color=yes

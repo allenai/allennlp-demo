@@ -57,7 +57,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        cd api && make bidaf-test DOCKER_LABEL=$GITHUB_SHA
+        cd api && make bidaf-test DOCKER_TAG=$GITHUB_SHA
 
   # TODO: takes too long to run right now.
   # bidaf_elmo:
@@ -67,7 +67,7 @@ jobs:
   #   - uses: actions/checkout@v2
   #   - name: Build and test image
   #     run: |
-  #       cd api && make bidaf_elmo-test DOCKER_LABEL=$GITHUB_SHA
+  #       cd api && make bidaf_elmo-test DOCKER_TAG=$GITHUB_SHA
 
   naqanet:
     name: Model (naqanet)
@@ -76,7 +76,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        cd api && make naqanet-test DOCKER_LABEL=$GITHUB_SHA
+        cd api && make naqanet-test DOCKER_TAG=$GITHUB_SHA
 
   nmn_drop:
     name: Model (nmn_drop)
@@ -85,4 +85,4 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        cd api && make nmn_drop-test DOCKER_LABEL=$GITHUB_SHA
+        cd api && make nmn_drop-test DOCKER_TAG=$GITHUB_SHA
