@@ -1,5 +1,4 @@
 SRC = allennlp_demo/
-DEMO_SRCS = $(shell find allennlp_demo -type f ! -name '*.pyc' ! -path '*.mypy_cache/*')
 DOCKER_LABEL = latest
 DOCKER_PORT = 8000
 
@@ -19,16 +18,39 @@ typecheck :
 		--no-site-packages \
 		--cache-dir=/dev/null
 
-%-build : allennlp_demo/%/Dockerfile context.tar.gz
-	docker build -f $< -t allennlp-demo-$*:$(DOCKER_LABEL) - < context.tar.gz
+%-context.tar.gz : FORCE
+	tar -czvf $@ --exclude-from=.dockerignore \
+		allennlp_demo/__init__.py \
+		allennlp_demo/Dockerfile \
+		allennlp_demo/requirements.txt \
+		allennlp_demo/common allennlp_demo/$*/
+
+%-build : %-context.tar.gz
+	@if [ -f allennlp_demo/$*/Dockerfile ]; then \
+		echo "Using custom build from allennlp_demo/$*/Dockefile"; \
+		docker build \
+			-f allennlp_demo/$*/Dockerfile \
+			-t allennlp-demo-$*:$(DOCKER_LABEL) \
+			- < $*-context.tar.gz; \
+	else \
+		echo "Using default build from allennlp_demo/Dockerfile"; \
+		docker build \
+			-f allennlp_demo/Dockerfile \
+			-t allennlp-demo-$*:$(DOCKER_LABEL) \
+			--build-arg DEMO=$* - < $*-context.tar.gz; \
+	fi
 
 %-run : %-build
-	docker run --rm -p $(DOCKER_PORT):8000 -v $$HOME/.allennlp:/root/.allennlp allennlp-demo-$*:$(DOCKER_LABEL) $(ARGS)
+	docker run --rm \
+		-p $(DOCKER_PORT):8000 \
+		-v $$HOME/.allennlp:/root/.allennlp \
+		allennlp-demo-$*:$(DOCKER_LABEL)
 
 %-test : %-build
-	docker run --rm -v $$HOME/.allennlp:/root/.allennlp allennlp-demo-$*:$(DOCKER_LABEL) -m pytest -v --color=yes
-
-context.tar.gz : FORCE
-	tar -czvf $@ $(DEMO_SRCS)
+	docker run --rm \
+		-v $$HOME/.allennlp:/root/.allennlp \
+		--entrypoint=python \
+		allennlp-demo-$*:$(DOCKER_LABEL) \
+		-m pytest -v --color=yes
 
 FORCE :
