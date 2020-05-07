@@ -1,4 +1,4 @@
-SRC = app.py scripts/ server/ allennlp_demo/ tests/
+SRC = allennlp_demo/
 DOCKER_LABEL = latest
 DOCKER_PORT = 8000
 
