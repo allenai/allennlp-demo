@@ -8,18 +8,18 @@ demos to run with different dependencies.
 
 ## Code Structure
 
-Each directory contains a small [Flask](https://flask.palletsprojects.com/en/1.1.x/)
-applications that handles requests intended for a particular model. Every
-application should have it's own `Dockerfile`.
+Each demo submodule of `allennlp_demo` contains a small [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+application that handles requests intended for a particular model.
 
 Shared code should be added to the `common/` directory. If you're changing
 code in this directory it'll have an effect on all of the endpoints that
 use it. We plan on adding tests in the near future as to make it easy to verify
 changes to common libaries.
 
-At build time we build each individual endpoint by executing the instructoins
-in it's `Dockerfile`. The `Dockerfile` includes the steps that install Python
-dependencies and copy over code from `common/` as needed.
+At build time we build each individual endpoint by executing the instructions
+in it's `Dockerfile`, which by default comes from [`./Dockerfile`](./Dockerfile) unless a
+different `Dockerfile` exists in the demo's subdirectory.
+The `Dockerfile` includes the steps that install Python dependencies and copy over code from `common/` as needed.
 
 ## Building
 

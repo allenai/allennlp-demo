@@ -10,8 +10,8 @@ on:
 
 jobs:
   # Runs common light-weight checks like linting and type checking.
-  checks:
-    name: Checks
+  api_checks:
+    name: API Checks
     runs-on: ubuntu-latest
 
     steps:
@@ -25,26 +25,27 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}
+        key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('api/requirements.txt') }}-${{ hashFiles('api/dev-requirements.txt') }}
 
     - name: Install requirements
       run: |
-        pip install -r requirements.txt
+        cd api
+        pip install -r requirements.txt -r dev-requirements.txt
 
     - name: Format
       if: always()
       run: |
-        make format
+        cd api && make format
 
     - name: Lint
       if: always()
       run: |
-        make lint
+        cd api && make lint
 
     - name: Type check
       if: always()
       run: |
-        make typecheck
+        cd api && make typecheck
 
   bidaf:
     name: Model (bidaf)
@@ -56,7 +57,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        make bidaf-test DOCKER_LABEL=$GITHUB_SHA
+        cd api && make bidaf-test DOCKER_LABEL=$GITHUB_SHA
 
   # TODO: takes too long to run right now.
   # bidaf_elmo:
@@ -66,7 +67,7 @@ jobs:
   #   - uses: actions/checkout@v2
   #   - name: Build and test image
   #     run: |
-  #       make bidaf_elmo-test DOCKER_LABEL=$GITHUB_SHA
+  #       cd api && make bidaf_elmo-test DOCKER_LABEL=$GITHUB_SHA
 
   naqanet:
     name: Model (naqanet)
@@ -75,7 +76,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        make naqanet-test DOCKER_LABEL=$GITHUB_SHA
+        cd api && make naqanet-test DOCKER_LABEL=$GITHUB_SHA
 
   nmn_drop:
     name: Model (nmn_drop)
@@ -84,4 +85,4 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build and test image
       run: |
-        make nmn_drop-test DOCKER_LABEL=$GITHUB_SHA
+        cd api && make nmn_drop-test DOCKER_LABEL=$GITHUB_SHA

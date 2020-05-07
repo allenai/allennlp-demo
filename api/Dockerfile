@@ -7,7 +7,7 @@ ARG DEMO
 
 WORKDIR /app/
 
-COPY allennlp_demo/requirements.txt requirements.txt
+COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm

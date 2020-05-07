@@ -6,6 +6,3 @@ mypy==0.770
 
 # Automatic code formatting
 black
-
-# Running tests.
-pytest

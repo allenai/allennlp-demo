@@ -18,26 +18,17 @@ typecheck :
 		--no-site-packages \
 		--cache-dir=/dev/null
 
-%-context.tar.gz : FORCE
-	tar -czvf $@ --exclude-from=.dockerignore \
-		allennlp_demo/__init__.py \
-		allennlp_demo/Dockerfile \
-		allennlp_demo/requirements.txt \
-		allennlp_demo/common allennlp_demo/$*/
-
-%-build : %-context.tar.gz
+%-build :
 	@if [ -f allennlp_demo/$*/Dockerfile ]; then \
 		echo "Using custom build from allennlp_demo/$*/Dockefile"; \
 		docker build \
 			-f allennlp_demo/$*/Dockerfile \
-			-t allennlp-demo-$*:$(DOCKER_LABEL) \
-			- < $*-context.tar.gz; \
+			-t allennlp-demo-$*:$(DOCKER_LABEL) .; \
 	else \
 		echo "Using default build from allennlp_demo/Dockerfile"; \
 		docker build \
-			-f allennlp_demo/Dockerfile \
-			-t allennlp-demo-$*:$(DOCKER_LABEL) \
-			--build-arg DEMO=$* - < $*-context.tar.gz; \
+			--build-arg DEMO=$* \
+			-t allennlp-demo-$*:$(DOCKER_LABEL) .; \
 	fi
 
 %-run : %-build
@@ -52,5 +43,3 @@ typecheck :
 		--entrypoint=python \
 		allennlp-demo-$*:$(DOCKER_LABEL) \
 		-m pytest -v --color=yes
-
-FORCE :
