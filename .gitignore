@@ -66,4 +66,4 @@ typings/
 .next
 
 # docker build context
-context.tar.gz
+*.tar.gz

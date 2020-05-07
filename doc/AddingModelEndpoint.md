@@ -23,11 +23,14 @@ selected a model, follow these steps to port it to the new solution:
     ```bash
     cd allennlp_demo/oscar_drop
     rsync -rv --filter="- __pycache__" --filter="- .pytest_cache" \
-        ../oscar_drop/ ./
+        ../bidaf/ ./
     ```
 
-3. Next, open up the `Dockerfile` and replace all instances of `bidaf/` with
-   `oscar_drop/`.
+3. If the default Dockerfile (`allennlp_demo/Dockerfile`) works for `oscar_drop`, you don't need
+   to create a new one - the default will automatically be used. If, for some reason, you
+   do need a custom Dockerfile to build the demo (for example, if `oscar_drop` requires
+   a different version of `allennlp` than the default) then you can just copy the default over
+   to `oscar_drop/Dockerfile` and modify it as you need.
 
 4. Now open up `models.json` in the root and copy over the model's configuration
    into `oscar_drop/model.json`.
@@ -55,9 +58,13 @@ selected a model, follow these steps to port it to the new solution:
    do this in the root directory.
 
     ```bash
-    cd allennlp_demo
-    docker build . -f allennlp_demo/oscar_drop/Dockerfile -t oscar_drop:latest && \
-        docker run  -v $HOME/.allennlp:/root/.allennlp --rm -it --entrypoint pytest oscar_drop:latest -x -ra
+    make oscar_drop-test
+    ```
+
+    And then
+
+    ```bash
+    make oscar_drop-run
     ```
 
 8. If the tests pass, move on to the next step. If they don't, then you'll need
