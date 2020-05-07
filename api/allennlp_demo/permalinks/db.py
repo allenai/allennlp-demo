@@ -69,47 +69,22 @@ class PostgresDemoDatabase(DemoDatabase):
         self.port = port
         self.user = user
         self.password = password
-        self.conn: Optional[psycopg2.extensions.connection] = None
-        self._connect()
 
-    def _connect(self) -> None:
-        logger.info("initializing database connection:")
+    def connect(self) -> psycopg2.extensions.connection:
+        logger.info("establishing database connection:")
         logger.info("host: %s", self.host)
         logger.info("port: %s", self.port)
         logger.info("dbname: %s", self.dbname)
-        try:
-            self.conn = psycopg2.connect(
-                host=self.host,
-                port=self.port,
-                user=self.user,
-                password=self.password,
-                dbname=self.dbname,
-                connect_timeout=5,
-            )
-            self.conn.set_session(autocommit=True)
-            logger.info("successfully initialized database connection")
-        except psycopg2.Error as error:
-            logger.exception("unable to connect to database")
-            raise error
-
-    # TODO(brendanr): Change our flow to catch exceptions due to lost connections and then retry
-    # rather than performing this check preemptively. That should be cheaper and more robust as
-    # a connection could fail between the check and the insert/update.
-    def _health_check(self) -> None:
-        """
-        Postgres has no way of automatically reconnecting lost database
-        connections. Because our database load is pretty low, we can afford to do
-        a health check before each database request and (try to) reconnect if the
-        connection has been lost.
-        """
-        try:
-            with self.conn.cursor() as curs:
-                # Run a simple query
-                curs.execute("""SELECT 1""")
-                curs.fetchone()
-        except (psycopg2.Error, AttributeError):
-            logger.exception("Database connection lost, reconnecting")
-            self._connect()
+        conn = psycopg2.connect(
+            host=self.host,
+            port=self.port,
+            user=self.user,
+            password=self.password,
+            dbname=self.dbname,
+            connect_timeout=5,
+        )
+        conn.set_session(autocommit=True)
+        return conn
 
     @classmethod
     def from_environment(cls) -> Optional["PostgresDemoDatabase"]:
@@ -134,9 +109,9 @@ class PostgresDemoDatabase(DemoDatabase):
             return None
 
     def insert_request(self, requester: str, model_name: str, inputs: Dict) -> Optional[int]:
+        conn = self.connect()
         try:
-            self._health_check()
-            with self.conn.cursor() as curs:
+            with conn.cursor() as curs:
                 logger.info("inserting into the database")
 
                 curs.execute(
@@ -156,11 +131,13 @@ class PostgresDemoDatabase(DemoDatabase):
         except (psycopg2.Error, AttributeError):
             logger.exception("Unable to insert permadata")
             return None
+        finally:
+            conn.close()
 
     def get_result(self, perma_id: int) -> Optional[PermaLink]:
+        conn = self.connect()
         try:
-            self._health_check()
-            with self.conn.cursor() as curs:
+            with conn.cursor() as curs:
                 logger.info("retrieving perma_id %s from database", perma_id)
                 curs.execute(RETRIEVE_SQL, (perma_id,))
                 row = curs.fetchone()
@@ -175,6 +152,8 @@ class PostgresDemoDatabase(DemoDatabase):
         except (psycopg2.Error, AttributeError):
             logger.exception("Unable to retrieve result")
             return None
+        finally:
+            conn.close()
 
 
 class InMemoryDemoDatabase(DemoDatabase):
