@@ -6,7 +6,7 @@
  * https://jsonnet.org/learning/getting_started.html
  */
 
-local config = import '../../../skiff.json';
+local config = import '../../../../skiff.json';
 
 {
     /**
