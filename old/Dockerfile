@@ -2,7 +2,7 @@
 FROM allennlp/commit:26e313b7d11eacf3a78c09c34608ad1bfd7db120
 LABEL maintainer="allennlp-contact@allenai.org"
 
-WORKDIR /stage/allennlp
+WORKDIR /app
 
 # Install python dependencies
 COPY requirements.txt requirements.txt
@@ -11,10 +11,8 @@ RUN pip install -r requirements.txt
 # Download spacy model
 RUN spacy download en_core_web_sm
 
-COPY scripts/ scripts/
 COPY server/models.py server/models.py
 
-COPY tests/ tests/
 COPY app.py app.py
 COPY server/ server/
 

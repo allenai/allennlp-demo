@@ -1,3 +1,5 @@
+.skiff/
 node_modules/
+build/
 **/*.md
 Dockerfile
