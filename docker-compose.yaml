@@ -5,6 +5,8 @@ services:
         build:
             context: api
             dockerfile: allennlp_demo/permalinks/Dockerfile
+        command:
+            - allennlp_demo/permalinks/api.py
         environment:
             - FLASK_ENV=development
             - DEMO_POSTGRES_HOST=db

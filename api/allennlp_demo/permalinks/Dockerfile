@@ -17,4 +17,4 @@ ENV PYTHONPATH /app/
 ENV PYTHONUNBUFFERED 1
 
 ENTRYPOINT [ "python" ]
-CMD [ "allennlp_demo/permalinks/api.py" ]
+CMD [ "allennlp_demo/permalinks/prod_api.py" ]
