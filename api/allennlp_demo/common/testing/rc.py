@@ -12,7 +12,7 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
 
     endpoint: ModelEndpoint
 
-    predict_payload = {
+    predict_input = {
         "passage": (
             "A reusable launch system (RLS, or reusable launch vehicle, RLV) "
             "is a launch system which is capable of launching a payload into "
@@ -44,7 +44,7 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
             resp = self.client.post(
                 f"/interpret/{interpreter_id}",
                 query_string={"no_cache": True},
-                json=self.predict_payload,
+                json=self.predict_input,
             )
             assert resp.status_code == 200
             assert resp.json is not None
@@ -59,7 +59,7 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
 
     def test_attack(self):
         data = {
-            "inputs": self.predict_payload,
+            "inputs": self.predict_input,
             "input_field_to_attack": "question",
             "grad_input_field": "grad_input_2",
         }

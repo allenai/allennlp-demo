@@ -26,7 +26,7 @@ class ModelEndpointTestCase:
     Should be defined by each subclass.
     """
 
-    predict_payload: Dict[str, Any]
+    predict_input: Dict[str, Any]
     """
     Payload to send to the /predict route.
     """
@@ -60,16 +60,16 @@ class ModelEndpointTestCase:
         """
         Test the /predict route.
         """
-        response = self.client.post("/predict", json=self.predict_payload)
+        response = self.client.post("/predict", json=self.predict_input)
         self.check_response_okay(response, cache_hit=False)
         self.check_predict_result(response.json)
 
-        response = self.client.post("/predict", json=self.predict_payload)
+        response = self.client.post("/predict", json=self.predict_input)
         self.check_response_okay(response, cache_hit=True)
         self.check_predict_result(response.json)
 
         response = self.client.post(
-            "/predict", query_string={"no_cache": True}, json=self.predict_payload
+            "/predict", query_string={"no_cache": True}, json=self.predict_input
         )
         self.check_response_okay(response, cache_hit=False)
         self.check_predict_result(response.json)
