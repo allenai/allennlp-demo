@@ -1,3 +1,5 @@
+from functools import lru_cache
+from dataclasses import asdict
 import json
 
 from flask import Flask, Request, Response, after_this_request, request, jsonify
@@ -14,8 +16,6 @@ from allennlp.interpret.saliency_interpreters import (
 )
 from allennlp.interpret.attackers import Attacker, Hotflip, InputReduction
 from allennlp.models.archival import load_archive
-from functools import lru_cache
-from dataclasses import asdict
 
 
 def no_cache(request: Request) -> bool:
@@ -85,6 +85,27 @@ class ModelEndpoint:
         self.attackers = self.load_attackers()
 
         self.configure_error_handling()
+
+        # By creating the LRU caches when the class is instantiated, we can
+        # be sure that the caches are specific to the instance, and not the class,
+        # i.e. every instance will have its own set of caches.
+
+        @lru_cache(maxsize=1024)
+        def predict_with_cache(inputs: str) -> JsonDict:
+            return self.predict(json.loads(inputs))
+
+        @lru_cache(maxsize=1024)
+        def interpret_with_cache(interpreter_id: str, inputs: str) -> JsonDict:
+            return self.interpret(interpreter_id, json.loads(inputs))
+
+        @lru_cache(maxsize=1024)
+        def attack_with_cache(attacker_id: str, attack: str) -> JsonDict:
+            return self.attack(attacker_id, json.loads(attack))
+
+        self.predict_with_cache = predict_with_cache
+        self.interpret_with_cache = interpret_with_cache
+        self.attack_with_cache = attack_with_cache
+
         self.setup_routes()
 
     def load_interpreters(self) -> Mapping[str, SaliencyInterpreter]:
@@ -165,38 +186,28 @@ class ModelEndpoint:
         def info_handler():
             return self.info()
 
-        @lru_cache(maxsize=1024)
-        def predict_with_cache(inputs: str) -> JsonDict:
-            return self.predict(json.loads(inputs))
-
         @self.app.route("/predict", methods=["POST"])
         def predict_handler():
             if no_cache(request):
                 return jsonify(self.predict(request.get_json()))
-            return jsonify(with_cache_hit_response_headers(predict_with_cache, request.data))
-
-        @lru_cache(maxsize=1024)
-        def interpret_with_cache(interpreter_id: str, inputs: str) -> JsonDict:
-            return self.interpret(interpreter_id, json.loads(inputs))
+            return jsonify(with_cache_hit_response_headers(self.predict_with_cache, request.data))
 
         @self.app.route("/interpret/<string:interpreter_id>", methods=["POST"])
         def interpet_handler(interpreter_id: str):
             if no_cache(request):
                 return jsonify(self.interpret(interpreter_id, request.get_json()))
             return jsonify(
-                with_cache_hit_response_headers(interpret_with_cache, interpreter_id, request.data)
+                with_cache_hit_response_headers(
+                    self.interpret_with_cache, interpreter_id, request.data
+                )
             )
-
-        @lru_cache(maxsize=1024)
-        def attack_with_cache(attacker_id: str, attack: str) -> JsonDict:
-            return self.attack(attacker_id, json.loads(attack))
 
         @self.app.route("/attack/<string:attacker_id>", methods=["POST"])
         def attack_handler(attacker_id: str):
             if no_cache(request):
                 return jsonify(self.attack(attacker_id, request.get_json()))
             return jsonify(
-                with_cache_hit_response_headers(attack_with_cache, attacker_id, request.data)
+                with_cache_hit_response_headers(self.attack_with_cache, attacker_id, request.data)
             )
 
     def run(self, port: int = 8000) -> None:
