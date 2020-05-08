@@ -30,7 +30,7 @@ class PermaLinkService(Flask):
             """
             The simplest of info routes. We can add more here later.
             """
-            return jsonify({ "id": "permalinks" })
+            return jsonify({"id": "permalinks"})
 
         @self.route("/<string:slug>")
         def get_permalink(slug: str) -> Response:
