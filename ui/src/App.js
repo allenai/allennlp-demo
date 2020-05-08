@@ -177,8 +177,6 @@ class SingleTaskDemo extends React.Component {
     const { slug, selectedModel, requestData, responseData } = this.state;
     const updateData = (requestData, responseData) => this.setState({requestData, responseData})
 
-    console.log(slug, selectedModel, modelComponents[selectedModel]);
-
     if (slug && !requestData) {
       // We're still waiting for permalink data, so just return the placeholder component.
       return (<WaitingForPermalink/>)
