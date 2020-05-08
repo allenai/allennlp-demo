@@ -35,7 +35,7 @@ class Model extends React.Component {
       // argument.
       let url;
       if (disablePermadata) {
-        const u = new URL(apiUrl(inputs));
+        const u = new URL(apiUrl(inputs), window.location.origin);
         const queryString = { ...qs.parse(u.search), record: false };
         u.search = qs.stringify(queryString);
         url = u.toString();

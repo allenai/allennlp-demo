@@ -1,7 +1,7 @@
 """
 Database utilities for the service
 """
-from typing import Optional, List
+from typing import Optional, List, Dict
 import json
 import datetime
 import logging
@@ -9,9 +9,7 @@ import os
 
 import psycopg2
 
-from allennlp.common.util import JsonDict
-
-from server.permalinks import Permadata
+from allennlp_demo.permalinks.models import PermaLink
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -23,14 +21,14 @@ class DemoDatabase:
     In the future it could also be used to store user-submitted feedback about predictions.
     """
 
-    def insert_request(self, requester: str, model_name: str, inputs: JsonDict) -> Optional[int]:
+    def insert_request(self, requester: str, model_name: str, inputs: Dict) -> Optional[int]:
         """
         Add the request to the database so that it can later
         be retrieved via permalink.
         """
         raise NotImplementedError
 
-    def get_result(self, perma_id: int) -> Permadata:
+    def get_result(self, perma_id: int) -> PermaLink:
         """
         Gets the result from the database with the given id.
         Returns ``None`` if no such result.
@@ -110,7 +108,7 @@ class PostgresDemoDatabase(DemoDatabase):
             logger.info("Relevant environment variables not found, so no demo database")
             return None
 
-    def insert_request(self, requester: str, model_name: str, inputs: JsonDict) -> Optional[int]:
+    def insert_request(self, requester: str, model_name: str, inputs: Dict) -> Optional[int]:
         try:
             conn = self.connect()
             with conn.cursor() as curs:
@@ -136,7 +134,7 @@ class PostgresDemoDatabase(DemoDatabase):
         finally:
             conn.close()
 
-    def get_result(self, perma_id: int) -> Optional[Permadata]:
+    def get_result(self, perma_id: int) -> Optional[PermaLink]:
         try:
             conn = self.connect()
             with conn.cursor() as curs:
@@ -148,9 +146,9 @@ class PostgresDemoDatabase(DemoDatabase):
             if row is None:
                 return None
 
-            # Otherwise, return a ``Permadata`` instance.
+            # Otherwise, return a ``PermaLink`` instance.
             model_name, request_data = row
-            return Permadata(model_name, json.loads(request_data))
+            return PermaLink(model_name, json.loads(request_data))
         except (psycopg2.Error, AttributeError):
             logger.exception("Unable to retrieve result")
             return None
@@ -164,13 +162,13 @@ class InMemoryDemoDatabase(DemoDatabase):
     """
 
     def __init__(self):
-        self.data: List[Permadata] = []
+        self.data: List[PermaLink] = []
 
-    def insert_request(self, requester: str, model_name: str, inputs: JsonDict) -> Optional[int]:
-        self.data.append(Permadata(model_name, inputs))
+    def insert_request(self, requester: str, model_name: str, inputs: Dict) -> Optional[int]:
+        self.data.append(PermaLink(model_name, inputs))
         return len(self.data) - 1
 
-    def get_result(self, perma_id: int) -> Optional[Permadata]:
+    def get_result(self, perma_id: int) -> Optional[PermaLink]:
         try:
             return self.data[perma_id]
         except IndexError:

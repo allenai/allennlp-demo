@@ -1,0 +1,109 @@
+version: '3'
+services:
+    # This is the new permalinks service, responsible for having requests to /api/permalink.
+    permalinks:
+        build:
+            context: api
+            dockerfile: allennlp_demo/permalinks/Dockerfile
+        command:
+            - allennlp_demo/permalinks/api.py
+        environment:
+            - FLASK_ENV=development
+            - DEMO_POSTGRES_HOST=db
+            - DEMO_POSTGRES_USER=postgres
+            - DEMO_POSTGRES_DBNAME=demo
+        volumes:
+            - ./api/allennlp_demo/permalinks:/app/allennlp_demo/permalinks
+            - ./api/allennlp_demo/common:/app/allennlp_demo/common
+        ports:
+            - 8001:8000
+    # We support running one model. The module's submodule name should be provided as the
+    # MODEL environment variable.
+    model:
+        # This only works for models that use the common Dockerfile. You'll
+        # need to modify this to use a model-specific file if you'd like to
+        # run it locally using this mechanism.
+        build:
+            context: api
+            dockerfile: Dockerfile
+            args:
+                MODULE: ${MODEL}
+        environment:
+            - FLASK_ENV=development
+        volumes:
+            - ./api/allennlp_demo/${MODEL}:/app/allennlp_demo/${MODEL}
+            - ./api/allennlp_demo/common:/app/allennlp_demo/common
+        ports:
+            - 8002:8000
+    # This container bootstraps the db if it hasn't been setup before. It just runs dev/setup_db.sh.
+    setup_db:
+        image: postgres:11.7-alpine
+        environment:
+            - DEMO_POSTGRES_HOST=db
+            - DEMO_POSTGRES_USER=postgres
+            - DEMO_POSTGRES_DBNAME=demo
+        entrypoint:
+            - /bin/bash
+        command:
+            - /src/dev/setup_db.sh
+        volumes:
+            - .:/src
+        depends_on:
+            - db
+    # The database is currently accessed both by the permalinks service and the legacy application.
+    # Once the permalinks migration has concluded it'll only be needed by the new permalinks API
+    # service.
+    db:
+        image: postgres:11.7-alpine
+        environment:
+            - POSTGRES_HOST_AUTH_METHOD=trust
+        ports:
+            - 5555:5432
+    # The legacy application is started with a single model specificed via the OLD_MODEL environment
+    # variable.
+    old:
+        build: old
+        command:
+            - --model=${OLD_MODEL}
+        environment:
+            - DEMO_POSTGRES_HOST=db
+            - DEMO_POSTGRES_USER=postgres
+            - DEMO_POSTGRES_DBNAME=demo
+        ports:
+            - 8000:8000
+        depends_on:
+            - setup_db
+    # Local environments run a HTTP server provided with our JavaScript build tools. It handles
+    # incremental recompilation. In production the precompiled UI assets are served from disk
+    # via NGINX.
+    ui:
+        build:
+            context: ui
+            dockerfile: Dockerfile.dev
+        environment:
+            - NODE_ENV=development
+        # We can't mount ./ui into the container in full, as it might include
+        # node_modules/ from the host. This causes weird things to happen.
+        # Dependency updates will require the image to be rebuilt to be
+        # applied.
+        volumes:
+            - ./ui/public:/ui/public
+            - ./ui/src:/ui/src
+        ports:
+            - 3000:3000
+        # This is required to keep the UI development server running. We can remove this
+        # once port to our newer UI build toolkit.
+        tty: true
+    # We use a reverse proxy locally to emulate what the NGINX ingress controller takes care
+    # of in production
+    nginx:
+        image: nginx:1.17.10-alpine
+        volumes:
+            - ./dev/proxy.conf:/etc/nginx/conf.d/default.conf
+        ports:
+            - 8080:80
+        depends_on:
+            - ui
+            - old
+            - model
+            - permalinks

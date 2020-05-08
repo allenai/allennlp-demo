@@ -218,41 +218,6 @@ def make_app(
             loaded_modules[n] = m.__dict__
         return jsonify({"allennlp_version": VERSION, "models": loaded_modules})
 
-    @app.route("/permadata", methods=["POST", "OPTIONS"])
-    def permadata() -> Response:  # pylint: disable=unused-variable
-        """
-        If the user requests a permalink, the front end will POST here with the payload
-            { slug: slug }
-        which we convert to an integer id and use to retrieve saved results from the database.
-        """
-        # This is just CORS boilerplate.
-        if request.method == "OPTIONS":
-            return Response(response="", status=200)
-
-        # If we don't have a database configured, there are no permalinks.
-        if demo_db is None:
-            raise ServerError("Permalinks are not enabled", 400)
-
-        # Convert the provided slug to an integer id.
-        slug = request.get_json()["slug"]
-        perma_id = slug_to_int(slug)
-        if perma_id is None:
-            # Malformed slug
-            raise ServerError("Unrecognized permalink: {}".format(slug), 400)
-
-        # Fetch the results from the database.
-        try:
-            permadata = demo_db.get_result(perma_id)
-        except psycopg2.Error:
-            logger.exception("Unable to get results from database: perma_id %s", perma_id)
-            raise ServerError("Database trouble", 500)
-
-        if permadata is None:
-            # No data found, invalid id?
-            raise ServerError("Unrecognized permalink: {}".format(slug), 400)
-
-        return jsonify({"requestData": permadata.request_data})
-
     @app.route("/predict/<model_name>", methods=["POST", "OPTIONS"])
     def predict(model_name: str) -> Response:  # pylint: disable=unused-variable
         """make a prediction using the specified model and return the results"""

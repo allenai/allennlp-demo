@@ -172,71 +172,6 @@ local db_env_variables = [
     }
 ];
 
-// We deploy a single version of the Python application, without any models
-// loaded, that's responsible for serving permadata from the database.
-local permadata_labels = labels + {
-    'role': 'permadata-server'
-};
-
-local permadata_deployment = {
-    apiVersion: 'extensions/v1beta1',
-    kind: 'Deployment',
-    metadata: {
-        labels: permadata_labels,
-        name: fqn + '-permadata',
-        namespace: namespace_name,
-    },
-    spec: {
-        revisionHistoryLimit: 3,
-        replicas: num_replicas,
-        template: {
-            metadata: {
-                name: fqn + '-permadata',
-                namespace: namespace_name,
-                labels: permadata_labels
-            },
-            spec: {
-                containers: [
-                    {
-                        name: 'permadata',
-                        image: image,
-                        args: [ '--no-models' ],
-                        readinessProbe: readinessProbe,
-                        resources: {
-                            requests: {
-                                cpu: '50m',
-                                memory: '500Mi'
-                            }
-                        },
-                        env: db_env_variables
-                    },
-                    cloudsql_proxy_container
-                ],
-                volumes: cloudsql_volumes
-            }
-        }
-    }
-};
-
-local permadata_service = {
-    apiVersion: 'v1',
-    kind: 'Service',
-    metadata: {
-        name: fqn + '-permadata',
-        namespace: namespace_name,
-        labels: permadata_labels
-    },
-    spec: {
-        selector: permadata_labels,
-        ports: [
-            {
-                port: api_port,
-                name: 'http'
-            }
-        ]
-    }
-};
-
 // We allow each model's JSON to specify how much memory and CPU it needs.
 // If not specified, we fall back to defaults.
 local DEFAULT_CPU = "0.2";
@@ -350,15 +285,7 @@ local ingress = {
                         // Interpreting is handled by the model backend.
                         model_path(model_name, 'interpret')
                         for model_name in model_names
-                    ] + [
-                        {
-                            path: '/permadata',
-                            backend: {
-                                serviceName: permadata_service.metadata.name,
-                                servicePort: api_port
-                            }
-                        }
-                   ]
+                    ]
                 }
             } for host in hosts
         ]
@@ -368,8 +295,6 @@ local ingress = {
 [
     namespace,
     ingress,
-    permadata_deployment,
-    permadata_service,
 ] + [
     model_deployment(model_name)
     for model_name in model_names
