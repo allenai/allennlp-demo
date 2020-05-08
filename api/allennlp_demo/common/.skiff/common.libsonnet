@@ -7,6 +7,7 @@
  */
 
 local config = import '../../../../skiff.json';
+local db = import 'db.libsonnet';
 
 {
     /**
@@ -27,8 +28,11 @@ local config = import '../../../../skiff.json';
      * @param startupTime   {number}    The amount of time in seconds the container should take to
      *                                  start. If this is set too low your container will get into
      *                                  a restart loop when it's started. Defaults to 120 seconds.
+     * @param useDb          {boolean}  If true the required resources will provision to provide
+     *                                  a secure connection to the database. The required secrets
+     *                                  must be manually provisioned by system administrator.
      */
-    APIEndpoint(id, image, cause, sha, cpu, memory, env, branch, repo, buildId, startupTime=120):
+    APIEndpoint(id, image, cause, sha, cpu, memory, env, branch, repo, buildId, startupTime=120, useDb=false):
         // Different environments are deployed to the same namespace. This serves to prevent
         // collissions.
         local fullyQualifiedName = config.appName + '-api-' + id + '-' + env;
@@ -149,6 +153,8 @@ local config = import '../../../../skiff.json';
                                     periodSeconds: 10,
                                     failureThreshold: 1,
                                 },
+                                # Wire up the database configuration of we need it.
+                                env: if useDb then db.EnvironmentVariables() else null,
                                 # Restart the container if the container doesn't respond for a
                                 # a full minute.
                                 livenessProbe: {
@@ -167,8 +173,18 @@ local config = import '../../../../skiff.json';
                                         memory: memory
                                     }
                                 },
-                            }
-                        ]
+                            },
+                            # If the database is required we run Google's SQL proxy to provide
+                            # a secure tunnel to the database. See:
+                            # https://cloud.google.com/sql/docs/postgres/sql-proxy
+                            if useDb then db.containers.CloudSQLProxy() else null
+                        ],
+                        # This volume provides the secrets required by the CloudSQL proxy. They're
+                        # mounted in as files. This is a better setup for Kubernetes and something
+                        # we should transition the database configuration to at some point. It allows
+                        # secrets to be updated without a container restart, which make rotating them
+                        # easier.
+                        volumes: if useDb then [ db.volumes.CloudSQLServiceAccountCreds() ] else [],
                     }
                 }
             }
