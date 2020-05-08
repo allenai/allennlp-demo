@@ -10,9 +10,11 @@ local config = import '../../../../skiff.json';
 
 {
     /**
-     * @param modelId       {string}    A unique identifier for the model. This will be used as a
-     *                                  prefix in the URL path for the endpoint. The model's
-     *                                  endpoints will be accessible at `/api/${modelId/*`.
+     * @param id            {string}    A unique identifier for the endpoint. This identifier
+     *                                  must be URL safe, as it's used to determine what requests
+     *                                  are routed to the endpoint. For instance, if the id is
+     *                                  `foo`, requests beginning with `/api/foo` are routed
+     *                                  to the endpoint.
      * @param image         {string}    The image tag to deploy.
      * @param cause         {string}    A message describing the reason for the deployment.
      * @param sha           {string}    The git sha.
@@ -26,10 +28,10 @@ local config = import '../../../../skiff.json';
      *                                  start. If this is set too low your container will get into
      *                                  a restart loop when it's started. Defaults to 120 seconds.
      */
-    ModelEndpoint(modelId, image, cause, sha, cpu, memory, env, branch, repo, buildId, startupTime=120):
+    APIEndpoint(id, image, cause, sha, cpu, memory, env, branch, repo, buildId, startupTime=120):
         // Different environments are deployed to the same namespace. This serves to prevent
         // collissions.
-        local fullyQualifiedName = 'mapi-' + modelId + '-' + env;
+        local fullyQualifiedName = config.appName + '-api-' + id + '-' + env;
 
         // Every resource is tagged with the same set of labels. These labels serve the
         // following purposes:
@@ -46,14 +48,14 @@ local config = import '../../../../skiff.json';
             apiVersion: 'v1',
             kind: 'Namespace',
             metadata: {
-                name: config.appName + '-mapi-' + modelId,
+                name: config.appName + '-api-' + id,
                 labels: namespaceLabels
             }
         };
 
         local labels = namespaceLabels + {
             env: env,
-            model: modelId
+            endpoint: id
         };
 
         // By default multiple instances of your application could get scheduled
@@ -218,9 +220,8 @@ local config = import '../../../../skiff.json';
                     'kubernetes.io/ingress.class': 'nginx',
                     'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
                     'nginx.ingress.kubernetes.io/proxy-body-size': '0.5m',
-                    // We route requests for `/api/:modelId` to the container. This setting trims
-                    // that prefix when forwarding the request to the container, so that
-                    // /api/:modelId/predict becomes /predict.
+                    // We trim the prefix before sending requests to the container, so a request for
+                    // /api/$path_prefix/foo becomes /foo.
                     'nginx.ingress.kubernetes.io/rewrite-target': '/$2'
                 }
             },
@@ -241,7 +242,7 @@ local config = import '../../../../skiff.json';
                                         serviceName: service.metadata.name,
                                         servicePort: apiPort
                                     },
-                                    path: '/api/' + modelId + '(/(.*))?$'
+                                    path: '/api/' + id + '(/(.*))?$'
                                 }
                             ]
                         }

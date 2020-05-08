@@ -14,7 +14,6 @@ import {
 import { ScrollToTopOnPageChange} from '@allenai/varnish/components/ScrollToTopOnPageChange';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
-import { API_ROOT } from './api-config';
 import Menu from './components/Menu';
 import ModelIntro from './components/ModelIntro';
 import { modelComponents, modelRedirects } from './models'
@@ -153,21 +152,23 @@ class SingleTaskDemo extends React.Component {
   // for a permalink.
   componentDidMount() {
     const { slug, responseData } = this.state;
-    const { model } = this.props;
 
     // If this is a permalink and we don't yet have the data for it...
     if (slug && !responseData) {
       // Make an ajax call to get the permadata,
       // and then use it to update the state.
-      fetch(`${API_ROOT}/permadata/${slug}`)
+      fetch(`/api/permalink/${slug}`)
         .then((response) => {
           return response.json();
         }).then((json) => {
           const { requestData } = json;
           this.setState({requestData});
         }).catch((error) => {
-          this.setState({outputState: "error"});
-          console.error(error);
+          // If a permalink doesn't resolve, we don't want to fail. Instead remove the slug from
+          // the URL. This lets the user at least prepare a submission.
+          console.error('Error loading permalink:', error);
+          // Start over without the slug.
+          window.location.replace(window.location.pathname.replace(`/${slug}`, ''));
         });
     }
   }
@@ -176,6 +177,8 @@ class SingleTaskDemo extends React.Component {
     const { slug, selectedModel, requestData, responseData } = this.state;
     const updateData = (requestData, responseData) => this.setState({requestData, responseData})
 
+    console.log(slug, selectedModel, modelComponents[selectedModel]);
+
     if (slug && !requestData) {
       // We're still waiting for permalink data, so just return the placeholder component.
       return (<WaitingForPermalink/>)
@@ -183,8 +186,8 @@ class SingleTaskDemo extends React.Component {
         // This is a model we know the component for, so render it.
         return React.createElement(modelComponents[selectedModel], {requestData, responseData, selectedModel, updateData})
     } else if (selectedModel === "user-models") {
-     const developLocallyHeader = "Developing Locally"
-     const developLocallyDescription = (
+      const developLocallyHeader = "Developing Locally"
+      const developLocallyDescription = (
           <span>
             <span>
               It's possible to run this demo locally with your own model (e.g., to visualize or interpret its predictions). See
@@ -194,7 +197,7 @@ class SingleTaskDemo extends React.Component {
               for more information.
             </span>
           </span>
-       );
+      );
       const modelRequest = "User Contributed Models"
       const modelDescription = (
         <span>

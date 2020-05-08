@@ -109,8 +109,8 @@ class PostgresDemoDatabase(DemoDatabase):
             return None
 
     def insert_request(self, requester: str, model_name: str, inputs: Dict) -> Optional[int]:
-        conn = self.connect()
         try:
+            conn = self.connect()
             with conn.cursor() as curs:
                 logger.info("inserting into the database")
 
@@ -135,8 +135,8 @@ class PostgresDemoDatabase(DemoDatabase):
             conn.close()
 
     def get_result(self, perma_id: int) -> Optional[PermaLink]:
-        conn = self.connect()
         try:
+            conn = self.connect()
             with conn.cursor() as curs:
                 logger.info("retrieving perma_id %s from database", perma_id)
                 curs.execute(RETRIEVE_SQL, (perma_id,))

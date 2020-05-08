@@ -86,3 +86,12 @@ jobs:
     - name: Build and test image
       run: |
         cd api && make nmn_drop-test DOCKER_TAG=$GITHUB_SHA
+
+  permalinks:
+    name: Permalinks API 
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test image
+      run: |
+        cd api && make permalinks-test DOCKER_TAG=$GITHUB_SHA
+

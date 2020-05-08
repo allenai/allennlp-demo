@@ -2,31 +2,31 @@ steps:
 - id: pull
   name: gcr.io/cloud-builders/docker
   entrypoint: /bin/bash
-  args: [ -c, docker pull gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH:latest || exit 0 ]
+  args: [ -c, docker pull gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:latest || exit 0 ]
 - id: build
   dir: api
   name: gcr.io/cloud-builders/docker
   entrypoint: make
   args: [
-    $_MODEL_PATH-build, DOCKER_BASE_NAME=gcr.io/$PROJECT_ID/$REPO_NAME, DOCKER_TAG=$COMMIT_SHA
+    $_SUBMODULE_PATH-build, DOCKER_BASE_NAME=gcr.io/$PROJECT_ID/$REPO_NAME, DOCKER_TAG=$COMMIT_SHA
   ]
 - id: tag-latest
   name: gcr.io/cloud-builders/docker
   args: [
     tag,
-    gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH:$COMMIT_SHA,
-    gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH:latest
+    gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:$COMMIT_SHA,
+    gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:latest
   ]
 - id: push
   name: gcr.io/cloud-builders/docker
-  args: [ push, gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH:$COMMIT_SHA ]
+  args: [ push, gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:$COMMIT_SHA ]
 - id: config
   name: gcr.io/ai2-reviz/jsonnet
   args: [
     -y,
     --output-file, webapp.yaml,
     --tla-str, env=$_ENV,
-    --tla-str, image=gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH:$COMMIT_SHA,
+    --tla-str, image=gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:$COMMIT_SHA,
     --tla-str, sha=$COMMIT_SHA,
     --tla-str, cause=Automated Skiff Deploy SHA:$COMMIT_SHA BUILD:$BUILD_ID,
     --tla-str, branch=$BRANCH_NAME,
@@ -34,21 +34,21 @@ steps:
     --tla-str, buildId=$BUILD_ID,
     webapp.jsonnet
   ]
-  dir: api/allennlp_demo/$_MODEL_PATH/.skiff
+  dir: api/allennlp_demo/$_SUBMODULE_PATH/.skiff
 - id: deploy
   name: gcr.io/ai2-reviz/rudder
   args: [ deploy, -f, webapp.yaml ]
-  dir: api/allennlp_demo/$_MODEL_PATH/.skiff
+  dir: api/allennlp_demo/$_SUBMODULE_PATH/.skiff
 substitutions:
   _ENV: prod
-  _MODEL_PATH: bidaf_elmo
+  _SUBMODULE_PATH: bidaf_elmo
 images: [
-  gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH:$COMMIT_SHA,
-  gcr.io/$PROJECT_ID/$REPO_NAME-$_MODEL_PATH:latest,
+  gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:$COMMIT_SHA,
+  gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:latest,
 ]
 artifacts:
   objects:
-    location: gs://skiff-archive/$REPO_NAME/$_MODEL_PATH/$_ENV/$BUILD_ID/$COMMIT_SHA
+    location: gs://skiff-archive/$REPO_NAME/$_SUBMODULE_PATH/$_ENV/$BUILD_ID/$COMMIT_SHA
     paths:
-    -  api/allennlp_demo/$_MODEL_PATH/.skiff/webapp.yaml
+    -  api/allennlp_demo/$_SUBMODULE_PATH/.skiff/webapp.yaml
 timeout: 900s

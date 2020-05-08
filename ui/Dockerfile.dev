@@ -1,0 +1,14 @@
+# This Dockerfile is used when developing the UI locally. The source code
+# should be mounted into the container from the host for things to work
+# properly.
+FROM node:12.16.2 as build
+
+WORKDIR /ui
+
+COPY package.json package-lock.json ./
+RUN npm install
+
+COPY config-overrides.js .
+
+ENTRYPOINT [ "npm" ]
+CMD [ "start" ]
