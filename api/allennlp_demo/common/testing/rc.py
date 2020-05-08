@@ -1,8 +1,4 @@
-import json
-from pathlib import Path
 from typing import List
-
-from secrets import token_urlsafe
 
 from allennlp_demo.common.http import ModelEndpoint
 from allennlp_demo.common.testing.model_endpoint_test_case import ModelEndpointTestCase
@@ -14,14 +10,28 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
     as necessary.
     """
 
-    FIXTURES_ROOT: Path = (Path(__file__).parent / "fixtures").resolve()
-
     endpoint: ModelEndpoint
 
-    def setup_method(self):
-        super().setup_method()
-        with open(self.FIXTURES_ROOT / "rc.json") as fh:
-            self.rc_input = json.load(fh)
+    predict_input = {
+        "passage": (
+            "A reusable launch system (RLS, or reusable launch vehicle, RLV) "
+            "is a launch system which is capable of launching a payload into "
+            "space more than once. This contrasts with expendable launch systems, "
+            "where each launch vehicle is launched once and then discarded. "
+            "No completely reusable orbital launch system has ever been created. "
+            "Two partially reusable launch systems were developed, the "
+            "Space Shuttle and Falcon 9. The Space Shuttle was partially reusable: "
+            "the orbiter (which included the Space Shuttle main engines and the "
+            "Orbital Maneuvering System engines), and the two solid rocket boosters "
+            "were reused after several months of refitting work for each launch. "
+            "The external tank was discarded after each flight."
+        ),
+        "question": "How many partially reusable launch systems were developed?",
+    }
+
+    def check_predict_result(self, result):
+        assert len(result["best_span"]) > 0
+        assert len(result["best_span_str"].strip()) > 0
 
     def interpreter_ids(self) -> List[str]:
         return ["simple", "smooth", "integrated"]
@@ -29,17 +39,12 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
     def attacker_ids(self) -> List[str]:
         return ["hotflip", "input-reduction"]
 
-    def test_predict(self):
-        resp = self.client.post("/predict", query_string={"no_cache": True}, json=self.rc_input)
-        assert resp.status_code == 200
-        assert resp.json is not None
-        assert len(resp.json["best_span"]) > 0
-        assert len(resp.json["best_span_str"].strip()) > 0
-
     def test_interpret(self):
         for interpreter_id in self.interpreter_ids():
             resp = self.client.post(
-                f"/interpret/{interpreter_id}", query_string={"no_cache": True}, json=self.rc_input,
+                f"/interpret/{interpreter_id}",
+                query_string={"no_cache": True},
+                json=self.predict_input,
             )
             assert resp.status_code == 200
             assert resp.json is not None
@@ -54,7 +59,7 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
 
     def test_attack(self):
         data = {
-            "inputs": self.rc_input,
+            "inputs": self.predict_input,
             "input_field_to_attack": "question",
             "grad_input_field": "grad_input_2",
         }
@@ -70,26 +75,3 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
         resp = self.client.post("/attack/invalid", json={})
         assert resp.status_code == 404
         assert resp.json["error"] == "No attacker with id invalid"
-
-    def test_invalid_json(self):
-        resp = self.client.post(
-            "/predict", data="{ invalid: json }", headers={"Content-Type": "application/json"}
-        )
-        assert resp.status_code == 400
-
-    def test_cache(self):
-        prompt = {
-            "question": f"Was this cached? {token_urlsafe(8)}",
-            "passage": "Only the model knows.",
-        }
-        resp = self.client.post("/predict", json=prompt)
-        assert resp.status_code == 200
-        assert "X-Cache-Hit" not in resp.headers
-
-        cached_resp = self.client.post("/predict", json=prompt)
-        assert resp.status_code == 200
-        assert cached_resp.headers.get("X-Cache-Hit") == "1"
-
-        no_cache_resp = self.client.post("/predict", query_string={"no_cache": True}, json=prompt)
-        assert resp.status_code == 200
-        assert "X-Cache-Hit" not in no_cache_resp.headers
