@@ -13,5 +13,7 @@ function(image, cause, sha, env, branch, repo, buildId)
     // https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes
     local cpu = '50m';
     local memory = '200Mi';
-
-    common.APIEndpoint('permalink', image, cause, sha, cpu, memory, env, branch, repo, buildId)
+    local startupTime = 30;
+    local useDb = true;
+    common.APIEndpoint('permalink', image, cause, sha, cpu, memory, env, branch, repo, buildId,
+                       startupTime, useDb)

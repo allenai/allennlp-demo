@@ -153,8 +153,7 @@ local db = import 'db.libsonnet';
                                     periodSeconds: 10,
                                     failureThreshold: 1,
                                 },
-                                # Wire up the database configuration of we need it.
-                                env: if useDb then db.EnvironmentVariables() else null,
+
                                 # Restart the container if the container doesn't respond for a
                                 # a full minute.
                                 livenessProbe: {
@@ -173,19 +172,28 @@ local db = import 'db.libsonnet';
                                         memory: memory
                                     }
                                 },
-                            },
-                            # If the database is required we run Google's SQL proxy to provide
-                            # a secure tunnel to the database. See:
-                            # https://cloud.google.com/sql/docs/postgres/sql-proxy
-                            if useDb then db.containers.CloudSQLProxy() else null
-                        ],
-                        # This volume provides the secrets required by the CloudSQL proxy. They're
-                        # mounted in as files. This is a better setup for Kubernetes and something
-                        # we should transition the database configuration to at some point. It allows
-                        # secrets to be updated without a container restart, which make rotating them
-                        # easier.
-                        volumes: if useDb then [ db.volumes.CloudSQLServiceAccountCreds() ] else [],
-                    }
+                            # Add the database configuration as environment variables if we need
+                            # them.
+                            } + if useDb then
+                                    { env: db.EnvironmentVariables() }
+                                else
+                                    {},
+                        # If we need the DB we run Google's Cloud SQL Proxy which provides
+                        # a secure tunnel to the database. Connecting to localhost:5432 routes
+                        # to the database via a mTLS encrypted tunnel.
+                        ] + if useDb then
+                                [ db.containers.CloudSQLProxy() ]
+                            else
+                                []
+                    # This volume provides the secrets required by the CloudSQL proxy. They're
+                    # mounted in as files. This is a better setup for Kubernetes and something
+                    # we should transition the database configuration to at some point. It allows
+                    # secrets to be updated without a container restart, which make rotating them
+                    # easier.
+                    } + if useDb then
+                            { volumes: [ db.volumes.CloudSQLServiceAccountCreds() ] }
+                        else
+                            {}
                 }
             }
         };
