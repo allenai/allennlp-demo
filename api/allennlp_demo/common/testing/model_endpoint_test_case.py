@@ -51,7 +51,10 @@ class ModelEndpointTestCase:
         pass
 
     def setup_method(self):
-        pass
+        # Clear the caches before each call.
+        self.endpoint.predict_with_cache.cache_clear()
+        self.endpoint.interpret_with_cache.cache_clear()
+        self.endpoint.attack_with_cache.cache_clear()
 
     def teardown_method(self):
         pass
