@@ -72,52 +72,6 @@ local namespace = {
     }
 };
 
-local cloudsql_proxy_container = {
-    name: "cloudsql-proxy",
-    image: "gcr.io/cloudsql-docker/gce-proxy:1.11",
-    command: ["/cloud_sql_proxy", "--dir=/cloudsql",
-              "-instances=ai2-allennlp:us-central1:allennlp-demo-database=tcp:5432",
-              "-credential_file=/secrets/cloudsql/credentials.json"],
-    securityContext: {
-        runAsUser: 2,
-        allowPrivilegeEscalation: false
-    },
-    volumeMounts: [
-        {
-            name: "cloudsql-instance-credentials",
-            mountPath: "/secrets/cloudsql",
-            readOnly: true
-        },
-        {
-            name: "ssl-certs",
-            mountPath: "/etc/ssl/certs"
-        },
-        {
-            name: "cloudsql",
-            mountPath: "/cloudsql"
-        }
-    ]
-};
-
-local cloudsql_volumes = [
-    {
-        name: "cloudsql-instance-credentials",
-        secret: {
-            secretName: "cloudsql-instance-credentials"
-        },
-    },
-    {
-        name: "cloudsql",
-        emptyDir: {},
-    },
-    {
-        name: "ssl-certs",
-        hostPath: {
-            path: "/etc/ssl/certs"
-        }
-    }
-];
-
 // Generates the path that should be routed to the backend for the specified
 // model.
 local model_path(model_name, endpoint) = {
@@ -138,39 +92,6 @@ local readinessProbe = {
         scheme: 'HTTP'
     }
 };
-
-local db_env_variables = [
-    {
-        name: "DEMO_POSTGRES_HOST",
-        value: "127.0.0.1"
-    },
-    {
-        name: "DEMO_POSTGRES_PORT",
-        value: "5432"
-    },
-    {
-        name: "DEMO_POSTGRES_DBNAME",
-        value: "demo"
-    },
-    {
-        name: "DEMO_POSTGRES_USER",
-        valueFrom: {
-            secretKeyRef: {
-                name: "cloudsql-db-credentials",
-                key: "username"
-            }
-        }
-    },
-    {
-        name: "DEMO_POSTGRES_PASSWORD",
-        valueFrom: {
-            secretKeyRef: {
-                name: "cloudsql-db-credentials",
-                key: "password"
-            }
-        }
-    }
-];
 
 // We allow each model's JSON to specify how much memory and CPU it needs.
 // If not specified, we fall back to defaults.
@@ -214,12 +135,9 @@ local model_deployment(model_name) = {
                                 cpu: get_cpu(model_name),
                                 memory: get_memory(model_name)
                             }
-                        },
-                        env: db_env_variables
-                    },
-                    cloudsql_proxy_container
-                ],
-                volumes: cloudsql_volumes
+                        }
+                    }
+                ]
             }
         }
     }

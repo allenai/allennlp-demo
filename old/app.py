@@ -34,8 +34,6 @@ from allennlp.interpret.saliency_interpreters import (
 from allennlp.interpret.attackers import Attacker, InputReduction, Hotflip
 from allennlp.version import VERSION
 
-from server.permalinks import int_to_slug, slug_to_int
-from server.db import DemoDatabase, PostgresDemoDatabase
 from server.logging import StackdriverJsonFormatter
 from server.utils import with_no_cache_headers
 from server.demo_model import DemoModel
@@ -101,15 +99,7 @@ def main(
     if port != 8000:
         logger.warning("The demo requires the API to be run on port 8000.")
 
-    # This will be ``None`` if all the relevant environment variables are not defined or if
-    # there is an exception when connecting to the database.
-    demo_db = PostgresDemoDatabase.from_environment()
-    if demo_db is None:
-        logger.warning(
-            "database credentials not provided, so not using database (permalinks disabled)"
-        )
-
-    app = make_app(demo_db=demo_db, models=models)
+    app = make_app(models=models)
     CORS(app)
 
     http_server = WSGIServer(("0.0.0.0", port), app, log=logger, error_log=logger)
@@ -120,7 +110,6 @@ def main(
 
 def make_app(
     models: Dict[str, DemoModel],
-    demo_db: Optional[DemoDatabase] = None,
     cache_size: int = 128,
     interpret_cache_size: int = 500,
     attack_cache_size: int = 500,
@@ -253,17 +242,6 @@ def make_app(
         # In theory this could result in false positives.
         pre_hits = _caching_prediction.cache_info().hits  # pylint: disable=no-value-for-parameter
 
-        if record_to_database and demo_db is not None:
-            try:
-                perma_id = None
-                perma_id = demo_db.insert_request(
-                    requester=request.remote_addr, model_name=model_name, inputs=data,
-                )
-
-            except Exception:  # pylint: disable=broad-except
-                # TODO(joelgrus): catch more specific errors
-                logger.exception("Unable to add request to database", exc_info=True)
-
         if use_cache and cache_size > 0:
             # lru_cache insists that all function arguments be hashable,
             # so unfortunately we have to stringify the data.
@@ -273,11 +251,6 @@ def make_app(
             prediction = model.predict_json(data)
 
         post_hits = _caching_prediction.cache_info().hits  # pylint: disable=no-value-for-parameter
-
-        if record_to_database and demo_db is not None and perma_id is not None:
-            slug = int_to_slug(perma_id)
-            prediction["slug"] = slug
-            log_blob["slug"] = slug
 
         if use_cache and post_hits > pre_hits:
             # Cache hit, so insert an artifical pause

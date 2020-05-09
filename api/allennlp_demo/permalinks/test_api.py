@@ -28,3 +28,25 @@ def test_get_permalink():
     assert resp.status_code == 200
     assert resp.json["requestData"]["slug"] == "zilla"
     assert len(resp.json.keys()) == 1
+
+
+def test_create_permalink():
+    db = InMemoryDemoDatabase()
+    app = PermaLinkService("testpermalinks", db)
+    client = app.test_client()
+
+    resp = client.post(
+        "/",
+        json={
+            "model_name": "bidaf",
+            "request_data": {"passage": "The dog barked.", "question": "Did the dog bark?"},
+        },
+    )
+    assert resp.status_code == 200
+    slug = resp.json
+    assert len(slug) != 0
+
+    get_resp = client.get(f"/{slug}")
+    assert get_resp.status_code == 200
+    assert get_resp.json["requestData"]["passage"] == "The dog barked."
+    assert get_resp.json["requestData"]["question"] == "Did the dog bark?"
