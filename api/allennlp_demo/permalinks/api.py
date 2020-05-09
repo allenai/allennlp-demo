@@ -11,11 +11,19 @@ from allennlp_demo.common.logs import configure_logging
 
 
 def get_client_ip(r: Request) -> str:
+    """
+    Returns the best attempt at a client IP address. If the request includes
+    the X-Forwarded-For header we accept the first IP address, otherwise we
+    fallback to the remote address. This isn't used for anything sensitive so
+    we're fine blindly trusting the client.
+    """
     forwarded_for = r.headers.get("X-Forwarded-For")
     if forwarded_for is None:
         return r.remote_addr
     ips = forwarded_for.split(",")
-    return ips.pop()
+    # Take the first.
+    # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For
+    return ips[0]
 
 
 class PermaLinkService(Flask):
