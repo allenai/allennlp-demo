@@ -51,6 +51,9 @@ class Model extends React.Component {
         },
         body: JSON.stringify(inputs)
       }).then((response) => {
+        if (response.status !== 200) {
+            throw Error('Predict call failed.');
+        }
         return response.json();
       }).then((json) => {
         this.props.updateData(inputs, json)
