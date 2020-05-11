@@ -21,7 +21,7 @@ class DemoDatabase:
     In the future it could also be used to store user-submitted feedback about predictions.
     """
 
-    def insert_request(self, requester: str, model_name: str, inputs: Dict) -> Optional[int]:
+    def insert_request(self, requester: str, model_name: str, request_data: Dict) -> Optional[int]:
         """
         Add the request to the database so that it can later
         be retrieved via permalink.
@@ -108,7 +108,7 @@ class PostgresDemoDatabase(DemoDatabase):
             logger.info("Relevant environment variables not found, so no demo database")
             return None
 
-    def insert_request(self, requester: str, model_name: str, inputs: Dict) -> Optional[int]:
+    def insert_request(self, requester: str, model_name: str, request_data: Dict) -> Optional[int]:
         try:
             conn = self.connect()
             with conn.cursor() as curs:
@@ -119,7 +119,7 @@ class PostgresDemoDatabase(DemoDatabase):
                     {
                         "model_name": model_name,
                         "requester": requester,
-                        "request_data": json.dumps(inputs),
+                        "request_data": json.dumps(request_data),
                         "timestamp": datetime.datetime.now(),
                     },
                 )
@@ -164,8 +164,8 @@ class InMemoryDemoDatabase(DemoDatabase):
     def __init__(self):
         self.data: List[PermaLink] = []
 
-    def insert_request(self, requester: str, model_name: str, inputs: Dict) -> Optional[int]:
-        self.data.append(PermaLink(model_name, inputs))
+    def insert_request(self, requester: str, model_name: str, request_data: Dict) -> Optional[int]:
+        self.data.append(PermaLink(model_name, request_data))
         return len(self.data) - 1
 
     def get_result(self, perma_id: int) -> Optional[PermaLink]:

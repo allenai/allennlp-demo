@@ -1,10 +1,29 @@
 from typing import Optional
+
 import psycopg2
-from flask import Flask, Response, jsonify
+
+from flask import Flask, Request, Response, jsonify, request
 from werkzeug.exceptions import BadRequest, InternalServerError, NotFound
+
 from allennlp_demo.permalinks.db import DemoDatabase, PostgresDemoDatabase
-from allennlp_demo.permalinks.models import slug_to_int
+from allennlp_demo.permalinks.models import slug_to_int, int_to_slug
 from allennlp_demo.common.logs import configure_logging
+
+
+def get_client_ip(r: Request) -> str:
+    """
+    Returns the best attempt at a client IP address. If the request includes
+    the X-Forwarded-For header we accept the first IP address, otherwise we
+    fallback to the remote address. This isn't used for anything sensitive so
+    we're fine blindly trusting the client.
+    """
+    forwarded_for = r.headers.get("X-Forwarded-For")
+    if forwarded_for is None:
+        return r.remote_addr
+    ips = forwarded_for.split(",")
+    # Take the first.
+    # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For
+    return ips[0]
 
 
 class PermaLinkService(Flask):
@@ -25,7 +44,7 @@ class PermaLinkService(Flask):
             self.logger.error(err)
             return jsonify({"error": "Something went wrong."}), 500
 
-        @self.route("/")
+        @self.route("/", methods=["GET"])
         def info():
             """
             The simplest of info routes. We can add more here later.
@@ -41,22 +60,50 @@ class PermaLinkService(Flask):
             if self.db is None:
                 raise BadRequest("Permalinks are not enabled")
 
-            perma_id = slug_to_int(slug)
-            if perma_id is None:
+            link_id = slug_to_int(slug)
+            if link_id is None:
                 # Malformed slug
                 raise BadRequest(f"Unrecognized permalink: {slug}")
 
             # Fetch the results from the database.
             try:
-                link = self.db.get_result(perma_id)
+                link = self.db.get_result(link_id)
             except psycopg2.Error:
-                self.logger.exception(f"Unable to get results from database: {perma_id}")
+                self.logger.exception(f"Unable to get results from database: {link_id}")
                 raise InternalServerError("Database error")
 
             if link is None:
                 raise NotFound(f"Permalink not found: {slug}")
 
             return jsonify({"requestData": link.request_data})
+
+        @self.route("/", methods=["POST"])
+        def create_permalink() -> Response:
+            """
+            Creates a new permalink.
+            """
+            # If we don't have a database configured, there are no permalinks.
+            if self.db is None:
+                raise BadRequest("Permalinks are not enabled")
+
+            model_name = request.json.get("model_name")
+            if model_name is None:
+                raise BadRequest("You must provide a model name")
+
+            request_data = request.json.get("request_data")
+            if request_data is None:
+                raise BadRequest("You must provide request data")
+
+            try:
+                id = self.db.insert_request(
+                    requester=get_client_ip(request),
+                    model_name=model_name,
+                    request_data=request_data,
+                )
+                return jsonify(int_to_slug(id))
+            except psycopg2.Error as err:
+                self.logger.exception(f"Error saving permalink: ", err)
+                raise InternalServerError("Unable to create permalink")
 
 
 if __name__ == "__main__":

@@ -17,7 +17,6 @@ from werkzeug.test import Client
 
 import app
 from app import make_app
-from server.db import InMemoryDemoDatabase
 from server.demo_model import DemoModel
 
 TEST_ARCHIVE_FILES = {
@@ -217,86 +216,6 @@ class TestFlask(AllenNlpTestCase):
             # cache is disabled, so call count should keep incrementing
             assert predictor.calls[key] == i + 1
             assert len(predictor.calls) == 1
-
-    def test_permalinks_fail_gracefully_with_no_database(self):
-        application = make_app(models={})
-        predictor = CountingPredictor()
-        application.predictors = {"counting": predictor}
-        application.max_request_lengths["counting"] = 100
-        application.testing = True
-        client = application.test_client()
-
-        # Make a prediction, no permalinks.
-        data = {"some": "input"}
-        response = client.post(
-            "/predict/counting", content_type="application/json", data=json.dumps(data)
-        )
-
-        assert response.status_code == 200
-
-        # With permalinks not enabled, the result shouldn't contain a slug.
-        result = json.loads(response.get_data())
-        assert "slug" not in result
-
-        # With permalinks not enabled, a post to the /permadata endpoint should be a 400.
-        response = self.client.post("/permadata", data="""{"slug": "someslug"}""")
-        assert response.status_code == 400
-
-    def test_permalinks_work(self):
-        db = InMemoryDemoDatabase()
-        application = make_app(demo_db=db, models={})
-        predictor = CountingPredictor()
-        application.predictors = {"counting": predictor}
-        application.max_request_lengths["counting"] = 100
-        application.testing = True
-        client = application.test_client()
-
-        def post(endpoint: str, data: JsonDict) -> Response:
-            return client.post(endpoint, content_type="application/json", data=json.dumps(data))
-
-        data = {"some": "input"}
-        response = post("/predict/counting", data=data)
-
-        assert response.status_code == 200
-        result = json.loads(response.get_data())
-        slug = result.get("slug")
-        assert slug is not None
-
-        response = post("/permadata", data={"slug": "not the right slug"})
-        assert response.status_code == 400
-
-        response = post("/permadata", data={"slug": slug})
-        assert response.status_code == 200
-        result2 = json.loads(response.get_data())
-        assert set(result2.keys()) == {"requestData"}
-        assert result2["requestData"] == data
-
-    def test_db_resilient_to_prediction_failure(self):
-        db = InMemoryDemoDatabase()
-        application = make_app(demo_db=db, models={})
-        predictor = FailingPredictor()
-        application.predictors = {"failing": predictor}
-        application.max_request_lengths["failing"] = 100
-        # Keep error handling as it would be in the actual application.
-        application.testing = False
-        client = application.test_client()
-
-        def post(endpoint: str, data: JsonDict) -> Response:
-            return client.post(endpoint, content_type="application/json", data=json.dumps(data))
-
-        data = {"some": "very nasty input that will cause a failure"}
-        response = post("/predict/failing", data=data)
-        assert response.status_code == 500
-
-        # This won't be returned when the server errors out, but the necessary information is still
-        # in the database for subsequent analysis.
-        slug = app.int_to_slug(0)
-
-        response = post("/permadata", data={"slug": slug})
-        assert response.status_code == 200
-        result = json.loads(response.get_data())
-        assert set(result.keys()) == {"requestData"}
-        assert result["requestData"] == data
 
     def test_microservice(self):
         models = {

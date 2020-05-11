@@ -51,28 +51,40 @@ class Model extends React.Component {
         },
         body: JSON.stringify(inputs)
       }).then((response) => {
+        if (response.status !== 200) {
+            throw Error('Predict call failed.');
+        }
         return response.json();
       }).then((json) => {
-        // If the response contains a `slug` for a permalink, we want to redirect
-        // to the corresponding path using `history.push`.
-        const { slug } = json;
-        const newPath = slug ? `/${selectedModel}/${slug}` : `/${selectedModel}`
-
-        // We'll pass the request and response data along as part of the location object
-        // so that the `Demo` component can use them to re-render.
-        const location = {
-          pathname: newPath
-        }
-
         this.props.updateData(inputs, json)
-
-        // Update the URL
-        if (!disablePermadata) {
-          this.props.history.push(location)
-        }
-
         this.setState({outputState: "received"})
 
+        if (!disablePermadata) {
+          // Extract the model name from the URL by taking the last portion
+          // of the path. The model name in this respect is the key in
+          // `models.json` that corresponds to the model being invoked. It
+          // may include the task name and model name, or one or the other.
+          //
+          // In the near future we plan to stop storing and relying on this
+          // field at all, which makes this an acceptable workaround.
+          const u = new URL(url, window.location.origin);
+          const modelName = u.pathname.split('/').pop();
+
+          fetch(`/api/permalink/`, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model_name: modelName,
+              request_data: inputs
+            })
+          }).then(r => r.json()).then(slug => {
+            const newPath = `/${selectedModel}/${slug}`;
+            this.props.history.push(newPath);
+          });
+        }
       }).catch((error) => {
         this.setState({outputState: "error"});
         console.error(error);
