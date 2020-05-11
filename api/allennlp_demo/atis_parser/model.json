@@ -1,0 +1,5 @@
+{
+    "id": "atis-parser",
+    "archive_file": "https://allennlp.s3.amazonaws.com/models/atis-parser-2020.02.10.tar.gz",
+    "predictor_name": "atis-parser"
+}
