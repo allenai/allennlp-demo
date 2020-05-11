@@ -3,6 +3,7 @@ import sys
 import json
 import logging
 import time
+from typing import Mapping
 
 from flask import Flask, request, Response, g
 from dataclasses import dataclass, asdict
@@ -32,7 +33,7 @@ class JsonLogFormatter(logging.Formatter):
             # In development we just return the exception with the default formatting, as this
             # is easiest for the end user.
             if os.getenv("FLASK_ENV") == "development":
-                return self.formatException(r.exc_info)
+                return super().format(r)
 
             # Otherwise we still output them as JSON
             m = r.getMessage() % r.__dict__
@@ -45,7 +46,7 @@ class JsonLogFormatter(logging.Formatter):
                     "stack": self.formatStack(r.stack_info),
                 }
             )
-        if not isinstance(r.msg, str):
+        if isinstance(r.msg, Mapping):
             return json.dumps({"logname": r.name, "severity": r.levelname, **r.msg})
         else:
             m = r.getMessage() % r.__dict__
