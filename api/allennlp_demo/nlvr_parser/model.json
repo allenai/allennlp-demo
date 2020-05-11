@@ -1,0 +1,5 @@
+{
+    "id": "nlvr-parser",
+    "archive_file": "https://allennlp.s3.amazonaws.com/models/nlvr-erm-model-2020.02.10-rule-vocabulary-updated.tar.gz",
+    "predictor_name": "nlvr-parser"
+}
