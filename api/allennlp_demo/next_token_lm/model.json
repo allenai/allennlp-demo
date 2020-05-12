@@ -1,0 +1,5 @@
+{
+    "id": "next-token-lm",
+    "archive_file": "https://storage.googleapis.com/allennlp-public-models/gpt2-next-word-lm-2020.02.19.tar.gz",
+    "predictor_name": "next_token_lm"
+}
