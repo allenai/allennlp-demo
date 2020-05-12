@@ -50,12 +50,6 @@
         "predictor_name": "biaffine-dependency-parser",
         "max_request_length": 5675
     },
-    "wikitables-parser": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2020.02.10.tar.gz",
-        "predictor_name": "wikitables-parser",
-        "max_request_length": 8177,
-        "image": "gcr.io/ai2-reviz/allennlp-demo:4a43b7f6ff8e90152526409dd904608ac2421c6d"
-    },
     "nlvr-parser": {
         "archive_file": "https://allennlp.s3.amazonaws.com/models/nlvr-erm-model-2020.02.10-rule-vocabulary-updated.tar.gz",
         "predictor_name": "nlvr-parser",
