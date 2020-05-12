@@ -7,6 +7,18 @@ import DemoInput from './DemoInput'
 import { Tabs } from 'antd';
 import qs from 'querystring';
 
+/**
+ * Returns whether the provided URL targets the legacy model serving mechanism.
+ *
+ * @param {string} url
+ * @returns {boolean}
+ */
+function isLegacyModelEndpoint(url) {
+  const u = new URL(url, window.location.origin);
+  return !u.pathname.startsWith('/api/');
+}
+
+
 class Model extends React.Component {
     constructor(props) {
       super(props);
@@ -60,15 +72,37 @@ class Model extends React.Component {
         this.setState({outputState: "received"})
 
         if (!disablePermadata) {
-          // Extract the model name from the URL by taking the last portion
-          // of the path. The model name in this respect is the key in
-          // `models.json` that corresponds to the model being invoked. It
-          // may include the task name and model name, or one or the other.
-          //
-          // In the near future we plan to stop storing and relying on this
-          // field at all, which makes this an acceptable workaround.
-          const u = new URL(url, window.location.origin);
-          const modelName = u.pathname.split('/').pop();
+          // Put together the appropriate request body.
+          let requestBody;
+          if (isLegacyModelEndpoint(url)) {
+            // Extract the model name from the URL by taking the last portion
+            // of the path. The model name in this respect is the key in
+            // `models.json` that corresponds to the model being invoked. It
+            // may include the task name and model name, or one or the other.
+            //
+            // In the near future we plan to stop storing and relying on this
+            // field at all, which makes this an acceptable workaround.
+            const u = new URL(url, window.location.origin);
+            const modelName = u.pathname.split('/').pop();
+            requestBody = JSON.stringify({
+              model_name: modelName,
+              request_data: inputs
+            })
+          } else {
+            // New endpoints are always of the form `/api/:model_id/:action`.
+            const u = new URL(url, window.location.origin);
+            const modelId = u.pathname.split('/')[2];
+            if (!modelId) {
+              throw new Error(`Malformed model endpoint url: ${url}`);
+            }
+            requestBody = JSON.stringify({
+              // TODO: `selectedModel` is a misnomer, it's actually the task name. We should fix
+              // this.
+              task_name: selectedModel,
+              model_id: modelId,
+              request_data: inputs
+            });
+          }
 
           fetch(`/api/permalink/`, {
             method: 'POST',
@@ -76,10 +110,7 @@ class Model extends React.Component {
               'Accept': 'application/json',
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-              model_name: modelName,
-              request_data: inputs
-            })
+            body: requestBody
           }).then(r => r.json()).then(slug => {
             const newPath = `/${selectedModel}/${slug}`;
             this.props.history.push(newPath);
@@ -93,7 +124,7 @@ class Model extends React.Component {
 
     interpretModel = (inputs, interpreter) => () => {
       const { apiUrlInterpret } = this.props
-      return fetch(apiUrlInterpret(inputs), {
+      return fetch(apiUrlInterpret(inputs, interpreter), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -114,15 +145,23 @@ class Model extends React.Component {
       if (target !== undefined) {
         attackInputs['target'] = target
       }
-
       const { apiUrlAttack } = this.props
-      return fetch(apiUrlAttack(inputs), {
+      const url = apiUrlAttack(inputs, attacker)
+
+      // Prepare the request body. The new `/attack` endpoints expect a slightly different
+      // request body.
+      const requestBody =
+        isLegacyModelEndpoint(url)
+          ? { ...inputs, ...attackInputs }
+          : { inputs: inputs, input_field_to_attack: inputToAttack, grad_input_field: gradInput };
+
+      return fetch(url, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({...inputs, ...attackInputs})
+        body: JSON.stringify(requestBody)
       }).then((response) => {
         return response.json();
       }).then((json) => {

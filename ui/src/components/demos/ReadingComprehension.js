@@ -9,7 +9,6 @@ import {
 } from 'react-accessible-accordion';
 import Model from '../Model'
 import OutputField from '../OutputField'
-import { API_ROOT } from '../../api-config';
 import { truncateText } from '../DemoInput'
 import { UsageSection } from '../UsageSection';
 import { UsageCode } from '../UsageCode';
@@ -40,31 +39,28 @@ const description = (
 
 const NMNModel = {
   name: "NMN (trained on DROP)",
-  desc: "A neural module network trained on DROP."
+  desc: "A neural module network trained on DROP.",
+  modelId: "nmn"
 };
 
 const taskModels = [
   {
     name: "ELMo-BiDAF (trained on SQuAD)",
-    desc: "Same as the BiDAF model except it uses ELMo embeddings instead of GloVe."
+    desc: "Same as the BiDAF model except it uses ELMo embeddings instead of GloVe.",
+    modelId: "bidaf-elmo"
   },
   {
     name: "BiDAF (trained on SQuAD)",
-    desc: "Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow,<br/>a widely used MC baseline that achieved state-of-the-art accuracies on<br/>the SQuAD dataset (Wikipedia sentences) in early 2017."
+    desc: "Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow,<br/>a widely used MC baseline that achieved state-of-the-art accuracies on<br/>the SQuAD dataset (Wikipedia sentences) in early 2017.",
+    modelId: "bidaf"
   },
   {
     name: "NAQANet (trained on DROP)",
-    desc: "An augmented version of QANet that adds rudimentary numerical reasoning ability,<br/>trained on DROP (Dua et al., 2019), as published in the original DROP paper."
+    desc: "An augmented version of QANet that adds rudimentary numerical reasoning ability,<br/>trained on DROP (Dua et al., 2019), as published in the original DROP paper.",
+    modelId: "naqanet"
   },
   NMNModel
 ]
-
-const taskEndpoints = {
-  "ELMo-BiDAF (trained on SQuAD)": "elmo-reading-comprehension",
-  "BiDAF (trained on SQuAD)": "reading-comprehension",
-  "NAQANet (trained on DROP)": "naqanet-reading-comprehension",
-  "NMN (trained on DROP)": "nmn-drop"
-};
 
 const fields = [
   {name: "passage", label: "Passage", type: "TEXT_AREA",
@@ -554,22 +550,21 @@ const examples = [
 ]
 
 
-const getUrl = (model, apiCall) => {
-    const selectedModel = model || (taskModels[0] && taskModels[0].name);
-    const endpoint = taskEndpoints[selectedModel]
-    return `${API_ROOT}/${apiCall}/${endpoint}`
+const getUrl = (model, ...paths) => {
+  const selectedModel = taskModels.find(t => t.name === model) || taskModels[0];
+  return `/${['api', selectedModel.modelId, ...paths ].join('/')}`;
 }
 
-const apiUrl = ({model}) => {
-    return getUrl(model, "predict")
+const apiUrl = ({ model }) => {
+  return getUrl(model, "predict")
 }
 
-const apiUrlInterpret = ({model}) => {
-    return getUrl(model, "interpret")
+const apiUrlInterpret = ({ model }, interpreter) => {
+  return getUrl(model, "interpret", interpreter)
 }
 
-const apiUrlAttack = ({model}) => {
-    return getUrl(model, "attack")
+const apiUrlAttack = ({ model }, attacker) => {
+  return getUrl(model, "attack", attacker)
 }
 
 const usage = (
