@@ -39,8 +39,12 @@ def test_old_create_permalink():
     resp = client.post(
         "/",
         json={
-            "model_name": "bidaf",
-            "request_data": {"passage": "The dog barked.", "question": "Did the dog bark?"},
+            "model_name": "reading-comprehension",
+            "request_data": {
+                "model": "BiDAF",
+                "passage": "The dog barked.",
+                "question": "Did the dog bark?",
+            },
         },
     )
     assert resp.status_code == 200
@@ -49,9 +53,10 @@ def test_old_create_permalink():
 
     get_resp = client.get(f"/{slug}")
     assert get_resp.status_code == 200
+    assert get_resp.json["request_data"]["model"] == "BiDAF"
     assert get_resp.json["request_data"]["passage"] == "The dog barked."
     assert get_resp.json["request_data"]["question"] == "Did the dog bark?"
-    assert get_resp.json["model_name"] == "bidaf"
+    assert get_resp.json["model_name"] == "reading-comprehension"
     assert get_resp.json["model_id"] is None
     assert get_resp.json["task_name"] is None
 
