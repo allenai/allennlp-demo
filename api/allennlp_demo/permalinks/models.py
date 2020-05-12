@@ -3,7 +3,15 @@ import binascii
 import logging
 from typing import Optional, NamedTuple, Dict
 
-PermaLink = NamedTuple("PermaLink", [("model_name", str), ("request_data", Dict)])
+PermaLink = NamedTuple(
+    "PermaLink",
+    [
+        ("model_name", Optional[str]),
+        ("request_data", Dict),
+        ("model_id", Optional[str]),
+        ("task_name", Optional[str]),
+    ],
+)
 
 
 def int_to_slug(i: int) -> str:

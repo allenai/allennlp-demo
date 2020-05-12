@@ -21,7 +21,14 @@ class DemoDatabase:
     In the future it could also be used to store user-submitted feedback about predictions.
     """
 
-    def insert_request(self, requester: str, model_name: str, request_data: Dict) -> Optional[int]:
+    def insert_request(
+        self,
+        requester: str,
+        request_data: Dict,
+        model_name: Optional[str] = None,
+        model_id: Optional[str] = None,
+        task_name: Optional[str] = None,
+    ) -> Optional[int]:
         """
         Add the request to the database so that it can later
         be retrieved via permalink.
@@ -45,14 +52,14 @@ class DemoDatabase:
 
 # SQL for inserting requests into the database.
 INSERT_SQL = """
-        INSERT INTO queries (model_name, requester, request_data, timestamp)
-        VALUES (%(model_name)s, %(requester)s, %(request_data)s, %(timestamp)s)
+        INSERT INTO queries (model_name, requester, request_data, timestamp, model_id, task_name)
+        VALUES (%(model_name)s, %(requester)s, %(request_data)s, %(timestamp)s, %(model_id)s, %(task_name)s)
         RETURNING id
         """
 
 # SQL for retrieving a prediction from the database.
 RETRIEVE_SQL = """
-        SELECT model_name, request_data
+        SELECT model_name, request_data, model_id, task_name
         FROM queries
         WHERE id = (%s)
         """
@@ -108,7 +115,14 @@ class PostgresDemoDatabase(DemoDatabase):
             logger.info("Relevant environment variables not found, so no demo database")
             return None
 
-    def insert_request(self, requester: str, model_name: str, request_data: Dict) -> Optional[int]:
+    def insert_request(
+        self,
+        requester: str,
+        request_data: Dict,
+        model_name: Optional[str] = None,
+        model_id: Optional[str] = None,
+        task_name: Optional[str] = None,
+    ) -> Optional[int]:
         try:
             conn = self.connect()
             with conn.cursor() as curs:
@@ -121,6 +135,8 @@ class PostgresDemoDatabase(DemoDatabase):
                         "requester": requester,
                         "request_data": json.dumps(request_data),
                         "timestamp": datetime.datetime.now(),
+                        "model_id": model_id,
+                        "task_name": task_name,
                     },
                 )
 
@@ -147,8 +163,8 @@ class PostgresDemoDatabase(DemoDatabase):
                 return None
 
             # Otherwise, return a ``PermaLink`` instance.
-            model_name, request_data = row
-            return PermaLink(model_name, json.loads(request_data))
+            model_name, request_data, model_id, task_name = row
+            return PermaLink(model_name, json.loads(request_data), model_id, task_name)
         except (psycopg2.Error, AttributeError):
             logger.exception("Unable to retrieve result")
             return None
@@ -164,8 +180,15 @@ class InMemoryDemoDatabase(DemoDatabase):
     def __init__(self):
         self.data: List[PermaLink] = []
 
-    def insert_request(self, requester: str, model_name: str, request_data: Dict) -> Optional[int]:
-        self.data.append(PermaLink(model_name, request_data))
+    def insert_request(
+        self,
+        requester: str,
+        request_data: Dict,
+        model_name: Optional[str] = None,
+        model_id: Optional[str] = None,
+        task_name: Optional[str] = None,
+    ) -> Optional[int]:
+        self.data.append(PermaLink(model_name, request_data, model_id, task_name))
         return len(self.data) - 1
 
     def get_result(self, perma_id: int) -> Optional[PermaLink]:
