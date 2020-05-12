@@ -46,18 +46,15 @@ const descriptionEllipsed = (
 const taskModels = [
   {
     name: "GloVe-LSTM",
-    desc: "Using GloVe embeddings and an LSTM layer."
+    desc: "Using GloVe embeddings and an LSTM layer.",
+    modelId: "glove-sentiment-analysis"
   },
   {
     name: "RoBERTa",
-    desc: "Using RoBERTa embeddings."
+    desc: "Using RoBERTa embeddings.",
+    modelId: "roberta-sentiment-analysis"
   }
 ]
-
-const taskEndpoints = {
-  "GloVe-LSTM": "glove-sentiment-analysis",
-  "RoBERTa": "roberta-sentiment-analysis"
-};
 
 // Input fields to the model.
 const fields = [
@@ -66,22 +63,21 @@ const fields = [
   {name: "model", label: "Model", type: "RADIO", options: taskModels, optional: true}
 ]
 
-const getUrl = (model, apiCall) => {
-  const selectedModel = model || (taskModels[0] && taskModels[0].name);
-  const endpoint = taskEndpoints[selectedModel]
-  return `${API_ROOT}/${apiCall}/${endpoint}`
+const getUrl = (model, ...paths) => {
+  const selectedModel = taskModels.find(t => t.name === model) || taskModels[0];
+  return `/${['api', selectedModel.modelId, ...paths ].join('/')}`;
 }
 
-const apiUrl = ({model}) => {
+const apiUrl = ({ model }) => {
   return getUrl(model, "predict")
 }
 
-const apiUrlInterpret = ({model}) => {
-  return getUrl(model, "interpret")
+const apiUrlInterpret = ({ model }, interpreter) => {
+  return getUrl(model, "interpret", interpreter)
 }
 
-const apiUrlAttack = ({model}) => {
-  return getUrl(model, "attack")
+const apiUrlAttack = ({ model }, attacker) => {
+  return getUrl(model, "attack", attacker)
 }
 
 const getGradData = ({ grad_input_1: gradInput1 }) => {
