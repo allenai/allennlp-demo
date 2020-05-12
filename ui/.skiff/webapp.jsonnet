@@ -131,7 +131,7 @@ local ingress = {
     metadata: {
         name: fqn + '-ui',
         namespace: namespace_name,
-        labels: labels,
+        labels: ui_labels,
         annotations: {
             'certmanager.k8s.io/cluster-issuer': 'letsencrypt-prod',
             'kubernetes.io/ingress.class': 'nginx',

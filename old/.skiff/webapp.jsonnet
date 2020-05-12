@@ -166,7 +166,7 @@ local ingress = {
     apiVersion: 'extensions/v1beta1',
     kind: 'Ingress',
     metadata: {
-        name: fqn + '-ingress',
+        name: fqn + '-old',
         namespace: namespace_name,
         labels: labels,
         annotations: {
