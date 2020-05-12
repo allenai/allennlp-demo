@@ -19,7 +19,7 @@ class ModelIntro extends React.Component {
 
   render() {
 
-    const { title, description, descriptionEllipsed } = this.props;
+    const { title, description } = this.props;
 
     return (
       <div>
