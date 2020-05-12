@@ -1,0 +1,36 @@
+#
+# This file provides common `docker-compose` service definitions for reuse in different
+# contexts.
+#
+# For more information on `docker-compose` and re-using service definitions see:
+# https://docs.docker.com/compose/extends/
+#
+version: '3'
+services:
+    # Local environments run a HTTP server provided with our JavaScript build tools. It handles
+    # incremental recompilation. In production the precompiled UI assets are served from disk
+    # via NGINX.
+    ui:
+        build:
+            context: ui
+            dockerfile: Dockerfile.dev
+        environment:
+            - NODE_ENV=development
+        # We can't mount ./ui into the container in full, as it might include
+        # node_modules/ from the host. This causes weird things to happen.
+        # Dependency updates will require the image to be rebuilt to be
+        # applied.
+        volumes:
+            - ./ui/public:/ui/public
+            - ./ui/src:/ui/src
+        ports:
+            - 3000:3000
+        # This is required to keep the UI development server running. We can remove this
+        # once port to our newer UI build toolkit.
+        tty: true
+    nginx:
+        image: nginx:1.17.10-alpine
+        volumes:
+            - ./dev/local_models.conf:/etc/nginx/conf.d/default.conf
+        ports:
+            - 8080:80
