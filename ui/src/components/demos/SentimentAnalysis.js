@@ -1,5 +1,4 @@
 import React from 'react';
-import { API_ROOT } from '../../api-config';
 import { UsageSection } from '../UsageSection';
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
