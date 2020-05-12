@@ -102,7 +102,7 @@ class PermaLinkService(Flask):
                 )
                 return jsonify(int_to_slug(id))
             except psycopg2.Error as err:
-                self.logger.exception(f"Error saving permalink: ", err)
+                self.logger.exception("Error saving permalink: %s", err)
                 raise InternalServerError("Unable to create permalink")
 
 
