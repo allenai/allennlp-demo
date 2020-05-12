@@ -86,10 +86,11 @@ def test_new_create_permalink():
     assert get_resp.json["model_id"] == "bidaf"
     assert get_resp.json["task_name"] == "reading-comprehension"
 
+
 def test_create_permalink_no_request_data():
     db = InMemoryDemoDatabase()
     app = PermaLinkService("testpermalinks", db)
     client = app.test_client()
 
-    resp = client.post("/", json={ "model_id": "bidaf", "task_name": "reading-comprehension", })
+    resp = client.post("/", json={"model_id": "bidaf", "task_name": "reading-comprehension"})
     assert resp.status_code == 400
