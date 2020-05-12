@@ -75,7 +75,7 @@ class PermaLinkService(Flask):
             if link is None:
                 raise NotFound(f"Permalink not found: {slug}")
 
-            return jsonify({"requestData": link.request_data})
+            return jsonify(link._asdict())
 
         @self.route("/", methods=["POST"])
         def create_permalink() -> Response:
@@ -86,23 +86,30 @@ class PermaLinkService(Flask):
             if self.db is None:
                 raise BadRequest("Permalinks are not enabled")
 
-            model_name = request.json.get("model_name")
-            if model_name is None:
-                raise BadRequest("You must provide a model name")
-
             request_data = request.json.get("request_data")
-            if request_data is None:
-                raise BadRequest("You must provide request data")
+            if not request_data:
+                raise BadRequest("Invalid request_data")
+
+            # Old models send this field. New models do not.
+            # TODO: Remove this once all models use the new serving mechanism.
+            model_name = request.json.get("model_name")
+
+            # New models send these fields, but old models do not.
+            # TODO: Once all models are served via the new mechanism these should be required.
+            model_id = request.json.get("model_id")
+            task_name = request.json.get("task_name")
 
             try:
                 id = self.db.insert_request(
                     requester=get_client_ip(request),
                     model_name=model_name,
                     request_data=request_data,
+                    model_id=model_id,
+                    task_name=task_name,
                 )
                 return jsonify(int_to_slug(id))
             except psycopg2.Error as err:
-                self.logger.exception(f"Error saving permalink: ", err)
+                self.logger.exception("Error saving permalink: %s", err)
                 raise InternalServerError("Unable to create permalink")
 
 
