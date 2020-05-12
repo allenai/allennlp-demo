@@ -34,10 +34,10 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
         assert len(result["best_span_str"].strip()) > 0
 
     def interpreter_ids(self) -> List[str]:
-        return ["simple", "smooth", "integrated"]
+        return ["simple_gradient", "smooth_gradient", "integrated_gradient"]
 
     def attacker_ids(self) -> List[str]:
-        return ["hotflip", "input-reduction"]
+        return ["hotflip", "input_reduction"]
 
     def test_interpret(self):
         for interpreter_id in self.interpreter_ids():

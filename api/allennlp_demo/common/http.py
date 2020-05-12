@@ -115,9 +115,9 @@ class ModelEndpoint:
         to add or remove interpreters.
         """
         return {
-            "simple": SimpleGradient(self.predictor),
-            "smooth": SmoothGradient(self.predictor),
-            "integrated": IntegratedGradient(self.predictor),
+            "simple_gradient": SimpleGradient(self.predictor),
+            "smooth_gradient": SmoothGradient(self.predictor),
+            "integrated_gradient": IntegratedGradient(self.predictor),
         }
 
     def load_attackers(self) -> Mapping[str, Attacker]:
@@ -128,7 +128,7 @@ class ModelEndpoint:
         """
         hotflip = Hotflip(self.predictor)
         hotflip.initialize()
-        return {"hotflip": hotflip, "input-reduction": InputReduction(self.predictor)}
+        return {"hotflip": hotflip, "input_reduction": InputReduction(self.predictor)}
 
     def info(self) -> str:
         """
