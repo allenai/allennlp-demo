@@ -15,4 +15,4 @@ function(image, cause, sha, env, branch, repo, buildId)
     local memory = '5Gi';
     // The amount of time to wait for the container to startup.
     local startupTime = 180;
-    common.APIEndpoint(model.id, image, cause, sha, cpu, memory, env, branch, repo, buildId)
+    common.APIEndpoint(model.id, image, cause, sha, cpu, memory, env, branch, repo, buildId, startupTime)

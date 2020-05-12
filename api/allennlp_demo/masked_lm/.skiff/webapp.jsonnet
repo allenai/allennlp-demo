@@ -15,4 +15,4 @@ function(image, cause, sha, env, branch, repo, buildId)
     local cpu = '50m';
     local memory = '4Gi';
     local startupTime = 180;
-    common.APIEndpoint(model.id, image, cause, sha, cpu, memory, env, branch, repo, buildId)
+    common.APIEndpoint(model.id, image, cause, sha, cpu, memory, env, branch, repo, buildId, startupTime)
