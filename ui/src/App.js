@@ -161,8 +161,8 @@ class SingleTaskDemo extends React.Component {
         .then((response) => {
           return response.json();
         }).then((json) => {
-          const { requestData } = json;
-          this.setState({requestData});
+          const { request_data } = json;
+          this.setState({ requestData: request_data });
         }).catch((error) => {
           // If a permalink doesn't resolve, we don't want to fail. Instead remove the slug from
           // the URL. This lets the user at least prepare a submission.
