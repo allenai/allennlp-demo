@@ -1,5 +1,6 @@
 {
     "id": "roberta-mnli",
     "archive_file": "https://storage.googleapis.com/allennlp-public-models/mnli-roberta-large-2020.02.27.tar.gz",
+    "overrides": {"model.namespace": "tags"},
     "predictor_name": "textual-entailment"
 }
