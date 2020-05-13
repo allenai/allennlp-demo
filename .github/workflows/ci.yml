@@ -47,51 +47,17 @@ jobs:
       run: |
         cd api && make typecheck
 
-  bidaf:
-    name: Model (bidaf)
-    # We run these tests on self-hosted runners because they require huge model
-    # files. We wouldn't be able to cache all of these using the cache available to GitHub-hosted
-    # runners, and downloading them from source each time would be become very expensive for us.
-    runs-on: [self-hosted]
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build and test image
-      run: |
-        cd api && make bidaf-test DOCKER_TAG=$GITHUB_SHA
-
-  # TODO: takes too long to run right now.
-  # bidaf_elmo:
-  #   name: Model (bidaf_elmo)
+  # This is an example of how we could run individual model tests on GitHub Actions.
+  # Currently we're doing this as part of the Google Cloud Build since that allows us to
+  # filter which models to build based on which files have changed.
+  # bidaf:
+  #   name: Model (bidaf)
+  #   # We run these tests on self-hosted runners because they require huge model
+  #   # files. We wouldn't be able to cache all of these using the cache available to GitHub-hosted
+  #   # runners, and downloading them from source each time would be become very expensive for us.
   #   runs-on: [self-hosted]
   #   steps:
   #   - uses: actions/checkout@v2
   #   - name: Build and test image
   #     run: |
-  #       cd api && make bidaf_elmo-test DOCKER_TAG=$GITHUB_SHA
-
-  naqanet:
-    name: Model (naqanet)
-    runs-on: [self-hosted]
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build and test image
-      run: |
-        cd api && make naqanet-test DOCKER_TAG=$GITHUB_SHA
-
-  nmn_drop:
-    name: Model (nmn_drop)
-    runs-on: [self-hosted]
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build and test image
-      run: |
-        cd api && make nmn_drop-test DOCKER_TAG=$GITHUB_SHA
-
-  permalinks:
-    name: Permalinks API
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build and test image
-      run: |
-        cd api && make permalinks-test DOCKER_TAG=$GITHUB_SHA
+  #       cd api && make bidaf-test DOCKER_TAG=$GITHUB_SHA
