@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 import { ExternalLink } from '@allenai/varnish/components';
 
 import { FormField } from '../Form';
-import { API_ROOT } from '../../api-config';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
@@ -69,18 +68,15 @@ const descriptionEllipsed = (
 const taskModels = [
   {
     name: "elmo-ner",
-    desc: "Reimplementation of the NER model described in 'Deep<br/>contextualized word representations' by Peters, et. al."
+    desc: "Reimplementation of the NER model described in 'Deep<br/>contextualized word representations' by Peters, et. al.",
+    modelId: "named-entity-recognition"
   },
   {
     name: "fine-grained-ner",
-    desc: "This Model identifies a broad range of 16 semantic types in the input text.<br/>This model is a reimplementation of Lample (2016) and uses a biLSTM<br/>with a CRF layer, character embeddings and ELMo embeddings. It was<br/>trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2."
+    desc: "This Model identifies a broad range of 16 semantic types in the input text.<br/>This model is a reimplementation of Lample (2016) and uses a biLSTM<br/>with a CRF layer, character embeddings and ELMo embeddings. It was<br/>trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2.",
+    modelId: "fine-grained-ner"
   }
 ]
-
-const taskEndpoints = {
-  "elmo-ner": "named-entity-recognition",
-  "fine-grained-ner": "fine-grained-named-entity-recognition"
-};
 
 const fields = [
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
@@ -326,22 +322,21 @@ const examples = [
     "When I told John that I wanted to move to Alaska, he warned me that I'd have trouble finding a Starbucks there."
   ].map(sentence => ({sentence, snippet: truncateText(sentence)}))
 
-const getUrl = (model, apiCall) => {
-    const selectedModel = model || (taskModels[0] && taskModels[0].name);
-    const endpoint = taskEndpoints[selectedModel]
-    return `${API_ROOT}/${apiCall}/${endpoint}`
+const getUrl = (model, ...paths) => {
+  const selectedModel = taskModels.find(t => t.name === model) || taskModels[0];
+  return `/${['api', selectedModel.modelId, ...paths ].join('/')}`;
 }
 
 const apiUrl = ({model}) => {
-    return getUrl(model, "predict")
+  return getUrl(model, "predict")
 }
 
-const apiUrlInterpret = ({model}) => {
-    return getUrl(model, "interpret")
+const apiUrlInterpret = ({model}, interpreter) => {
+  return getUrl(model, "interpret", interpreter)
 }
 
-const apiUrlAttack = ({model}) => {
-    return getUrl(model, "attack")
+const apiUrlAttack = ({model}, attacker) => {
+  return getUrl(model, "attack", attacker)
 }
 
 const modelUrl = "https://storage.googleapis.com/allennlp-public-models/ner-model-2020.02.10.tar.gz"
