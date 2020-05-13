@@ -50,29 +50,13 @@ services:
             - .:/src
         depends_on:
             - db
-    # The database is currently accessed both by the permalinks service and the legacy application.
-    # Once the permalinks migration has concluded it'll only be needed by the new permalinks API
-    # service.
+    # The database is used by the permalinks service.
     db:
         image: postgres:11.7-alpine
         environment:
             - POSTGRES_HOST_AUTH_METHOD=trust
         ports:
             - 5555:5432
-    # The legacy application is started with a single model specificed via the OLD_MODEL environment
-    # variable.
-    old:
-        build: old
-        command:
-            - --model=${OLD_MODEL}
-        environment:
-            - DEMO_POSTGRES_HOST=db
-            - DEMO_POSTGRES_USER=postgres
-            - DEMO_POSTGRES_DBNAME=demo
-        ports:
-            - 8000:8000
-        depends_on:
-            - setup_db
     # Local environments run a HTTP server provided with our JavaScript build tools. It handles
     # incremental recompilation. In production the precompiled UI assets are served from disk
     # via NGINX.
@@ -104,6 +88,5 @@ services:
             - 8080:80
         depends_on:
             - ui
-            - old
             - model
             - permalinks
