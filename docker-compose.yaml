@@ -25,7 +25,7 @@ services:
         # run it locally using this mechanism.
         build:
             context: api
-            dockerfile: Dockerfile
+            dockerfile: ${MODEL_DOCKERFILE:-Dockerfile}
             args:
                 MODULE: ${MODEL}
         environment:
@@ -99,7 +99,7 @@ services:
     nginx:
         image: nginx:1.17.10-alpine
         volumes:
-            - ./dev/proxy.conf:/etc/nginx/conf.d/default.conf
+            - ./dev/local_models.conf:/etc/nginx/conf.d/default.conf
         ports:
             - 8080:80
         depends_on:
