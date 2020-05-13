@@ -31,9 +31,4 @@ images: [
   gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:$COMMIT_SHA,
   gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:latest,
 ]
-artifacts:
-  objects:
-    location: gs://skiff-archive/$REPO_NAME/$_SUBMODULE_PATH/$_ENV/$BUILD_ID/$COMMIT_SHA
-    paths:
-    -  api/allennlp_demo/$_SUBMODULE_PATH/.skiff/webapp.yaml
 timeout: 900s
