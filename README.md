@@ -16,16 +16,12 @@ You'll need [Docker](https://www.docker.com/) installed on your local machine.
 
 ## Running a Local Environment
 
-The AllenNLP demo at a high level is composed of three components:
+The AllenNLP demo at a high level is composed of two components:
 
 1. A JavaScript application for rendering the user-interface. The code for this can be found
    in `ui/`.
-2. A legacy Python application that provides a HTTP API for using models to do interesting things,
-   like predict answers to questions. The code for this can be found in `old/`.
-3. A series of Python applications that each provide a small HTTP API endpoint for doing interesting
+2. A series of Python applications that each provide a small HTTP API endpoint for doing interesting
    things with a single model. The code for this can be found in `api/`.
-
-We're in the process of deprecating the application in `old/`. It should be gone soon.
 
 There's three ways to run things locally:
 

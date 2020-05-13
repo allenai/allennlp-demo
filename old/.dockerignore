@@ -1,8 +1,0 @@
-.skiff
-**/__pycache__
-**/*.pyc
-Dockerfile
-**/*.md
-**/.mypy_cache
-scripts/
-tests/
