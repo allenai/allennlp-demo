@@ -1,9 +1,4 @@
 {
-    "open-information-extraction": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/openie-model.2020.03.26.tar.gz",
-        "predictor_name": "open-information-extraction",
-        "max_request_length": 19681
-    },
     "elmo-snli": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2020.04.09.tar.gz",
         "predictor_name": "textual-entailment",
