@@ -8,7 +8,6 @@ import {
   } from 'react-accessible-accordion';
 
 import HeatMap from '../HeatMap'
-import { API_ROOT } from '../../api-config';
 import { withRouter } from 'react-router-dom';
 import Model from '../Model'
 import OutputField from '../OutputField'
@@ -185,7 +184,7 @@ const examples = [
     },
 ];
 
-const apiUrl = () => `${API_ROOT}/predict/wikitables-parser`
+const apiUrl = () => `/api/wikitables-parser/predict`
 
 const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 
