@@ -1,19 +1,4 @@
 {
-    "elmo-snli": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2020.04.09.tar.gz",
-        "predictor_name": "textual-entailment",
-        "max_request_length": 13129
-    },
-    "roberta-snli": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/snli-roberta-large-2020.04.30.tar.gz",
-        "predictor_name": "textual-entailment",
-        "max_request_length": 13129
-    },
-    "roberta-mnli": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/mnli-roberta-large-2020.02.27.tar.gz",
-        "predictor_name": "textual-entailment",
-        "max_request_length": 13129
-    },
     "next-token-lm": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/gpt2-next-word-lm-2020.02.19.tar.gz",
         "predictor_name": "next_token_lm",
