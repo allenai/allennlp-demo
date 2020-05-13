@@ -3,7 +3,6 @@ import { ExternalLink, Tabs } from  '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
@@ -241,7 +240,7 @@ const examples = [
     "More than a few CEOs say the red-carpet treatment tempts them to return to a heartland city for future meetings.",
 ].map(sentence => ({sentence}))
 
-const apiUrl = () => `${API_ROOT}/predict/semantic-role-labeling`
+const apiUrl = () => `/api/semantic-role-labeling/predict`
 
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.03.24.tar.gz'
 
