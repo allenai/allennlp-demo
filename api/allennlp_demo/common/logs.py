@@ -18,7 +18,7 @@ class RequestLogEntry:
     query: dict
     ip: str
     forwarded_for: Optional[str]
-    time: float
+    latency: float
     cached: bool
 
 
@@ -77,7 +77,7 @@ def configure_logging(app: Flask):
     # Output a request log our own with information we're interested in.
     @app.after_request
     def log_request(r: Response) -> Response:
-        t = time.perf_counter() - g.start
+        latency = time.perf_counter() - g.start
         rl = RequestLogEntry(
             r.status_code,
             request.method,
@@ -85,7 +85,7 @@ def configure_logging(app: Flask):
             request.args,
             request.remote_addr,
             request.headers.get("X-Forwarded-For"),
-            t,
+            latency,
             r.headers.get("X-Cache-Hit", "0") == "1",
         )
         logging.getLogger("request").info(asdict(rl))
