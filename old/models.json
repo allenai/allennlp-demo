@@ -19,12 +19,6 @@
         "predictor_name": "textual-entailment",
         "max_request_length": 13129
     },
-    "atis-parser": {
-        "archive_file": "https://allennlp.s3.amazonaws.com/models/atis-parser-2020.02.10.tar.gz",
-        "predictor_name": "atis-parser",
-        "max_request_length": 2236,
-        "image": "gcr.io/ai2-reviz/allennlp-demo:4a43b7f6ff8e90152526409dd904608ac2421c6d"
-    },
     "next-token-lm": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/gpt2-next-word-lm-2020.02.19.tar.gz",
         "predictor_name": "next_token_lm",
