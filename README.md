@@ -42,13 +42,18 @@ There's three ways to run things locally:
    endpoint, you can do so by running:
 
     ```bash
-    MODEL=bidaf_elmo OLD_MODEL=reading-comprehension docker-compose up --build
+    MODEL=bidaf_elmo docker-compose up --build
     ```
 
-   The `MODEL` parameter specifies which model in `api/` to spin up, while `OLD_MODEL` tells the old
-   application which model it should load.
+   The `MODEL` environment variable specifies which model in `api/` to run locally. The name should
+   match the name of the directory in `api/allenlp_demo`. If the model has a custom `Dockerfile`,
+   set the `MODEL_DOCKERFILE` environment variable to the path to that file:
 
-   Once that's complete load [http://localhost:8080](http://localhost:8080) in the
+   ```bash
+   MODEL=masked_lm MODEL_DOCKERFILE=allennlp_demo/masked_lm/Dockerfile docker-compose up --build
+   ```
+
+   Once everything's started open [http://localhost:8080](http://localhost:8080) in the
    browser of your choice.
 
    Code changes will be automatically applied, while changes to backend or frontend dependencies
