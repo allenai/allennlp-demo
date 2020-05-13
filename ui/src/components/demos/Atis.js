@@ -9,7 +9,6 @@ import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
 import HeatMap from '../HeatMap'
-import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import OutputField from '../OutputField'
 import SyntaxHighlight from '../highlight/SyntaxHighlight.js';
@@ -139,7 +138,7 @@ const examples = [
   },
 ];
 
-const apiUrl = () => `${API_ROOT}/predict/atis-parser`
+const apiUrl = () => `/api/atis-parser/predict`
 
 const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
 

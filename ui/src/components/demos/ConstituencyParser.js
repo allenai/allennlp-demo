@@ -2,7 +2,6 @@ import React from 'react';
 import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
-import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import { Tree } from 'hierplane';
 import { UsageSection } from '../UsageSection';
@@ -59,7 +58,7 @@ const examples = [
     "True self-control is waiting until the movie starts to eat your popcorn.",
   ].map(sentence => ({sentence}))
 
-const apiUrl = () => `${API_ROOT}/predict/constituency-parsing`
+const apiUrl = () => `/api/constituency-parser/predict`
 
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2020.02.10.tar.gz'
 
