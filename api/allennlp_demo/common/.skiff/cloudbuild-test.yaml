@@ -24,9 +24,6 @@ steps:
     gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:$COMMIT_SHA,
     gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:latest
   ]
-- id: push
-  name: gcr.io/cloud-builders/docker
-  args: [ push, gcr.io/$PROJECT_ID/$REPO_NAME-$_SUBMODULE_PATH:$COMMIT_SHA ]
 substitutions:
   _ENV: prod
   _SUBMODULE_PATH: bidaf_elmo
