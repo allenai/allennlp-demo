@@ -1,6 +1,7 @@
 FROM allennlp/commit:93024e53c1445cb4630ee5c07926abff8943715f
 
 WORKDIR /app/
+
 COPY allennlp_demo/atis_parser/requirements.txt allennlp_demo/atis_parser/requirements.txt
 ENV EXCLUDE_ALLENNLP_IN_SETUP true
 RUN pip install -r allennlp_demo/atis_parser/requirements.txt
