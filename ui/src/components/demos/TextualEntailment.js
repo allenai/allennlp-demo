@@ -8,7 +8,6 @@ import {
   AccordionItemBody,
   } from 'react-accessible-accordion';
 
-import { API_ROOT } from '../../api-config';
 import HeatMap from '../HeatMap'
 import Model from '../Model'
 import OutputField from '../OutputField'
@@ -72,23 +71,20 @@ const descriptionEllipsed = (
 const taskModels = [
   {
     name: "Decomposable Attention + ELMo; SNLI",
-    desc: "The decomposable attention model combined with ELMo trained on SNLI."
+    desc: "The decomposable attention model combined with ELMo trained on SNLI.",
+    modelId: "elmo-snli"
   },
   {
     name: "RoBERTa; SNLI",
-    desc: "The RoBERTa model trained on SNLI."
+    desc: "The RoBERTa model trained on SNLI.",
+    modelId: "roberta-snli"
   },
   {
     name: "RoBERTa; MultiNLI",
-    desc: "The RoBERTa model trained on MultiNLI."
+    desc: "The RoBERTa model trained on MultiNLI.",
+    modelId: "roberta-mnli"
   }
 ]
-
-const taskEndpoints = {
-  "Decomposable Attention + ELMo; SNLI": "elmo-snli",
-  "RoBERTa; SNLI": "roberta-snli",
-  "RoBERTa; MultiNLI": "roberta-mnli"
-};
 
 const fields = [
   {name: "premise", label: "Premise", type: "TEXT_INPUT",
@@ -98,22 +94,21 @@ const fields = [
   {name: "model", label: "Model", type: "RADIO", options: taskModels, optional: true}
 ]
 
-const getUrl = (model, apiCall) => {
-  const selectedModel = model || (taskModels[0] && taskModels[0].name);
-  const endpoint = taskEndpoints[selectedModel]
-  return `${API_ROOT}/${apiCall}/${endpoint}`
+const getUrl = (model, ...paths) => {
+  const selectedModel = taskModels.find(t => t.name === model) || taskModels[0];
+  return `/${['api', selectedModel.modelId, ...paths ].join('/')}`;
 }
 
-const apiUrl = ({model}) => {
+const apiUrl = ({ model }) => {
   return getUrl(model, "predict")
 }
 
-const apiUrlInterpret = ({model}) => {
-  return getUrl(model, "interpret")
+const apiUrlInterpret = ({ model }, interpreter) => {
+  return getUrl(model, "interpret", interpreter)
 }
 
-const apiUrlAttack = ({model}) => {
-  return getUrl(model, "attack")
+const apiUrlAttack = ({ model }, attacker) => {
+  return getUrl(model, "attack", attacker)
 }
 
 const TeGraph = ({x, y}) => {
