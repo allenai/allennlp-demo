@@ -19,11 +19,6 @@
         "predictor_name": "textual-entailment",
         "max_request_length": 13129
     },
-    "coreference-resolution": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz",
-        "predictor_name": "coreference-resolution",
-        "max_request_length": 21097
-    },
     "wikitables-parser": {
         "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2020.02.10.tar.gz",
         "predictor_name": "wikitables-parser",
