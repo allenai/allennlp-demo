@@ -8,16 +8,16 @@ import { Accordion } from 'react-accessible-accordion';
 import SaliencyMaps from '../Saliency'
 import HotflipComponent from '../Hotflip'
 import { FormField, FormLabel, FormTextArea } from '../Form';
-import { API_ROOT } from '../../api-config';
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
   SG_INTERPRETER,
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
-const apiUrl = () => `${API_ROOT}/predict/masked-lm`
-const apiUrlInterpret = () => `${API_ROOT}/interpret/masked-lm`
-const apiUrlAttack = () => `${API_ROOT}/attack/masked-lm`
+
+const apiUrl = () => `/api/masked-lm/predict`
+const apiUrlInterpret = (_, interpreter) => `/api/masked-lm/interpret/${interpreter}`;
+const apiUrlAttack = (_, attacker) => `/api/masked-lm/attack/${attacker}`
 
 const NAME_OF_INPUT_TO_ATTACK = "tokens"
 const NAME_OF_GRAD_INPUT = "grad_input_1"
@@ -398,7 +398,7 @@ class App extends React.Component {
   }
 
   interpretModel = (inputs, interpreter) => () => {
-    return fetch(apiUrlInterpret(inputs), {
+    return fetch(apiUrlInterpret(inputs, interpreter), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -415,18 +415,22 @@ class App extends React.Component {
   }
 
   attackModel = (inputs, attacker, inputToAttack, gradInput) => ({target}) => {
-    const attackInputs = {...{attacker}, ...{inputToAttack}, ...{gradInput}}
+    const requestBody = {
+      inputs: inputs,
+      input_field_to_attack: inputToAttack,
+      grad_input_field: gradInput
+    };
     if (target !== undefined) {
-      attackInputs['target'] = {words: [[target]]}
+      requestBody.target = {words: [[target]]}
     }
 
-    return fetch(apiUrlAttack(inputs), {
+    return fetch(apiUrlAttack(inputs, attacker), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({...inputs, ...attackInputs})
+      body: JSON.stringify(requestBody)
     }).then((response) => {
       return response.json();
     }).then((json) => {
