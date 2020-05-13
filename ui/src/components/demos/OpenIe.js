@@ -2,7 +2,6 @@ import React from 'react';
 import { ExternalLink, Tabs } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
-import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import HierplaneVisualization from '../HierplaneVisualization'
 import TextVisualization from '../TextVisualization'
@@ -230,7 +229,7 @@ const examples = [
   ].map(sentence => ({sentence}))
 
 
-const apiUrl = () => `${API_ROOT}/predict/open-information-extraction`
+const apiUrl = () => `/api/open-information-extraction/predict`;
 
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/openie-model.2020.03.26.tar.gz'
 
