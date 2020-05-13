@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 import { ExternalLink } from '@allenai/varnish/components';
 
 import { FormField } from '../Form';
-import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import { UsageSection } from '../UsageSection';
 import { UsageHeader } from '../UsageHeader';
@@ -11,7 +10,7 @@ import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import NestedHighlight, { withHighlightClickHandling } from '../highlight/NestedHighlight';
 
-const apiUrl = () => `${API_ROOT}/predict/coreference-resolution`
+const apiUrl = () => `/api/coreference-resolution/predict`
 
 const title = "Co-reference Resolution";
 

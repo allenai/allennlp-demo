@@ -2,7 +2,6 @@ import React from 'react';
 import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
-import { API_ROOT } from '../../api-config';
 import Model from '../Model'
 import { Tree } from 'hierplane';
 import { UsageSection } from '../UsageSection';
@@ -60,7 +59,7 @@ const examples = [
     "CRISPR-Cas9 is a versatile genome editing technology for studying the functions of genetic elements."
   ].map(sentence => ({sentence}))
 
-const apiUrl = () => `${API_ROOT}/predict/dependency-parsing`
+const apiUrl = () => `/api/dependency-parser/predict`
 
 const modelUrl = "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2020.04.06.tar.gz"
 

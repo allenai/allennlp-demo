@@ -19,21 +19,6 @@
         "predictor_name": "textual-entailment",
         "max_request_length": 13129
     },
-    "coreference-resolution": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz",
-        "predictor_name": "coreference-resolution",
-        "max_request_length": 21097
-    },
-    "constituency-parsing": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2020.02.10.tar.gz",
-        "predictor_name": "constituency-parser",
-        "max_request_length": 2236
-    },
-    "dependency-parsing": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2020.04.06.tar.gz",
-        "predictor_name": "biaffine-dependency-parser",
-        "max_request_length": 5675
-    },
     "nlvr-parser": {
         "archive_file": "https://allennlp.s3.amazonaws.com/models/nlvr-erm-model-2020.02.10-rule-vocabulary-updated.tar.gz",
         "predictor_name": "nlvr-parser",
@@ -57,16 +42,5 @@
         "max_request_length": 10000,
         "memory": "4Gi",
         "image": "gcr.io/ai2-reviz/allennlp-demo:584070b73f7eb6eb1f82af723295aec0a44ae3a9"
-    },
-    "glove-sentiment-analysis": {
-        "archive_file": "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basic-classifier-glove-2019.06.27.tar.gz",
-        "predictor_name": "text_classifier",
-        "max_request_length": 1000
-    },
-    "roberta-sentiment-analysis": {
-        "archive_file": "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.05.05.tar.gz",
-        "predictor_name": "text_classifier",
-        "max_request_length": 1000,
-        "memory": "4Gi"
     }
 }
