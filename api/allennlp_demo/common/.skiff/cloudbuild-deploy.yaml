@@ -10,13 +10,6 @@ steps:
   args: [
     $_SUBMODULE_PATH-build, DOCKER_BASE_NAME=gcr.io/$PROJECT_ID/$REPO_NAME, DOCKER_TAG=$COMMIT_SHA
   ]
-- id: test
-  dir: api
-  name: gcr.io/cloud-builders/docker
-  entrypoint: make
-  args: [
-    $_SUBMODULE_PATH-test, DOCKER_BASE_NAME=gcr.io/$PROJECT_ID/$REPO_NAME, DOCKER_TAG=$COMMIT_SHA
-  ]
 - id: tag-latest
   name: gcr.io/cloud-builders/docker
   args: [
