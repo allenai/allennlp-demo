@@ -3,18 +3,35 @@ The info service is an endpoint that lists all API endpoints and some additional
 about each. It's purely for discovery, and intended for use primarily by administrators (but is
 ok to be public.
 """
-from typing import Optional, Mapping, Any
-from dataclasses import dataclass
 
-import flask
-import kubernetes
-import requests
-import logging
+# grequests calls gevent.monkey.patch_all(thread=False, select=False), which
+# only partially patches, so we need still need to call gevent.monkey.patch_all().
+# These together ensure that third party libs (like requests) use the non-blocking socket,
+# so that we actually benefit from using `gevent`. They recommend that it be one of the first
+# lines executed in your program, which is why we import these first.
+#
+# See: http://www.gevent.org/intro.html#monkey-patching
+import grequests
+from gevent import monkey
 
-from allennlp_demo.common.logs import configure_logging
+monkey.patch_all()
+
+from dataclasses import dataclass  # noqa: E402
+import logging  # noqa: E402
+from typing import Optional, Mapping, Any, List  # noqa: E402
+
+import flask  # noqa: E402
+from flask_caching import Cache  # noqa: E402
+import kubernetes  # noqa: E402
+from requests import Session, adapters  # noqa: E402
+
+from allennlp_demo.common.logs import configure_logging  # noqa: E402
 
 
-@dataclass(frozen=True)
+logger = logging.getLogger(__name__)
+
+
+@dataclass
 class Endpoint:
     """
     An individual API endpoint.
@@ -26,8 +43,6 @@ class Endpoint:
 
     @staticmethod
     def from_ingress(ingress: kubernetes.client.ExtensionsV1beta1Ingress) -> Optional["Endpoint"]:
-        logger = logging.getLogger(__name__)
-
         id = ingress.metadata.labels.get("endpoint")
         if id is None:
             return None
@@ -49,15 +64,7 @@ class Endpoint:
         path = paths[0].path.rstrip("(/.*))?$")
         url = f"https://{rule.host}{path}"
 
-        # The root of each endpoint should include some additional information.
-        # NOTE: Python is quite slow at this, since this is an I/O bound action. In theory
-        # gevent should resolve that, but in practice it doesn't seem to. We could consider
-        # using a Thread here, or just rewrite this in language that's better suited for the task.
-        resp = requests.get(url)
-        if not resp.ok:
-            return Endpoint(id, url, None)
-
-        return Endpoint(id, url, resp.json())
+        return Endpoint(id, url, None)
 
 
 class InfoService(flask.Flask):
@@ -65,16 +72,48 @@ class InfoService(flask.Flask):
         super().__init__(name)
         configure_logging(self)
 
+        cache = Cache(config={"CACHE_TYPE": "simple"})
+        cache.init_app(self)
+
+        # We'll re-use a single HTTP Session to make all of the info requests to our
+        # our model endpoints.
+        # We set `pool_maxsize` to 100 so that the pool can handle all of the model
+        # requests concurrently, potentially from several different incoming requests
+        # at once.
+        self.session = Session()
+        adapter = adapters.HTTPAdapter(pool_maxsize=100)
+        self.session.mount("https://", adapter)
+
         @self.route("/", methods=["GET"])
+        @cache.cached(timeout=10)
         def info():
             client = kubernetes.client.ExtensionsV1beta1Api()
             resp = client.list_ingress_for_all_namespaces(label_selector="app=allennlp-demo")
-            endpoints = []
+
+            # Gather endpoints.
+            endpoints: List[Endpoint] = []
+            info_requests: List[grequests.AsyncRequest] = []
             for ingress in resp.items:
                 endpoint = Endpoint.from_ingress(ingress)
                 if endpoint is not None:
                     endpoints.append(endpoint)
+                    info_requests.append(
+                        grequests.request("GET", endpoint.url, session=self.session)
+                    )
+
+            # Now join the info HTTP requests concurrently.
+            for endpoint, info_resp in zip(
+                endpoints, grequests.map(info_requests, exception_handler=self.exception_handler),
+            ):
+                if not info_resp:
+                    continue
+                endpoint.info = info_resp.json()
+
             return flask.jsonify(endpoints)
+
+    @staticmethod
+    def exception_handler(request: grequests.AsyncRequest, exception) -> None:
+        logger.exception("Request to %s failed: %s", request.url, exception)
 
 
 if __name__ == "__main__":
