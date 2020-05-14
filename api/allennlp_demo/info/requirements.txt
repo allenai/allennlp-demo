@@ -4,3 +4,4 @@ gevent==20.5.0
 kubernetes==11.0.0
 requests==2.23.0
 grequests==0.6.0
+Flask-Caching==1.8.0

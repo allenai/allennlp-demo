@@ -21,6 +21,7 @@ import logging  # noqa: E402
 from typing import Optional, Mapping, Any, List  # noqa: E402
 
 import flask  # noqa: E402
+from flask_caching import Cache  # noqa: E402
 import kubernetes  # noqa: E402
 from requests import Session, adapters  # noqa: E402
 
@@ -70,11 +71,16 @@ class InfoService(flask.Flask):
     def __init__(self, name: str = "info"):
         super().__init__(name)
         configure_logging(self)
+
+        cache = Cache(config={"CACHE_TYPE": "simple"})
+        cache.init_app(self)
+
         self.session = Session()
         adapter = adapters.HTTPAdapter(pool_maxsize=100)
         self.session.mount("https://", adapter)
 
         @self.route("/", methods=["GET"])
+        @cache.cached(timeout=10)
         def info():
             client = kubernetes.client.ExtensionsV1beta1Api()
             resp = client.list_ingress_for_all_namespaces(label_selector="app=allennlp-demo")
