@@ -4,13 +4,17 @@ about each. It's purely for discovery, and intended for use primarily by adminis
 ok to be public.
 """
 
-# This needs to be imported first, since it calls gevent.monkey.patch_all(),
-# which ensures third party libs (like requests) use the non-blocking socket, so that we actually
-# benefit from using `gevent`. They recommend that it be one of the first
-# lines executed in your program, which is why we import it first.
+# grequests calls gevent.monkey.patch_all(thread=False, select=False), which
+# only partially patches, so we need still need to call gevent.monkey.patch_all().
+# These together ensure that third party libs (like requests) use the non-blocking socket,
+# so that we actually benefit from using `gevent`. They recommend that it be one of the first
+# lines executed in your program, which is why we import these first.
 #
 # See: http://www.gevent.org/intro.html#monkey-patching
 import grequests
+from gevent import monkey
+
+monkey.patch_all()
 
 from dataclasses import dataclass  # noqa: E402
 import logging  # noqa: E402
@@ -18,6 +22,7 @@ from typing import Optional, Mapping, Any, List  # noqa: E402
 
 import flask  # noqa: E402
 import kubernetes  # noqa: E402
+from requests import Session, adapters  # noqa: E402
 
 from allennlp_demo.common.logs import configure_logging  # noqa: E402
 
@@ -65,11 +70,15 @@ class InfoService(flask.Flask):
     def __init__(self, name: str = "info"):
         super().__init__(name)
         configure_logging(self)
+        self.session = Session()
+        adapter = adapters.HTTPAdapter(pool_maxsize=100)
+        self.session.mount("https://", adapter)
 
         @self.route("/", methods=["GET"])
         def info():
             client = kubernetes.client.ExtensionsV1beta1Api()
             resp = client.list_ingress_for_all_namespaces(label_selector="app=allennlp-demo")
+
             # Gather endpoints.
             endpoints: List[Endpoint] = []
             info_requests: List[grequests.AsyncRequest] = []
@@ -77,13 +86,23 @@ class InfoService(flask.Flask):
                 endpoint = Endpoint.from_ingress(ingress)
                 if endpoint is not None:
                     endpoints.append(endpoint)
-                    info_requests.append(grequests.get(endpoint.url))
-            # Now concurrently get the info for each endpoint.
-            for endpoint, info_resp in zip(endpoints, grequests.map(info_requests)):
-                if not info_resp.ok:
+                    info_requests.append(
+                        grequests.request("GET", endpoint.url, session=self.session)
+                    )
+
+            # Now join the info HTTP requests concurrently.
+            for endpoint, info_resp in zip(
+                endpoints, grequests.map(info_requests, exception_handler=self.exception_handler),
+            ):
+                if not info_resp:
                     continue
                 endpoint.info = info_resp.json()
+
             return flask.jsonify(endpoints)
+
+    @staticmethod
+    def exception_handler(request: grequests.AsyncRequest, exception) -> None:
+        logger.exception("Request to %s failed: %s", request.url, exception)
 
 
 if __name__ == "__main__":
