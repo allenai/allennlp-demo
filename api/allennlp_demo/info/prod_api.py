@@ -6,9 +6,9 @@ The workload for this service is entirely I/O bound, so should improve the
 service's ability to handle more concurrent connections without using a
 multi-process WSGI server like `gunicorn`.
 """
-from gevent import patch_all, pywsgi
+from gevent import monkey, pywsgi
 
-patch_all()
+monkey.patch_all()
 
 import kubernetes  # noqa: E402
 
