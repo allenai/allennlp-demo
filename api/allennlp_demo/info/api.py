@@ -94,7 +94,7 @@ class InfoService(flask.Flask):
             for ingress in resp.items:
                 # Don't try to return information for this service, otherwise we'd recursively
                 # call ourselves.
-                if ingress.metadata.labels.get('endpoint') == 'info':
+                if ingress.metadata.labels.get("endpoint") == "info":
                     continue
                 endpoint = Endpoint.from_ingress(ingress)
                 if endpoint is not None:
