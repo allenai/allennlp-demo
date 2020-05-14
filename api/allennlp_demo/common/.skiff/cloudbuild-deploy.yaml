@@ -58,4 +58,4 @@ artifacts:
     location: gs://skiff-archive/$REPO_NAME/$_SUBMODULE_PATH/$_ENV/$BUILD_ID/$COMMIT_SHA
     paths:
     -  api/allennlp_demo/$_SUBMODULE_PATH/.skiff/webapp.yaml
-timeout: 900s
+timeout: 1200s
