@@ -75,6 +75,11 @@ class InfoService(flask.Flask):
         cache = Cache(config={"CACHE_TYPE": "simple"})
         cache.init_app(self)
 
+        # We'll re-use a single HTTP Session to make all of the info requests to our
+        # our model endpoints.
+        # We set `pool_maxsize` to 100 so that the pool can handle all of the model
+        # requests concurrently, potentially from several different incoming requests
+        # at once.
         self.session = Session()
         adapter = adapters.HTTPAdapter(pool_maxsize=100)
         self.session.mount("https://", adapter)
