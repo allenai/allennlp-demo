@@ -67,7 +67,7 @@ class Endpoint:
         sha = ingress.metadata.annotations.get("apps.allenai.org/sha")
         repo = ingress.metadata.annotations.get("apps.allenai.org/repo")
         if sha is not None and repo is not None:
-            github_url = f"https://github.com/{repo}/commit/{sha}"
+            github_url = f"https://github.com/allenai/{repo}/commit/{sha}"
         else:
             github_url = None
 
