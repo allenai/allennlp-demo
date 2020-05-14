@@ -4,14 +4,11 @@ about each. It's purely for discovery, and intended for use primarily by adminis
 ok to be public.
 """
 
-# grequests calls gevent.monkey.patch_all(thread=False, select=False), which
-# only partially patches, so we need still need to call gevent.monkey.patch_all().
-# These together ensure that third party libs (like requests) use the non-blocking socket,
+# This ensures that third party libs (like requests) use the non-blocking socket,
 # so that we actually benefit from using `gevent`. They recommend that it be one of the first
 # lines executed in your program, which is why we import these first.
 #
 # See: http://www.gevent.org/intro.html#monkey-patching
-import grequests
 from gevent import monkey
 
 monkey.patch_all()
@@ -22,6 +19,7 @@ from typing import Optional, Mapping, Any, List  # noqa: E402
 
 import flask  # noqa: E402
 from flask_caching import Cache  # noqa: E402
+import grequests  # noqa: E402
 import kubernetes  # noqa: E402
 from requests import Session, adapters  # noqa: E402
 
