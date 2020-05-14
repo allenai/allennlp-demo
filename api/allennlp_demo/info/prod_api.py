@@ -6,10 +6,13 @@ The workload for this service is entirely I/O bound, so should improve the
 service's ability to handle more concurrent connections without using a
 multi-process WSGI server like `gunicorn`.
 """
-from gevent import pywsgi
-import kubernetes
+from gevent import patch_all, pywsgi
 
-from allennlp_demo.info.api import InfoService
+patch_all()
+
+import kubernetes  # noqa: E402
+
+from allennlp_demo.info.api import InfoService  # noqa: E402
 
 
 if __name__ == "__main__":
