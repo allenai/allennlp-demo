@@ -38,8 +38,8 @@ class Endpoint:
     id: str
     url: str
     info: Optional[Mapping[str, Any]]
-    sha: Optional[str]
-    github_url: Optional[str]
+    commit_sha: Optional[str]
+    commit_url: Optional[str]
 
     @staticmethod
     def from_ingress(ingress: kubernetes.client.ExtensionsV1beta1Ingress) -> Optional["Endpoint"]:
@@ -64,14 +64,14 @@ class Endpoint:
         path = paths[0].path.rstrip("(/.*))?$")
         url = f"https://{rule.host}{path}"
 
-        sha = ingress.metadata.annotations.get("apps.allenai.org/sha")
+        commit_sha = ingress.metadata.annotations.get("apps.allenai.org/sha")
         repo = ingress.metadata.annotations.get("apps.allenai.org/repo")
-        if sha is not None and repo is not None:
-            github_url = f"https://github.com/allenai/{repo}/commit/{sha}"
+        if commit_sha is not None and repo is not None:
+            commit_url = f"https://github.com/allenai/{repo}/commit/{commit_sha}"
         else:
-            github_url = None
+            commit_url = None
 
-        return Endpoint(id, url, None, sha, github_url)
+        return Endpoint(id, url, None, commit_sha, commit_url)
 
 
 class InfoService(flask.Flask):
