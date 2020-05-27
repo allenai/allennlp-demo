@@ -1,0 +1,5 @@
+{
+    "id": "transformer-qa",
+    "archive_file": "https://storage.googleapis.com/allennlp-public-models/transformer-qa-2020-05-26.tar.gz",
+    "predictor_name": "transformer_qa"
+}
