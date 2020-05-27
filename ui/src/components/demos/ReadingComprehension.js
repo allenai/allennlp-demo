@@ -55,6 +55,11 @@ const taskModels = [
     modelId: "bidaf"
   },
   {
+    name: "Transformer QA (trained on SQuAD)",
+    desc: "comprehension model patterned after the proposed model in<br/>https://arxiv.org/abs/1810.04805 (Devlin et al), with improvements borrowed from the SQuAD<br/>model in the transformers project.",
+    modelId: "transformer-qa"
+  },
+  {
     name: "NAQANet (trained on DROP)",
     desc: "An augmented version of QANet that adds rudimentary numerical reasoning ability,<br/>trained on DROP (Dua et al., 2019), as published in the original DROP paper.",
     modelId: "naqanet"
