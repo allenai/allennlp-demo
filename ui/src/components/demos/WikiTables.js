@@ -1,5 +1,4 @@
 import React from 'react';
-import { ExternalLink } from  '@allenai/varnish/components';
 import {
   Accordion,
   AccordionItem,
@@ -20,10 +19,10 @@ const description = (
     <span>
       Semantic parsing maps natural language to machine language.  This page demonstrates a semantic
       parsing model on the
-      <ExternalLink href="https://nlp.stanford.edu/software/sempre/wikitable/">{' '}WikiTableQuestions</ExternalLink> dataset.
+      <a href="https://nlp.stanford.edu/software/sempre/wikitable/">{' '}WikiTableQuestions</a> dataset.
       The model is a re-implementation of the parser in the
-      <ExternalLink href="https://www.semanticscholar.org/paper/Iterative-Search-for-Weakly-Supervised-Semantic-Dasigi-Gardner/af17ccbdae4cbd1b67d6ab359615c8000f8fb66f">
-      {' '}NAACL 2019 paper by Dasigi, Gardner, Murty, Zettlemoyer, and Hovy</ExternalLink>.
+      <a href="https://www.semanticscholar.org/paper/Iterative-Search-for-Weakly-Supervised-Semantic-Dasigi-Gardner/af17ccbdae4cbd1b67d6ab359615c8000f8fb66f">
+      {' '}NAACL 2019 paper by Dasigi, Gardner, Murty, Zettlemoyer, and Hovy</a>.
     </span>
   </span>
 );

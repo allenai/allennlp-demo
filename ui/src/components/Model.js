@@ -4,7 +4,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { PaneTop, PaneBottom } from './Pane'
 import ModelIntro from './ModelIntro';
 import DemoInput from './DemoInput'
-import { Tabs } from 'antd';
+import { Tabs } from '@allenai/varnish';
 import qs from 'querystring';
 
 class Model extends React.Component {

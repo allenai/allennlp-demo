@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Col, Row, Slider } from 'antd';
+import { Col, Row, Slider } from '@allenai/varnish';
 
 import { FormField, FormLabel } from '../../../Form';
 import { LogScale } from './LogScale';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@allenai/varnish/components';
+import { Button } from '@allenai/varnish';
 
 import { FormField, FormLabel } from '../Form';
 

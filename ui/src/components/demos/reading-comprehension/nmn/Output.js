@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Tabs, Popover } from 'antd';
+import { Tabs, Popover } from '@allenai/varnish';
 
 import OutputField from '../../../OutputField';
 import NestedHighlight, { getHighlightColor } from '../../../highlight/NestedHighlight';

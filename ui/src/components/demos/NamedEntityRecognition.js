@@ -1,6 +1,5 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { ExternalLink } from '@allenai/varnish/components';
 
 import { FormField } from '../Form';
 import HighlightContainer from '../highlight/HighlightContainer';
@@ -36,23 +35,23 @@ const description = (
         (people, locations, organizations, etc.)
         in the input text. This elmo-ner model is the "baseline" model described in
     </span>
-    <ExternalLink href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc" target="_blank" rel="noopener">
+    <a href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc" target="_blank" rel="noopener noreferrer">
       {' '} Peters, Ammar, Bhagavatula, and Power 2017 {' '}
-    </ExternalLink>
+    </a>
     <span>
       .  It uses a Gated Recurrent Unit (GRU) character encoder as well as a GRU phrase encoder,
       and it starts with pretrained
     </span>
-    <ExternalLink href = "https://nlp.stanford.edu/projects/glove/" target="_blank" rel="noopener">{' '} GloVe vectors {' '}</ExternalLink>
+    <a href = "https://nlp.stanford.edu/projects/glove/" target="_blank" rel="noopener noreferrer">{' '} GloVe vectors {' '}</a>
     <span>
       for its token embeddings. It was trained on the
     </span>
-    <ExternalLink href = "https://www.clips.uantwerpen.be/conll2003/ner/" target="_blank" rel="noopener">{' '} CoNLL-2003 {' '}</ExternalLink>
+    <a href = "https://www.clips.uantwerpen.be/conll2003/ner/" target="_blank" rel="noopener noreferrer">{' '} CoNLL-2003 {' '}</a>
     <span>
       NER dataset.
       (This is also the model constructed in our
     </span>
-    <ExternalLink href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/walk_through_allennlp/creating_a_model.md" target="_blank" rel="noopener">{' '}Creating a Model{' '}</ExternalLink>
+    <a href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/walk_through_allennlp/creating_a_model.md" target="_blank" rel="noopener noreferrer">{' '}Creating a Model{' '}</a>
     <span>
       tutorial.)
     </span>

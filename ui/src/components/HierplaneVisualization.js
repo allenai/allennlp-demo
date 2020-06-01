@@ -1,6 +1,6 @@
 import React from 'react'
 import { Tree } from 'hierplane';
-import { Button } from '@allenai/varnish/components';
+import { Button } from '@allenai/varnish';
 
 
 class HierplaneVisualization extends React.Component {
@@ -33,12 +33,12 @@ class HierplaneVisualization extends React.Component {
         return (
           <div className="hierplane__visualization">
             <div className="hierplane__visualization-verbs">
-              <Button className="hierplane__visualization-verbs__prev" variant="link" ghost onClick={this.selectPrevVerb}>
+              <Button className="hierplane__visualization-verbs__prev" type="link" ghost onClick={this.selectPrevVerb}>
                 <svg width="12" height="12">
                   <use xlinkHref="#icon__disclosure"></use>
                 </svg>
               </Button>
-              <Button variant="link" ghost onClick={this.selectNextVerb}>
+              <Button type="link" ghost onClick={this.selectNextVerb}>
                 <svg width="12" height="12">
                   <use xlinkHref="#icon__disclosure"></use>
                 </svg>
