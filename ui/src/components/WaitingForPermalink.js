@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spin, Icon } from 'antd';
+import { Spin, Icon } from '@allenai/varnish';
 import styled from 'styled-components';
 
 class WaitingForPermalink extends React.Component {

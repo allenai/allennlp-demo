@@ -5,7 +5,6 @@ import {
   AccordionItemTitle,
   AccordionItemBody,
 } from 'react-accessible-accordion';
-import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
 import HeatMap from '../HeatMap'
@@ -20,10 +19,10 @@ const description = (
     <span>
       Semantic parsing maps natural language to machine language.  This page demonstrates a semantic
       parsing model on the
-      <ExternalLink href="http://lic.nlp.cornell.edu/nlvr/">{' '}Cornell NLVR</ExternalLink> dataset.
+      <a href="http://lic.nlp.cornell.edu/nlvr/">{' '}Cornell NLVR</a> dataset.
       The model is the one described in the
-      <ExternalLink href="https://www.semanticscholar.org/paper/Iterative-Search-for-Weakly-Supervised-Semantic-Dasigi-Gardner/af17ccbdae4cbd1b67d6ab359615c8000f8fb66f">
-      {' '}NAACL 2019 paper by Dasigi, Gardner, Murty, Zettlemoyer, and Hovy</ExternalLink>.
+      <a href="https://www.semanticscholar.org/paper/Iterative-Search-for-Weakly-Supervised-Semantic-Dasigi-Gardner/af17ccbdae4cbd1b67d6ab359615c8000f8fb66f">
+      {' '}NAACL 2019 paper by Dasigi, Gardner, Murty, Zettlemoyer, and Hovy</a>.
 
       The structured representation is not particularly useful here, unless you know what you're doing.
       We recommend just seeing how the sentence maps to a logical form.

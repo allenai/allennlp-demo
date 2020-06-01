@@ -5,7 +5,6 @@ import {
   AccordionItemTitle,
   AccordionItemBody,
   } from 'react-accessible-accordion';
-import { ExternalLink } from '@allenai/varnish/components';
 import { withRouter } from 'react-router-dom';
 
 import HeatMap from '../HeatMap'
@@ -19,8 +18,8 @@ const description = (
   <span>
     <span>
       Natural language to SQL interfaces allow users to query data in relational databases without writing
-      SQL queries. This demo is an implementation of an encoder-decoder architecture with LSTMs and <ExternalLink href="https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a"> constrained type decoding </ExternalLink>
-      trained on the <ExternalLink href="https://www.semanticscholar.org/paper/The-ATIS-Spoken-Language-Systems-Pilot-Corpus-Hemphill-Godfrey/1d19708290ef3cc3f43c2c95b07acdd4f52f5cda"> ATIS </ExternalLink>
+      SQL queries. This demo is an implementation of an encoder-decoder architecture with LSTMs and <a href="https://www.semanticscholar.org/paper/Neural-Semantic-Parsing-with-Type-Constraints-for-Krishnamurthy-Dasigi/8c6f58ed0ebf379858c0bbe02c53ee51b3eb398a"> constrained type decoding </a>
+      trained on the <a href="https://www.semanticscholar.org/paper/The-ATIS-Spoken-Language-Systems-Pilot-Corpus-Hemphill-Godfrey/1d19708290ef3cc3f43c2c95b07acdd4f52f5cda"> ATIS </a>
       dataset.  This model is still a proof-of-concept of what you can do with semantic parsing in AllenNLP
       and its performance is not state-of-the-art (this naive model gets around 40% exact denotation accuracy on the contextual ATIS dataset).
     </span>

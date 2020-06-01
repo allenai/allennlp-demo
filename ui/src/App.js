@@ -1,21 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
-import { ThemeProvider } from '@allenai/varnish/theme';
-import { DefaultLayoutProvider } from '@allenai/varnish/layout';
-import {
-  Content,
-  ExternalLink,
-  Footer,
-  Header,
-  HeaderColumns,
-  Layout,
-} from '@allenai/varnish/components';
-import { ScrollToTopOnPageChange} from '@allenai/varnish/components/ScrollToTopOnPageChange';
+import { Theming, Footer, Header, Layout } from '@allenai/varnish';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
 import Menu from './components/Menu';
 import ModelIntro from './components/ModelIntro';
+import { ScrollToTopOnPageChange } from './components/ScrollToTopOnPageChange';
 import { modelComponents, modelRedirects } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
@@ -26,7 +17,11 @@ import './css/icons.css';
 import './css/Accordion.css';
 import './css/hierplane-overrides.css';
 import './css/visualization-types.css';
+import '@allenai/varnish/dist/varnish.css';
 
+const { ThemeProvider } = Theming;
+const { Content, DefaultAppLayoutProvider } = Layout;
+const { HeaderColumns } = Header;
 
 /*******************************************************************************
   <App /> Container
@@ -57,7 +52,7 @@ which delegates to the particular ModelComponent specified in `demo/src/models.j
 const App = () => (
   <ThemeProvider>
     <Router>
-      <DefaultLayoutProvider layoutVariant="app">
+      <DefaultAppLayoutProvider layoutVariant="app">
         <ScrollToTopOnPageChange />
         <Switch>
           <Route exact path="/" render={() => (
@@ -65,7 +60,7 @@ const App = () => (
           )}/>
           <Route path="/:model/:slug?" component={Demo}/>
         </Switch>
-      </DefaultLayoutProvider>
+      </DefaultAppLayoutProvider>
     </Router>
   </ThemeProvider>
 )
@@ -81,7 +76,7 @@ const Demo = (props) => {
     <Layout bgcolor="white">
       <Header>
         <HeaderColumnsWithSpace gridTemplateColumns="auto auto 1fr">
-        <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
+          <a href="http://www.allennlp.org/" target="_blank" rel="noopener noreferrer">
             <Logo width="147px"
               height="26px"
               alt="AllenNLP"
@@ -190,7 +185,7 @@ class SingleTaskDemo extends React.Component {
             <span>
               It's possible to run this demo locally with your own model (e.g., to visualize or interpret its predictions). See
             </span>
-            <ExternalLink href="https://github.com/allenai/allennlp-demo#contributing-a-new-model-to-the-demo" target="_blank" rel="noopener">{' '} this tutorial </ExternalLink>
+            <a href="https://github.com/allenai/allennlp-demo#contributing-a-new-model-to-the-demo" target="_blank" rel="noopener noreferrer">{' '} this tutorial </a>
             <span>
               for more information.
             </span>
@@ -205,7 +200,7 @@ class SingleTaskDemo extends React.Component {
             in adding your model to a list of publicly available implementations, as a service to this demo, or as a component in the library itself,
             please openan issue on our
           </span>
-          <ExternalLink href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener">{' '} public Github repository </ExternalLink>
+          <a href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener noreferrer">{' '} public Github repository </a>
           <span>
             or sending us an email at allennlp-contact@allenai.org.
           </span>

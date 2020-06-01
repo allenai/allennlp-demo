@@ -2,7 +2,6 @@ import React from 'react'
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { ExternalLink } from '@allenai/varnish/components';
 
 import OutputField from '../OutputField'
 import { Accordion } from 'react-accessible-accordion';
@@ -163,7 +162,7 @@ const DEFAULT_MODEL = "345M"
 const description = (
   <span>
 This demonstration uses the public 345M
-parameter <ExternalLink href="https://github.com/openai/gpt-2" target="_blank" rel="noopener">OpenAI GPT-2</ExternalLink> language model
+parameter <a href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</a> language model
 to generate sentences.<br /><br />
 Enter some initial text and the model will generate the most likely next words.
 You can click on one of those words to choose it and continue or just keep typing.

@@ -1,16 +1,13 @@
 import React from 'react';
-import { 
-  BodySmall, 
-  IconMenuItemColumns, 
-  ImgIcon, 
-  InternalLink, 
-  LeftMenu, 
-  LeftMenuItem,
-  LeftSider,
-  Wrapping, 
-} from '@allenai/varnish/components';
+import { Typography, Menu as VarnishMenu, Layout, Icon } from '@allenai/varnish';
 
+import { InternalLink } from '../components/InternalLink'
 import { modelGroups } from '../models'
+
+const { BodySmall } = Typography;
+const { IconMenuItemColumns, Item, SubMenu } = VarnishMenu;
+const { LeftSider } = Layout;
+const { ImgIcon } = Icon;
 
 /*******************************************************************************
   <Menu /> Component
@@ -30,7 +27,7 @@ export default class Menu extends React.Component {
   handleMenuCollapse = () => {
       this.setState({ menuCollapsed: !this.state.menuCollapsed });
   };
-  
+
   render() {
     return (
       <LeftSider
@@ -38,35 +35,36 @@ export default class Menu extends React.Component {
         collapsedWidth={this.siderWidthCollapsed}
         collapsible
         collapsed={this.state.menuCollapsed}
-        onCollapse={this.handleMenuCollapse}>
-          <LeftMenu
+        onCollapse={this.handleMenuCollapse}
+        >
+          <VarnishMenu
             defaultSelectedKeys={[this.props.redirectedModel]}
             defaultOpenKeys={modelGroups.filter(g => g.defaultOpen).map(g => g.label)}
+            mode="inline"
+            inlineCollapsed={this.handleMenuCollapse}
           >
             {modelGroups.map(g => (
-              <LeftMenu.SubMenu
+              <SubMenu
                 key={g.label}
                 title={
                   <IconMenuItemColumns>
                     {g.iconSrc && (
                       <ImgIcon src={g.iconSrc} />
                     )}
-                    <Wrapping>
-                      <BodySmall>{g.label}</BodySmall>
-                    </Wrapping>
+                    <BodySmall>{g.label}</BodySmall>
                   </IconMenuItemColumns>
                 }
               >
                 {g.models.map(m => (
-                  <LeftMenuItem key={m.model}>
+                  <Item key={m.model}>
                     <InternalLink to={"/" + m.model} onClick={() => {}}>
                       <span>{m.name}</span>
                     </InternalLink>
-                  </LeftMenuItem>
+                  </Item>
                 ))}
-              </LeftMenu.SubMenu>
+              </SubMenu>
             ))}
-          </LeftMenu>
+          </VarnishMenu>
       </LeftSider>
     )
   }

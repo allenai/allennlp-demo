@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import {
     Button,
     Select,
-    Icon,
     Radio,
-} from '@allenai/varnish/components'
+} from '@allenai/varnish'
+import RightOutlined from '@ant-design/icons/RightOutlined';
 
 import BeamSearch from './BeamSearch'
 import { Tooltip } from './Shared'
@@ -277,10 +277,10 @@ class DemoInput extends React.Component {
                 {inputs}
                 <RunButtonArea>
                     <Button
-                      variant="primary"
+                      type="primary"
                       disabled={!canRun || outputState === "working"}
                       onClick={ () => this.props.runModel(this.cleanInputs()) }>Run
-                        <Icon type="right" />
+                        <RightOutlined />
                     </Button>
                 </RunButtonArea>
                 {inputOutputs}

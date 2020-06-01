@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Input, Select } from '@allenai/varnish/components';
+import { Input, Select } from '@allenai/varnish';
 
 export const FormField = styled.div`
   margin-top: ${({theme}) => theme.spacing.md};

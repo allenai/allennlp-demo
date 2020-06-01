@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, Tabs } from  '@allenai/varnish/components';
+import { Tabs } from '@allenai/varnish';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -21,7 +21,7 @@ const description = (
         providing representations that answer basic questions about sentence meaning, including “who” did “what” to “whom,” etc.
         This page demonstrates a reimplementation of
       </span>
-      <ExternalLink href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener">{' '} a BERT based model (Shi et al, 2019)</ExternalLink>
+      <a href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener noreferrer">{' '} a BERT based model (Shi et al, 2019)</a>
       <span> with some modifications (no additional parameters apart from a linear classification layer), which is currently the state of the art single model for English PropBank SRL (Newswire sentences). It achieves 86.49 test F1 on the Ontonotes 5.0 dataset.</span>
     </span>
   );
