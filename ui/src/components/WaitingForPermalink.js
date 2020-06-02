@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spin, Icon } from '@allenai/varnish';
+import { Spin } from '@allenai/varnish';
 import styled from 'styled-components';
 
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
