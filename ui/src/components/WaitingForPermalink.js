@@ -2,11 +2,13 @@ import React from 'react';
 import { Spin, Icon } from '@allenai/varnish';
 import styled from 'styled-components';
 
+import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
+
 class WaitingForPermalink extends React.Component {
     render() {
         return (
             <LoadingContainer>
-                <Spin indicator={<Icon type="loading"  style={{ fontSize: '2rem' }} />} />
+                <Spin indicator={<LoadingOutlined style={{ fontSize: '2rem' }} />} />
             </LoadingContainer>
         );
     }
