@@ -34,38 +34,40 @@ const description = (
   </span>
   )
 
-const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2020.03.19.tar.gz'
-
-const bashCommand =
-  `echo '{"passage": "The Matrix is a 1999 science fiction action film written and directed by The Wachowskis, starring Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.", "question": "Who stars in The Matrix?"}' | \\
+const bashCommand = (modelUrl) => {
+  return `echo '{"passage": "The Matrix is a 1999 science fiction action film written and directed by The Wachowskis, starring Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.", "question": "Who stars in The Matrix?"}' | \\
 allennlp predict ${modelUrl} -`
+}
 
-const pythonCommand =
-  `from allennlp.predictors.predictor import Predictor
+const pythonCommand = (modelUrl) => {
+  return `from allennlp.predictors.predictor import Predictor
 import allennlp_models.rc
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   passage="The Matrix is a 1999 science fiction action film written and directed by The Wachowskis, starring Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, and Joe Pantoliano.",
   question="Who stars in The Matrix?"
 )`
+}
+
+const defaultUsage = "JONBWHATDOIDOHERE"
 
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
-const defaultUsage = { // TODO: @michaels - text to be updated
-  installCommand: 'pip install allennlp==1.0.0rc1 allennlp-models==1.0.0rc1',
-  bashCommand,
-  pythonCommand,
+const buildUsage = (modelUrl, configPath) => { return {
+  installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+  bashCommand: bashCommand(modelUrl),
+  pythonCommand: pythonCommand(modelUrl),
   evaluationCommand: `allennlp evaluate \\
   ${modelUrl} \\
   https://s3-us-west-2.amazonaws.com/allennlp/datasets/squad/squad-dev-v1.1.json`,
-  trainingCommand: 'allennlp train training_config/rc/bidaf_elmo.jsonnet -s output_path'
-}
+  trainingCommand: `allennlp train ${configPath} -s output_path`
+}}
 
 const NMNModel = {
   name: "NMN (trained on DROP)",
   desc: <span>A neural module network trained on DROP.</span>,
   modelId: "nmn",
-  usage: defaultUsage // TODO: @michaels - text to be updated
+  usage: null
 };
 
 // Array<{name: string, desc: Element, modelId: string, usage?: Usage}>
@@ -74,7 +76,7 @@ const taskModels = [
     name: "ELMo-BiDAF (trained on SQuAD)",
     desc: <span>Same as the BiDAF model except it uses ELMo embeddings instead of GloVe.</span>,
     modelId: "bidaf-elmo",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2020.03.19.tar.gz", "https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/bidaf_elmo.jsonnet")
   },
   {
     name: "BiDAF (trained on SQuAD)",
@@ -84,7 +86,7 @@ const taskModels = [
       sentences) in early 2017.
       </span>,
     modelId: "bidaf",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("https://storage.googleapis.com/allennlp-public-models/bidaf-model-2020.03.19.tar.gz", "https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/bidaf.jsonnet")
   },
   {
     name: "Transformer QA (trained on SQuAD)",
@@ -93,7 +95,7 @@ const taskModels = [
       (Devlin et al), with improvements borrowed from the SQuAD model in the transformers project.
       </span>,
     modelId: "transformer-qa",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("https://storage.googleapis.com/allennlp-public-models/transformer-qa-2020-05-26.tar.gz", "https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/transformer_qa.jsonnet")
   },
   {
     name: "NAQANet (trained on DROP)",
@@ -102,7 +104,7 @@ const taskModels = [
       DROP (Dua et al., 2019), as published in the original DROP paper.
       </span>,
     modelId: "naqanet",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("https://storage.googleapis.com/allennlp-public-models/naqanet-2020.02.19.tar.gz", "https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/naqanet.jsonnet")
   },
   NMNModel
 ];
