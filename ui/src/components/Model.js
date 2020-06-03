@@ -217,7 +217,7 @@ class Model extends React.Component {
                             ))
                           }
                         </FormSelect>
-                        <OptDesc>{subModel.options[1].desc}</OptDesc>
+                        <ModelDesc>{subModel.options[1].desc}</ModelDesc>
                       </FormField>
                     : null}
 
@@ -239,10 +239,13 @@ class Model extends React.Component {
     }
 }
 
-const OptDesc = styled.p`
-  max-width: ${({theme}) => theme.breakpoints.lg};
-  white-space: break-spaces;
+const ModelDesc = styled.p`
   margin-bottom: ${({theme}) => theme.spacing.md};
+`;
+
+const OptDesc = styled.div`
+  max-width: ${({theme}) => theme.breakpoints.md};
+  white-space: break-spaces;
 `;
 
 const TabFontFix = createGlobalStyle`
@@ -256,6 +259,7 @@ export const Wrapper = styled.div`
   background: ${({theme}) => theme.palette.background.light};
   display: block;
   width: 100%;
+  max-width: ${({theme}) => theme.breakpoints.xl};
 `;
 
 export default Model
