@@ -10,10 +10,6 @@ import {
 import HeatMap from '../HeatMap'
 import Model from '../Model'
 import OutputField from '../OutputField'
-import { UsageSection } from '../UsageSection';
-import { UsageHeader } from '../UsageHeader'
-import { UsageCode } from '../UsageCode';
-import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 import '../../css/TeComponent.css';
 
@@ -67,21 +63,51 @@ const descriptionEllipsed = (
   </span>
 )
 
+const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/snli-roberta-large-2020.02.27.tar.gz'
+
+const bashCommand =
+    `echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
+allennlp predict --predictor textual-entailment ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+import allennlp_models.nli
+predictor = Predictor.from_path("${modelUrl}", predictor_name="textual-entailment")
+predictor.predict(
+  hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
+  premise="Two women are wandering along the shore drinking iced tea."
+)`
+
+// tasks that have only 1 model, and models that do not define usage will use this as a default
+// undefined is also fine, but no usage will be displayed for this task/model
+const defaultUsage = { // TODO: @michaels - text to be updated
+  installCommand: 'pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3',
+  bashCommand,
+  pythonCommand,
+  evaluationCommand: `allennlp evaluate \\
+  https://storage.googleapis.com/allennlp-public-models/mnli-roberta-large-2020.02.27.tar.gz \\
+  https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`,
+  trainingCommand: 'allennlp train training_config/decomposable_attention.jsonnet -s output_path'
+}
+
 const taskModels = [
   {
     name: "Decomposable Attention + ELMo; SNLI",
-    desc: "The decomposable attention model combined with ELMo trained on SNLI.",
-    modelId: "elmo-snli"
+    desc: <span>The decomposable attention model combined with ELMo trained on SNLI.</span>,
+    modelId: "elmo-snli",
+    usage: defaultUsage // TODO: @michaels - text to be updated
   },
   {
     name: "RoBERTa; SNLI",
-    desc: "The RoBERTa model trained on SNLI.",
-    modelId: "roberta-snli"
+    desc: <span>The RoBERTa model trained on SNLI.</span>,
+    modelId: "roberta-snli",
+    usage: defaultUsage // TODO: @michaels - text to be updated
   },
   {
     name: "RoBERTa; MultiNLI",
-    desc: "The RoBERTa model trained on MultiNLI.",
-    modelId: "roberta-mnli"
+    desc: <span>The RoBERTa model trained on MultiNLI.</span>,
+    modelId: "roberta-mnli",
+    usage: defaultUsage // TODO: @michaels - text to be updated
   }
 ]
 
@@ -94,7 +120,9 @@ const fields = [
 ]
 
 const getUrl = (model, ...paths) => {
-  const selectedModel = taskModels.find(t => t.name === model) || taskModels[0];
+  const selectedModel = taskModels.find(t => t.name === model)
+    || taskModels.find(t => t.modelId === model)
+    || taskModels[0];
   return `/${['api', selectedModel.modelId, ...paths ].join('/')}`;
 }
 
@@ -372,65 +400,6 @@ const examples = [
   },
 ]
 
-const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/snli-roberta-large-2020.02.27.tar.gz'
-
-const bashCommand =
-    `echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
-allennlp predict --predictor textual-entailment ${modelUrl} -`
-
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
-import allennlp_models.nli
-predictor = Predictor.from_path("${modelUrl}", predictor_name="textual-entailment")
-predictor.predict(
-  hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
-  premise="Two women are wandering along the shore drinking iced tea."
-)`
-
-const usage = (
-  <React.Fragment>
-    <UsageSection>
-      <h3>Installing AllenNLP</h3>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
-        </SyntaxHighlight>
-      </UsageCode>
-      <UsageHeader>Prediction</UsageHeader>
-      <strong>On the command line (bash):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          { bashCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-      <strong>As a library (Python):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          { pythonCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Evaluation</UsageHeader>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          {`allennlp evaluate \\
-  https://storage.googleapis.com/allennlp-public-models/mnli-roberta-large-2020.02.27.tar.gz \\
-  https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`} />
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Training</UsageHeader>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          allennlp train training_config/decomposable_attention.jsonnet -s output_path
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-  </React.Fragment>
-)
-
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

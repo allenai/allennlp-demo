@@ -1,7 +1,4 @@
 import React from 'react';
-import { UsageSection } from '../UsageSection';
-import { UsageCode } from '../UsageCode';
-import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import { withRouter } from 'react-router-dom';
 import Model from '../Model'
 import OutputField from '../OutputField'
@@ -42,16 +39,44 @@ const descriptionEllipsed = (
   <span> Sentiment Analysis predicts whether an input is positive or negative… </span>
 );
 
+const modelUrl = "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.05.04.tar.gz"
+
+const bashCommand =
+    `echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
+allennlp predict ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+import allennlp_models.sentiment
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  sentence="a very well-made, funny and entertaining picture."
+)`
+
+// tasks that have only 1 model, and models that do not define usage will use this as a default
+// undefined is also fine, but no usage will be displayed for this task/model
+const defaultUsage = { // TODO: @michaels - text to be updated
+  installCommand: 'pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3',
+  bashCommand,
+  pythonCommand,
+  evaluationCommand: `allennlp evaluate \\
+  https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz \\
+  https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`,
+  trainingCommand: 'allennlp train training_config/basic_stanford_sentiment_treebank.jsonnet -s output_path'
+}
+
 const taskModels = [
   {
     name: "GloVe-LSTM",
-    desc: "Using GloVe embeddings and an LSTM layer.",
-    modelId: "glove-sentiment-analysis"
+    desc: <span>Using GloVe embeddings and an LSTM layer.</span>,
+    modelId: "glove-sentiment-analysis",
+    usage: defaultUsage // TODO: @michaels - text to be updated
   },
   {
     name: "RoBERTa",
-    desc: "Using RoBERTa embeddings.",
-    modelId: "roberta-sentiment-analysis"
+    desc: <span>Using RoBERTa embeddings.</span>,
+    modelId: "roberta-sentiment-analysis",
+    usage: defaultUsage // TODO: @michaels - text to be updated
   }
 ]
 
@@ -63,7 +88,9 @@ const fields = [
 ]
 
 const getUrl = (model, ...paths) => {
-  const selectedModel = taskModels.find(t => t.name === model) || taskModels[0];
+  const selectedModel = taskModels.find(t => t.name === model)
+    || taskModels.find(t => t.modelId === model)
+    || taskModels[0];
   return `/${['api', selectedModel.modelId, ...paths ].join('/')}`;
 }
 
@@ -159,64 +186,6 @@ const examples = [
   { sentence: "visually imaginative, thematically instructive and thoroughly delightful, it takes us on a roller-coaster ride from innocence to experience without even a hint of that typical kiddie-flick sentimentality."}
 ]
 
-const modelUrl = "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.05.04.tar.gz"
-
-const bashCommand =
-    `echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
-allennlp predict ${modelUrl} -`
-
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
-import allennlp_models.sentiment
-predictor = Predictor.from_path("${modelUrl}")
-predictor.predict(
-  sentence="a very well-made, funny and entertaining picture."
-)`
-
-const usage = (
-  <React.Fragment>
-    <UsageSection>
-      <h3>Installing AllenNLP</h3>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
-        </SyntaxHighlight>
-      </UsageCode>
-      <h3>Prediction</h3>
-      <h5>On the command line (bash):</h5>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          { bashCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-      <h5>As a library (Python):</h5>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          { pythonCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <h3>Evaluation</h3>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          {`allennlp evaluate \\
-  https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz \\
-  https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`}
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <h3>Training</h3>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          allennlp train training_config/basic_stanford_sentiment_treebank.jsonnet -s output_path
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-  </React.Fragment>
-)
-
 // A call to a pre-existing model component that handles all of the inputs and outputs. We just need to pass it the things we've already defined as props:
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
 export default withRouter(props => <Model {...props} {...modelProps}/>)
