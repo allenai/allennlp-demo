@@ -49,25 +49,30 @@ predictor.predict(
 )`
 }
 
-const defaultUsage = "JONBWHATDOIDOHERE"
+// fall back for models that do not have special usage (or there is only one model)
+// undefined will hide the usage tab for those models
+const defaultUsage = undefined;
 
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
-const buildUsage = (modelUrl, configPath) => { return {
-  installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
-  bashCommand: bashCommand(modelUrl),
-  pythonCommand: pythonCommand(modelUrl),
-  evaluationCommand: `allennlp evaluate \\
-  ${modelUrl} \\
-  https://s3-us-west-2.amazonaws.com/allennlp/datasets/squad/squad-dev-v1.1.json`,
-  trainingCommand: `allennlp train ${configPath} -s output_path`
-}}
+const buildUsage = (modelUrl, configPath) => {
+  const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelUrl}`;
+  const fullConfigPath = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/${configPath}`;
+  return {
+    installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+    bashCommand: bashCommand(fullModelUrl),
+    pythonCommand: pythonCommand(fullModelUrl),
+    evaluationCommand: `allennlp evaluate \\
+    ${fullModelUrl} \\
+    https://s3-us-west-2.amazonaws.com/allennlp/datasets/squad/squad-dev-v1.1.json`,
+    trainingCommand: `allennlp train ${fullConfigPath} -s output_path`
+  }
+}
 
 const NMNModel = {
   name: "NMN (trained on DROP)",
   desc: <span>A neural module network trained on DROP.</span>,
-  modelId: "nmn",
-  usage: null
+  modelId: "nmn"
 };
 
 // Array<{name: string, desc: Element, modelId: string, usage?: Usage}>
@@ -76,7 +81,7 @@ const taskModels = [
     name: "ELMo-BiDAF (trained on SQuAD)",
     desc: <span>Same as the BiDAF model except it uses ELMo embeddings instead of GloVe.</span>,
     modelId: "bidaf-elmo",
-    usage: buildUsage("https://storage.googleapis.com/allennlp-public-models/bidaf-elmo-model-2020.03.19.tar.gz", "https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/bidaf_elmo.jsonnet")
+    usage: buildUsage("bidaf-elmo-model-2020.03.19.tar.gz", "bidaf_elmo.jsonnet")
   },
   {
     name: "BiDAF (trained on SQuAD)",
@@ -86,7 +91,7 @@ const taskModels = [
       sentences) in early 2017.
       </span>,
     modelId: "bidaf",
-    usage: buildUsage("https://storage.googleapis.com/allennlp-public-models/bidaf-model-2020.03.19.tar.gz", "https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/bidaf.jsonnet")
+    usage: buildUsage("bidaf-model-2020.03.19.tar.gz", "bidaf.jsonnet")
   },
   {
     name: "Transformer QA (trained on SQuAD)",
@@ -95,7 +100,7 @@ const taskModels = [
       (Devlin et al), with improvements borrowed from the SQuAD model in the transformers project.
       </span>,
     modelId: "transformer-qa",
-    usage: buildUsage("https://storage.googleapis.com/allennlp-public-models/transformer-qa-2020-05-26.tar.gz", "https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/transformer_qa.jsonnet")
+    usage: buildUsage("transformer-qa-2020-05-26.tar.gz", "transformer_qa.jsonnet")
   },
   {
     name: "NAQANet (trained on DROP)",
@@ -104,7 +109,7 @@ const taskModels = [
       DROP (Dua et al., 2019), as published in the original DROP paper.
       </span>,
     modelId: "naqanet",
-    usage: buildUsage("https://storage.googleapis.com/allennlp-public-models/naqanet-2020.02.19.tar.gz", "https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/naqanet.jsonnet")
+    usage: buildUsage("naqanet-2020.02.19.tar.gz", "naqanet.jsonnet")
   },
   NMNModel
 ];

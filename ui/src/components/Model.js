@@ -177,15 +177,17 @@ class Model extends React.Component {
         const demoOutput = requestData && responseData ? <Output {...outputProps} interpretModel={this.interpretModel} attackModel={this.attackModel}/> : null
 
         // grab usage from default or from selected submodel
-        let usage = defaultUsage;
+        let subModelUsage = defaultUsage;
+        let subModelDescription = '';
         if(subModel) {
             const selectedSubModel = subModel.options.filter(o => o.modelId === (this.state.selectedSubModel || subModel.options[0].modelId));
             if(selectedSubModel.length) {
-              usage = selectedSubModel[0].usage || defaultUsage;
+              subModelUsage = selectedSubModel[0].usage || defaultUsage;
+              subModelDescription =  selectedSubModel[0].desc;
             }
         }
 
-        const tabs = [ demoInput, usage ].filter(tabContent => tabContent !== undefined);
+        const tabs = [ demoInput, subModelUsage ].filter(tabContent => tabContent !== undefined);
 
         return (
             <Wrapper className="pane__horizontal model">
@@ -216,7 +218,7 @@ class Model extends React.Component {
                             ))
                           }
                         </FormSelect>
-                        <ModelDesc>{subModel.options[1].desc}</ModelDesc>
+                        <ModelDesc>{subModelDescription}</ModelDesc>
                       </FormField>
                     : null}
 
@@ -226,7 +228,7 @@ class Model extends React.Component {
                           {demoInput}
                         </Tabs.TabPane>
                         <Tabs.TabPane tab="Usage" key="usage">
-                          <Usage {...usage} />
+                          <Usage {...subModelUsage} />
                         </Tabs.TabPane>
                       </Tabs>
                     ) : demoInput}

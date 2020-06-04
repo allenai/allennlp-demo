@@ -1,7 +1,8 @@
 import React from 'react';
+import styled from 'styled-components';
 import { createGlobalStyle }  from 'styled-components';
 import colormap from 'colormap'
-import { Popover } from '@allenai/varnish';
+import { Popover, Link } from '@allenai/varnish';
 import {
   Accordion,
   AccordionItem,
@@ -222,9 +223,9 @@ export class SaliencyComponent extends React.Component {
 }
 
 export const WhatIsThis = styled.span`
-    ${linkColorStyles()}
+    ${Link.linkColorStyles()}
     padding-left: ${({theme}) => theme.spacing.md};
-    font-variant: italic;
+    font-style: italic;
 `
 
 export default SaliencyMaps
