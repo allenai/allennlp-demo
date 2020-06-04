@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemTitle,
-  AccordionItemBody,
-  } from 'react-accessible-accordion';
+import styled from 'styled-components';
+import { Collapse } from '@allenai/varnish';
 
 import HeatMap from '../HeatMap'
 import { withRouter } from 'react-router-dom';
@@ -76,7 +72,6 @@ const ActionInfo = ({ action, question_tokens }) => {
   )
 }
 
-
 const Output = ({ responseData }) => {
     const { answer, logical_form, predicted_actions, linking_scores, feature_scores, similarity_scores, entities, question_tokens } = responseData
 
@@ -93,62 +88,39 @@ const Output = ({ responseData }) => {
         </OutputField>
 
         <OutputField label="Model internals">
-          <Accordion accordion={false}>
-            <AccordionItem expanded={true}>
-              <AccordionItemTitle>
-                Predicted actions
-                <div className="accordion__arrow" role="presentation"/>
-              </AccordionItemTitle>
-              <AccordionItemBody>
-                {(predicted_actions || []).map((action, action_index) => (
-                  <Accordion accordion={false} key={"action_" + action_index}>
-                    <AccordionItem>
-                      <AccordionItemTitle>
-                        {action['predicted_action']}
-                        <div className="accordion__arrow" role="presentation"/>
-                      </AccordionItemTitle>
-                      <AccordionItemBody>
-                        <ActionInfo action={action} question_tokens={question_tokens}/>
-                      </AccordionItemBody>
-                    </AccordionItem>
-                  </Accordion>
-                ))}
-              </AccordionItemBody>
-            </AccordionItem>
-            <AccordionItem>
-              <AccordionItemTitle>
-                Entity linking scores
-                <div className="accordion__arrow" role="presentation"/>
-              </AccordionItemTitle>
-              <AccordionItemBody>
-                <HeatMap colLabels={question_tokens} rowLabels={entities} data={linking_scores} normalization="log-per-row-with-zero" />
-              </AccordionItemBody>
-            </AccordionItem>
+          <Collapse defaultActiveKey={['default']}>
+            <Collapse.Panel header="Predicted actions" key="default">
+              <PanelDesc>
+                To solve the problem, the model took the following actions.
+              </PanelDesc>
+              {(predicted_actions || []).map((action, action_index) => (
+                <Collapse key={"action_" + action_index}>
+                  <Collapse.Panel header={action['predicted_action']}>
+                      <ActionInfo action={action} question_tokens={question_tokens}/>
+                  </Collapse.Panel>
+                </Collapse>
+              ))}
+            </Collapse.Panel>
+            <Collapse.Panel header="Entity linking scores">
+              <HeatMap colLabels={question_tokens} rowLabels={entities} data={linking_scores} normalization="log-per-row-with-zero" />
+            </Collapse.Panel>
             {feature_scores &&
-              <AccordionItem>
-                <AccordionItemTitle>
-                  Entity linking scores (features only)
-                  <div className="accordion__arrow" role="presentation"/>
-                </AccordionItemTitle>
-                <AccordionItemBody>
-                  <HeatMap colLabels={question_tokens} rowLabels={entities} data={feature_scores} normalization="log-per-row-with-zero" />
-                </AccordionItemBody>
-              </AccordionItem>
+              <Collapse.Panel header="Entity linking scores (features only)">
+                <HeatMap colLabels={question_tokens} rowLabels={entities} data={feature_scores} normalization="log-per-row-with-zero" />
+              </Collapse.Panel>
             }
-            <AccordionItem>
-              <AccordionItemTitle>
-                Entity linking scores (similarity only)
-                <div className="accordion__arrow" role="presentation"/>
-              </AccordionItemTitle>
-              <AccordionItemBody>
-                <HeatMap colLabels={question_tokens} rowLabels={entities} data={similarity_scores} normalization="log-per-row-with-zero" />
-              </AccordionItemBody>
-            </AccordionItem>
-          </Accordion>
+            <Collapse.Panel header="Entity linking scores (similarity only)">
+              <HeatMap colLabels={question_tokens} rowLabels={entities} data={similarity_scores} normalization="log-per-row-with-zero" />
+            </Collapse.Panel>
+          </Collapse>
         </OutputField>
       </div>
     )
 }
+
+const PanelDesc = styled.div`
+  margin-bottom: ${({theme}) => theme.spacing.sm};
+`;
 
 const examples = [
     {

@@ -1,16 +1,14 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import { Collapse } from '@allenai/varnish';
 
-import { FormField } from '../Form';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
 import OutputField from '../OutputField'
 import { truncateText } from '../DemoInput'
-
-import { Accordion } from 'react-accessible-accordion';
 import SaliencyMaps from '../Saliency'
-import InputReductionComponent from '../InputReduction'
+import InputReductionComponent, { InputReductionPanel } from '../InputReduction'
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
@@ -78,7 +76,7 @@ predictor.predict(
 
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
-const buildUsage = (modelFile) => { 
+const buildUsage = (modelFile) => {
   const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
   return {
     installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
@@ -268,10 +266,12 @@ const Attacks = ({attackData, attackModel, requestData, relevantTokens}) => {
     reducedInput = {original: reductionData["original"].join(" "), formattedReduced: formattedReduced}
   }
   return (
-    <OutputField>
-      <Accordion accordion={false}>
-        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
-      </Accordion>
+    <OutputField label="Model Attacks">
+      <Collapse>
+        <InputReductionPanel>
+          <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+        </InputReductionPanel>
+      </Collapse>
     </OutputField>
   )
 }
@@ -337,15 +337,13 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
 
     return (
       <div className="model__content model__content--ner-output">
-        <FormField>
+        <OutputField>
           <HighlightContainer layout="bottom-labels">
             {formattedTokens.map((token, i) => <TokenSpan key={i} token={token} />)}
           </HighlightContainer>
-            <Accordion accordion={false}>
-              <MySaliencyMaps interpretData={interpretData} tokens={words} relevantTokens={relevantTokens} interpretModel={interpretModel} requestData={requestData}/>
-              <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData} relevantTokens={relevantTokens}/>
-            </Accordion>
-        </FormField>
+        </OutputField>
+        <MySaliencyMaps interpretData={interpretData} tokens={words} relevantTokens={relevantTokens} interpretModel={interpretModel} requestData={requestData}/>
+        <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData} relevantTokens={relevantTokens}/>
       </div>
     )
 }

@@ -1,10 +1,8 @@
 import React from 'react';
+import styled from 'styled-components';
+import { Collapse } from '@allenai/varnish';
+
 import { FormInput } from './Form';
-import {
-    AccordionItem,
-    AccordionItemTitle,
-    AccordionItemBody,
-    } from 'react-accessible-accordion';
 import { RedToken, GreenToken, TransparentToken } from './Shared';
 
 // takes in the input before and after the hotflip attack and highlights
@@ -166,19 +164,17 @@ export default class HotflipComponent extends React.Component {
       </div>
 
     return (
-        <AccordionItem>
-            <AccordionItemTitle>
-                HotFlip Attack
-                <div className="accordion__arrow" role="presentation"/>
-            </AccordionItemTitle>
-            <AccordionItemBody>
-                <p>
-                    <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the input word with the highest gradient until the prediction changes.
-                </p>
-                {resultDisplay}
-                {controlDisplay}
-            </AccordionItemBody>
-        </AccordionItem>
+      <>
+        <p>
+          <a href="https://arxiv.org/abs/1712.06751" target="_blank" rel="noopener noreferrer">HotFlip</a> flips words in the input to change the model's prediction. We iteratively flip the input word with the highest gradient until the prediction changes.
+        </p>
+        {resultDisplay}
+        {controlDisplay}
+      </>
     )
   }
 }
+
+export const HotflipPanel = styled(Collapse.Panel).attrs({
+  header: "HotFlip Attack"
+})``;
