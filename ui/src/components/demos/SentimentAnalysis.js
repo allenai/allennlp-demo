@@ -39,30 +39,36 @@ const descriptionEllipsed = (
   <span> Sentiment Analysis predicts whether an input is positive or negative… </span>
 );
 
-const modelUrl = "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.05.04.tar.gz"
+const defaultUsage = undefined
 
-const bashCommand =
-    `echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
+const bashCommand = (modelUrl) => {
+    return `echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
 allennlp predict ${modelUrl} -`
+}
 
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
+const pythonCommand = (modelUrl) => {
+    return `from allennlp.predictors.predictor import Predictor
 import allennlp_models.sentiment
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   sentence="a very well-made, funny and entertaining picture."
 )`
+}
 
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
-const defaultUsage = { // TODO: @michaels - text to be updated
-  installCommand: 'pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3',
-  bashCommand,
-  pythonCommand,
-  evaluationCommand: `allennlp evaluate \\
-  https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz \\
-  https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`,
-  trainingCommand: 'allennlp train training_config/basic_stanford_sentiment_treebank.jsonnet -s output_path'
+const buildUsage = (modelFile, configFile) => {
+  const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
+  const fullConfigUrl = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/classification/${configFile}`;
+  return {
+    installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+    bashCommand,
+    pythonCommand,
+    evaluationCommand: `allennlp evaluate \\
+    ${fullModelUrl} \\
+    https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`,
+    trainingCommand: `allennlp train ${fullConfigUrl} -s output_path`
+  }
 }
 
 const taskModels = [
@@ -70,13 +76,13 @@ const taskModels = [
     name: "GloVe-LSTM",
     desc: <span>Using GloVe embeddings and an LSTM layer.</span>,
     modelId: "glove-sentiment-analysis",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("sst-2-basic-classifier-glove-2019.06.27.tar.gz", "basic_stanford_sentiment_treebank.jsonnet")
   },
   {
     name: "RoBERTa",
     desc: <span>Using RoBERTa embeddings.</span>,
     modelId: "roberta-sentiment-analysis",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("sst-roberta-large-2020.05.05.tar.gz", "stanford_sentiment_treebank_roberta.jsonnet")
   }
 ]
 

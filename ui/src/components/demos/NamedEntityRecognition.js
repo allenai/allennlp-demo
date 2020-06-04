@@ -60,34 +60,39 @@ const descriptionEllipsed = (
   </span>
 )
 
-const modelUrl = "https://storage.googleapis.com/allennlp-public-models/ner-model-2020.02.10.tar.gz"
+const defaultUsage = undefined
 
-const bashCommand =
-    `echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
+const bashCommand = (modelUrl) => {
+  return `echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
 allennlp predict ${modelUrl} -`
+}
 
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
+const pythonCommand = (modelUrl) => {
+  return `from allennlp.predictors.predictor import Predictor
 import allennlp_models.ner.crf_tagger
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"
 )`
+}
 
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
-const defaultUsage = { // TODO: @michaels - text to be updated
-  installCommand: 'pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3',
-  bashCommand,
-  pythonCommand,
-  evaluationNote: (<span>
-    The NER model was evaluated on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
-    dataset. Unfortunately we cannot release this data due to licensing restrictions.
-  </span>),
-  trainingNote: (<span>
-    The NER model was trained on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
-    dataset. Unfortunately we cannot release this data due to licensing restrictions.
-  </span>)
+const buildUsage = (modelFile) => { 
+  const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
+  return {
+    installCommand: 'pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3',
+    bashCommand: bashCommand(fullModelUrl),
+    pythonCommand: pythonCommand(fullModelUrl),
+    evaluationNote: (<span>
+      The NER model was evaluated on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
+      dataset. Unfortunately we cannot release this data due to licensing restrictions.
+    </span>),
+    trainingNote: (<span>
+      The NER model was trained on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
+      dataset. Unfortunately we cannot release this data due to licensing restrictions.
+    </span>)
+  }
 }
 
 const taskModels = [
@@ -98,7 +103,7 @@ const taskModels = [
       Peters, et. al.
       </span>,
     modelId: "named-entity-recognition",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("ner-model-2020.02.10.tar.gz")
   },
   {
     name: "fine-grained-ner",
@@ -108,7 +113,7 @@ const taskModels = [
       and ELMo embeddings. It was trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2.
       </span>,
     modelId: "fine-grained-ner",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("fine-grained-ner-model-elmo-2018.12.21.tar.gz")
   }
 ]
 

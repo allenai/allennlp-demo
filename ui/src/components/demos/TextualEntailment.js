@@ -63,31 +63,37 @@ const descriptionEllipsed = (
   </span>
 )
 
-const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/snli-roberta-large-2020.02.27.tar.gz'
+const defaultUsage = undefined
 
-const bashCommand =
-    `echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
+const bashCommand = (modelUrl) => {
+  return `echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
 allennlp predict --predictor textual-entailment ${modelUrl} -`
+}
 
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
+const pythonCommand = (modelUrl) => {
+  return `from allennlp.predictors.predictor import Predictor
 import allennlp_models.nli
 predictor = Predictor.from_path("${modelUrl}", predictor_name="textual-entailment")
 predictor.predict(
   hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
   premise="Two women are wandering along the shore drinking iced tea."
 )`
+}
 
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
-const defaultUsage = { // TODO: @michaels - text to be updated
-  installCommand: 'pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3',
-  bashCommand,
-  pythonCommand,
-  evaluationCommand: `allennlp evaluate \\
-  https://storage.googleapis.com/allennlp-public-models/mnli-roberta-large-2020.02.27.tar.gz \\
-  https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`,
-  trainingCommand: 'allennlp train training_config/decomposable_attention.jsonnet -s output_path'
+const buildUsage = (modelFile, configFile) => {
+  const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
+  const fullConfigUrl = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/pair_classification/${configFile}`;
+  return {
+    installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+    bashCommand: bashCommand(fullModelUrl),
+    pythonCommand: pythonCommand(fullModelUrl),
+    evaluationCommand: `allennlp evaluate \\
+    ${fullModelUrl} \\
+    https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`,
+    trainingCommand: `allennlp train ${fullConfigUrl} -s output_path`
+  }
 }
 
 const taskModels = [
@@ -95,19 +101,19 @@ const taskModels = [
     name: "Decomposable Attention + ELMo; SNLI",
     desc: <span>The decomposable attention model combined with ELMo trained on SNLI.</span>,
     modelId: "elmo-snli",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("decomposable-attention-elmo-2020.04.09.tar.gz", "decomposable_attention_elmo.jsonnet")
   },
   {
     name: "RoBERTa; SNLI",
     desc: <span>The RoBERTa model trained on SNLI.</span>,
     modelId: "roberta-snli",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("snli-roberta-large-2020.04.30.tar.gz", "snli_roberta.jsonnet")
   },
   {
     name: "RoBERTa; MultiNLI",
     desc: <span>The RoBERTa model trained on MultiNLI.</span>,
     modelId: "roberta-mnli",
-    usage: defaultUsage // TODO: @michaels - text to be updated
+    usage: buildUsage("mnli-roberta-large-2020.05.13.tar.gz", "mnli_roberta.jsonnet")
   }
 ]
 
