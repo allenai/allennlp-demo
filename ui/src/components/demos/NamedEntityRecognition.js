@@ -81,7 +81,7 @@ predictor.predict(
 const buildUsage = (modelFile) => { 
   const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
   return {
-    installCommand: 'pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3',
+    installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
     bashCommand: bashCommand(fullModelUrl),
     pythonCommand: pythonCommand(fullModelUrl),
     evaluationNote: (<span>
@@ -112,8 +112,7 @@ const taskModels = [
       reimplementation of Lample (2016) and uses a biLSTM with a CRF layer, character embeddings
       and ELMo embeddings. It was trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2.
       </span>,
-    modelId: "fine-grained-ner",
-    usage: buildUsage("fine-grained-ner-model-elmo-2018.12.21.tar.gz")
+    modelId: "fine-grained-ner"
   }
 ]
 
