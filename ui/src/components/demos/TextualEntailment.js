@@ -51,9 +51,8 @@ const description = (
     <span>
     .
     </span>
-    <p>
-      <b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a>
-    </p>
+    <br/>
+    <b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a>
   </span>
   );
 

@@ -29,9 +29,8 @@ const description = (
     <a href = "https://www.semanticscholar.org/paper/SpanBERT%3A-Improving-Pre-training-by-Representing-Joshi-Chen/81f5810fbbab9b7203b9556f4ce3c741875407bc" target="_blank" rel="noopener noreferrer">{' '} SpanBERT embeddings</a>
     . On Ontonotes this model achieves an F1 score of 78.87% on the test set.
     </span>
-    <p>
-      <b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a>
-    </p>
+    <br/>
+    <b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a>
   </span>
 );
 

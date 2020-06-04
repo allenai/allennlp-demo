@@ -30,9 +30,8 @@ const description = (
     the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.
     They achieve about 87% and 95.11% accuracy on the test set.
     </span>
-    <p>
-      <b>Contributed by:</b> <a href="https://zhaofengwu.github.io">Zhaofeng Wu</a>
-    </p>
+    <br/>
+    <b>Contributed by:</b> <a href="https://zhaofengwu.github.io">Zhaofeng Wu</a>
   </span>
 );
 const descriptionEllipsed = (
@@ -62,8 +61,8 @@ const buildUsage = (modelFile, configFile) => {
   const fullConfigUrl = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/classification/${configFile}`;
   return {
     installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
-    bashCommand,
-    pythonCommand,
+    bashCommand: bashCommand(fullModelUrl),
+    pythonCommand: pythonCommand(fullModelUrl),
     evaluationCommand: `allennlp evaluate \\
     ${fullModelUrl} \\
     https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`,
