@@ -1,26 +1,20 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemTitle,
-  AccordionItemBody,
-  } from 'react-accessible-accordion';
+import { Collapse } from '@allenai/varnish';
 
 import HeatMap from '../HeatMap'
 import Model from '../Model'
 import OutputField from '../OutputField'
-
-import '../../css/TeComponent.css';
-
 import SaliencyMaps from '../Saliency'
-import InputReductionComponent from '../InputReduction'
+import InputReductionComponent, { InputReductionPanel } from '../InputReduction'
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
   SG_INTERPRETER,
   INPUT_REDUCTION_ATTACKER
 } from '../InterpretConstants'
+
+import '../../css/TeComponent.css';
 
 const title = "Textual Entailment"
 
@@ -227,13 +221,17 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   }
   return (
     <OutputField label="Model Attacks">
-      <Accordion accordion={false}>
-        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
-      </Accordion>
+      <Collapse>
+        <InputReductionPanel>
+          <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+        </InputReductionPanel>
+      </Collapse>
     </OutputField>
   )
   // NOTE(mattg): see note above.  This should go right below the input reduction component.
-  //<HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+  // <HotflipPanel>
+  //   <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+  // </HotflipPanel>
 }
 
 
@@ -309,39 +307,28 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const accordion = model && model.includes('RoBERTa') ?
     " "
   :
-    <OutputField>
-      <Accordion accordion={false}>
-        <MySaliencyMaps interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel={interpretModel} requestData={requestData} />
-        <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
-
-        <AccordionItem>
-          <AccordionItemTitle>
-            Premise to Hypothesis Attention
-            <div className="accordion__arrow" role="presentation"/>
-          </AccordionItemTitle>
-          <AccordionItemBody>
+    <>
+      <MySaliencyMaps interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel={interpretModel} requestData={requestData} />
+      <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
+      <OutputField label="Attention">
+        <Collapse>
+          <Collapse.Panel header="Premise to Hypothesis Attention">
             <p>
                 For every premise word, the model computes an attention over the hypothesis words.
                 This heatmap shows that attention, which is normalized for every row in the matrix.
             </p>
             <HeatMap colLabels={premise_tokens} rowLabels={hypothesis_tokens} data={h2p_attention} />
-          </AccordionItemBody>
-        </AccordionItem>
-        <AccordionItem>
-          <AccordionItemTitle>
-            Hypothesis to Premise Attention
-            <div className="accordion__arrow" role="presentation"/>
-          </AccordionItemTitle>
-          <AccordionItemBody>
+          </Collapse.Panel>
+          <Collapse.Panel header="Hypothesis to Premise Attention">
             <p>
               For every hypothesis word, the model computes an attention over the premise words.
               This heatmap shows that attention, which is normalized for every row in the matrix.
             </p>
             <HeatMap colLabels={hypothesis_tokens} rowLabels={premise_tokens} data={p2h_attention} />
-          </AccordionItemBody>
-        </AccordionItem>
-      </Accordion>
-    </OutputField>
+          </Collapse.Panel>
+        </Collapse>
+      </OutputField>
+    </>
 
   return (
   <div className="model__content answer">

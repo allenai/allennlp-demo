@@ -2,11 +2,11 @@ import React from 'react'
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import _ from 'lodash';
+import { Collapse } from '@allenai/varnish';
 
 import OutputField from '../OutputField'
-import { Accordion } from 'react-accessible-accordion';
 import SaliencyMaps from '../Saliency'
-import HotflipComponent from '../Hotflip'
+import HotflipComponent, { HotflipPanel } from '../Hotflip'
 import { FormField, FormLabel, FormTextArea } from '../Form';
 import {
   GRAD_INTERPRETER,
@@ -216,9 +216,11 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   }
   return (
     <OutputField label="Model Attacks">
-      <Accordion accordion={false}>
-        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
-      </Accordion>
+      <Collapse>
+        <HotflipPanel>
+          <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+        </HotflipPanel>
+      </Collapse>
     </OutputField>
   )
 }
@@ -418,10 +420,8 @@ class App extends React.Component {
           </InputOutput>
         </ModelArea>
         <div className="model__content">
-          <Accordion accordion={false}>
-            <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
-            <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
-          </Accordion>
+          <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
+          <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
         </div>
       </Wrapper>
     )
