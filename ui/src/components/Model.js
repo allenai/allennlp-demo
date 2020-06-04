@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 
 import { PaneTop, PaneBottom } from './Pane'
 import ModelIntro from './ModelIntro';
@@ -166,7 +166,6 @@ class Model extends React.Component {
 
         return (
             <Wrapper className="pane__horizontal model">
-                <TabFontFix />
                 <PaneTop>
                   <div className="model__content">
                     <ModelIntro
@@ -190,13 +189,6 @@ class Model extends React.Component {
         )
     }
 }
-
-const TabFontFix = createGlobalStyle`
-  .ant-tabs,
-  .ant-tabs-nav-container {
-    font-size: inherit !important;
-  }
-`;
 
 export const Wrapper = styled.div`
   background: ${({theme}) => theme.palette.background.light};

@@ -1,13 +1,16 @@
-import React from 'react'
+import React from 'react';
+import { createGlobalStyle }  from 'styled-components';
 import colormap from 'colormap'
-import { Tooltip, ColorizedToken } from './Shared';
-import OutputField from './OutputField'
+import { Popover } from '@allenai/varnish';
 import {
   Accordion,
   AccordionItem,
   AccordionItemTitle,
   AccordionItemBody,
   } from 'react-accessible-accordion';
+
+import { Tooltip, ColorizedToken } from './Shared';
+import OutputField from './OutputField'
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
@@ -41,19 +44,41 @@ const getTokenWeightPairs = (grads, tokens) => {
   })
 }
 
+const PopoverWidthFix = createGlobalStyle`
+  .ant-popover{
+    max-width: 70%;
+  }
+`;
+
 export const SaliencyMaps = ({interpretData, inputTokens, inputHeaders, interpretModel, requestData}) => {
   const simpleGradData = interpretData.simple;
   const integratedGradData = interpretData.ig;
   const smoothGradData = interpretData.sg;
-  const interpretationHeader = <>Model Interpretations <i><a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer" style={{paddingLeft: `1em`, fontWeight:100}}>What is this?</a></i></>
+  const popContent = (
+  <div>
+    <p>
+      Despite constant advances and seemingly super-human performance on constrained domains,
+      state-of-the-art models for NLP are imperfect. These imperfections, coupled with today's
+      advances being driven by (seemingly black-box) neural models, leave researchers and
+      practitioners scratching their heads asking, <i>why did my model make this prediction?</i>
+    </p>
+    <a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer">Learn More</a>
+  </div>);
+  const interpretationHeader = (<>Model Interpretations
+    <PopoverWidthFix />
+    <Popover content={popContent} title="Model Interpretations">
+      <i><a href="javascript:;" style={{paddingLeft: `1em`, fontWeight:100}}>What is this?</a></i>
+    </Popover></>)
   return (
-    <OutputField label={interpretationHeader}>
-      <Accordion accordion={false}>
-        <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
-        <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
-        <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
-      </Accordion>
-    </OutputField>
+    <>
+      <OutputField label={interpretationHeader}>
+        <Accordion accordion={false}>
+          <SaliencyComponent interpretData={simpleGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, GRAD_INTERPRETER)} interpreter={GRAD_INTERPRETER} />
+          <SaliencyComponent interpretData={integratedGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, IG_INTERPRETER)} interpreter={IG_INTERPRETER} />
+          <SaliencyComponent interpretData={smoothGradData} inputTokens={inputTokens} inputHeaders={inputHeaders} interpretModel={interpretModel(requestData, SG_INTERPRETER)} interpreter={SG_INTERPRETER}/>
+        </Accordion>
+      </OutputField>
+  </>
   )
 }
 
@@ -153,7 +178,6 @@ export class SaliencyComponent extends React.Component {
       }
     } else {
       const saliencyMaps = [];
-      
       for (let i = 0; i < inputTokens.length; i++) {
         const grads = interpretData[i];
         const tokens = inputTokens[i];

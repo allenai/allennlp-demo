@@ -40,10 +40,9 @@ redirected to the default model (here, /reading-comprehension).
 
 The overall front-end service serves all routes that look like `/<model_name>`.
 When you request `/<model_name>`, you will be served the <Demo> component,
-which shows some chrome, a menu, and a <SingleTaskFrame> that's an iframe with src
-`/task/<model_name>`, which the k8s ingress controller will direct to the machine
-serving that specific demo. That machine may be doing *anything*, as long as it serves
-its demo front-end at `/task/<model_name>`.
+which shows some chrome, a menu, and a <SingleTaskFrame>, which the k8s ingress controller will
+direct to the machine serving that specific demo. That machine may be doing *anything*, as long
+as it serves its demo front-end at `/task/<model_name>`.
 
 In particular, that machine may be also running this code,
 for which the route `/task/<model_name>` serves the <SingleTaskDemo> component,
@@ -67,7 +66,7 @@ const App = () => (
 
 // This is the top-level demo component.
 // It handles the chrome for header and menus,
-// and it renders the specific task in an iframe.
+// and it renders the specific task.
 const Demo = (props) => {
   const { model, slug } = props.match.params
   const redirectedModel = modelRedirects[model] || model
