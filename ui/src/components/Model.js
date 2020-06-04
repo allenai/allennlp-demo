@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 import _ from 'lodash';
 import { Tabs, Select, Typography } from '@allenai/varnish';
 import qs from 'querystring';
@@ -189,7 +189,6 @@ class Model extends React.Component {
 
         return (
             <Wrapper className="pane__horizontal model">
-                <TabFontFix />
                 <PaneTop>
                   <div className="model__content">
                     <ModelIntro
@@ -246,13 +245,6 @@ const ModelDesc = styled.p`
 const OptDesc = styled.div`
   max-width: ${({theme}) => theme.breakpoints.md};
   white-space: break-spaces;
-`;
-
-const TabFontFix = createGlobalStyle`
-  .ant-tabs,
-  .ant-tabs-nav-container {
-    font-size: inherit !important;
-  }
 `;
 
 export const Wrapper = styled.div`
