@@ -417,11 +417,13 @@ class App extends React.Component {
             </InputOutputColumn>
           </InputOutput>
         </ModelArea>
-      <Accordion accordion={false}>
-        <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
-        <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
-      </Accordion>
-    </Wrapper>
+        <div className="model__content">
+          <Accordion accordion={false}>
+            <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
+            <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
+          </Accordion>
+        </div>
+      </Wrapper>
     )
   }
 
