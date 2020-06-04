@@ -1,15 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
+import { Collapse } from '@allenai/varnish';
+
 import { UsageSection } from '../UsageSection';
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
-import { withRouter } from 'react-router-dom';
 import Model from '../Model'
 import OutputField from '../OutputField'
-import { Accordion } from 'react-accessible-accordion';
 import SaliencyMaps from '../Saliency'
-import InputReductionComponent from '../InputReduction'
-import HotflipComponent from '../Hotflip'
+import InputReductionComponent, { InputReductionPanel } from '../InputReduction'
+import HotflipComponent, { HotflipPanel } from '../Hotflip'
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
@@ -113,10 +114,14 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   }
   return (
     <OutputField label="Model Attacks">
-      <Accordion accordion={false}>
-        <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
-        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
-      </Accordion>
+      <Collapse>
+        <InputReductionPanel>
+          <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+        </InputReductionPanel>
+        <HotflipPanel>
+          <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+        </HotflipPanel>
+      </Collapse>
     </OutputField>
   )
 }
@@ -128,7 +133,7 @@ const textFromProbability = (prob) => {
       return <div>The model is quite sure the sentence is <Negative>Negative</Negative>. ({probNegStr})</div>;
   } else if (prob < 0.5) {
       return <div>The model thinks the sentence is <Negative>Negative</Negative>. ({probNegStr})</div>;
-  } else if (prob == 0.5) {
+  } else if (prob === 0.5) {
       return <div>The model doesn't know whether the sentence is <Positive>Positive or Negative</Positive>. (50.0%)</div>;
   } else if (prob < 0.8) {
       return <div>The model thinks the sentence is <Positive>Positive</Positive>. ({probPosStr})</div>;
@@ -140,8 +145,6 @@ const textFromProbability = (prob) => {
 // What is rendered as Output when the user hits buttons on the demo.
 const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   const model = requestData ? requestData.model : undefined;
-
-  const [positiveClassProbability, negativeClassProbability] = responseData['probs']
   const tokens = responseData['tokens'] || requestData['sentence'].split(' ');
   // The RoBERTa-large model is very slow to be attacked
   const attacks = model && model.includes('RoBERTa') ?
@@ -154,15 +157,11 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   return (
     <div className="model__content answer">
       <OutputField label="Answer">
-        {textFromProbability(positiveClassProbability)}
+        {textFromProbability(responseData['probs'][0])}
       </OutputField>
 
-    <OutputField>
-      <Accordion accordion={false}>
-          <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={interpretModel} requestData={requestData}/>
-          {attacks}
-      </Accordion>
-    </OutputField>
+    <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={interpretModel} requestData={requestData}/>
+    {attacks}
   </div>
   );
 }

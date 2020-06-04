@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemTitle,
-  AccordionItemBody,
-} from 'react-accessible-accordion';
+import styled from 'styled-components';
+import { Collapse } from '@allenai/varnish';
 import { withRouter } from 'react-router-dom';
 
 import HeatMap from '../HeatMap'
@@ -92,33 +88,28 @@ const Output = ({ responseData }) => {
           </OutputField>
 
           <OutputField label="Model internals">
-          <Accordion accordion={false}>
-            <AccordionItem expanded={true}>
-                <AccordionItemTitle>
-                Predicted actions
-                <div className="accordion__arrow" role="presentation"/>
-                </AccordionItemTitle>
-                <AccordionItemBody>
-                  {predicted_actions.map((action, action_index) => (
-                    <Accordion accordion={false} key={"action_" + action_index}>
-                      <AccordionItem>
-                        <AccordionItemTitle>
-                          {action['predicted_action']}
-                          <div className="accordion__arrow" role="presentation"/>
-                        </AccordionItemTitle>
-                        <AccordionItemBody>
-                          <ActionInfo action={action} sentence_tokens={sentence_tokens}/>
-                        </AccordionItemBody>
-                      </AccordionItem>
-                      </Accordion>
-                    ))}
-                  </AccordionItemBody>
-              </AccordionItem>
-            </Accordion>
+          <Collapse defaultActiveKey={['default']}>
+            <Collapse.Panel header="Predicted actions" key="default">
+              <PanelDesc>
+                To solve the problem, the model took the following actions.
+              </PanelDesc>
+              {predicted_actions.map((action, action_index) => (
+                <Collapse key={"action_" + action_index}>
+                  <Collapse.Panel header={action['predicted_action']}>
+                    <ActionInfo action={action} sentence_tokens={sentence_tokens}/>
+                  </Collapse.Panel>
+                  </Collapse>
+                ))}
+              </Collapse.Panel>
+            </Collapse>
           </OutputField>
         </div>
       )
 }
+
+const PanelDesc = styled.div`
+  margin-bottom: ${({theme}) => theme.spacing.sm};
+`;
 
 const examples = [
     {

@@ -14,7 +14,6 @@ import WaitingForPermalink from './components/WaitingForPermalink';
 import './css/App.css';
 import './css/fonts.css';
 import './css/icons.css';
-import './css/Accordion.css';
 import './css/hierplane-overrides.css';
 import './css/visualization-types.css';
 import '@allenai/varnish/dist/varnish.css';
