@@ -125,15 +125,15 @@ const textFromProbability = (prob) => {
   const probPosStr = Number(prob).toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 1});
   const probNegStr = Number(1-prob).toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 1});
   if (prob < 0.2) {
-      return <div>We are quite sure the sentence is <Negative>Negative</Negative>. ({probNegStr})</div>;
+      return <div>The model is quite sure the sentence is <Negative>Negative</Negative>. ({probNegStr})</div>;
   } else if (prob < 0.5) {
-      return <div>We think the sentence is <Negative>Negative</Negative>. ({probNegStr})</div>;
+      return <div>The model thinks the sentence is <Negative>Negative</Negative>. ({probNegStr})</div>;
   } if (prob == 0.5) {
-      return <div>We don't know whether the sentence is <Positive>Positive or Negative</Positive>. (50.0%)</div>;
+      return <div>The model doesn't know whether the sentence is <Positive>Positive or Negative</Positive>. (50.0%)</div>;
   } else if (prob < 0.8) {
-      return <div>We think the sentence is <Positive>Positive</Positive>. ({probPosStr})</div>;
+      return <div>The model thinks the sentence is <Positive>Positive</Positive>. ({probPosStr})</div>;
   } else {
-      return <div>We are quite sure the sentence is <Positive>Positive</Positive>. ({probPosStr})</div>;
+      return <div>The model is are quite sure the sentence is <Positive>Positive</Positive>. ({probPosStr})</div>;
   }
 }
 
