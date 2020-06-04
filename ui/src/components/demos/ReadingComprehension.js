@@ -1,12 +1,8 @@
 import React from 'react';
-import HeatMap from '../HeatMap'
 import { withRouter } from 'react-router-dom';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemTitle,
-  AccordionItemBody,
-} from 'react-accessible-accordion';
+import { Collapse } from '@allenai/varnish';
+
+import HeatMap from '../HeatMap'
 import Model from '../Model'
 import OutputField from '../OutputField'
 import { truncateText } from '../DemoInput'
@@ -14,8 +10,8 @@ import { UsageSection } from '../UsageSection';
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import SaliencyMaps from '../Saliency'
-import InputReductionComponent from '../InputReduction'
-import HotflipComponent from '../Hotflip'
+import InputReductionComponent, { InputReductionPanel } from '../InputReduction'
+import HotflipComponent, { HotflipPanel } from '../Hotflip'
 import {
   GRAD_INTERPRETER,
   IG_INTERPRETER,
@@ -78,25 +74,19 @@ const fields = [
 const Attention = ({passage_question_attention, question_tokens, passage_tokens}) => {
   if(passage_question_attention && question_tokens && passage_tokens) {
     return (
-        <OutputField label="Model Internals">
-          <Accordion accordion={false}>
-            <AccordionItem expanded={false}>
-              <AccordionItemTitle>
-                Passage to Question attention
-                <div className="accordion__arrow" role="presentation"/>
-              </AccordionItemTitle>
-              <AccordionItemBody>
-                <p>
-                  For every passage word, the model computes an attention over the question words.
-                  This heatmap shows that attention, which is normalized for every row in the matrix.
-                </p>
-                <HeatMap
-                  colLabels={question_tokens} rowLabels={passage_tokens}
-                  data={passage_question_attention} includeSlider={true} showAllCols={true} />
-              </AccordionItemBody>
-            </AccordionItem>
-          </Accordion>
-        </OutputField>
+      <OutputField label="Model Internals">
+        <Collapse>
+          <Collapse.Panel header="Passage to Question attention">
+            <p>
+              For every passage word, the model computes an attention over the question words.
+              This heatmap shows that attention, which is normalized for every row in the matrix.
+            </p>
+            <HeatMap
+              colLabels={question_tokens} rowLabels={passage_tokens}
+              data={passage_question_attention} includeSlider={true} showAllCols={true} />
+          </Collapse.Panel>
+        </Collapse>
+      </OutputField>
     )
   }
   return null;
@@ -205,15 +195,20 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   // so we're disabling it for now (see TODO in that function).
   const inputReduction = model && model.includes('NAQANet') ?
     " "
-  :
-    <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+  : (
+    <InputReductionPanel>
+      <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+    </InputReductionPanel>
+  )
 
   return (
     <OutputField label="Model Attacks">
-      <Accordion accordion={false}>
+      <Collapse>
         {inputReduction}
-        <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
-      </Accordion>
+        <HotflipPanel>
+          <HotflipComponent hotflipData={hotflipData} hotflipFunction={attackModel(requestData, HOTFLIP_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
+        </HotflipPanel>
+      </Collapse>
     </OutputField>
   )
 }

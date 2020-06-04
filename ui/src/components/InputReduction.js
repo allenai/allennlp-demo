@@ -1,9 +1,7 @@
 import React from 'react';
-import {
-    AccordionItem,
-    AccordionItemTitle,
-    AccordionItemBody,
-    } from 'react-accessible-accordion';
+import styled from 'styled-components';
+import { Collapse } from '@allenai/varnish';
+
 import { RedToken, TransparentToken, BlankToken } from './Shared';
 
 // takes in the input before and after input reduction and highlights
@@ -122,18 +120,16 @@ export default class InputReductionComponent extends React.Component {
         }
 
         return (
-            <AccordionItem>
-                <AccordionItemTitle>
-                    Input Reduction
-                    <div className="accordion__arrow" role="presentation"/>
-                </AccordionItemTitle>
-                <AccordionItemBody>
-                    <p>
-                        <a href="https://arxiv.org/abs/1804.07781" target="_blank" rel="noopener noreferrer">Input Reduction</a> removes as many words from the input as possible without changing the model's prediction.
-                    </p>
-                    {displayText}
-                </AccordionItemBody>
-            </AccordionItem>
+            <>
+                <p>
+                    <a href="https://arxiv.org/abs/1804.07781" target="_blank" rel="noopener noreferrer">Input Reduction</a> removes as many words from the input as possible without changing the model's prediction.
+                </p>
+                {displayText}
+            </>
         )
     }
 }
+
+export const InputReductionPanel = styled(Collapse.Panel).attrs({
+    header: "Input Reduction"
+  })``;

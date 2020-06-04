@@ -1,11 +1,7 @@
 import React from 'react';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemTitle,
-  AccordionItemBody,
-  } from 'react-accessible-accordion';
+import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { Collapse } from '@allenai/varnish';
 
 import HeatMap from '../HeatMap'
 import Model from '../Model'
@@ -75,38 +71,23 @@ const Output = ({ responseData }) => {
     query = <SyntaxHighlight>{predicted_sql_query}</SyntaxHighlight>
     internals = (
       <OutputField label="Model internals">
-        <Accordion accordion={false}>
-          <AccordionItem expanded={true}>
-            <AccordionItemTitle>
-                Predicted actions
-                <div className="accordion__arrow" role="presentation"/>
-            </AccordionItemTitle>
-            <AccordionItemBody>
-              {predicted_actions.map((action, action_index) => (
-                <Accordion accordion={false} key={"action_" + action_index}>
-                  <AccordionItem>
-                    <AccordionItemTitle>
-                      {action['predicted_action']}
-                      <div className="accordion__arrow" role="presentation"/>
-                    </AccordionItemTitle>
-                    <AccordionItemBody>
-                      <ActionInfo action={action} tokenized_utterance={tokenized_utterance}/>
-                    </AccordionItemBody>
-                  </AccordionItem>
-                </Accordion>
-              ))}
-            </AccordionItemBody>
-          </AccordionItem>
-          <AccordionItem>
-            <AccordionItemTitle>
-              Entity linking scores
-              <div className="accordion__arrow" role="presentation"/>
-            </AccordionItemTitle>
-            <AccordionItemBody>
-              <HeatMap colLabels={tokenized_utterance} rowLabels={entities} data={linking_scores} />
-            </AccordionItemBody>
-          </AccordionItem>
-        </Accordion>
+        <Collapse defaultActiveKey={['default']}>
+          <Collapse.Panel header="Predicted actions" key="default">
+            <PanelDesc>
+              To solve the problem, the model took the following actions.
+            </PanelDesc>
+            {predicted_actions.map((action, action_index) => (
+              <Collapse key={"action_" + action_index}>
+                <Collapse.Panel header={action['predicted_action']}>
+                  <ActionInfo action={action} tokenized_utterance={tokenized_utterance}/>
+                </Collapse.Panel>
+              </Collapse>
+            ))}
+          </Collapse.Panel>
+          <Collapse.Panel header="Entity linking scores">
+            <HeatMap colLabels={tokenized_utterance} rowLabels={entities} data={linking_scores} />
+          </Collapse.Panel>
+        </Collapse>
       </OutputField>
     )
   } else {
@@ -124,6 +105,9 @@ const Output = ({ responseData }) => {
     )
 }
 
+const PanelDesc = styled.div`
+  margin-bottom: ${({theme}) => theme.spacing.sm};
+`;
 
 const examples = [
   {
