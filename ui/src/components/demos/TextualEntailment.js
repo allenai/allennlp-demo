@@ -23,30 +23,8 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 const description = (
   <span>
-    <span>
     Textual Entailment (TE) takes a pair of sentences and predicts whether the facts in the first
     necessarily imply the facts in the second one.
-    This page demonstrates two types of models: (1) a reimplementation of
-    </span>
-    <a href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27" target="_blanke" rel="noopener noreferrer">{' '} the decomposable attention model (Parikh et al, 2017) {' '}</a>
-    <span>
-    with Glove vectors substituted by <a href="https://arxiv.org/abs/1802.05365">ELMo embeddings</a>;
-    and (2)
-    </span>
-    <a href = "https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de" target="_blanke" rel="noopener noreferrer">{' '} the RoBERTa model (Liu et al, 2019)</a>
-    <span>
-    . The decomposable attention model was trained on
-    </span>
-    <a href = "https://nlp.stanford.edu/projects/snli/" target="_blank" rel="noopener noreferrer">{' '} the SNLI dataset {' '}</a>
-    <span>
-    while the RoBERTa model was trained on both the SNLI dataset and
-    </span>
-    <a href = "https://www.nyu.edu/projects/bowman/multinli/paper.pdf/" target="_blank" rel="noopener noreferrer">{' '} the MultiNLI dataset</a>
-    <span>
-    .
-    </span>
-    <br/>
-    <b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a>
   </span>
   );
 
@@ -92,18 +70,18 @@ const buildUsage = (modelFile, configFile) => {
 const taskModels = [
   {
     name: "Decomposable Attention + ELMo; SNLI",
-    desc: <span>The decomposable attention model combined with ELMo trained on SNLI.</span>,
+    desc: <span>The <a href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27">decomposable attention model (Parikh et al, 2017)</a> combined with  <a href="https://arxiv.org/abs/1802.05365">ELMo embeddings</a> trained on SNLI.</span>,
     modelId: "elmo-snli",
     usage: buildUsage("decomposable-attention-elmo-2020.04.09.tar.gz", "decomposable_attention_elmo.jsonnet")
   },
   {
     name: "RoBERTa; SNLI",
-    desc: <span>The RoBERTa model trained on SNLI.</span>,
+    desc: <span>The <a href="https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de">RoBERTa model (Liu et al, 2019)</a> trained on SNLI.<p><b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a></p></span>,
     modelId: "roberta-snli"
   },
   {
     name: "RoBERTa; MultiNLI",
-    desc: <span>The RoBERTa model trained on MultiNLI.</span>,
+    desc: <span>The <a href="https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de">RoBERTa model (Liu et al, 2019)</a> trained on <a href="https://www.nyu.edu/projects/bowman/multinli/paper.pdf">MultiNLI</a>.<p><b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a></p></span>,
     modelId: "roberta-mnli"
   }
 ]

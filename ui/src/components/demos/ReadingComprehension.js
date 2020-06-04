@@ -73,14 +73,14 @@ const NMNModel = {
 const taskModels = [
   {
     name: "ELMo-BiDAF (trained on SQuAD)",
-    desc: <span>Same as the BiDAF model except it uses ELMo embeddings instead of GloVe.</span>,
+    desc: <span>This model is like BiDAF except it uses ELMo embeddings instead of GloVe.</span>,
     modelId: "bidaf-elmo",
     usage: buildUsage("bidaf-elmo-model-2020.03.19.tar.gz", "bidaf_elmo.jsonnet")
   },
   {
     name: "BiDAF (trained on SQuAD)",
     desc: <span>
-      Reimplementation of BiDAF (Seo et al, 2017), or Bi-Directional Attention Flow, a widely used
+      Reimplementation of <a href="https://arxiv.org/abs/1611.01603">BiDAF (Seo et al, 2017)</a>, or Bi-Directional Attention Flow, a widely used
       MC baseline that achieved state-of-the-art accuracies on the SQuAD dataset (Wikipedia
       sentences) in early 2017.
       </span>,
@@ -90,16 +90,16 @@ const taskModels = [
   {
     name: "Transformer QA (trained on SQuAD)",
     desc: <span>
-      Comprehension model patterned after the proposed model in https://arxiv.org/abs/1810.04805
-      (Devlin et al), with improvements borrowed from the SQuAD model in the transformers project.
+      Comprehension model patterned after the proposed model
+      in <a href="https://arxiv.org/abs/1810.04805">Devlin et al</a>, with improvements borrowed from the SQuAD model in the transformers project.
       </span>,
     modelId: "transformer-qa"
   },
   {
     name: "NAQANet (trained on DROP)",
     desc: <span>
-      An augmented version of QANet that adds rudimentary numerical reasoning ability, trained on
-      DROP (Dua et al., 2019), as published in the original DROP paper.
+      An augmented version of QANet that adds rudimentary numerical reasoning ability, trained
+      on <a href="https://arxiv.org/pdf/1903.00161.pdf">DROP (Dua et al., 2019)</a>, as published in the original DROP paper.
       </span>,
     modelId: "naqanet"
   },

@@ -25,15 +25,7 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 // Text shown in the UI
 const description = (
   <span>
-    <span>
-    Sentiment Analysis predicts whether an input is positive or negative. The two models are based
-    on GloVe embeddings and <a href="https://arxiv.org/pdf/1907.11692.pdf">RoBERTa large</a>,
-    respectively, and are trained on the binary classification setting of
-    the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.
-    They achieve about 87% and 95.11% accuracy on the test set.
-    </span>
-    <br/>
-    <b>Contributed by:</b> <a href="https://zhaofengwu.github.io">Zhaofeng Wu</a>
+    Sentiment Analysis predicts whether an input is positive or negative.
   </span>
 );
 const descriptionEllipsed = (
@@ -75,13 +67,15 @@ const buildUsage = (modelFile, configFile) => {
 const taskModels = [
   {
     name: "GloVe-LSTM",
-    desc: <span>Using GloVe embeddings and an LSTM layer.</span>,
+    desc: <span>This model uses GloVe embeddings and is trained on the binary classification setting of the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.  It achieves about 87% on the test set.</span>,
     modelId: "glove-sentiment-analysis",
     usage: buildUsage("sst-2-basic-classifier-glove-2019.06.27.tar.gz", "basic_stanford_sentiment_treebank.jsonnet")
   },
   {
     name: "RoBERTa",
-    desc: <span>Using RoBERTa embeddings.</span>,
+    desc: <span>This model is trained on <a href="https://arxiv.org/pdf/1907.11692.pdf">RoBERTa large</a> with the binary classification setting of the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.  It achieves 95.11% accuracy on the test set.
+          <p><b>Contributed by:</b> <a href="https://zhaofengwu.github.io">Zhaofeng Wu</a></p>
+   </span>,
     modelId: "roberta-sentiment-analysis",
     usage: buildUsage("sst-roberta-large-2020.05.05.tar.gz", "stanford_sentiment_treebank_roberta.jsonnet")
   }

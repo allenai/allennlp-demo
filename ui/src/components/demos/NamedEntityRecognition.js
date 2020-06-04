@@ -25,29 +25,9 @@ const NAME_OF_GRAD_INPUT = 'grad_input_1'
 const description = (
   <span>
     <span>
-        The named entity recognition model identifies named entities
+        Named Entity Recognition is the task of identifying named entities
         (people, locations, organizations, etc.)
-        in the input text. This elmo-ner model is the "baseline" model described in
-    </span>
-    <a href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc" target="_blank" rel="noopener noreferrer">
-      {' '} Peters, Ammar, Bhagavatula, and Power 2017 {' '}
-    </a>
-    <span>
-      .  It uses a Gated Recurrent Unit (GRU) character encoder as well as a GRU phrase encoder,
-      and it starts with pretrained
-    </span>
-    <a href = "https://nlp.stanford.edu/projects/glove/" target="_blank" rel="noopener noreferrer">{' '} GloVe vectors {' '}</a>
-    <span>
-      for its token embeddings. It was trained on the
-    </span>
-    <a href = "https://www.clips.uantwerpen.be/conll2003/ner/" target="_blank" rel="noopener noreferrer">{' '} CoNLL-2003 {' '}</a>
-    <span>
-      NER dataset.
-      (This is also the model constructed in our
-    </span>
-    <a href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/walk_through_allennlp/creating_a_model.md" target="_blank" rel="noopener noreferrer">{' '}Creating a Model{' '}</a>
-    <span>
-      tutorial.)
+        in the input text.
     </span>
   </span>
 )
@@ -97,8 +77,12 @@ const taskModels = [
   {
     name: "elmo-ner",
     desc: <span>
-      Reimplementation of the NER model described in 'Deep contextualized word representations' by
-      Peters, et. al.
+      This model is the "baseline" model described 
+      in <a href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc">
+      Peters, Ammar, Bhagavatula, and Power 2017</a>.
+      It uses a Gated Recurrent Unit (GRU) character encoder as well as a GRU phrase encoder,
+      and it starts with pretrained <a href = "https://nlp.stanford.edu/projects/glove/">GloVe vectors</a> for
+      its token embeddings. It was trained on the <a href = "https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset.
       </span>,
     modelId: "named-entity-recognition",
     usage: buildUsage("ner-model-2020.02.10.tar.gz")
@@ -107,7 +91,7 @@ const taskModels = [
     name: "fine-grained-ner",
     desc: <span>
       This Model identifies a broad range of 16 semantic types in the input text. This model is a
-      reimplementation of Lample (2016) and uses a biLSTM with a CRF layer, character embeddings
+      reimplementation of <a href="https://arxiv.org/abs/1603.01360">Lample (2016)</a> and uses a biLSTM with a CRF layer, character embeddings
       and ELMo embeddings. It was trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2.
       </span>,
     modelId: "fine-grained-ner"
