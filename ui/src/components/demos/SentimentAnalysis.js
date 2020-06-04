@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { UsageSection } from '../UsageSection';
 import { UsageCode } from '../UsageCode';
 import SyntaxHighlight from '../highlight/SyntaxHighlight';
@@ -120,12 +121,25 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   )
 }
 
+const textFromProbability = (prob) => {
+  if (prob < 0.2) {
+      return <div>We are quite sure the sentence is <Negative>Negative</Negative>.</div>;
+  } else if (prob < 0.5) {
+      return <div>We think the sentence is <Negative>Negative</Negative> (but we're not sure).</div>;
+  } if (prob == 0.5) {
+      return <div>We don't know whether the sentence is <Positive>Positive or Negative</Positive>.</div>;
+  } else if (prob < 0.8) {
+      return <div>We think the sentence is <Positive>Positive</Positive> (but we're not sure).</div>;
+  } else {
+      return <div>We are quite sure the sentence is <Positive>Positive</Positive>.</div>;
+  }
+}
+
 // What is rendered as Output when the user hits buttons on the demo.
 const Output = ({ responseData, requestData, interpretData, interpretModel, attackData, attackModel}) => {
   const model = requestData ? requestData.model : undefined;
 
   const [positiveClassProbability, negativeClassProbability] = responseData['probs']
-  const prediction = negativeClassProbability < positiveClassProbability ? "Positive" : "Negative"
   const tokens = responseData['tokens'] || requestData['sentence'].split(' ');
   // The RoBERTa-large model is very slow to be attacked
   const attacks = model && model.includes('RoBERTa') ?
@@ -138,7 +152,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   return (
     <div className="model__content answer">
       <OutputField label="Answer">
-        {prediction}
+        {textFromProbability(positiveClassProbability)}
       </OutputField>
 
     <OutputField>
@@ -216,6 +230,15 @@ const usage = (
     </UsageSection>
   </React.Fragment>
 )
+
+const Positive = styled.span`
+  font-weight: 700;
+  color: ${({theme}) => theme.palette.text.success};
+`;
+
+const Negative = styled(Positive)`
+  color: ${({theme}) => theme.palette.text.error};
+`;
 
 // A call to a pre-existing model component that handles all of the inputs and outputs. We just need to pass it the things we've already defined as props:
 const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}
