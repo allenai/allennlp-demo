@@ -49,12 +49,10 @@ predictor.predict(
 )`
 }
 
-// fall back for models that do not have special usage (or there is only one model)
-// undefined will hide the usage tab for those models
-const defaultUsage = undefined;
-
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
+const defaultUsage = undefined;
+
 const buildUsage = (modelUrl, configPath) => {
   const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelUrl}`;
   const fullConfigPath = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/rc/${configPath}`;
