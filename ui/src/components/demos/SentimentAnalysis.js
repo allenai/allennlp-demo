@@ -128,7 +128,7 @@ const textFromProbability = (prob) => {
       return <div>The model is quite sure the sentence is <Negative>Negative</Negative>. ({probNegStr})</div>;
   } else if (prob < 0.5) {
       return <div>The model thinks the sentence is <Negative>Negative</Negative>. ({probNegStr})</div>;
-  } if (prob == 0.5) {
+  } else if (prob == 0.5) {
       return <div>The model doesn't know whether the sentence is <Positive>Positive or Negative</Positive>. (50.0%)</div>;
   } else if (prob < 0.8) {
       return <div>The model thinks the sentence is <Positive>Positive</Positive>. ({probPosStr})</div>;
