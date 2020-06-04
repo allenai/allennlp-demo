@@ -105,14 +105,12 @@ const taskModels = [
   {
     name: "RoBERTa; SNLI",
     desc: <span>The RoBERTa model trained on SNLI.</span>,
-    modelId: "roberta-snli",
-    usage: buildUsage("snli-roberta-large-2020.04.30.tar.gz", "snli_roberta.jsonnet")
+    modelId: "roberta-snli"
   },
   {
     name: "RoBERTa; MultiNLI",
     desc: <span>The RoBERTa model trained on MultiNLI.</span>,
-    modelId: "roberta-mnli",
-    usage: buildUsage("mnli-roberta-large-2020.05.13.tar.gz", "mnli_roberta.jsonnet")
+    modelId: "roberta-mnli"
   }
 ]
 
