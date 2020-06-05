@@ -1,10 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-    Button,
-    Select,
-    Radio,
-} from '@allenai/varnish'
+import { Button, Select, Radio } from '@allenai/varnish'
 import RightOutlined from '@ant-design/icons/RightOutlined';
 
 import BeamSearch from './BeamSearch'
@@ -291,17 +287,22 @@ class DemoInput extends React.Component {
 }
 
 const FormInstructions = styled.div`
+  display: grid;
   margin: ${({theme}) => `${theme.spacing.md} 0 ${theme.spacing.md}`};
   transition: margin .2s ease;
+  grid-template-columns: auto 1fr;
+  gap: ${({theme}) => theme.spacing.xs};
+  align-items: center;
 
   span {
-    padding-right: ${({theme}) => theme.spacing.xs};
-    max-width: 9.375em;
     color: ${({theme}) => theme.palette.text.secondary};
   }
 
   @media screen and (max-height: ${({theme}) => theme.breakpoints.md}) {
     margin: ${({theme}) => `${theme.spacing.xs} 0 ${theme.spacing.xs}`};
+  }
+  @media screen and (max-width: ${({theme}) => theme.breakpoints.sm}) {
+    grid-template-columns: auto;
   }
 `;
 

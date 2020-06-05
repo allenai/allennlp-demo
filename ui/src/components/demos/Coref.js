@@ -3,10 +3,6 @@ import { withRouter } from 'react-router-dom';
 
 import { FormField } from '../Form';
 import Model from '../Model'
-import { UsageSection } from '../UsageSection';
-import { UsageHeader } from '../UsageHeader';
-import { UsageCode } from '../UsageCode';
-import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import NestedHighlight, { withHighlightClickHandling } from '../highlight/NestedHighlight';
 
 const apiUrl = () => `/api/coreference-resolution/predict`
@@ -33,9 +29,8 @@ const description = (
     <a href = "https://www.semanticscholar.org/paper/SpanBERT%3A-Improving-Pre-training-by-Representing-Joshi-Chen/81f5810fbbab9b7203b9556f4ce3c741875407bc" target="_blank" rel="noopener noreferrer">{' '} SpanBERT embeddings</a>
     . On Ontonotes this model achieves an F1 score of 78.87% on the test set.
     </span>
-    <p>
-      <b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a>
-    </p>
+    <br/>
+    <b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a>
   </span>
 );
 
@@ -44,6 +39,40 @@ const descriptionEllipsed = (
     Coreference resolution is the task of finding all expressions that refer to the same entity in a text. It is an…
   </span>
 )
+
+const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz'
+
+const bashCommand =
+    `echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
+allennlp predict ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+import allennlp_models.coref
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  document="The woman reading a newspaper sat on the bench with her dog."
+)`
+
+// tasks that have only 1 model, and models that do not define usage will use this as a default
+// undefined is also fine, but no usage will be displayed for this task/model
+const defaultUsage = {
+  installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+  bashCommand,
+  pythonCommand,
+  evaluationNote: (<span>
+    The Coreference model was evaluated on the CoNLL 2012 dataset.
+    Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+    To compile the data in the right format for evaluating the Coreference model, please see scripts/compile_coref_data.sh.
+    This script requires the Ontonotes 5.0 dataset, available on <a href="https://catalog.ldc.upenn.edu/ldc2013t19">the LDC website</a>.
+  </span>),
+  trainingNote: (<span>
+    The Coreference model was evaluated on the CoNLL 2012 dataset.
+    Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+    To compile the data in the right format for evaluating the Coreference model, please see scripts/compile_coref_data.sh.
+    This script requires the Ontonotes 5.0 dataset, available on <a href="https://catalog.ldc.upenn.edu/ldc2013t19">the LDC website</a>.
+  </span>)
+}
 
 const fields = [
     {name: "document", label: "Document", type: "TEXT_AREA",
@@ -97,64 +126,6 @@ const examples = [
     }
   ]
 
-const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz'
-
-const bashCommand =
-    `echo '{"document": "The woman reading a newspaper sat on the bench with her dog."}' | \\
-allennlp predict ${modelUrl} -`
-
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
-import allennlp_models.coref
-predictor = Predictor.from_path("${modelUrl}")
-predictor.predict(
-  document="The woman reading a newspaper sat on the bench with her dog."
-)`
-
-const usage = (
-  <React.Fragment>
-    <UsageSection>
-      <h3>Installing AllenNLP</h3>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
-        </SyntaxHighlight>
-      </UsageCode>
-      <UsageHeader>Prediction</UsageHeader>
-      <strong>On the command line (bash):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          { bashCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-      <strong>As a library (Python):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          { pythonCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Evaluation</UsageHeader>
-      <p>
-        The Coreference model was evaluated on the CoNLL 2012 dataset.
-        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
-        To compile the data in the right format for evaluating the Coreference model, please see scripts/compile_coref_data.sh.
-        This script requires the Ontonotes 5.0 dataset, available on <a href="https://catalog.ldc.upenn.edu/ldc2013t19">the LDC website</a>.
-      </p>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Training</UsageHeader>
-      <p>
-        The Coreference model was evaluated on the CoNLL 2012 dataset.
-        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
-        To compile the data in the right format for evaluating the Coreference model, please see scripts/compile_coref_data.sh.
-        This script requires the Ontonotes 5.0 dataset, available on <a href="https://catalog.ldc.upenn.edu/ldc2013t19">the LDC website</a>.
-      </p>
-    </UsageSection>
-  </React.Fragment>
-)
-
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output: withHighlightClickHandling(Output), usage}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output: withHighlightClickHandling(Output), defaultUsage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

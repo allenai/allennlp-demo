@@ -5,10 +5,6 @@ import { Collapse } from '@allenai/varnish';
 import HeatMap from '../HeatMap'
 import Model from '../Model'
 import OutputField from '../OutputField'
-import { UsageSection } from '../UsageSection';
-import { UsageHeader } from '../UsageHeader'
-import { UsageCode } from '../UsageCode';
-import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import SaliencyMaps from '../Saliency'
 import InputReductionComponent, { InputReductionPanel } from '../InputReduction'
 import {
@@ -27,31 +23,8 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 const description = (
   <span>
-    <span>
     Textual Entailment (TE) takes a pair of sentences and predicts whether the facts in the first
     necessarily imply the facts in the second one.
-    This page demonstrates two types of models: (1) a reimplementation of
-    </span>
-    <a href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27" target="_blanke" rel="noopener noreferrer">{' '} the decomposable attention model (Parikh et al, 2017) {' '}</a>
-    <span>
-    with Glove vectors substituted by <a href="https://arxiv.org/abs/1802.05365">ELMo embeddings</a>;
-    and (2)
-    </span>
-    <a href = "https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de" target="_blanke" rel="noopener noreferrer">{' '} the RoBERTa model (Liu et al, 2019)</a>
-    <span>
-    . The decomposable attention model was trained on
-    </span>
-    <a href = "https://nlp.stanford.edu/projects/snli/" target="_blank" rel="noopener noreferrer">{' '} the SNLI dataset {' '}</a>
-    <span>
-    while the RoBERTa model was trained on both the SNLI dataset and
-    </span>
-    <a href = "https://www.nyu.edu/projects/bowman/multinli/paper.pdf/" target="_blank" rel="noopener noreferrer">{' '} the MultiNLI dataset</a>
-    <span>
-    .
-    </span>
-    <p>
-      <b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a>
-    </p>
   </span>
   );
 
@@ -61,20 +34,54 @@ const descriptionEllipsed = (
   </span>
 )
 
+const defaultUsage = undefined
+
+const bashCommand = (modelUrl) => {
+  return `echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
+allennlp predict --predictor textual-entailment ${modelUrl} -`
+}
+
+const pythonCommand = (modelUrl) => {
+  return `from allennlp.predictors.predictor import Predictor
+import allennlp_models.nli
+predictor = Predictor.from_path("${modelUrl}", predictor_name="textual-entailment")
+predictor.predict(
+  hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
+  premise="Two women are wandering along the shore drinking iced tea."
+)`
+}
+
+// tasks that have only 1 model, and models that do not define usage will use this as a default
+// undefined is also fine, but no usage will be displayed for this task/model
+const buildUsage = (modelFile, configFile) => {
+  const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
+  const fullConfigUrl = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/pair_classification/${configFile}`;
+  return {
+    installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+    bashCommand: bashCommand(fullModelUrl),
+    pythonCommand: pythonCommand(fullModelUrl),
+    evaluationCommand: `allennlp evaluate \\
+    ${fullModelUrl} \\
+    https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`,
+    trainingCommand: `allennlp train ${fullConfigUrl} -s output_path`
+  }
+}
+
 const taskModels = [
   {
     name: "Decomposable Attention + ELMo; SNLI",
-    desc: "The decomposable attention model combined with ELMo trained on SNLI.",
-    modelId: "elmo-snli"
+    desc: <span>The <a href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27">decomposable attention model (Parikh et al, 2017)</a> combined with  <a href="https://arxiv.org/abs/1802.05365">ELMo embeddings</a> trained on SNLI.</span>,
+    modelId: "elmo-snli",
+    usage: buildUsage("decomposable-attention-elmo-2020.04.09.tar.gz", "decomposable_attention_elmo.jsonnet")
   },
   {
     name: "RoBERTa; SNLI",
-    desc: "The RoBERTa model trained on SNLI.",
+    desc: <span>The <a href="https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de">RoBERTa model (Liu et al, 2019)</a> trained on SNLI.<p><b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a></p></span>,
     modelId: "roberta-snli"
   },
   {
     name: "RoBERTa; MultiNLI",
-    desc: "The RoBERTa model trained on MultiNLI.",
+    desc: <span>The <a href="https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de">RoBERTa model (Liu et al, 2019)</a> trained on <a href="https://www.nyu.edu/projects/bowman/multinli/paper.pdf">MultiNLI</a>.<p><b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a></p></span>,
     modelId: "roberta-mnli"
   }
 ]
@@ -88,7 +95,9 @@ const fields = [
 ]
 
 const getUrl = (model, ...paths) => {
-  const selectedModel = taskModels.find(t => t.name === model) || taskModels[0];
+  const selectedModel = taskModels.find(t => t.name === model)
+    || taskModels.find(t => t.modelId === model)
+    || taskModels[0];
   return `/${['api', selectedModel.modelId, ...paths ].join('/')}`;
 }
 
@@ -359,65 +368,6 @@ const examples = [
   },
 ]
 
-const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/snli-roberta-large-2020.02.27.tar.gz'
-
-const bashCommand =
-    `echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
-allennlp predict --predictor textual-entailment ${modelUrl} -`
-
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
-import allennlp_models.nli
-predictor = Predictor.from_path("${modelUrl}", predictor_name="textual-entailment")
-predictor.predict(
-  hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
-  premise="Two women are wandering along the shore drinking iced tea."
-)`
-
-const usage = (
-  <React.Fragment>
-    <UsageSection>
-      <h3>Installing AllenNLP</h3>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
-        </SyntaxHighlight>
-      </UsageCode>
-      <UsageHeader>Prediction</UsageHeader>
-      <strong>On the command line (bash):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          { bashCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-      <strong>As a library (Python):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          { pythonCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Evaluation</UsageHeader>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          {`allennlp evaluate \\
-  https://storage.googleapis.com/allennlp-public-models/mnli-roberta-large-2020.02.27.tar.gz \\
-  https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`} />
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Training</UsageHeader>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          allennlp train training_config/decomposable_attention.jsonnet -s output_path
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-  </React.Fragment>
-)
-
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

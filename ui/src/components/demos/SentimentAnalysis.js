@@ -3,9 +3,6 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { Collapse } from '@allenai/varnish';
 
-import { UsageSection } from '../UsageSection';
-import { UsageCode } from '../UsageCode';
-import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import Model from '../Model'
 import OutputField from '../OutputField'
 import SaliencyMaps from '../Saliency'
@@ -28,32 +25,59 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 // Text shown in the UI
 const description = (
   <span>
-    <span>
-    Sentiment Analysis predicts whether an input is positive or negative. The two models are based
-    on GloVe embeddings and <a href="https://arxiv.org/pdf/1907.11692.pdf">RoBERTa large</a>,
-    respectively, and are trained on the binary classification setting of
-    the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.
-    They achieve about 87% and 95.11% accuracy on the test set.
-    </span>
-    <p>
-      <b>Contributed by:</b> <a href="https://zhaofengwu.github.io">Zhaofeng Wu</a>
-    </p>
+    Sentiment Analysis predicts whether an input is positive or negative.
   </span>
 );
 const descriptionEllipsed = (
   <span> Sentiment Analysis predicts whether an input is positive or negative… </span>
 );
 
+const defaultUsage = undefined
+
+const bashCommand = (modelUrl) => {
+    return `echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
+allennlp predict ${modelUrl} -`
+}
+
+const pythonCommand = (modelUrl) => {
+    return `from allennlp.predictors.predictor import Predictor
+import allennlp_models.sentiment
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  sentence="a very well-made, funny and entertaining picture."
+)`
+}
+
+// tasks that have only 1 model, and models that do not define usage will use this as a default
+// undefined is also fine, but no usage will be displayed for this task/model
+const buildUsage = (modelFile, configFile) => {
+  const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
+  const fullConfigUrl = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/classification/${configFile}`;
+  return {
+    installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+    bashCommand: bashCommand(fullModelUrl),
+    pythonCommand: pythonCommand(fullModelUrl),
+    evaluationCommand: `allennlp evaluate \\
+    ${fullModelUrl} \\
+    https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`,
+    trainingCommand: `allennlp train ${fullConfigUrl} -s output_path`
+  }
+}
+
 const taskModels = [
   {
     name: "GloVe-LSTM",
-    desc: "Using GloVe embeddings and an LSTM layer.",
-    modelId: "glove-sentiment-analysis"
+    desc: <span>This model uses GloVe embeddings and is trained on the binary classification setting of the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.  It achieves about 87% on the test set.</span>,
+    modelId: "glove-sentiment-analysis",
+    usage: buildUsage("sst-2-basic-classifier-glove-2019.06.27.tar.gz", "basic_stanford_sentiment_treebank.jsonnet")
   },
   {
     name: "RoBERTa",
-    desc: "Using RoBERTa embeddings.",
-    modelId: "roberta-sentiment-analysis"
+    desc: <span>This model is trained on <a href="https://arxiv.org/pdf/1907.11692.pdf">RoBERTa large</a> with the binary classification setting of the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.  It achieves 95.11% accuracy on the test set.
+          <p><b>Contributed by:</b> <a href="https://zhaofengwu.github.io">Zhaofeng Wu</a></p>
+   </span>,
+    modelId: "roberta-sentiment-analysis",
+    usage: buildUsage("sst-roberta-large-2020.05.05.tar.gz", "stanford_sentiment_treebank_roberta.jsonnet")
   }
 ]
 
@@ -65,7 +89,9 @@ const fields = [
 ]
 
 const getUrl = (model, ...paths) => {
-  const selectedModel = taskModels.find(t => t.name === model) || taskModels[0];
+  const selectedModel = taskModels.find(t => t.name === model)
+    || taskModels.find(t => t.modelId === model)
+    || taskModels[0];
   return `/${['api', selectedModel.modelId, ...paths ].join('/')}`;
 }
 
@@ -166,72 +192,6 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   );
 }
 
-// Examples the user can choose from in the demo
-const examples = [
-  { sentence: "a very well-made, funny and entertaining picture." },
-  { sentence: "so unremittingly awful that labeling it a dog probably constitutes cruelty to canines" },
-  { sentence: "all the amped up tony hawk style stunts and thrashing rap-metal can't disguise the fact that, really, we've been here, done that."},
-  { sentence: "visually imaginative, thematically instructive and thoroughly delightful, it takes us on a roller-coaster ride from innocence to experience without even a hint of that typical kiddie-flick sentimentality."}
-]
-
-const modelUrl = "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.05.04.tar.gz"
-
-const bashCommand =
-    `echo '{"sentence": "a very well-made, funny and entertaining picture."}' | \\
-allennlp predict ${modelUrl} -`
-
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
-import allennlp_models.sentiment
-predictor = Predictor.from_path("${modelUrl}")
-predictor.predict(
-  sentence="a very well-made, funny and entertaining picture."
-)`
-
-const usage = (
-  <React.Fragment>
-    <UsageSection>
-      <h3>Installing AllenNLP</h3>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
-        </SyntaxHighlight>
-      </UsageCode>
-      <h3>Prediction</h3>
-      <h5>On the command line (bash):</h5>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          { bashCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-      <h5>As a library (Python):</h5>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          { pythonCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <h3>Evaluation</h3>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          {`allennlp evaluate \\
-  https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.02.17.tar.gz \\
-  https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt`}
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <h3>Training</h3>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          allennlp train training_config/basic_stanford_sentiment_treebank.jsonnet -s output_path
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-  </React.Fragment>
-)
-
 const Positive = styled.span`
   font-weight: 700;
   color: ${({theme}) => theme.palette.text.success};
@@ -241,6 +201,14 @@ const Negative = styled(Positive)`
   color: ${({theme}) => theme.palette.text.error};
 `;
 
+// Examples the user can choose from in the demo
+const examples = [
+  { sentence: "a very well-made, funny and entertaining picture." },
+  { sentence: "so unremittingly awful that labeling it a dog probably constitutes cruelty to canines" },
+  { sentence: "all the amped up tony hawk style stunts and thrashing rap-metal can't disguise the fact that, really, we've been here, done that."},
+  { sentence: "visually imaginative, thematically instructive and thoroughly delightful, it takes us on a roller-coaster ride from innocence to experience without even a hint of that typical kiddie-flick sentimentality."}
+]
+
 // A call to a pre-existing model component that handles all of the inputs and outputs. We just need to pass it the things we've already defined as props:
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
 export default withRouter(props => <Model {...props} {...modelProps}/>)

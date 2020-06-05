@@ -1,7 +1,8 @@
 import React from 'react';
+import styled from 'styled-components';
 import { createGlobalStyle }  from 'styled-components';
 import colormap from 'colormap'
-import { Popover, Collapse } from '@allenai/varnish';
+import { Popover, Link, Collapse } from '@allenai/varnish';
 
 import { Tooltip, ColorizedToken } from './Shared';
 import OutputField from './OutputField'
@@ -57,7 +58,7 @@ export const SaliencyMaps = ({interpretData, inputTokens, inputHeaders, interpre
   const interpretationHeader = (<>Model Interpretations
     <PopoverWidthFix />
     <Popover content={popContent} title="Model Interpretations">
-      <i><a href="javascript:;" style={{paddingLeft: `1em`, fontWeight:100}}>What is this?</a></i>
+      <WhatIsThis>What is this?</WhatIsThis>
     </Popover></>)
   return (
     <>
@@ -210,5 +211,11 @@ export class SaliencyComponent extends React.Component {
     )
   }
 }
+
+export const WhatIsThis = styled.span`
+    ${Link.linkColorStyles()}
+    padding-left: ${({theme}) => theme.spacing.md};
+    font-style: italic;
+`
 
 export default SaliencyMaps
