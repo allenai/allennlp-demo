@@ -89,9 +89,10 @@ const Output = ({ responseData }) => {
 
         <OutputField label="Model internals">
           <Collapse defaultActiveKey={['default']}>
-            <Collapse.Panel header="Predicted actions" key="default">
+            <Collapse.Panel header="Predicted production rules" key="default">
               <PanelDesc>
-                To solve the problem, the model took the following actions.
+                The sequence of grammar production rules predicted by the model, which together determine an
+                abstract syntax tree for the program shown above.
               </PanelDesc>
               {(predicted_actions || []).map((action, action_index) => (
                 <Collapse key={"action_" + action_index}>
