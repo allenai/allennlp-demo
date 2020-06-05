@@ -41,7 +41,6 @@ export default class Menu extends React.Component {
             defaultSelectedKeys={[this.props.redirectedModel]}
             defaultOpenKeys={modelGroups.filter(g => g.defaultOpen).map(g => g.label)}
             mode="inline"
-            inlineCollapsed={this.handleMenuCollapse}
           >
             {modelGroups.map(g => (
               <SubMenu

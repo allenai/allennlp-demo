@@ -3,10 +3,6 @@ import { withRouter } from 'react-router-dom';
 
 import Model from '../Model'
 import { Tree } from 'hierplane';
-import { UsageSection } from '../UsageSection';
-import { UsageHeader } from '../UsageHeader';
-import { UsageCode } from '../UsageCode';
-import SyntaxHighlight from '../highlight/SyntaxHighlight';
 
 const title = "Constituency Parsing";
 
@@ -28,6 +24,38 @@ const descriptionEllipsed = (
     A constituency parse tree breaks a text into sub-phrases, or constituents. Non-terminals in the tree are types of…
   </span>
 )
+
+const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2020.02.10.tar.gz'
+
+const bashCommand =
+    `echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
+allennlp predict ${modelUrl} -`
+
+const pythonCommand =
+    `from allennlp.predictors.predictor import Predictor
+import allennlp_models.syntax.constituency_parser
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  sentence="If I bring 10 dollars tomorrow, can you buy me lunch?"
+)`
+
+// tasks that have only 1 model, and models that do not define usage will use this as a default
+// undefined is also fine, but no usage will be displayed for this task/model
+const defaultUsage = {
+  installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+  bashCommand,
+  pythonCommand,
+  evaluationNote: (<span>
+    The constituency parser was evaluated on the Penn Tree Bank dataset.
+    Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+    You can download the PTB data from <a href="https://catalog.ldc.upenn.edu/ldc99t42">the LDC website</a>.
+  </span>),
+  trainingNote: (<span>
+    The constituency parser was evaluated on the Penn Tree Bank dataset.
+    Unfortunately we cannot release this data due to licensing restrictions by the LDC.
+    You can download the PTB data from <a href="https://catalog.ldc.upenn.edu/ldc99t42">the LDC website</a>.
+  </span>)
+}
 
 const fields = [
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
@@ -59,62 +87,6 @@ const examples = [
 
 const apiUrl = () => `/api/constituency-parser/predict`
 
-const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2020.02.10.tar.gz'
-
-const bashCommand =
-    `echo '{"sentence": "If I bring 10 dollars tomorrow, can you buy me lunch?"}' | \\
-allennlp predict ${modelUrl} -`
-
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
-import allennlp_models.syntax.constituency_parser
-predictor = Predictor.from_path("${modelUrl}")
-predictor.predict(
-  sentence="If I bring 10 dollars tomorrow, can you buy me lunch?"
-)`
-
-const usage = (
-  <React.Fragment>
-      <h3>Installing AllenNLP</h3>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
-        </SyntaxHighlight>
-      </UsageCode>
-    <UsageSection>
-      <UsageHeader>Prediction</UsageHeader>
-      <strong>On the command line (bash):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-            { bashCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-      <strong>As a library (Python):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          { pythonCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Evaluation</UsageHeader>
-      <p>
-        The constituency parser was evaluated on the Penn Tree Bank dataset.
-        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
-        You can download the PTB data from <a href="https://catalog.ldc.upenn.edu/ldc99t42">the LDC website</a>.
-      </p>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Training</UsageHeader>
-      <p>
-        The constituency parser was evaluated on the Penn Tree Bank dataset.
-        Unfortunately we cannot release this data due to licensing restrictions by the LDC.
-        You can download the PTB data from <a href="https://catalog.ldc.upenn.edu/ldc99t42">the LDC website</a>.
-      </p>
-    </UsageSection>
-  </React.Fragment>
-)
-
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

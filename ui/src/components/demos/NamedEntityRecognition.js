@@ -2,16 +2,11 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Collapse } from '@allenai/varnish';
 
-import { FormField } from '../Form';
 import HighlightContainer from '../highlight/HighlightContainer';
 import { Highlight } from '../highlight/Highlight';
 import Model from '../Model'
 import OutputField from '../OutputField'
 import { truncateText } from '../DemoInput'
-import { UsageSection } from '../UsageSection';
-import { UsageHeader } from '../UsageHeader';
-import { UsageCode } from '../UsageCode';
-import SyntaxHighlight from '../highlight/SyntaxHighlight';
 import SaliencyMaps from '../Saliency'
 import InputReductionComponent, { InputReductionPanel } from '../InputReduction'
 import {
@@ -30,29 +25,9 @@ const NAME_OF_GRAD_INPUT = 'grad_input_1'
 const description = (
   <span>
     <span>
-        The named entity recognition model identifies named entities
+        Named Entity Recognition is the task of identifying named entities
         (people, locations, organizations, etc.)
-        in the input text. This elmo-ner model is the "baseline" model described in
-    </span>
-    <a href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc" target="_blank" rel="noopener noreferrer">
-      {' '} Peters, Ammar, Bhagavatula, and Power 2017 {' '}
-    </a>
-    <span>
-      .  It uses a Gated Recurrent Unit (GRU) character encoder as well as a GRU phrase encoder,
-      and it starts with pretrained
-    </span>
-    <a href = "https://nlp.stanford.edu/projects/glove/" target="_blank" rel="noopener noreferrer">{' '} GloVe vectors {' '}</a>
-    <span>
-      for its token embeddings. It was trained on the
-    </span>
-    <a href = "https://www.clips.uantwerpen.be/conll2003/ner/" target="_blank" rel="noopener noreferrer">{' '} CoNLL-2003 {' '}</a>
-    <span>
-      NER dataset.
-      (This is also the model constructed in our
-    </span>
-    <a href = "https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/walk_through_allennlp/creating_a_model.md" target="_blank" rel="noopener noreferrer">{' '}Creating a Model{' '}</a>
-    <span>
-      tutorial.)
+        in the input text.
     </span>
   </span>
 )
@@ -63,15 +38,62 @@ const descriptionEllipsed = (
   </span>
 )
 
+const defaultUsage = undefined
+
+const bashCommand = (modelUrl) => {
+  return `echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
+allennlp predict ${modelUrl} -`
+}
+
+const pythonCommand = (modelUrl) => {
+  return `from allennlp.predictors.predictor import Predictor
+import allennlp_models.ner.crf_tagger
+predictor = Predictor.from_path("${modelUrl}")
+predictor.predict(
+  sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"
+)`
+}
+
+// tasks that have only 1 model, and models that do not define usage will use this as a default
+// undefined is also fine, but no usage will be displayed for this task/model
+const buildUsage = (modelFile) => {
+  const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
+  return {
+    installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+    bashCommand: bashCommand(fullModelUrl),
+    pythonCommand: pythonCommand(fullModelUrl),
+    evaluationNote: (<span>
+      The NER model was evaluated on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
+      dataset. Unfortunately we cannot release this data due to licensing restrictions.
+    </span>),
+    trainingNote: (<span>
+      The NER model was trained on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
+      dataset. Unfortunately we cannot release this data due to licensing restrictions.
+    </span>)
+  }
+}
+
 const taskModels = [
   {
     name: "elmo-ner",
-    desc: "Reimplementation of the NER model described in 'Deep<br/>contextualized word representations' by Peters, et. al.",
-    modelId: "named-entity-recognition"
+    desc: <span>
+      This model is the "baseline" model described 
+      in <a href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc">
+      Peters, Ammar, Bhagavatula, and Power 2017</a>.
+      It uses a Gated Recurrent Unit (GRU) character encoder as well as a GRU phrase encoder,
+      and it starts with pretrained <a href = "https://nlp.stanford.edu/projects/glove/">GloVe vectors</a> for
+      its token embeddings. It was trained on the <a href = "https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset.
+      </span>,
+    modelId: "named-entity-recognition",
+    usage: buildUsage("ner-model-2020.02.10.tar.gz")
   },
   {
     name: "fine-grained-ner",
-    desc: "This Model identifies a broad range of 16 semantic types in the input text.<br/>This model is a reimplementation of Lample (2016) and uses a biLSTM<br/>with a CRF layer, character embeddings and ELMo embeddings. It was<br/>trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2.",
+    desc: <span>
+      This Model identifies a broad range of 16 semantic types in the input text. This model is a
+      reimplementation of <a href="https://arxiv.org/abs/1603.01360">Lample (2016)</a> and uses a biLSTM with a CRF layer, character embeddings
+      and ELMo embeddings. It was trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2.
+      </span>,
     modelId: "fine-grained-ner"
   }
 ]
@@ -321,7 +343,9 @@ const examples = [
   ].map(sentence => ({sentence, snippet: truncateText(sentence)}))
 
 const getUrl = (model, ...paths) => {
-  const selectedModel = taskModels.find(t => t.name === model) || taskModels[0];
+  const selectedModel = taskModels.find(t => t.name === model)
+    || taskModels.find(t => t.modelId === model)
+    || taskModels[0];
   return `/${['api', selectedModel.modelId, ...paths ].join('/')}`;
 }
 
@@ -337,58 +361,5 @@ const apiUrlAttack = ({model}, attacker) => {
   return getUrl(model, "attack", attacker)
 }
 
-const modelUrl = "https://storage.googleapis.com/allennlp-public-models/ner-model-2020.02.10.tar.gz"
-
-const bashCommand =
-    `echo '{"sentence": "Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"}' | \\
-allennlp predict ${modelUrl} -`
-
-const pythonCommand =
-    `from allennlp.predictors.predictor import Predictor
-import allennlp_models.ner.crf_tagger
-predictor = Predictor.from_path("${modelUrl}")
-predictor.predict(
-  sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"
-)`
-
-const usage = (
-  <React.Fragment>
-    <UsageSection>
-      <h3>Installing AllenNLP</h3>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          pip install allennlp==1.0.0rc3 allennlp-models==1.0.0rc3
-        </SyntaxHighlight>
-      </UsageCode>
-      <UsageHeader>Prediction</UsageHeader>
-      <strong>On the command line (bash):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="bash">
-          { bashCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-      <strong>As a library (Python):</strong>
-      <UsageCode>
-        <SyntaxHighlight language="python">
-          { pythonCommand }
-        </SyntaxHighlight>
-      </UsageCode>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Evaluation</UsageHeader>
-      <p>
-        The NER model was evaluated on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER
-        dataset. Unfortunately we cannot release this data due to licensing restrictions.
-      </p>
-    </UsageSection>
-    <UsageSection>
-      <UsageHeader>Training</UsageHeader>
-      <p>
-        The NER model was trained on the <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset. Unfortunately we cannot release this data due to licensing restrictions.
-      </p>
-    </UsageSection>
-  </React.Fragment>
-)
-
 export default withRouter(props => <Model {...props} {...modelProps}/>)
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, usage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
