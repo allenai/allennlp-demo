@@ -41,7 +41,7 @@ allennlp predict ${modelUrl} -`
 
 const pythonCommand = (modelUrl) => {
     return `from allennlp.predictors.predictor import Predictor
-import allennlp_models.sentiment
+import allennlp_models.classification
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   sentence="a very well-made, funny and entertaining picture."
