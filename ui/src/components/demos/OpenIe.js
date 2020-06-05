@@ -30,7 +30,7 @@ const bashCommand =
 allennlp predict ${modelUrl} - --predictor=open-information-extraction`
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
-import allennlp_models.syntax.srl
+import allennlp_models.structured_prediction
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   sentence="John decided to run for office next month."

@@ -33,7 +33,7 @@ allennlp predict ${modelUrl} -`
 
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
-import allennlp_models.syntax.constituency_parser
+import allennlp_models.structured_prediction
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   sentence="If I bring 10 dollars tomorrow, can you buy me lunch?"
