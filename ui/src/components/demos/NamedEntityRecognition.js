@@ -47,7 +47,7 @@ allennlp predict ${modelUrl} -`
 
 const pythonCommand = (modelUrl) => {
   return `from allennlp.predictors.predictor import Predictor
-import allennlp_models.ner.crf_tagger
+import allennlp_models.tagging
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   sentence="Did Uriah honestly think he could beat The Legend of Zelda in under three hours?"
