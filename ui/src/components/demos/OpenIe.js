@@ -27,7 +27,7 @@ const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/openie-m
 
 const bashCommand =
     `echo '{"sentence": "John decided to run for office next month."}' | \\
-allennlp predict ${modelUrl} - --predictor=open-information-extraction`
+allennlp predict ${modelUrl} -`
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
 import allennlp_models.structured_prediction

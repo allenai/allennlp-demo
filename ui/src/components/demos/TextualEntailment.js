@@ -38,13 +38,13 @@ const defaultUsage = undefined
 
 const bashCommand = (modelUrl) => {
   return `echo '{"hypothesis": "Two women are sitting on a blanket near some rocks talking about politics.", "premise": "Two women are wandering along the shore drinking iced tea."}' | \\
-allennlp predict --predictor textual-entailment ${modelUrl} -`
+allennlp predict ${modelUrl} -`
 }
 
 const pythonCommand = (modelUrl) => {
   return `from allennlp.predictors.predictor import Predictor
 import allennlp_models.pair_classification
-predictor = Predictor.from_path("${modelUrl}", predictor_name="textual-entailment")
+predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   hypothesis="Two women are sitting on a blanket near some rocks talking about politics.",
   premise="Two women are wandering along the shore drinking iced tea."
