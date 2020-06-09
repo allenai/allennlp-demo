@@ -77,7 +77,7 @@ const taskModels = [
           <p><b>Contributed by:</b> <a href="https://zhaofengwu.github.io">Zhaofeng Wu</a></p>
    </span>,
     modelId: "roberta-sentiment-analysis",
-    usage: buildUsage("sst-roberta-large-2020.05.05.tar.gz", "stanford_sentiment_treebank_roberta.jsonnet")
+    usage: buildUsage("sst-roberta-large-2020.06.08.tar.gz", "stanford_sentiment_treebank_roberta.jsonnet")
   }
 ]
 
