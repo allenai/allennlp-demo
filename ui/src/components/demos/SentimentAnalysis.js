@@ -173,7 +173,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const model = requestData ? requestData.model : undefined;
   const tokens = responseData['tokens'] || requestData['sentence'].split(' ');
   // The RoBERTa-large model is very slow to be attacked
-  const attacks = model && model.includes('RoBERTa') ?
+  const attacks = model && model.toLowerCase().includes('roberta') ?
     " "
   :
     <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
