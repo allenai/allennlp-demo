@@ -217,7 +217,8 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const model = requestData ? requestData.model : undefined;
 
   let label_probs, h2p_attention, p2h_attention, premise_tokens, hypothesis_tokens;
-  if (model && model.includes('RoBERTa')) {
+  const modelIsRoberta = model && model.toLowerCase().includes('roberta');
+  if (modelIsRoberta) {
     label_probs = responseData.probs
   } else {
     label_probs = responseData.label_probs
@@ -282,7 +283,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const y = (c / (a + b + c))
 
   // The RoBERTa-large models don't support interprets
-  const accordion = model && model.includes('RoBERTa') ?
+  const accordion = modelIsRoberta ?
     " "
   :
     <>
