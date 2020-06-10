@@ -1,5 +1,5 @@
 {
     "id": "roberta-snli",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/snli_roberta-2020.06.09.tar.gz",
+    "archive_file": "https://storage.googleapis.com/allennlp-public-models/snli-roberta-large-2020.04.30.tar.gz",
     "predictor_name": "textual-entailment"
 }

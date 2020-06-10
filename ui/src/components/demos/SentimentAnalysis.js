@@ -69,7 +69,7 @@ const taskModels = [
     name: "GloVe-LSTM",
     desc: <span>This model uses GloVe embeddings and is trained on the binary classification setting of the <a href="https://nlp.stanford.edu/sentiment/treebank.html">Stanford Sentiment Treebank</a>.  It achieves about 87% on the test set.</span>,
     modelId: "glove-sentiment-analysis",
-    usage: buildUsage("basic_stanford_sentiment_treebank-2020.06.09.tar.gz", "basic_stanford_sentiment_treebank.jsonnet")
+    usage: buildUsage("sst-2-basic-classifier-glove-2019.06.27.tar.gz", "basic_stanford_sentiment_treebank.jsonnet")
   },
   {
     name: "RoBERTa",
@@ -77,7 +77,7 @@ const taskModels = [
           <p><b>Contributed by:</b> <a href="https://zhaofengwu.github.io">Zhaofeng Wu</a></p>
    </span>,
     modelId: "roberta-sentiment-analysis",
-    usage: buildUsage("sst-roberta-large-2020.06.08.tar.gz", "stanford_sentiment_treebank_roberta.jsonnet")
+    usage: buildUsage("sst-roberta-large-2020.05.05.tar.gz", "stanford_sentiment_treebank_roberta.jsonnet")
   }
 ]
 

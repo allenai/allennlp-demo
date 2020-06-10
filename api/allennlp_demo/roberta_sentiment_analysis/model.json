@@ -1,5 +1,5 @@
 {
     "id": "roberta-sentiment-analysis",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.06.08.tar.gz",
+    "archive_file": "https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.05.05.tar.gz",
     "predictor_name": "text_classifier"
 }
