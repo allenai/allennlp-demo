@@ -12,13 +12,15 @@ const title = "Semantic Role Labeling"
 
 const description = (
     <span>
-      <span>
+      <p>
         Semantic Role Labeling (SRL) recovers the latent predicate argument structure of a sentence,
         providing representations that answer basic questions about sentence meaning, including “who” did “what” to “whom,” etc.
-        This page demonstrates a reimplementation of
-      </span>
-      <a href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener noreferrer">{' '} a BERT based model (Shi et al, 2019)</a>
-      <span> with some modifications (no additional parameters apart from a linear classification layer), which is currently the state of the art single model for English PropBank SRL (Newswire sentences). It achieves 86.49 test F1 on the Ontonotes 5.0 dataset.</span>
+      </p>
+      <p>
+        This page demonstrates a reimplementation 
+        of <a href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener noreferrer">a BERT based model (Shi et al, 2019)</a> with
+        some modifications (no additional parameters apart from a linear classification layer), which is currently the state of the art single model for English PropBank SRL (Newswire sentences). It achieves 86.49 test F1 on the Ontonotes 5.0 dataset.
+      </p>
     </span>
   );
 

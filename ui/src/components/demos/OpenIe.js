@@ -11,9 +11,13 @@ const title = "Open Information Extraction";
 
 const description = (
   <span>
-    Given an input sentence, Open Information Extraction (Open IE) extracts a list of propositions, each composed of a single predicate and an arbitrary number of arguments.
-    These extractions break syntactically complex sentences into the relationships they express, which can then be used for various downstream tasks.
-    This page demonstrates a reimplementation of <a href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</a>.
+    <p>
+      Given an input sentence, Open Information Extraction (Open IE) extracts a list of propositions, each composed of a single predicate and an arbitrary number of arguments.
+      These extractions break syntactically complex sentences into the relationships they express, which can then be used for various downstream tasks.
+    </p>
+    <p>
+      This page demonstrates a reimplementation of <a href="https://www.semanticscholar.org/paper/Supervised-Open-Information-Extraction-Stanovsky-Michael/c82921a426fd8090564f459b0bd90cdb1e7a9e2d" target="_blank" rel="noopener noreferrer">{' '} a deep BiLSTM sequence prediction model (Stanovsky et al., 2018)</a>.
+    </p>
   </span>
 )
 

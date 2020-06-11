@@ -11,24 +11,21 @@ const title = "Co-reference Resolution";
 
 const description = (
   <span>
-    <span>
-    Coreference resolution is the task of finding all expressions that refer to the same entity
-    in a text. It is an important step for many higher level NLP tasks that involve natural
-    language understanding such as document summarization, question answering, and information extraction.
-    </span>
-    <a href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83" target="_blank" rel="noopener noreferrer">{' '} End-to-end Neural Coreference Resolution (Lee et al, 2017) {' '}</a>
-    <span>
-    is a neural model which considers all possible spans in the document as potential mentions and
-    learns distributions over possible anteceedents for each span, using aggressive
-    pruning strategies to retain computational efficiency. It achieved state-of-the-art accuracies on
-    </span>
-    <a href = "http://cemantix.org/data/ontonotes.html" target="_blank" rel="noopener noreferrer">{' '} the Ontonotes 5.0 dataset {' '}</a>
-    <span>
-    in early 2017. The model here is based on that paper, but we have substituted the GloVe embeddings
-    that it uses with
-    <a href = "https://www.semanticscholar.org/paper/SpanBERT%3A-Improving-Pre-training-by-Representing-Joshi-Chen/81f5810fbbab9b7203b9556f4ce3c741875407bc" target="_blank" rel="noopener noreferrer">{' '} SpanBERT embeddings</a>
-    . On Ontonotes this model achieves an F1 score of 78.87% on the test set.
-    </span>
+    <p>
+      Coreference resolution is the task of finding all expressions that refer to the same entity
+      in a text. It is an important step for many higher level NLP tasks that involve natural
+      language understanding such as document summarization, question answering, and information extraction.
+    </p>
+    <p>
+      <a href = "https://www.semanticscholar.org/paper/End-to-end-Neural-Coreference-Resolution-Lee-He/3f2114893dc44eacac951f148fbff142ca200e83">End-to-end Neural Coreference Resolution (Lee et al, 2017)</a> is
+      a neural model which considers all possible spans in the document as potential mentions and
+      learns distributions over possible anteceedents for each span, using aggressive
+      pruning strategies to retain computational efficiency. It achieved state-of-the-art accuracies on
+      on <a href = "http://cemantix.org/data/ontonotes.html">the Ontonotes 5.0 dataset</a>
+      in early 2017. The model here is based on that paper, but we have substituted the GloVe embeddings
+      that it uses with <a href = "https://www.semanticscholar.org/paper/SpanBERT%3A-Improving-Pre-training-by-Representing-Joshi-Chen/81f5810fbbab9b7203b9556f4ce3c741875407bc" target="_blank" rel="noopener noreferrer">SpanBERT embeddings</a>
+      . On Ontonotes this model achieves an F1 score of 78.87% on the test set.
+    </p>
     <br/>
     <b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a>
   </span>
