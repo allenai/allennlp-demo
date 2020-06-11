@@ -77,7 +77,7 @@ const taskModels = [
   {
     name: "elmo-ner",
     desc: <span>
-      This model is the "baseline" model described 
+      This model is the baseline model described 
       in <a href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc">
       Peters, Ammar, Bhagavatula, and Power 2017</a>.
       It uses a Gated Recurrent Unit (GRU) character encoder as well as a GRU phrase encoder,
