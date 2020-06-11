@@ -73,7 +73,7 @@ const NMNModel = {
 const taskModels = [
   {
     name: "ELMo-BiDAF (trained on SQuAD)",
-    desc: <span>This model is like BiDAF except it uses ELMo embeddings instead of GloVe.</span>,
+    desc: <span>This model is like BiDAF but uses ELMo embeddings instead of GloVe.</span>,
     modelId: "bidaf-elmo",
     usage: buildUsage("bidaf-elmo-model-2020.03.19.tar.gz", "bidaf_elmo.jsonnet")
   },
@@ -81,7 +81,7 @@ const taskModels = [
     name: "BiDAF (trained on SQuAD)",
     desc: <span>
       Reimplementation of <a href="https://arxiv.org/abs/1611.01603">BiDAF (Seo et al, 2017)</a>, or Bi-Directional Attention Flow, a widely used
-      MC baseline that achieved state-of-the-art accuracies on the SQuAD dataset (Wikipedia
+      reading comprehension baseline that achieved state-of-the-art accuracies on the SQuAD dataset (Wikipedia
       sentences) in early 2017.
       </span>,
     modelId: "bidaf",
@@ -90,7 +90,7 @@ const taskModels = [
   {
     name: "Transformer QA (trained on SQuAD)",
     desc: <span>
-      Comprehension model patterned after the proposed model
+      A reading comprehension model patterned after the proposed model
       in <a href="https://arxiv.org/abs/1810.04805">Devlin et al</a>, with improvements borrowed from the SQuAD model in the transformers project.
       </span>,
     modelId: "transformer-qa"
