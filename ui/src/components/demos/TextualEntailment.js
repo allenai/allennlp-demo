@@ -77,12 +77,14 @@ const taskModels = [
   {
     name: "RoBERTa; SNLI",
     desc: <span>The <a href="https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de">RoBERTa model (Liu et al, 2019)</a> trained on SNLI.<p><b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a></p></span>,
-    modelId: "roberta-snli"
+    modelId: "roberta-snli",
+    usage: buildUsage("snli_roberta-2020.06.09.tar.gz", "snli_roberta.jsonnet")
   },
   {
     name: "RoBERTa; MultiNLI",
     desc: <span>The <a href="https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de">RoBERTa model (Liu et al, 2019)</a> trained on <a href="https://www.nyu.edu/projects/bowman/multinli/paper.pdf">MultiNLI</a>.<p><b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a></p></span>,
-    modelId: "roberta-mnli"
+    modelId: "roberta-mnli",
+    usage: buildUsage("mnli_roberta-2020.06.09.tar.gz", "mnli_roberta.jsonnet")
   }
 ]
 
