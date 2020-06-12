@@ -395,7 +395,7 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
       }
 
       default: { // old best_span_str path used by BiDAF model
-          const { best_span_str: bestSpanStr } = responseData;
+        const { best_span_str: bestSpanStr } = responseData;
         if(question && passage && bestSpanStr) {
           const start = passage.indexOf(bestSpanStr);
           const head = passage.slice(0, start);
@@ -434,15 +434,15 @@ const Output = (props) => {
     case NMNModel.name:
     case NMNModel.modelId:
       return (
-          <div className="model__content answer">
-            <nmn.Output response={props.responseData}/>
-          </div>
+        <div className="model__content answer">
+          <nmn.Output response={props.responseData}/>
+        </div>
       );
     default:
       return (
-          <div className="model__content answer">
-            <AnswerByType {...props} />
-          </div>
+        <div className="model__content answer">
+          <AnswerByType {...props} />
+        </div>
       )
   }
 }
