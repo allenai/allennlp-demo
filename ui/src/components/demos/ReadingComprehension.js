@@ -93,7 +93,8 @@ const taskModels = [
       A reading comprehension model patterned after the proposed model
       in <a href="https://arxiv.org/abs/1810.04805">Devlin et al</a>, with improvements borrowed from the SQuAD model in the transformers project.
       </span>,
-    modelId: "transformer-qa"
+    modelId: "transformer-qa",
+    usage: buildUsage("transformer-qa-2020-05-26.tar.gz", "transformer_qa.jsonnet")
   },
   {
     name: "NAQANet (trained on DROP)",
@@ -101,7 +102,8 @@ const taskModels = [
       An augmented version of QANet that adds rudimentary numerical reasoning ability, trained
       on <a href="https://arxiv.org/pdf/1903.00161.pdf">DROP (Dua et al., 2019)</a>, as published in the original DROP paper.
       </span>,
-    modelId: "naqanet"
+    modelId: "naqanet",
+    usage: buildUsage("naqanet-2020.02.19.tar.gz", "naqanet.jsonnet")
   },
   NMNModel
 ];
