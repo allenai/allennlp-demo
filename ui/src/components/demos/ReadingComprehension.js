@@ -394,8 +394,8 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
         return NoAnswer();
       }
 
-      default: {
-        const { predicted_ans: bestSpanStr } = responseData;
+      default: { // old best_span_str path used by BiDAF model
+          const { best_span_str: bestSpanStr } = responseData;
         if(question && passage && bestSpanStr) {
           const start = passage.indexOf(bestSpanStr);
           const head = passage.slice(0, start);
