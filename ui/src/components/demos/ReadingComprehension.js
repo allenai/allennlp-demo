@@ -431,13 +431,13 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
 
 const Output = (props) => {
   switch (props.requestData.model) {
-    case NMNModel.name: {
+    case NMNModel.name:
+    case NMNModel.modelId:
       return (
         <div className="model__content answer">
           <nmn.Output response={props.responseData} />
         </div>
       );
-    }
     default:
       return (
         <div className="model__content answer">
