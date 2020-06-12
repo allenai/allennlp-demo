@@ -435,7 +435,7 @@ const Output = (props) => {
     case NMNModel.modelId:
       return (
         <div className="model__content answer">
-          <nmn.Output response={props.responseData}/>
+          <nmn.Output response={props.responseData} />
         </div>
       );
     default:
