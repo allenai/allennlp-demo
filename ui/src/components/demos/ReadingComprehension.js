@@ -239,7 +239,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   // NAQANet needs some fixing in allennlp.attackers.utils.get_fields_to_compare in order to work,
   // so we're disabling it for now (see TODO in that function).
   const inputReduction = model && model.toLowerCase().includes('naqanet') ?
-    " "
+    null
   : (
     <InputReductionPanel>
       <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
