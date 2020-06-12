@@ -430,19 +430,21 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
 }
 
 const Output = (props) => {
-    if (props.requestData.model && (props.requestData.model === NMNModel.name || props.requestData.model === "nmn")) {
-        return (
-            <div className="model__content answer">
-                <nmn.Output response={props.responseData}/>
-            </div>
-        );
+    switch (props.requestData.model) {
+        case NMNModel.name:
+        case NMNModel.modelId:
+            return (
+                <div className="model__content answer">
+                    <nmn.Output response={props.responseData}/>
+                </div>
+            );
+        default:
+            return (
+                <div className="model__content answer">
+                    <AnswerByType {...props} />
+                </div>
+            )
     }
-
-    return (
-        <div className="model__content answer">
-            <AnswerByType {...props} />
-        </div>
-    )
 }
 
 const addSnippet = (example) => {
