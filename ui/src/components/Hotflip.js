@@ -135,12 +135,12 @@ export default class HotflipComponent extends React.Component {
                       </button>
 
     const target = targeted === undefined ?
-      " "
+      null
     :
       <p> Leave blank to allow any change (untargeted). For targeted attacks, enter a single token that you want to flip the mask to: <FormInput type="text" onChange={ this.updateTargetWord }/> </p>
 
     const buttonDisplay = (flippedString !== " " && targeted === undefined) ?
-      " "
+      null
     :
       <div>
         <p style={{color: "#7c7c7c"}}>Press "flip words" to run HotFlip.</p>
