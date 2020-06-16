@@ -286,7 +286,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
 
   // The RoBERTa-large models don't support interprets
   const accordion = modelIsRoberta ?
-    " "
+    null
   :
     <>
       <MySaliencyMaps interpretData={interpretData} premise_tokens={premise_tokens} hypothesis_tokens={hypothesis_tokens} interpretModel={interpretModel} requestData={requestData} />

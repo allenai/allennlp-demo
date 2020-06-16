@@ -174,7 +174,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const tokens = responseData['tokens'] || requestData['sentence'].split(' ');
   // The RoBERTa-large model is very slow to be attacked
   const attacks = model && model.toLowerCase().includes('roberta') ?
-    " "
+    null
   :
     <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
 
