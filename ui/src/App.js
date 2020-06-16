@@ -181,7 +181,7 @@ class SingleTaskDemo extends React.Component {
       const developLocallyDescription = (
           <span>
             <span>
-              It's possible to run this demo locally with your own model (e.g., to visualize or interpret its predictions). See
+              It's possible to run the AllenNLP demo locally using your own model (e.g., to visualize or interpret its predictions). See
             </span>
             <a href="https://github.com/allenai/allennlp-demo#contributing-a-new-model-to-the-demo" target="_blank" rel="noopener noreferrer">{' '} this tutorial </a>
             <span>
@@ -193,14 +193,14 @@ class SingleTaskDemo extends React.Component {
       const modelDescription = (
         <span>
           <span>
-            We are always looking to add user contributed AllenNLP models as either components in the AllenNLP library or on this demo site.
-            If you have a published result or novel model demonstrating strong performance on a dataset and you are interested
-            in adding your model to a list of publicly available implementations, as a service to this demo, or as a component in the library itself,
-            please openan issue on our
+            We are always looking to add user-contributed AllenNLP models as either components in the AllenNLP library or as part of this collection of demos.
+            If you have a published result or a novel model demonstrating strong performance on an NLP dataset and you are interested
+            in adding your model to our list of publicly available implementations, as a service to this demo collection, or as a component in the AllenNLP library itself,
+            please open an issue on our
           </span>
-          <a href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener noreferrer">{' '} public Github repository </a>
+          <a href="https://github.com/allenai/allennlp/issues" target="_blank" rel="noopener noreferrer">{' '} public GitHub repository </a>
           <span>
-            or sending us an email at allennlp-contact@allenai.org.
+            or send us an email at allennlp-contact@allenai.org.
           </span>
         </span>
 

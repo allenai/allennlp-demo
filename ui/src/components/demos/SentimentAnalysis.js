@@ -25,11 +25,11 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 // Text shown in the UI
 const description = (
   <span>
-    Sentiment Analysis predicts whether an input is positive or negative.
+    Sentiment Analysis is the task of interpreting and classifying emotions (positive or negative) in the input text.
   </span>
 );
 const descriptionEllipsed = (
-  <span> Sentiment Analysis predicts whether an input is positive or negative… </span>
+  <span> Sentiment Analysis is the task of interpreting and classifying emotions… </span>
 );
 
 const defaultUsage = undefined
@@ -174,7 +174,7 @@ const Output = ({ responseData, requestData, interpretData, interpretModel, atta
   const tokens = responseData['tokens'] || requestData['sentence'].split(' ');
   // The RoBERTa-large model is very slow to be attacked
   const attacks = model && model.toLowerCase().includes('roberta') ?
-    " "
+    null
   :
     <Attacks attackData={attackData} attackModel={attackModel} requestData={requestData}/>
 

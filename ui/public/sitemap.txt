@@ -1,0 +1,16 @@
+https://demo.allennlp.org/
+https://demo.allennlp.org/reading-comprehension
+https://demo.allennlp.org/named-entity-recognition
+https://demo.allennlp.org/open-information-extraction
+https://demo.allennlp.org/sentiment-analysis
+https://demo.allennlp.org/dependency-parsing
+https://demo.allennlp.org/constituency-parsing
+https://demo.allennlp.org/semantic-role-labeling
+https://demo.allennlp.org/coreference-resolution
+https://demo.allennlp.org/wikitables-parser
+https://demo.allennlp.org/nlvr-parser
+https://demo.allennlp.org/atis-parser
+https://demo.allennlp.org/textual-entailment
+https://demo.allennlp.org/next-token-lm
+https://demo.allennlp.org/masked-lm
+https://demo.allennlp.org/user-models

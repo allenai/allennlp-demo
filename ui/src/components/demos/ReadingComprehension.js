@@ -93,7 +93,8 @@ const taskModels = [
       A reading comprehension model patterned after the proposed model
       in <a href="https://arxiv.org/abs/1810.04805">Devlin et al</a>, with improvements borrowed from the SQuAD model in the transformers project.
       </span>,
-    modelId: "transformer-qa"
+    modelId: "transformer-qa",
+    usage: buildUsage("transformer-qa-2020-05-26.tar.gz", "transformer_qa.jsonnet")
   },
   {
     name: "NAQANet (trained on DROP)",
@@ -101,7 +102,8 @@ const taskModels = [
       An augmented version of QANet that adds rudimentary numerical reasoning ability, trained
       on <a href="https://arxiv.org/pdf/1903.00161.pdf">DROP (Dua et al., 2019)</a>, as published in the original DROP paper.
       </span>,
-    modelId: "naqanet"
+    modelId: "naqanet",
+    usage: buildUsage("naqanet-2020.02.19.tar.gz", "naqanet.jsonnet")
   },
   NMNModel
 ];
@@ -237,7 +239,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   // NAQANet needs some fixing in allennlp.attackers.utils.get_fields_to_compare in order to work,
   // so we're disabling it for now (see TODO in that function).
   const inputReduction = model && model.toLowerCase().includes('naqanet') ?
-    " "
+    null
   : (
     <InputReductionPanel>
       <InputReductionComponent reducedInput={reducedInput} reduceFunction={attackModel(requestData, INPUT_REDUCTION_ATTACKER, NAME_OF_INPUT_TO_ATTACK, NAME_OF_GRAD_INPUT)} />
@@ -429,13 +431,13 @@ const AnswerByType = ({ responseData, requestData, interpretData, interpretModel
 
 const Output = (props) => {
   switch (props.requestData.model) {
-    case NMNModel.name: {
+    case NMNModel.name:
+    case NMNModel.modelId:
       return (
         <div className="model__content answer">
           <nmn.Output response={props.responseData} />
         </div>
       );
-    }
     default:
       return (
         <div className="model__content answer">
