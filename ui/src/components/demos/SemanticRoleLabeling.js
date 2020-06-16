@@ -13,8 +13,7 @@ const title = "Semantic Role Labeling"
 const description = (
     <span>
       <p>
-        Semantic Role Labeling (SRL) recovers the latent predicate argument structure of a sentence,
-        providing representations that answer basic questions about sentence meaning, including “who” did “what” to “whom,” etc.
+        Semantic Role Labeling (SRL) is the task of determining the latent predicate argument structure of a sentence and providing representations that can answer basic questions about sentence meaning, including <em>who</em> did <em>what</em> to <em>whom</em>, etc.
       </p>
       <p>
         This page demonstrates a reimplementation 
@@ -26,7 +25,7 @@ const description = (
 
 const descriptionEllipsed = (
   <span>
-    Semantic Role Labeling (SRL) recovers the latent predicate argument structure of a sentence, providing…
+    Semantic Role Labeling (SRL) is the task of determining the latent predicate argument structure…
   </span>
 )
 

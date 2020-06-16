@@ -23,14 +23,14 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 const description = (
   <span>
-    Textual Entailment (TE) takes a pair of sentences and predicts whether the facts in the first
-    necessarily imply the facts in the second one.
+    Textual Entailment (TE) is the task of predicting whether, for a pair of sentences, the facts in the first sentence necessarily imply the facts in the second.
+    This task is in some sense "NLP-complete", and you should not expect any current model to cover every possible aspect of entailment.  Instead, you should think about what the model was trained on to see whether it could reasonably capture the phenomena that you are querying it with.
   </span>
   );
 
 const descriptionEllipsed = (
   <span>
-    Textual Entailment (TE) takes a pair of sentences and predicts whether the facts in the first necessarily imply the…
+    Textual Entailment (TE) is the task of predicting whether, for a pair of sentences, the facts in the first sentence…
   </span>
 )
 
