@@ -181,7 +181,7 @@ class SingleTaskDemo extends React.Component {
       const developLocallyDescription = (
           <span>
             <span>
-              It's possible to run this demo locally with your own model (e.g., to visualize or interpret its predictions). See
+              It's possible to run the AllenNLP demo locally using your own model (e.g., to visualize or interpret its predictions). See
             </span>
             <a href="https://github.com/allenai/allennlp-demo#contributing-a-new-model-to-the-demo" target="_blank" rel="noopener noreferrer">{' '} this tutorial </a>
             <span>
