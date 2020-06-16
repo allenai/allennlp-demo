@@ -59,7 +59,7 @@ predictor.predict(
 const buildUsage = (modelFile) => {
   const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
   return {
-    installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+    installCommand: 'pip install allennlp==1.0.0 allennlp-models==1.0.0',
     bashCommand: bashCommand(fullModelUrl),
     pythonCommand: pythonCommand(fullModelUrl),
     evaluationNote: (<span>

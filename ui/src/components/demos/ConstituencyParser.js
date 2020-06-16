@@ -41,7 +41,7 @@ predictor.predict(
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
 const defaultUsage = {
-  installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+  installCommand: 'pip install allennlp==1.0.0 allennlp-models==1.0.0',
   bashCommand,
   pythonCommand,
   evaluationNote: (<span>

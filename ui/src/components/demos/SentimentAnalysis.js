@@ -52,9 +52,9 @@ predictor.predict(
 // undefined is also fine, but no usage will be displayed for this task/model
 const buildUsage = (modelFile, configFile) => {
   const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
-  const fullConfigUrl = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0rc5/training_config/classification/${configFile}`;
+  const fullConfigUrl = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0/training_config/classification/${configFile}`;
   return {
-    installCommand: 'pip install allennlp==1.0.0rc5 allennlp-models==1.0.0rc5',
+    installCommand: 'pip install allennlp==1.0.0 allennlp-models==1.0.0',
     bashCommand: bashCommand(fullModelUrl),
     pythonCommand: pythonCommand(fullModelUrl),
     evaluationCommand: `allennlp evaluate \\
