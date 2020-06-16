@@ -161,12 +161,12 @@ const DEFAULT_MODEL = "345M"
 
 const description = (
   <span>
-This demonstration uses the public 345M
-parameter <a href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</a> language model
+<p>Language modeling is the task of determining the probability of a given sequence of words occurring in a sentence. </p>
+<p>This demonstration uses the public 345M parameter <a href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</a> language model
 to generate sentences.<br /><br />
-Enter some initial text and the model will generate the most likely next words.
-You can click on one of those words to choose it and continue or just keep typing.
-Click the left arrow at the bottom to undo your last choice.
+Provide some initial text, and the model will generate a list of the most-likely next words.
+You can click on one of those candidate words to choose it and continue, or you can keep typing.
+Click the left arrow at the bottom to undo your last choice.</p>
   </span>
 )
 
