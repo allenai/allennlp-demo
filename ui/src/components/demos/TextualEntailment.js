@@ -23,14 +23,13 @@ const NAME_OF_GRAD_INPUT = "grad_input_1"
 
 const description = (
   <span>
-    Textual Entailment (TE) takes a pair of sentences and predicts whether the facts in the first
-    necessarily imply the facts in the second one.
+    Textual Entailment (TE) is the task of predicting whether, for a pair of sentences, the facts in the first sentence necessarily imply the facts in the second.
   </span>
   );
 
 const descriptionEllipsed = (
   <span>
-    Textual Entailment (TE) takes a pair of sentences and predicts whether the facts in the first necessarily imply the…
+    Textual Entailment (TE) is the task of predicting whether, for a pair of sentences, the facts in the first sentence…
   </span>
 )
 
