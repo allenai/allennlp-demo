@@ -1,6 +1,6 @@
 # This is the common Dockerfile that is used to build all demos unless the demo
 # overrides this with its own Dockerfile in its directory.
-FROM allennlp/allennlp:v1.0.0rc3
+FROM allennlp/allennlp
 
 # Name / sub-directory name of the demo.
 ARG MODULE
