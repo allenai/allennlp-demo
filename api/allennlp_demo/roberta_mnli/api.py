@@ -1,6 +1,6 @@
 import os
 
-from allennlp_models import nli  # noqa: F401
+from allennlp_models import pair_classification  # noqa: F401
 
 from allennlp_demo.common import config, http
 

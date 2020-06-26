@@ -1,5 +1,5 @@
 {
     "id": "bidaf",
     "archive_file": "https://storage.googleapis.com/allennlp-public-models/bidaf-model-2020.03.19.tar.gz",
-    "predictor_name": "reading-comprehension"
+    "predictor_name": "reading_comprehension"
 }
