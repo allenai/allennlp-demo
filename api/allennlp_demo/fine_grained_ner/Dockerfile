@@ -1,7 +1,7 @@
 # This Dockerfile is specific to the fine-grained-ner model, but is meant to be executed in the `allennlp_demo`
 # directory, so that the build context includes common libraries that are shared across models.
 # This is why paths here include the fine-grained-ner/ prefix.
-FROM allennlp/commit:ff0d44a5e21d5e6256c73b5b9f216a87c5743f91
+FROM allennlp/allennlp
 
 WORKDIR /app/
 COPY allennlp_demo/fine_grained_ner/requirements.txt requirements.txt
