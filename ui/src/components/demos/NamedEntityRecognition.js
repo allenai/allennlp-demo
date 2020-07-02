@@ -94,7 +94,8 @@ const taskModels = [
       reimplementation of <a href="https://arxiv.org/abs/1603.01360">Lample (2016)</a> and uses a biLSTM with a CRF layer, character embeddings
       and ELMo embeddings. It was trained on the Ontonotes 5.0 dataset, and has dev set F1 of 88.2.
       </span>,
-    modelId: "fine-grained-ner"
+    modelId: "fine-grained-ner",
+    usage: buildUsage("fine-grained-ner.2020-06-24.tar.gz")
   }
 ]
 
