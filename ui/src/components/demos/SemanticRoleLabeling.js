@@ -37,7 +37,6 @@ allennlp predict ${modelUrl} -`
 
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
-import allennlp_models.syntax.srl
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
   sentence="Did Uriah honestly think he could beat the game in under three hours?"
