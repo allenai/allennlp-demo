@@ -9,7 +9,7 @@
     "colormap": "^2.3.1",
     "hierplane": "^0.2.1",
     "lodash": "^4.17.11",
-    "npm": "6.14.4",
+    "npm": "6.14.6",
     "react": "^16.13.1",
     "react-app-rewire-styled-components": "3.0.2",
     "react-app-rewired": "2.1.5",
