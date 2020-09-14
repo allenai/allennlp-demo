@@ -30,7 +30,7 @@ jobs:
     - name: Install requirements
       run: |
         cd api
-        pip install -r requirements.txt -r dev-requirements.txt
+        pip install --upgrade --upgrade-strategy eager -r requirements.txt -r dev-requirements.txt
 
     - name: Format
       if: always()
