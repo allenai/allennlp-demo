@@ -12,17 +12,11 @@ const description = (
       Dependency parsing is the task of analyzing the grammatical structure of a sentence and establishing the relationships between "head" words and the words which modify those heads.
     </p>
     <p>
-      This demo is an implementation of a neural model for dependency parsing using biaffine classifiers on top of a bidirectional LSTM based 
+      This demo is an implementation of a neural model for dependency parsing using biaffine classifiers on top of a bidirectional LSTM based
       on <a href="https://arxiv.org/abs/1611.01734" target="_blank" rel="noopener noreferrer">{' '} Deep Biaffine Attention for Neural Dependency Parsing (Dozat, 2017).</a><br />
       The parser is trained on the PTB 3.0 dataset using Stanford dependencies, achieving 95.57% and 94.44% unlabeled and labeled attachement score using gold POS tags. For predicted POS tags, the model achieves 94.81% UAS and 92.86% LAS respectively.
     </p>
   </span>
-)
-
-const descriptionEllipsed = (
-<span>
-    Dependency parsing is the task of analyzing the grammatical structure of a sentence and establishing…
-</span>
 )
 
 const modelUrl = "https://storage.googleapis.com/allennlp-public-models/biaffine-dependency-parser-ptb-2020.04.06.tar.gz"
@@ -87,6 +81,6 @@ const examples = [
 
 const apiUrl = () => `/api/dependency-parser/predict`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
+const modelProps = {apiUrl, title, description, fields, examples, Output, defaultUsage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

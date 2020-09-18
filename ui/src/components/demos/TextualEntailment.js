@@ -28,12 +28,6 @@ const description = (
   </span>
   );
 
-const descriptionEllipsed = (
-  <span>
-    Textual Entailment (TE) is the task of predicting whether, for a pair of sentences, the facts in the first sentence…
-  </span>
-)
-
 const defaultUsage = undefined
 
 const bashCommand = (modelUrl) => {
@@ -371,6 +365,6 @@ const examples = [
   },
 ]
 
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, fields, examples, Output, defaultUsage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

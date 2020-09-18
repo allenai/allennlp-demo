@@ -160,7 +160,7 @@ class Model extends React.Component {
     }
 
     render() {
-        const { title, description, descriptionEllipsed, examples, fields, selectedModel, Output, requestData, responseData, defaultUsage } = this.props;
+        const { title, description, examples, fields, selectedModel, Output, requestData, responseData, defaultUsage } = this.props;
         const { outputState } = this.state;
 
         // pull 'model' field out since we dont want to render it as part of the model inputs
@@ -195,8 +195,7 @@ class Model extends React.Component {
                   <div className="model__content">
                     <ModelIntro
                       title={title}
-                      description={description}
-                      descriptionEllipsed={descriptionEllipsed}/>
+                      description={description}/>
 
                     {subModel ?
                       <FormField>

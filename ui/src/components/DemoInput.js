@@ -4,6 +4,7 @@ import { Button, Select, Radio } from '@allenai/varnish'
 import RightOutlined from '@ant-design/icons/RightOutlined';
 
 import BeamSearch from './BeamSearch'
+import { ImageParamControl } from './ImageParamControl';
 import { Tooltip } from './Shared'
 import '../css/Button.css'
 import { FormField, FormLabel, FormInput, FormTextArea, FormSelect } from './Form';
@@ -168,6 +169,19 @@ class DemoInput extends React.Component {
             let input = null;
 
             switch (field.type) {
+                case "IMAGE_UPLOAD":
+                    input = (
+                        <ImageParamControl
+                            onChange = {(img)=>{
+                                const stateUpdate = {}
+                                stateUpdate[field.name] = img;
+                                this.setState(stateUpdate)
+                            }}
+                            modelParams = {this.state[field.name] || {}}
+                        />
+                    )
+                    break
+
                 case "TEXT_AREA":
                 case "TEXT_INPUT":
                     // Both text area and input have the exact same properties.

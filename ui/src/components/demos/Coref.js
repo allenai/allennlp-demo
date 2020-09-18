@@ -31,12 +31,6 @@ const description = (
   </span>
 );
 
-const descriptionEllipsed = (
-  <span>
-    Coreference resolution is the task of finding all expressions that refer to the same entity in a text. It is an…
-  </span>
-)
-
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz'
 
 const bashCommand =
@@ -123,6 +117,6 @@ const examples = [
     }
   ]
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output: withHighlightClickHandling(Output), defaultUsage}
+const modelProps = {apiUrl, title, description, fields, examples, Output: withHighlightClickHandling(Output), defaultUsage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

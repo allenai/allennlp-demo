@@ -28,9 +28,6 @@ const description = (
     Sentiment Analysis is the task of interpreting and classifying emotions (positive or negative) in the input text.
   </span>
 );
-const descriptionEllipsed = (
-  <span> Sentiment Analysis is the task of interpreting and classifying emotions… </span>
-);
 
 const defaultUsage = undefined
 
@@ -210,5 +207,5 @@ const examples = [
 ]
 
 // A call to a pre-existing model component that handles all of the inputs and outputs. We just need to pass it the things we've already defined as props:
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, fields, examples, Output, defaultUsage}
 export default withRouter(props => <Model {...props} {...modelProps}/>)
