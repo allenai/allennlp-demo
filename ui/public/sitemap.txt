@@ -1,5 +1,6 @@
 https://demo.allennlp.org/
 https://demo.allennlp.org/reading-comprehension
+https://demo.allennlp.org/visual-question-answering
 https://demo.allennlp.org/named-entity-recognition
 https://demo.allennlp.org/open-information-extraction
 https://demo.allennlp.org/sentiment-analysis

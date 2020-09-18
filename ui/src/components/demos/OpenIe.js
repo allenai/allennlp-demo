@@ -21,12 +21,6 @@ const description = (
   </span>
 )
 
-const descriptionEllipsed = (
-  <span>
-    Given an input sentence, Open Information Extraction (Open IE) extracts a list of propositions, each composed of…
-  </span>
-)
-
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/openie-model.2020.03.26.tar.gz'
 
 const bashCommand =
@@ -262,6 +256,6 @@ const examples = [
 
 const apiUrl = () => `/api/open-information-extraction/predict`;
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
+const modelProps = {apiUrl, title, description, fields, examples, Output, defaultUsage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

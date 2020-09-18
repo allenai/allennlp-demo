@@ -16,18 +16,12 @@ const description = (
         Semantic Role Labeling (SRL) is the task of determining the latent predicate argument structure of a sentence and providing representations that can answer basic questions about sentence meaning, including <em>who</em> did <em>what</em> to <em>whom</em>, etc.
       </p>
       <p>
-        This page demonstrates a reimplementation 
+        This page demonstrates a reimplementation
         of <a href="https://arxiv.org/abs/1904.05255" target="_blank" rel="noopener noreferrer">a BERT based model (Shi et al, 2019)</a> with
         some modifications (no additional parameters apart from a linear classification layer), which is currently the state of the art single model for English PropBank SRL (Newswire sentences). It achieves 86.49 test F1 on the Ontonotes 5.0 dataset.
       </p>
     </span>
   );
-
-const descriptionEllipsed = (
-  <span>
-    Semantic Role Labeling (SRL) is the task of determining the latent predicate argument structure…
-  </span>
-)
 
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.03.24.tar.gz'
 
@@ -271,6 +265,6 @@ const examples = [
 
 const apiUrl = () => `/api/semantic-role-labeling/predict`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
+const modelProps = {apiUrl, title, description, fields, examples, Output, defaultUsage}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
