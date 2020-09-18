@@ -22,12 +22,6 @@ const description = (
   </span>
 );
 
-const descriptionEllipsed = (
-  <span>
-    Natural language to SQL interfaces allow users to query data in relational databases without writing SQL queries…
-  </span>
-)
-
 const fields = [
   {name: "utterance", label: "Utterance", type: "TEXT_INPUT",
    placeholder: `E.g. "show me the flights from detroit to westchester county"`}
@@ -124,6 +118,6 @@ const examples = [
 
 const apiUrl = () => `/api/atis-parser/predict`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

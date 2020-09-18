@@ -26,12 +26,6 @@ const description = (
   </span>
 );
 
-const descriptionEllipsed = (
-  <span>
-    Semantic parsing maps natural language to machine language.  This page demonstrates a semantic parsing…
-  </span>
-)
-
 const fields = [
     {name: "sentence", label: "Sentence", type: "TEXT_INPUT",
      placeholder: `E.g. "There is a tower with a blue block over a yellow block"`},
@@ -129,6 +123,6 @@ const examples = [
 
 const apiUrl = () => `/api/nlvr-parser/predict`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
