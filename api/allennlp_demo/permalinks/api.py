@@ -115,7 +115,7 @@ class PermaLinkService(Flask):
         # noop post for image upload, we need an endpoint, but we don't need to save the image
         @self.route("/noop", methods=["POST"])
         def noop():
-            return "";
+            return ""
 
 
 if __name__ == "__main__":

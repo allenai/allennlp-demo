@@ -28,7 +28,7 @@ const description = (
 );
 
 // TODO(dirkg): is this the correct url?
-const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/openie-model.2020.03.26.tar.gz'
+const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/vilbert-vqa-2020-09-17.tar.gz'
 
 // TODO(dirkg): is this the correct command?
 const bashCommand =

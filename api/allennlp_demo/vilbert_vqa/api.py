@@ -46,7 +46,7 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
                 "confidence": 1.24
             }, {
                 "answer": "red",
-                "confidence": -1.780,
+                "confidence": 0,
             }, {
                 "answer": "The Spanish Inquisition",
                 "confidence": 99.142
