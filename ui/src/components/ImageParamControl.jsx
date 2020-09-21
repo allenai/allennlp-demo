@@ -13,13 +13,13 @@ import styled from 'styled-components';
 import { Upload, message } from '@allenai/varnish';
 import { LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 
-/* props: T = {
+/* props = {
     modelParams: {
         imgSrc?: string;
         imageName?: string;
         image?: File;
     }
-    onChange: (newParams: T) => void;
+    onChange: (newModelParams) => void;
 }*/
 export const ImageParamControl = (props) => {
     const [localState, setLocalState] = useState({});
@@ -240,3 +240,16 @@ const DraggerImg = styled.img`
     max-width: ${({ theme }) => `calc(100% - ${theme.spacing.xxs} - ${theme.spacing.xxs})`};
     padding: ${({ theme }) => theme.spacing.xxs};
 `;
+
+export async function blobToString(blob) {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+        reader.onloadend = () => {
+            var base64String = reader.result;
+            // Base64 Encoded String without additional data: Attributes.
+            resolve(base64String.substr(base64String.indexOf(',') + 1));
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    })
+}

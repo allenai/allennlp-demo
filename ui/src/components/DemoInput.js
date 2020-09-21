@@ -4,7 +4,7 @@ import { Button, Select, Radio } from '@allenai/varnish'
 import RightOutlined from '@ant-design/icons/RightOutlined';
 
 import BeamSearch from './BeamSearch'
-import { ImageParamControl } from './ImageParamControl';
+import { ImageParamControl, blobToString } from './ImageParamControl';
 import { Tooltip } from './Shared'
 import '../css/Button.css'
 import { FormField, FormLabel, FormInput, FormTextArea, FormSelect } from './Form';
@@ -149,7 +149,7 @@ class DemoInput extends React.Component {
     }
 
     render() {
-        const { fields, selectedModel, outputState, responseData, inputState } = this.props
+        const { fields, selectedModel, outputState, responseData, inputState, exampleLabel } = this.props
 
         // Only enable running the model if every required field has a value.
         const canRun = fields.every(field => field.optional || this.state[field.name])
@@ -173,9 +173,13 @@ class DemoInput extends React.Component {
                     input = (
                         <ImageParamControl
                             onChange = {(img)=>{
-                                const stateUpdate = {}
-                                stateUpdate[field.name] = img;
-                                this.setState(stateUpdate)
+                                blobToString(img.image).then(s => {
+                                    img.image_base64 = s
+                                    const stateUpdate = {}
+                                    stateUpdate[field.name] = img
+                                    this.setState(stateUpdate)
+                                })
+                                .catch(e => console.log(e))
                             }}
                             modelParams = {this.state[field.name] || {}}
                         />
@@ -272,7 +276,7 @@ class DemoInput extends React.Component {
         return (
             <React.Fragment>
                 <FormInstructions>
-                    <span>Enter text or</span>
+                    <span>{exampleLabel ? exampleLabel : 'Enter text or'}</span>
                     <Select
                         dropdownMatchSelectWidth = {false}
                         disabled={outputState === "working"}

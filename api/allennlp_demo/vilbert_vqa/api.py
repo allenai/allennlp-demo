@@ -24,15 +24,17 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
                 "image": image_url
             })
         else:
-            image_base64 = inputs.get("image_base64")
-            if image_base64 is not None:
-                with tempfile.NamedTemporaryFile(prefix=f"{self.__class__.__name__}-") as f:
-                    f.write(standard_b64decode(image_base64))
-                    f.flush()
-                    result = super().predict({
-                        "question": inputs["question"],
-                        "image": f.name
-                    })
+            image = inputs.get("image")
+            if image is not None:
+                image_base64 = image["image_base64"]
+                if image_base64 is not None:
+                    with tempfile.NamedTemporaryFile(prefix=f"{self.__class__.__name__}-") as f:
+                        f.write(standard_b64decode(image_base64))
+                        f.flush()
+                        result = super().predict({
+                            "question": inputs["question"],
+                            "image": f.name
+                        })
 
         if result is None:
             raise ValueError("No image found in request.")
@@ -44,7 +46,7 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
                 "confidence": 1.24
             }, {
                 "answer": "red",
-                "confidence": -1.780,
+                "confidence": 0,
             }, {
                 "answer": "The Spanish Inquisition",
                 "confidence": 99.142
