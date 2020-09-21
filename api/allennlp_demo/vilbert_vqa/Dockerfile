@@ -13,7 +13,7 @@ COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
 COPY allennlp_demo/common allennlp_demo/common
 COPY allennlp_demo/vilbert_vqa allennlp_demo/vilbert_vqa
 
-RUN pip install git+git://github.com/allenai/allennlp.git@3be45bc485a4488aa075f44d9ec644c2649d0a43
+RUN pip install git+git://github.com/allenai/allennlp.git@4015f16ef797991062dda0d57aeb9640a963e072
 RUN pip install git+https://github.com/facebookresearch/detectron2@v0.2.1
 
 # Ensure allennlp_demo module can be found by Python.
