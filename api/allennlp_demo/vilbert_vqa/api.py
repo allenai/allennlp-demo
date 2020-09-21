@@ -39,18 +39,12 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
         if result is None:
             raise ValueError("No image found in request.")
 
-        # return dummy output for now
         return [
             {
-                "answer": "cat",
-                "confidence": 1.24
-            }, {
-                "answer": "red",
-                "confidence": 0,
-            }, {
-                "answer": "The Spanish Inquisition",
-                "confidence": 99.142
+                "answer": token,
+                "confidence": score * 100
             }
+            for token, score in result["tokens"].items()
         ]
 
     def load_interpreters(self):
