@@ -15,24 +15,41 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
         super().__init__(c)
 
     def predict(self, inputs: JsonDict):
+        result = None
+
         image_url = inputs.get("image_url")
         if image_url is not None:
-            return super().predict({
+            result = super().predict({
                 "question": inputs["question"],
                 "image": image_url
             })
+        else:
+            image_base64 = inputs.get("image_base64")
+            if image_base64 is not None:
+                with tempfile.NamedTemporaryFile(prefix=f"{self.__class__.__name__}-") as f:
+                    f.write(standard_b64decode(image_base64))
+                    f.flush()
+                    result = super().predict({
+                        "question": inputs["question"],
+                        "image": f.name
+                    })
 
-        image_base64 = inputs.get("image_base64")
-        if image_base64 is not None:
-            with tempfile.NamedTemporaryFile(prefix=f"{self.__class__.__name__}-") as f:
-                f.write(standard_b64decode(image_base64))
-                f.flush()
-                return super().predict({
-                    "question": inputs["question"],
-                    "image": f.name
-                })
+        if result is None:
+            raise ValueError("No image found in request.")
 
-        raise ValueError("No image found in request.")
+        # return dummy output for now
+        return [
+            {
+                "answer": "cat",
+                "confidence": 1.24
+            }, {
+                "answer": "red",
+                "confidence": -1.780,
+            }, {
+                "answer": "The Spanish Inquisition",
+                "confidence": 99.142
+            }
+        ]
 
     def load_interpreters(self):
         # The interpreters don't work with this model right now.
