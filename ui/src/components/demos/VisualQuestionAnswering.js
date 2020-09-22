@@ -68,7 +68,7 @@ const fields = [
      placeholder: `E.g. "What game are they playing?"`}
 ]
 
-const answerPageSize = 6;
+const answerPageSize = 15;
 
 const answerColumns = [
     {
