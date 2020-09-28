@@ -65,7 +65,7 @@ local namespace = {
 };
 
 local deployment = {
-    apiVersion: 'extensions/v1beta1',
+    apiVersion: 'apps/v1',
     kind: 'Deployment',
     metadata: {
         labels: ui_labels,
@@ -75,6 +75,9 @@ local deployment = {
     spec: {
         revisionHistoryLimit: 3,
         replicas: num_replicas,
+        selector: {
+            matchLabels: ui_labels
+        },
         template: {
             metadata: {
                 name: fqn,
