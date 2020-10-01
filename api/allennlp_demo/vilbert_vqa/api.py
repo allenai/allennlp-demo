@@ -39,7 +39,7 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
         if result is None:
             raise ValueError("No image found in request.")
 
-        return [
+        results = [
             {
                 "answer": token,
                 "confidence": score * 100
@@ -47,6 +47,8 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
             for token, score in result["tokens"].items()
             if not token.startswith("@@")
         ]
+        results.sort(key=lambda x: -x["confidence"])
+        return results[:10]  # Jon only wants the first 10 results.
 
     def load_interpreters(self):
         # The interpreters don't work with this model right now.
