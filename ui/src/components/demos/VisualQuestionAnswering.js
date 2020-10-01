@@ -14,7 +14,6 @@ import livingRoomSrc from './exampleImages/living_room.jpg';
 
 const title = "Visual Question Answering";
 
-// TODO(dirkg): please update the description
 const description = (
   <span>
     Visual Question Answering (VQA) is the task of generating a answer in response to a natural
@@ -27,39 +26,31 @@ const description = (
   </span>
 );
 
-// TODO(dirkg): is this the correct url?
-const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/vilbert-vqa-2020-09-17.tar.gz'
+const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/vilbert-vqa-2020.10.01.tar.gz'
 
 // TODO(dirkg): is this the correct command?
 const bashCommand =
-    `echo '{"question": "What game are they playing?", image: { image_base64: "..." } }' | \\
+    `echo '{"question": "What game are they playing?", "image": "https://storage.googleapis.com/allennlp-public-data/vqav2/baseball.jpg" }' | \\
 allennlp predict ${modelUrl} -`
 // TODO(dirkg): is this the correct command?
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
-import allennlp_models.structured_prediction
 predictor = Predictor.from_path("${modelUrl}")
 predictor.predict(
-  question="What game are they playing?",
-  image: {
-    image_base64: "..."
-  }
+  sentence="What game are they playing?",
+  image="https://storage.googleapis.com/allennlp-public-data/vqav2/baseball.jpg"
 )`
 
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
 const defaultUsage = {
-  installCommand: 'pip install allennlp==1.0.0 allennlp-models==1.0.0',
+  installCommand: 'pip install git+git://github.com/allenai/allennlp.git@0b20f80c1ea700766fe53d2eaf1c28de764f9710 && pip install git+https://github.com/facebookresearch/detectron2@v0.2.1',
   bashCommand,
   pythonCommand,
-  // TODO(dirkg): please update the notes
   evaluationNote: (<span>
-    <mark>[TODO(dirkg): please update the notes]</mark>.
+      Evaluation requires a large amount of images to be accessible locally, so we can't provide a command you can easily copy and paste.
   </span>),
-  // TODO(dirkg): please update the notes
-  trainingNote: (<span>
-    <mark>[TODO(dirkg): please update the notes]]</mark>.
-  </span>)
+  trainingCommand: `allennlp train training_configs/vilbert_vqa_from_huggingface.jsonnet -s output_path`
 }
 
 const fields = [
