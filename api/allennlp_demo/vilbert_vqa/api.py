@@ -45,6 +45,7 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
                 "confidence": score * 100
             }
             for token, score in result["tokens"].items()
+            if not token.startswith("@@")
         ]
 
     def load_interpreters(self):
