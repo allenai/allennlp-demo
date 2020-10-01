@@ -48,7 +48,7 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
             if not token.startswith("@@")
         ]
         results.sort(key=lambda x: -x["confidence"])
-        return results[:10]  # Jon only wants the first 10 results.
+        return results[:45]  # Jon only wants the first 45 results.
 
     def load_interpreters(self):
         # The interpreters don't work with this model right now.
