@@ -28,11 +28,9 @@ const description = (
 
 const modelUrl = 'https://storage.googleapis.com/allennlp-public-models/vilbert-vqa-2020.10.01.tar.gz'
 
-// TODO(dirkg): is this the correct command?
 const bashCommand =
     `echo '{"question": "What game are they playing?", "image": "https://storage.googleapis.com/allennlp-public-data/vqav2/baseball.jpg" }' | \\
 allennlp predict ${modelUrl} -`
-// TODO(dirkg): is this the correct command?
 const pythonCommand =
     `from allennlp.predictors.predictor import Predictor
 predictor = Predictor.from_path("${modelUrl}")
