@@ -32,12 +32,6 @@ const description = (
   </span>
 )
 
-const descriptionEllipsed = (
-  <span>
-    The named entity recognition model identifies named entities (people, locations, organizations, and…
-  </span>
-)
-
 const defaultUsage = undefined
 
 const bashCommand = (modelUrl) => {
@@ -77,7 +71,7 @@ const taskModels = [
   {
     name: "elmo-ner",
     desc: <span>
-      This model is the baseline model described 
+      This model is the baseline model described
       in <a href = "https://www.semanticscholar.org/paper/Semi-supervised-sequence-tagging-with-bidirectiona-Peters-Ammar/73e59cb556351961d1bdd4ab68cbbefc5662a9fc">
       Peters, Ammar, Bhagavatula, and Power 2017</a>.
       It uses a Gated Recurrent Unit (GRU) character encoder as well as a GRU phrase encoder,
@@ -363,4 +357,4 @@ const apiUrlAttack = ({model}, attacker) => {
 }
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
-const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, descriptionEllipsed, fields, examples, Output, defaultUsage}
+const modelProps = {apiUrl, apiUrlInterpret, apiUrlAttack, title, description, fields, examples, Output, defaultUsage}

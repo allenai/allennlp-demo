@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
-import { Theming, Footer, Header, Layout } from '@allenai/varnish';
+import { ThemeProvider, Footer, Header, Layout } from '@allenai/varnish';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
 import Menu from './components/Menu';
@@ -18,7 +18,6 @@ import './css/hierplane-overrides.css';
 import './css/visualization-types.css';
 import '@allenai/varnish/dist/varnish.css';
 
-const { ThemeProvider } = Theming;
 const { Content, DefaultAppLayoutProvider } = Layout;
 const { HeaderColumns } = Header;
 

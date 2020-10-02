@@ -1,0 +1,5 @@
+{
+    "id": "vilbert-vqa",
+    "archive_file": "https://storage.googleapis.com/allennlp-public-models/vilbert-vqa-2020.10.01.tar.gz",
+    "predictor_name": "vilbert_vqa"
+}

@@ -23,12 +23,6 @@ const description = (
   </span>
 );
 
-const descriptionEllipsed = (
-  <span>
-    Semantic parsing maps natural language to machine language.  This page demonstrates a semantic parsing…
-  </span>
-)
-
 const fields = [
   {name: "table", label: "Table", type: "TEXT_AREA",
     placeholder: `E.g. "Season\tLevel\tDivision\tSection\tPosition\tMovements\n1993\tTier 3\tDivision 2\tÖstra Svealand\t1st\tPromoted\n1994\tTier 2\tDivision 1\tNorra\t11th\tRelegation Playoffs\n"`},
@@ -158,6 +152,6 @@ const examples = [
 
 const apiUrl = () => `/api/wikitables-parser/predict`
 
-const modelProps = {apiUrl, title, description, descriptionEllipsed, fields, examples, Output}
+const modelProps = {apiUrl, title, description, fields, examples, Output}
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)

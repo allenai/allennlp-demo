@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@allenai/varnish": "~0.9.1",
-    "@ant-design/icons": "^4.1.0",
+    "@allenai/varnish": "^1.0.0",
+    "@ant-design/icons": "^4.2.1",
     "colormap": "^2.3.1",
     "hierplane": "^0.2.1",
     "lodash": "^4.17.11",
@@ -17,7 +17,7 @@
     "react-scripts": "3.4.1",
     "react-syntax-highlighter": "^12.2.1",
     "react-tooltip": "4.2.5",
-    "styled-components": "^4.3.2"
+    "styled-components": "^5.1.1"
   },
   "scripts": {
     "start": "react-app-rewired start",
