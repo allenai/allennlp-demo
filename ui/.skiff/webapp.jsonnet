@@ -65,7 +65,7 @@ local namespace = {
 };
 
 local deployment = {
-    apiVersion: 'extensions/v1beta1',
+    apiVersion: 'apps/v1',
     kind: 'Deployment',
     metadata: {
         labels: ui_labels,
@@ -75,6 +75,9 @@ local deployment = {
     spec: {
         revisionHistoryLimit: 3,
         replicas: num_replicas,
+        selector: {
+            matchLabels: ui_labels
+        },
         template: {
             metadata: {
                 name: fqn,
@@ -133,7 +136,7 @@ local ingress = {
         namespace: namespace_name,
         labels: ui_labels,
         annotations: {
-            'certmanager.k8s.io/cluster-issuer': 'letsencrypt-prod',
+            'cert-manager.io/cluster-issuer': 'letsencrypt-prod',
             'kubernetes.io/ingress.class': 'nginx',
             'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
             'apps.allenai.org/build': build_id,
