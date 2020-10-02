@@ -52,3 +52,5 @@ artifacts:
     paths:
     -  api/allennlp_demo/$_SUBMODULE_PATH/.skiff/webapp.yaml
 timeout: 1200s
+options:
+  machineType: 'N1_HIGHCPU_8'
