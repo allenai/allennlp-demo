@@ -19,10 +19,7 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
 
         image_url = inputs.get("image_url")
         if image_url is not None:
-            result = super().predict({
-                "question": inputs["question"],
-                "image": image_url
-            })
+            result = super().predict({"question": inputs["question"], "image": image_url})
         else:
             image = inputs.get("image")
             if image is not None:
@@ -31,19 +28,13 @@ class VilbertVqaModelEndpoint(http.ModelEndpoint):
                     with tempfile.NamedTemporaryFile(prefix=f"{self.__class__.__name__}-") as f:
                         f.write(standard_b64decode(image_base64))
                         f.flush()
-                        result = super().predict({
-                            "question": inputs["question"],
-                            "image": f.name
-                        })
+                        result = super().predict({"question": inputs["question"], "image": f.name})
 
         if result is None:
             raise ValueError("No image found in request.")
 
         results = [
-            {
-                "answer": token,
-                "confidence": score * 100
-            }
+            {"answer": token, "confidence": score * 100}
             for token, score in result["tokens"].items()
             if not token.startswith("@@")
         ]
