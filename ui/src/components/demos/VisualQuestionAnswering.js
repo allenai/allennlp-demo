@@ -163,7 +163,7 @@ const examples = [
     }
 ];
 
-const apiUrl = () => '/api/vilbert_vqa/predict'
+const apiUrl = () => '/api/vilbert-vqa/predict'
 
 const modelProps = {
   apiUrl,
