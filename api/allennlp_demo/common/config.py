@@ -44,15 +44,15 @@ class Model:
     def from_file(cls, path: str) -> "Model":
         with open(path, "r") as fh:
             out = cls(**json.load(fh))
-        assert cls.pretrained_model_id is not None or cls.archive_file is not None
-        if cls.pretrained_model_id is not None:
+        assert out.pretrained_model_id is not None or out.archive_file is not None
+        if out.pretrained_model_id is not None:
             assert (
-                cls.archive_file is None
+                out.archive_file is None
             ), "'archive_file' option not supported with 'pretrained_model_id'"
             assert (
-                cls.predictor_name is None
+                out.predictor_name is None
             ), "'predictor_name' option not supported with 'pretrained_model_id'"
             assert (
-                cls.overrides is None
+                out.overrides is None
             ), "'overrides' option not supported with 'pretrained_model_id'"
         return out
