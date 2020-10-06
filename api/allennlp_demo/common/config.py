@@ -1,7 +1,11 @@
 import json
 
 from dataclasses import dataclass
-from typing import Mapping, Optional
+from typing import Mapping, Optional, List
+
+
+VALID_ATTACKERS = ("hotflip", "input_reduction")
+VALID_INTERPRETERS = ("simple_gradient", "smooth_gradient", "integrated_gradient")
 
 
 @dataclass(frozen=True)
@@ -40,11 +44,25 @@ class Model:
     This is ignored if `pretrained_model_id` is given.
     """
 
+    attackers: Optional[List[str]] = None
+    """
+    List of valid attackers to use.
+    """
+
+    interpreters: Optional[List[str]] = None
+    """
+    List of valid interpreters to use.
+    """
+
     @classmethod
     def from_file(cls, path: str) -> "Model":
         with open(path, "r") as fh:
             out = cls(**json.load(fh))
         assert out.pretrained_model_id is not None or out.archive_file is not None
+        for attacker in out.attackers or []:
+            assert attacker in VALID_ATTACKERS, f"invalid attacker {attacker}"
+        for interpreter in out.interpreters or []:
+            assert interpreter in VALID_INTERPRETERS, f"invalid interpreter {interpreter}"
         if out.pretrained_model_id is not None:
             assert (
                 out.archive_file is None

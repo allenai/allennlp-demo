@@ -2,6 +2,7 @@ SRC = allennlp_demo/
 DOCKER_BASE_NAME = allennlp-demo
 DOCKER_TAG = latest
 DOCKER_PORT = 8000
+MODEL_ENDPOINT_TESTS = $(shell find . -type f -name 'test_api.py')
 
 .PHONY : lint
 lint :
@@ -48,3 +49,12 @@ typecheck :
 		--entrypoint=python \
 		$(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG) \
 		-m pytest -v --color=yes
+
+allennlp_demo/%/test_api.py : FORCE
+	@echo "Testing $@"
+	pytest -v --color=yes $@
+
+.PHONY : model-endpoint-tests
+model-endpoint-tests : $(MODEL_ENDPOINT_TESTS)
+
+FORCE :

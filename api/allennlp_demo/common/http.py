@@ -3,7 +3,7 @@ from dataclasses import asdict
 import json
 
 from flask import Flask, Request, Response, after_this_request, request, jsonify
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Dict
 from allennlp.version import VERSION
 from allennlp_demo.common import config
 from allennlp_demo.common.logs import configure_logging
@@ -122,11 +122,14 @@ class ModelEndpoint:
         `/interpret/:id` will invoke the interpreter with the provided `:id`. Override this method
         to add or remove interpreters.
         """
-        return {
-            "simple_gradient": SimpleGradient(self.predictor),
-            "smooth_gradient": SmoothGradient(self.predictor),
-            "integrated_gradient": IntegratedGradient(self.predictor),
-        }
+        interpreters: Dict[str, SaliencyInterpreter] = {}
+        if self.model.interpreters is None or "simple_gradient" in self.model.interpreters:
+            interpreters["simple_gradient"] = SimpleGradient(self.predictor)
+        if self.model.interpreters is None or "smooth_gradient" in self.model.interpreters:
+            interpreters["smooth_gradient"] = SmoothGradient(self.predictor)
+        if self.model.interpreters is None or "integrated_gradient" in self.model.interpreters:
+            interpreters["integrated_gradient"] = IntegratedGradient(self.predictor)
+        return interpreters
 
     def load_attackers(self) -> Mapping[str, Attacker]:
         """
@@ -134,9 +137,14 @@ class ModelEndpoint:
         will invoke the attacker with the provided `:id`. Override this method to add or remove
         attackers.
         """
-        hotflip = Hotflip(self.predictor)
-        hotflip.initialize()
-        return {"hotflip": hotflip, "input_reduction": InputReduction(self.predictor)}
+        attackers: Dict[str, Attacker] = {}
+        if self.model.attackers is None or "hotflip" in self.model.attackers:
+            hotflip = Hotflip(self.predictor)
+            hotflip.initialize()
+            attackers["hotflip"] = hotflip
+        if self.model.attackers is None or "input_reduction" in self.model.attackers:
+            attackers["input_reduction"] = InputReduction(self.predictor)
+        return attackers
 
     def info(self) -> str:
         """

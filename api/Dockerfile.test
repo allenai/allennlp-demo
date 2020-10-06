@@ -20,4 +20,4 @@ ENV PYTHONUNBUFFERED 1
 # Disable parallelism in tokenizers because it doesn't help, and sometimes hurts.
 ENV TOKENIZERS_PARALLELISM 0
 
-ENTRYPOINT ["pytest"]
+ENTRYPOINT ["make"]
