@@ -67,6 +67,11 @@ jobs:
       run: |
         docker build --pull -f Dockerfile.test -t $DOCKER_IMAGE_NAME .
 
+    - name: Dubug info
+      working-directory: api
+      run: |
+        docker run --rm --entrypoint pip $DOCKER_IMAGE_NAME freeze
+
     - name: Run model endpoint tests
       working-directory: api
       run: |

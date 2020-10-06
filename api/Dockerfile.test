@@ -21,4 +21,4 @@ ENV PYTHONUNBUFFERED 1
 ENV TOKENIZERS_PARALLELISM 0
 
 ENTRYPOINT ["pytest"]
-CMD ["-v", ".", "allennlp_demo/atis_parser/test_api.py"]
+CMD ["-v", "-n2", "--forked", "--color=yes", "--durations=5", "allennlp_demo/atis_parser/test_api.py"]
