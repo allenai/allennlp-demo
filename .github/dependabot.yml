@@ -12,7 +12,3 @@ updates:
     interval: daily
     time: "13:00"
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: allennlp-models
-    versions:
-    - "> 1.0.0rc3"

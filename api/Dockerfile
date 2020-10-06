@@ -1,6 +1,6 @@
 # This is the common Dockerfile that is used to build all demos unless the demo
 # overrides this with its own Dockerfile in its directory.
-FROM allennlp/allennlp:v1.0.0rc3
+FROM allennlp/allennlp:v1.1.0
 
 # Name / sub-directory name of the demo.
 ARG MODULE
@@ -22,6 +22,9 @@ ENV PYTHONPATH /app/
 # Ensure log messages written immediately instead of being buffered, which is
 # useful if the app crashes so the logs won't get swallowed.
 ENV PYTHONUNBUFFERED 1
+
+# Disable parallelism in tokenizers because it doesn't help, and sometimes hurts.
+ENV TOKENIZERS_PARALLELISM 0
 
 # You might be wondering why we can't just do
 #
