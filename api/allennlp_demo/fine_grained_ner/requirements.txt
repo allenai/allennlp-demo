@@ -1,5 +1,0 @@
-# See the Docker image for the version of AllenNLP
-dataclasses
-Flask==1.1.2
-pytest==5.4.1
-allennlp_models==1.0.0

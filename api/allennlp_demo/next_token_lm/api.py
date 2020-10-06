@@ -1,7 +1,6 @@
 import os
 from typing import Mapping
 
-from allennlp_models import lm  # noqa: F401
 from allennlp.interpret.attackers import Attacker, Hotflip
 
 from allennlp_demo.common import config, http

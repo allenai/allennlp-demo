@@ -15,7 +15,6 @@ from allennlp.interpret.saliency_interpreters import (
     IntegratedGradient,
 )
 from allennlp.interpret.attackers import Attacker, Hotflip, InputReduction
-from allennlp.models.archival import load_archive
 
 
 def no_cache(request: Request) -> bool:
@@ -77,9 +76,22 @@ class ModelEndpoint:
         self.app = Flask(model.id)
         self.configure_logging()
 
-        o = json.dumps(model.overrides) if model.overrides is not None else ""
-        archive = load_archive(model.archive_file, overrides=o)
-        self.predictor = Predictor.from_archive(archive, model.predictor_name)
+        if model.pretrained_model_id is not None:
+            # This is here so that this will also work with older versions.
+            # TODO (epwalsh): import this at the top once we move ALL demo models
+            # to new version of allennlp/allennlp-models.
+            from allennlp_models.pretrained import load_predictor
+
+            self.predictor = load_predictor(model.pretrained_model_id)
+        elif model.archive_file is not None:
+            o = json.dumps(model.overrides) if model.overrides is not None else ""
+            self.predictor = Predictor.from_path(
+                model.archive_file, predictor_name=model.predictor_name, overrides=o
+            )
+        else:
+            raise ValueError(
+                "invalid model config, either 'pretrained_model_id' or 'archive_file' required"
+            )
 
         self.interpreters = self.load_interpreters()
         self.attackers = self.load_attackers()

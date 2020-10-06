@@ -1,5 +1,4 @@
 {
     "id": "elmo-snli",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/decomposable-attention-elmo-2020.04.09.tar.gz",
-    "predictor_name": "textual-entailment"
+    "pretrained_model_id": "pair-classification-esim"
 }
