@@ -1,0 +1,24 @@
+FROM allennlp/allennlp:v1.1.0
+
+WORKDIR /app/
+
+COPY requirements.txt requirements.txt
+COPY dev-requirements.txt dev-requirements.txt
+RUN pip install --no-cache-dir --upgrade --upgrade-strategy=eager -r requirements.txt -r dev-requirements.txt
+
+RUN spacy download en_core_web_sm
+
+COPY . .
+
+# Ensure allennlp_demo module can be found by Python.
+ENV PYTHONPATH /app/
+
+# Ensure log messages written immediately instead of being buffered, which is
+# useful if the app crashes so the logs won't get swallowed.
+ENV PYTHONUNBUFFERED 1
+
+# Disable parallelism in tokenizers because it doesn't help, and sometimes hurts.
+ENV TOKENIZERS_PARALLELISM 0
+
+ENTRYPOINT ["pytest"]
+CMD ["-v", ".", "allennlp_demo/atis_parser/test_api.py"]
