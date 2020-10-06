@@ -79,4 +79,6 @@ jobs:
             -v $HOME/.allennlp:/root/.allennlp \
             -v $HOME/.cache/torch:/root/.cache/torch \
             -v $HOME/nltk_data:/root/nltk_data \
-            $DOCKER_IMAGE_NAME -v allennlp_demo/atis_parser/test_api.py
+            $DOCKER_IMAGE_NAME -v --color=yes -n2 --forked --durations=5 \
+            allennlp_demo/atis_parser/test_api.py \
+            allennlp_demo/transformer_qa/test_api.py
