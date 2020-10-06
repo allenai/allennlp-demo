@@ -1,5 +1,4 @@
 {
     "id": "masked-lm",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/bert-masked-lm-2019.09.17.tar.gz",
-    "predictor_name": "masked_language_model"
+    "pretrained_model_id": "lm-masked-language-model"
 }

@@ -15,6 +15,7 @@ from allennlp.interpret.saliency_interpreters import (
     IntegratedGradient,
 )
 from allennlp.interpret.attackers import Attacker, Hotflip, InputReduction
+from allennlp_models.pretrained import load_predictor
 
 
 def no_cache(request: Request) -> bool:
@@ -77,11 +78,6 @@ class ModelEndpoint:
         self.configure_logging()
 
         if model.pretrained_model_id is not None:
-            # This is here so that this will also work with older versions.
-            # TODO (epwalsh): import this at the top once we move ALL demo models
-            # to new version of allennlp/allennlp-models.
-            from allennlp_models.pretrained import load_predictor
-
             self.predictor = load_predictor(model.pretrained_model_id)
         elif model.archive_file is not None:
             o = json.dumps(model.overrides) if model.overrides is not None else ""
