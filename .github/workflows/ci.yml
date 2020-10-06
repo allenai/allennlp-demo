@@ -79,4 +79,4 @@ jobs:
             -v $HOME/.allennlp:/root/.allennlp \
             -v $HOME/.cache/torch:/root/.cache/torch \
             -v $HOME/nltk_data:/root/nltk_data \
-            $DOCKER_IMAGE_NAME
+            $DOCKER_IMAGE_NAME -v allennlp_demo/atis_parser/test_api.py
