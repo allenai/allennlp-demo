@@ -20,32 +20,35 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: 3.8
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@v2
       with:
         path: ${{ env.pythonLocation }}
         key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('api/requirements.txt') }}-${{ hashFiles('api/dev-requirements.txt') }}
 
     - name: Install requirements
+      working-directory: api
       run: |
-        cd api
         pip install --upgrade --upgrade-strategy eager -r requirements.txt -r dev-requirements.txt
 
     - name: Format
+      working-directory: api
       if: always()
       run: |
-        cd api && make format
+        make format
 
     - name: Lint
+      working-directory: api
       if: always()
       run: |
-        cd api && make lint
+        make lint
 
     - name: Type check
+      working-directory: api
       if: always()
       run: |
-        cd api && make typecheck
+        make typecheck
 
   # This is an example of how we could run individual model tests on GitHub Actions.
   # Currently we're doing this as part of the Google Cloud Build since that allows us to
