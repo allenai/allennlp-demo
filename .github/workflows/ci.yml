@@ -100,6 +100,10 @@ jobs:
       with:
         python-version: 3.8
 
+    - name: Install requirements
+      run: |
+        pip install PyYAML
+
     - name: Validate GitHub Actions config
       run: |
         # If this step fails, this means the model matrix in the 'endpoint_test' GitHub Actions
