@@ -57,7 +57,12 @@ jobs:
     runs-on: [self-hosted]
     strategy:
       matrix:
-        model: ["atis_parser", "bidaf"]
+        model: [
+          "atis_parser",
+          "bidaf",
+          "bidaf_elmo",
+          "constituency_parser",
+        ]
     steps:
     - uses: actions/checkout@v2
     - name: Build and test endpoint

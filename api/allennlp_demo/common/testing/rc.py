@@ -39,39 +39,39 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
     def attacker_ids(self) -> List[str]:
         return ["hotflip", "input_reduction"]
 
-    #  def test_interpret(self):
-    #      for interpreter_id in self.interpreter_ids():
-    #          resp = self.client.post(
-    #              f"/interpret/{interpreter_id}",
-    #              query_string={"no_cache": True},
-    #              json=self.predict_input,
-    #          )
-    #          assert resp.status_code == 200
-    #          assert resp.json is not None
-    #          assert len(resp.json["instance_1"]) > 0
-    #          assert len(resp.json["instance_1"]["grad_input_1"]) > 0
-    #          assert len(resp.json["instance_1"]["grad_input_2"]) > 0
+    def test_interpret(self):
+        for interpreter_id in self.interpreter_ids():
+            resp = self.client.post(
+                f"/interpret/{interpreter_id}",
+                query_string={"no_cache": True},
+                json=self.predict_input,
+            )
+            assert resp.status_code == 200
+            assert resp.json is not None
+            assert len(resp.json["instance_1"]) > 0
+            assert len(resp.json["instance_1"]["grad_input_1"]) > 0
+            assert len(resp.json["instance_1"]["grad_input_2"]) > 0
 
-    #  def test_invalid_interpreter_id(self):
-    #      resp = self.client.post("/interpret/invalid", json={})
-    #      assert resp.status_code == 404
-    #      assert resp.json["error"] == "No interpreter with id invalid"
+    def test_invalid_interpreter_id(self):
+        resp = self.client.post("/interpret/invalid", json={})
+        assert resp.status_code == 404
+        assert resp.json["error"] == "No interpreter with id invalid"
 
-    #  def test_attack(self):
-    #      data = {
-    #          "inputs": self.predict_input,
-    #          "input_field_to_attack": "question",
-    #          "grad_input_field": "grad_input_2",
-    #      }
-    #      for attacker_id in self.attacker_ids():
-    #          resp = self.client.post(
-    #              f"/attack/{attacker_id}", json=data, query_string={"no_cache": True}
-    #          )
-    #          assert resp.status_code == 200
-    #          assert len(resp.json["final"]) > 0
-    #          assert len(resp.json["original"]) > 0
+    def test_attack(self):
+        data = {
+            "inputs": self.predict_input,
+            "input_field_to_attack": "question",
+            "grad_input_field": "grad_input_2",
+        }
+        for attacker_id in self.attacker_ids():
+            resp = self.client.post(
+                f"/attack/{attacker_id}", json=data, query_string={"no_cache": True}
+            )
+            assert resp.status_code == 200
+            assert len(resp.json["final"]) > 0
+            assert len(resp.json["original"]) > 0
 
-    #  def test_invalid_attacker_id(self):
-    #      resp = self.client.post("/attack/invalid", json={})
-    #      assert resp.status_code == 404
-    #      assert resp.json["error"] == "No attacker with id invalid"
+    def test_invalid_attacker_id(self):
+        resp = self.client.post("/attack/invalid", json={})
+        assert resp.status_code == 404
+        assert resp.json["error"] == "No attacker with id invalid"
