@@ -62,6 +62,16 @@ jobs:
           "bidaf",
           "bidaf_elmo",
           "constituency_parser",
+          "coref",
+          "dependency_parser",
+          "elmo_snli",
+          "fine_grained_ner",
+          "glove_sentiment_analysis",
+          "masked_lm",
+          "named_entity_recognition",
+          "naqanet",
+          "next_token_lm",
+          "nlvr_parser",
         ]
     steps:
     - uses: actions/checkout@v2
