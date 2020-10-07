@@ -72,6 +72,15 @@ jobs:
           "naqanet",
           "next_token_lm",
           "nlvr_parser",
+          "nmn_drop",
+          "open_information_extraction",
+          "roberta_mnli",
+          "roberta_sentiment_analysis",
+          "roberta_snli",
+          "semantic_role_labeling",
+          "transformer_qa",
+          "vilbert_vqa",
+          "wikitables_parser",
         ]
     steps:
     - uses: actions/checkout@v2
@@ -79,3 +88,20 @@ jobs:
       working-directory: api
       run: |
         make ${{ matrix.model }}-test DOCKER_TAG=$GITHUB_SHA
+
+  validate_ci:
+    name: Validate CI Config
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+
+    - name: Validate GitHub Actions config
+      run: |
+        # If this step fails, this means the model matrix in the 'endpoint_test' GitHub Actions
+        # job needs to be updated.
+        python dev/check_models_ci.py
