@@ -52,22 +52,15 @@ jobs:
       run: |
         make typecheck
 
-  atis_parser:
-    name: Endpoint Test (${{ github.job }})
+  endpoint_test:
+    name: Endpoint Test
     runs-on: [self-hosted]
+    strategy:
+      matrix:
+        model: ["atis_parser", "bidaf"]
     steps:
     - uses: actions/checkout@v2
     - name: Build and test endpoint
       working-directory: api
       run: |
-        make ${{ github.job }}-test DOCKER_TAG=$GITHUB_SHA
-
-  bidaf:
-    name: Endpoint Test (${{ github.job }})
-    runs-on: [self-hosted]
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build and test endpoint
-      working-directory: api
-      run: |
-        make ${{ github.job }}-test DOCKER_TAG=$GITHUB_SHA
+        make ${{ matrix.model }}-test DOCKER_TAG=$GITHUB_SHA
