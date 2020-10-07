@@ -52,31 +52,22 @@ jobs:
       run: |
         make typecheck
 
-  model_endpoint_tests:
-    name: Model Endpoint Tests
+  atis_parser:
+    name: Endpoint Test (${{ github.job }})
     runs-on: [self-hosted]
     steps:
     - uses: actions/checkout@v2
-
-    - name: Set Docker tag
-      run: |
-        echo "DOCKER_IMAGE_NAME=allennlp-demo-test:$GITHUB_SHA" >> $GITHUB_ENV
-
-    - name: Build test image
+    - name: Build and test endpoint
       working-directory: api
       run: |
-        docker build --pull -f Dockerfile.test -t $DOCKER_IMAGE_NAME .
+        make ${{ github.job }}-test DOCKER_TAG=$GITHUB_SHA
 
-    - name: Dubug info
+  bidaf:
+    name: Endpoint Test (${{ github.job }})
+    runs-on: [self-hosted]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test endpoint
       working-directory: api
       run: |
-        docker run --rm --entrypoint pip $DOCKER_IMAGE_NAME freeze
-
-    - name: Run model endpoint tests
-      working-directory: api
-      run: |
-        docker run --rm \
-            -v $HOME/.allennlp:/root/.allennlp \
-            -v $HOME/.cache/torch:/root/.cache/torch \
-            -v $HOME/nltk_data:/root/nltk_data \
-            $DOCKER_IMAGE_NAME model-endpoint-tests
+        make ${{ github.job }}-test DOCKER_TAG=$GITHUB_SHA

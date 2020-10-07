@@ -3,6 +3,6 @@
 git+https://github.com/allenai/allennlp.git@edcb6d3466d2c4263f1e6a5731c6ace5358f47e8
 git+https://github.com/allenai/allennlp-models.git@0b05944f34762e84707317ff3f5b843646de2e58
 # TODO (epwalsh): Update semparse to latest release.
-git+https://github.com/allenai/allennlp-semparse.git@008f9275724fdcaf81520160b8db9e074d1b85d3
+git+https://github.com/allenai/allennlp-semparse.git@5bafed1738ad828c08befbb16b6e2142c1bdfef4
 Flask==1.1.2
 pytest==6.1.1
