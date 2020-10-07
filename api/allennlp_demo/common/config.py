@@ -1,7 +1,8 @@
 import json
-
 from dataclasses import dataclass
 from typing import Mapping, Optional, List
+
+from allennlp.predictors import Predictor
 
 
 VALID_ATTACKERS = ("hotflip", "input_reduction")
@@ -54,6 +55,11 @@ class Model:
     List of valid interpreters to use.
     """
 
+    use_old_load_method: bool = False
+    """
+    Some models that run on older versions need to be load differently.
+    """
+
     @classmethod
     def from_file(cls, path: str) -> "Model":
         with open(path, "r") as fh:
@@ -73,4 +79,35 @@ class Model:
             assert (
                 out.overrides is None
             ), "'overrides' option not supported with 'pretrained_model_id'"
+        if out.use_old_load_method:
+            assert out.pretrained_model_id is None
+        out._update_from_model_card()
         return out
+
+    def _update_from_model_card(self):
+        if self.pretrained_model_id is not None:
+            from allennlp_models.pretrained import get_pretrained_models
+
+            model_card = get_pretrained_models()[self.pretrained_model_id]
+            self.archive_file = model_card.archive_file
+            self.predictor_name = model_card.registered_predictor_name
+
+    def load_predictor(self) -> Predictor:
+        if self.pretrained_model_id is not None:
+            from allennlp_models.pretrained import load_predictor
+
+            return load_predictor(self.pretrained_model_id)
+
+        assert self.archive_file is not None
+        o = json.dumps(self.overrides) if self.overrides is not None else ""
+
+        if self.use_old_load_method:
+            from allennlp.models.archival import load_archive
+
+            o = json.dumps(self.overrides) if self.overrides is not None else ""
+            archive = load_archive(self.archive_file, overrides=o)
+            return Predictor.from_archive(archive, self.predictor_name)
+
+        return Predictor.from_path(
+            self.archive_file, predictor_name=self.predictor_name, overrides=o
+        )

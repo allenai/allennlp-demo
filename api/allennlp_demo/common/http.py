@@ -7,7 +7,7 @@ from typing import Callable, Mapping, Dict
 from allennlp.version import VERSION
 from allennlp_demo.common import config
 from allennlp_demo.common.logs import configure_logging
-from allennlp.predictors.predictor import Predictor, JsonDict
+from allennlp.predictors.predictor import JsonDict
 from allennlp.interpret.saliency_interpreters import (
     SaliencyInterpreter,
     SimpleGradient,
@@ -15,7 +15,6 @@ from allennlp.interpret.saliency_interpreters import (
     IntegratedGradient,
 )
 from allennlp.interpret.attackers import Attacker, Hotflip, InputReduction
-from allennlp_models.pretrained import load_predictor
 
 
 def no_cache(request: Request) -> bool:
@@ -76,22 +75,9 @@ class ModelEndpoint:
         self.model = model
         self.app = Flask(model.id)
         self.configure_logging()
-
-        if model.pretrained_model_id is not None:
-            self.predictor = load_predictor(model.pretrained_model_id)
-        elif model.archive_file is not None:
-            o = json.dumps(model.overrides) if model.overrides is not None else ""
-            self.predictor = Predictor.from_path(
-                model.archive_file, predictor_name=model.predictor_name, overrides=o
-            )
-        else:
-            raise ValueError(
-                "invalid model config, either 'pretrained_model_id' or 'archive_file' required"
-            )
-
+        self.predictor = model.load_predictor()
         self.interpreters = self.load_interpreters()
         self.attackers = self.load_attackers()
-
         self.configure_error_handling()
 
         # By creating the LRU caches when the class is instantiated, we can
