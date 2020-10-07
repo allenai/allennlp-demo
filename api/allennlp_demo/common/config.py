@@ -20,15 +20,14 @@ class Model:
     A unique name to identify each demo.
     """
 
+    archive_file: str
+    """
+    The path to the model's archive_file.
+    """
+
     pretrained_model_id: Optional[str] = None
     """
     The ID of a pretrained model to use from `allennlp_models.pretrained`.
-    """
-
-    archive_file: Optional[str] = None
-    """
-    If `pretrained_model_id` is `None`, `archive_file` is required so we can load the predictor
-    directly from the given archive.
     """
 
     predictor_name: Optional[str] = None
@@ -63,34 +62,24 @@ class Model:
     @classmethod
     def from_file(cls, path: str) -> "Model":
         with open(path, "r") as fh:
-            out = cls(**json.load(fh))
-        assert out.pretrained_model_id is not None or out.archive_file is not None
+            raw = json.load(fh)
+            if "pretrained_model_id" in raw:
+                from allennlp_models.pretrained import get_pretrained_models
+
+                model_card = get_pretrained_models()[raw["pretrained_model_id"]]
+                raw["archive_file"] = model_card.archive_file
+                raw["predictor_name"] = model_card.registered_predictor_name
+            out = cls(**raw)
+
+        # Do some validation.
         for attacker in out.attackers or []:
             assert attacker in VALID_ATTACKERS, f"invalid attacker {attacker}"
         for interpreter in out.interpreters or []:
             assert interpreter in VALID_INTERPRETERS, f"invalid interpreter {interpreter}"
-        if out.pretrained_model_id is not None:
-            assert (
-                out.archive_file is None
-            ), "'archive_file' option not supported with 'pretrained_model_id'"
-            assert (
-                out.predictor_name is None
-            ), "'predictor_name' option not supported with 'pretrained_model_id'"
-            assert (
-                out.overrides is None
-            ), "'overrides' option not supported with 'pretrained_model_id'"
         if out.use_old_load_method:
             assert out.pretrained_model_id is None
-        out._update_from_model_card()
+
         return out
-
-    def _update_from_model_card(self):
-        if self.pretrained_model_id is not None:
-            from allennlp_models.pretrained import get_pretrained_models
-
-            model_card = get_pretrained_models()[self.pretrained_model_id]
-            self.archive_file = model_card.archive_file
-            self.predictor_name = model_card.registered_predictor_name
 
     def load_predictor(self) -> Predictor:
         if self.pretrained_model_id is not None:
