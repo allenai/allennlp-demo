@@ -1,4 +1,5 @@
 {
     "id": "next-token-lm",
-    "pretrained_model_id": "lm-next-token-lm-gpt2"
+    "pretrained_model_id": "lm-next-token-lm-gpt2",
+    "attackers": ["hotflip"]
 }

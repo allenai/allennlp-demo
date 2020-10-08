@@ -1,12 +1,10 @@
 from functools import lru_cache
 from dataclasses import asdict
 import json
+from typing import Callable, Dict
 
 from flask import Flask, Request, Response, after_this_request, request, jsonify
-from typing import Callable, Mapping, Dict
 from allennlp.version import VERSION
-from allennlp_demo.common import config
-from allennlp_demo.common.logs import configure_logging
 from allennlp.predictors.predictor import JsonDict
 from allennlp.interpret.saliency_interpreters import (
     SaliencyInterpreter,
@@ -15,6 +13,9 @@ from allennlp.interpret.saliency_interpreters import (
     IntegratedGradient,
 )
 from allennlp.interpret.attackers import Attacker, Hotflip, InputReduction
+
+from allennlp_demo.common import config
+from allennlp_demo.common.logs import configure_logging
 
 
 def no_cache(request: Request) -> bool:
@@ -55,12 +56,22 @@ class NotFoundError(RuntimeError):
 
 class UnknownInterpreterError(NotFoundError):
     def __init__(self, interpreter_id: str):
-        super().__init__(f"No interpreter with id {interpreter_id}")
+        super().__init__(f"No interpreter with id '{interpreter_id}'")
+
+
+class InvalidInterpreterError(NotFoundError):
+    def __init__(self, interpreter_id: str):
+        super().__init__(f"Interpreter with id '{interpreter_id}' is not supported for this model")
 
 
 class UnknownAttackerError(NotFoundError):
     def __init__(self, attacker_id: str):
-        super().__init__(f"No attacker with id {attacker_id}")
+        super().__init__(f"No attacker with id '{attacker_id}'")
+
+
+class InvalidAttackerError(NotFoundError):
+    def __init__(self, attacker_id: str):
+        super().__init__(f"Attacker with id '{attacker_id}' is not supported for this model")
 
 
 class ModelEndpoint:
@@ -102,33 +113,41 @@ class ModelEndpoint:
 
         self.setup_routes()
 
-    def load_interpreters(self) -> Mapping[str, SaliencyInterpreter]:
+    def load_interpreters(self) -> Dict[str, SaliencyInterpreter]:
         """
         Returns a mapping of interpreters keyed by a unique identifier. Requests to
         `/interpret/:id` will invoke the interpreter with the provided `:id`. Override this method
         to add or remove interpreters.
         """
+        interpreter_names = (
+            config.VALID_INTERPRETERS
+            if self.model.interpreters is None
+            else self.model.interpreters
+        )
         interpreters: Dict[str, SaliencyInterpreter] = {}
-        if self.model.interpreters is None or "simple_gradient" in self.model.interpreters:
+        if "simple_gradient" in interpreter_names:
             interpreters["simple_gradient"] = SimpleGradient(self.predictor)
-        if self.model.interpreters is None or "smooth_gradient" in self.model.interpreters:
+        if "smooth_gradient" in interpreter_names:
             interpreters["smooth_gradient"] = SmoothGradient(self.predictor)
-        if self.model.interpreters is None or "integrated_gradient" in self.model.interpreters:
+        if "integrated_gradient" in interpreter_names:
             interpreters["integrated_gradient"] = IntegratedGradient(self.predictor)
         return interpreters
 
-    def load_attackers(self) -> Mapping[str, Attacker]:
+    def load_attackers(self) -> Dict[str, Attacker]:
         """
         Returns a mapping of attackers keyed by a unique identifier. Requests to `/attack/:id`
         will invoke the attacker with the provided `:id`. Override this method to add or remove
         attackers.
         """
+        attacker_names = (
+            config.VALID_ATTACKERS if self.model.attackers is None else self.model.attackers
+        )
         attackers: Dict[str, Attacker] = {}
-        if self.model.attackers is None or "hotflip" in self.model.attackers:
+        if "hotflip" in attacker_names:
             hotflip = Hotflip(self.predictor)
             hotflip.initialize()
             attackers["hotflip"] = hotflip
-        if self.model.attackers is None or "input_reduction" in self.model.attackers:
+        if "input_reduction" in attacker_names:
             attackers["input_reduction"] = InputReduction(self.predictor)
         return attackers
 
@@ -149,9 +168,11 @@ class ModelEndpoint:
         Interprets the output of a predictor and assigns sailency scores to each, as to find
         inputs that would change the model's prediction some desired manner.
         """
+        if interpreter_id not in config.VALID_INTERPRETERS:
+            raise UnknownInterpreterError(interpreter_id)
         interp = self.interpreters.get(interpreter_id)
         if interp is None:
-            raise UnknownInterpreterError(interpreter_id)
+            raise InvalidInterpreterError(interpreter_id)
         return interp.saliency_interpret_from_json(inputs)
 
     def attack(self, attacker_id: str, attack: JsonDict) -> JsonDict:
@@ -159,9 +180,11 @@ class ModelEndpoint:
         Modifies the input (e.g. by adding or removing tokens) to try to change the model's prediction
         in some desired manner.
         """
+        if attacker_id not in config.VALID_ATTACKERS:
+            raise UnknownAttackerError(attacker_id)
         attacker = self.attackers.get(attacker_id)
         if attacker is None:
-            raise UnknownAttackerError(attacker_id)
+            raise InvalidAttackerError(attacker_id)
         return attacker.attack_from_json(**attack)
 
     def configure_logging(self) -> None:

@@ -8,5 +8,7 @@
             "beam_size": 1
        }
     },
-    "use_old_load_method": true
+    "use_old_load_method": true,
+    "attackers": [],
+    "interpreters": []
 }

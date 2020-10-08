@@ -1,4 +1,6 @@
 {
     "id": "transformer-qa",
-    "pretrained_model_id": "rc-transformer-qa"
+    "pretrained_model_id": "rc-transformer-qa",
+    "attackers": [],
+    "interpreters": []
 }

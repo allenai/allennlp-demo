@@ -1,11 +1,12 @@
 import os
 from pathlib import Path
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, List
 
 from flask.testing import FlaskClient
 from flask.wrappers import Response
 
 from allennlp_demo.common.http import ModelEndpoint
+from allennlp_demo.common.config import VALID_ATTACKERS, VALID_INTERPRETERS
 
 
 class ModelEndpointTestCase:
@@ -59,6 +60,12 @@ class ModelEndpointTestCase:
     def teardown_method(self):
         pass
 
+    def interpreter_ids(self) -> List[str]:
+        return list(self.endpoint.interpreters.keys())
+
+    def attacker_ids(self) -> List[str]:
+        return list(self.endpoint.attackers.keys())
+
     def test_predict(self):
         """
         Test the /predict route.
@@ -110,3 +117,45 @@ class ModelEndpointTestCase:
         result of the /predict route.
         """
         pass
+
+    def test_interpret(self) -> None:
+        """
+        Subclasses can override this method to test interpret functionality.
+        """
+        pass
+
+    def test_attack(self) -> None:
+        """
+        Subclasses can override this method to test attack functionality.
+        """
+        pass
+
+    def test_unknown_interpreter_id(self):
+        resp = self.client.post("/interpret/invalid", json={})
+        assert resp.status_code == 404
+        assert resp.json["error"] == "No interpreter with id 'invalid'"
+
+    def test_unknown_attacker_id(self):
+        resp = self.client.post("/attack/invalid", json={})
+        assert resp.status_code == 404
+        assert resp.json["error"] == "No attacker with id 'invalid'"
+
+    def test_invalid_interpreter_id(self):
+        for interpreter_id in VALID_INTERPRETERS:
+            if interpreter_id not in self.interpreter_ids():
+                resp = self.client.post(f"/interpret/{interpreter_id}", json={})
+                assert resp.status_code == 404
+                assert (
+                    resp.json["error"]
+                    == f"Interpreter with id '{interpreter_id}' is not supported for this model"
+                ), resp.json["error"]
+
+    def test_invalid_attacker_id(self):
+        for attacker_id in VALID_ATTACKERS:
+            if attacker_id not in self.attacker_ids():
+                resp = self.client.post(f"/attack/{attacker_id}", json={})
+                assert resp.status_code == 404
+                assert (
+                    resp.json["error"]
+                    == f"Attacker with id '{attacker_id}' is not supported for this model"
+                ), resp.json["error"]

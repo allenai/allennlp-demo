@@ -1,4 +1,5 @@
 {
     "id": "masked-lm",
-    "pretrained_model_id": "lm-masked-language-model"
+    "pretrained_model_id": "lm-masked-language-model",
+    "attackers": ["hotflip"]
 }

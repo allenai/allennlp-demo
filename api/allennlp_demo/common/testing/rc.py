@@ -1,4 +1,4 @@
-from typing import List
+from overrides import overrides
 
 from allennlp_demo.common.http import ModelEndpoint
 from allennlp_demo.common.testing.model_endpoint_test_case import ModelEndpointTestCase
@@ -29,16 +29,12 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
         "question": "How many partially reusable launch systems were developed?",
     }
 
+    @overrides
     def check_predict_result(self, result):
         assert len(result["best_span"]) > 0
         assert len(result["best_span_str"].strip()) > 0
 
-    def interpreter_ids(self) -> List[str]:
-        return ["simple_gradient", "smooth_gradient", "integrated_gradient"]
-
-    def attacker_ids(self) -> List[str]:
-        return ["hotflip", "input_reduction"]
-
+    @overrides
     def test_interpret(self):
         for interpreter_id in self.interpreter_ids():
             resp = self.client.post(
@@ -52,11 +48,7 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
             assert len(resp.json["instance_1"]["grad_input_1"]) > 0
             assert len(resp.json["instance_1"]["grad_input_2"]) > 0
 
-    def test_invalid_interpreter_id(self):
-        resp = self.client.post("/interpret/invalid", json={})
-        assert resp.status_code == 404
-        assert resp.json["error"] == "No interpreter with id invalid"
-
+    @overrides
     def test_attack(self):
         data = {
             "inputs": self.predict_input,
@@ -70,8 +62,3 @@ class RcModelEndpointTestCase(ModelEndpointTestCase):
             assert resp.status_code == 200
             assert len(resp.json["final"]) > 0
             assert len(resp.json["original"]) > 0
-
-    def test_invalid_attacker_id(self):
-        resp = self.client.post("/attack/invalid", json={})
-        assert resp.status_code == 404
-        assert resp.json["error"] == "No attacker with id invalid"

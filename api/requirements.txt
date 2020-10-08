@@ -1,7 +1,5 @@
-# TODO (epwalsh): Update these to latest nightly release, only depend on models
-# directly so that dependabot updates these in a single PR.
-git+https://github.com/allenai/allennlp.git@edcb6d3466d2c4263f1e6a5731c6ace5358f47e8
-git+https://github.com/allenai/allennlp-models.git@d71e1ad929459c408d08d8e9e469942afba804bd
+allennlp==1.2.0rc1.dev20201008
+allennlp-models==1.2.0rc1.dev20201008
 allennlp-semparse==0.0.2
 Flask==1.1.2
 pytest==6.1.1

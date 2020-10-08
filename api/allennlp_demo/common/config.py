@@ -1,6 +1,6 @@
 import json
 from dataclasses import dataclass
-from typing import Mapping, Optional, List
+from typing import Dict, Any, Optional, List
 
 from allennlp.predictors import Predictor
 
@@ -37,7 +37,7 @@ class Model:
     This is ignored if `pretrained_model_id` is given.
     """
 
-    overrides: Optional[Mapping] = None
+    overrides: Optional[Dict[str, Any]] = None
     """
     Optional parameter overrides to pass through when loading the archive.
 
@@ -88,15 +88,15 @@ class Model:
             return load_predictor(self.pretrained_model_id)
 
         assert self.archive_file is not None
-        o = json.dumps(self.overrides) if self.overrides is not None else ""
 
         if self.use_old_load_method:
             from allennlp.models.archival import load_archive
 
-            o = json.dumps(self.overrides) if self.overrides is not None else ""
+            # Older versions require overrides to be passed as a JSON string.
+            o = json.dumps(self.overrides) if self.overrides is not None else None
             archive = load_archive(self.archive_file, overrides=o)
             return Predictor.from_archive(archive, self.predictor_name)
 
         return Predictor.from_path(
-            self.archive_file, predictor_name=self.predictor_name, overrides=o
+            self.archive_file, predictor_name=self.predictor_name, overrides=self.overrides
         )

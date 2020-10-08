@@ -19,11 +19,3 @@ class TestVilbertVqaModelEndpoint(RcModelEndpointTestCase):
             assert "answer" in answer
             assert "confidence" in answer
             assert 0.0 <= answer["confidence"] <= 100.0
-
-    @overrides
-    def interpreter_ids(self):
-        return []
-
-    @overrides
-    def attacker_ids(self):
-        return []
