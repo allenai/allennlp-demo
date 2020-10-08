@@ -9,12 +9,12 @@ RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm
 
+RUN pip install git+git://github.com/allenai/allennlp.git@0b20f80c1ea700766fe53d2eaf1c28de764f9710
+RUN pip install git+https://github.com/facebookresearch/detectron2@v0.2.1
+
 COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
 COPY allennlp_demo/common allennlp_demo/common
 COPY allennlp_demo/vilbert_vqa allennlp_demo/vilbert_vqa
-
-RUN pip install git+git://github.com/allenai/allennlp.git@0b20f80c1ea700766fe53d2eaf1c28de764f9710
-RUN pip install git+https://github.com/facebookresearch/detectron2@v0.2.1
 
 # Ensure allennlp_demo module can be found by Python.
 ENV PYTHONPATH /app/

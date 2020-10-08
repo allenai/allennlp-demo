@@ -1,5 +1,5 @@
 {
     "id": "coreference-resolution",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/coref-spanbert-large-2020.02.27.tar.gz",
-    "predictor_name": "coreference-resolution"
+    "pretrained_model_id": "coref-spanbert",
+    "attackers": ["input_reduction"]
 }

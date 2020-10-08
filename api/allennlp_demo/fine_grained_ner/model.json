@@ -1,5 +1,4 @@
 {
     "id": "fine-grained-ner",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/fine-grained-ner.2020-06-24.tar.gz",
-    "predictor_name": "sentence_tagger"
+    "pretrained_model_id": "tagging-fine-grained-crf-tagger"
 }

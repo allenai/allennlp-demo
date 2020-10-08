@@ -1,7 +1,5 @@
 import os
 
-from allennlp_models.rc import bidaf  # noqa: F401
-
 from allennlp_demo.common import config, http
 
 

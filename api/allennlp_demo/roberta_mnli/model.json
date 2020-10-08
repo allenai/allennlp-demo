@@ -1,5 +1,5 @@
 {
     "id": "roberta-mnli",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/mnli_roberta-2020.06.09.tar.gz",
-    "predictor_name": "textual-entailment"
+    "pretrained_model_id": "pair-classification-roberta-snli",
+    "attackers": ["input_reduction"]
 }

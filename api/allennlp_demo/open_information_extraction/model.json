@@ -1,5 +1,4 @@
 {
     "id": "open-information-extraction",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/openie-model.2020.03.26.tar.gz",
-    "predictor_name": "open-information-extraction"
+    "pretrained_model_id": "structured-prediction-srl"
 }

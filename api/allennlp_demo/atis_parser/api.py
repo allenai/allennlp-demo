@@ -1,7 +1,6 @@
 import os
 
 from allennlp_demo.common import config, http
-from allennlp_semparse import predictors, models  # noqa: F401
 
 
 class AtisParserModelEndpoint(http.ModelEndpoint):
