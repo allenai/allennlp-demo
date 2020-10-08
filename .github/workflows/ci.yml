@@ -7,11 +7,15 @@ on:
   pull_request:
     branches:
     - master
+  schedule:
+  - cron: '7 6 * * *'
 
 jobs:
   api_checks:
     name: API Checks
     runs-on: ubuntu-latest
+    # Don't run nightly builds for forks.
+    if: github.repository == 'allenai/allennlp-demo' || github.event_name != 'schedule'
     steps:
     - uses: actions/checkout@v2
 
@@ -55,8 +59,12 @@ jobs:
   endpoint_test:
     name: Endpoint Test
     runs-on: [self-hosted]
+    # self-hosted runner only available on main repo
+    if: github.repository == 'allenai/allennlp-demo'
     strategy:
       matrix:
+        # This should be all of the directory names in api/allennlp_demo that correspond
+        # to demo model endpoints.
         model: [
           "atis_parser",
           "bidaf",
@@ -92,6 +100,8 @@ jobs:
   validate_ci:
     name: Validate CI Config
     runs-on: ubuntu-latest
+    # Don't run nightly builds for forks.
+    if: github.repository == 'allenai/allennlp-demo' || github.event_name != 'schedule'
     steps:
     - uses: actions/checkout@v2
 
