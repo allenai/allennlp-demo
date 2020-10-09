@@ -29,9 +29,6 @@ ARG MODULE
 # Copy model-specific stuff.
 COPY allennlp_demo/${MODULE} allennlp_demo/${MODULE}
 
-# Disable parallelism in tokenizers because it doesn't help, and sometimes hurts.
-ENV TOKENIZERS_PARALLELISM 0
-
 # You might be wondering why we can't just do
 #
 #> ENTRYPOINT [ "python" ]
