@@ -1,5 +1,5 @@
 {
     "id": "naqanet",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/naqanet-2020.02.19.tar.gz",
-    "predictor_name": "reading-comprehension"
+    "pretrained_model_id": "rc-naqanet",
+    "attackers": ["input_reduction"]
 }

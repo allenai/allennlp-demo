@@ -7,13 +7,15 @@ on:
   pull_request:
     branches:
     - master
+  schedule:
+  - cron: '7 6 * * *'
 
 jobs:
-  # Runs common light-weight checks like linting and type checking.
   api_checks:
     name: API Checks
     runs-on: ubuntu-latest
-
+    # Don't run nightly builds for forks.
+    if: github.repository == 'allenai/allennlp-demo' || github.event_name != 'schedule'
     steps:
     - uses: actions/checkout@v2
 
@@ -31,6 +33,10 @@ jobs:
       working-directory: api
       run: |
         pip install --upgrade --upgrade-strategy eager -r requirements.txt -r dev-requirements.txt
+
+    - name: Debug info
+      run: |
+        pip freeze
 
     - name: Format
       working-directory: api
@@ -50,17 +56,66 @@ jobs:
       run: |
         make typecheck
 
-  # This is an example of how we could run individual model tests on GitHub Actions.
-  # Currently we're doing this as part of the Google Cloud Build since that allows us to
-  # filter which models to build based on which files have changed.
-  # bidaf:
-  #   name: Model (bidaf)
-  #   # We run these tests on self-hosted runners because they require huge model
-  #   # files. We wouldn't be able to cache all of these using the cache available to GitHub-hosted
-  #   # runners, and downloading them from source each time would be become very expensive for us.
-  #   runs-on: [self-hosted]
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: Build and test image
-  #     run: |
-  #       cd api && make bidaf-test DOCKER_TAG=$GITHUB_SHA
+  endpoint_test:
+    name: Endpoint Test
+    runs-on: [self-hosted]
+    # self-hosted runner only available on main repo
+    if: github.repository == 'allenai/allennlp-demo'
+    strategy:
+      matrix:
+        # This should be all of the directory names in api/allennlp_demo that correspond
+        # to demo model endpoints.
+        model: [
+          "atis_parser",
+          "bidaf",
+          "bidaf_elmo",
+          "constituency_parser",
+          "coref",
+          "dependency_parser",
+          "elmo_snli",
+          "fine_grained_ner",
+          "glove_sentiment_analysis",
+          "masked_lm",
+          "named_entity_recognition",
+          "naqanet",
+          "next_token_lm",
+          "nlvr_parser",
+          "nmn_drop",
+          "open_information_extraction",
+          "roberta_mnli",
+          "roberta_sentiment_analysis",
+          "roberta_snli",
+          "semantic_role_labeling",
+          "transformer_qa",
+          "vilbert_vqa",
+          "wikitables_parser",
+        ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build and test endpoint
+      working-directory: api
+      run: |
+        make ${{ matrix.model }}-test DOCKER_TAG=$GITHUB_SHA
+
+  validate_ci:
+    name: Validate CI Config
+    runs-on: ubuntu-latest
+    # Don't run nightly builds for forks.
+    if: github.repository == 'allenai/allennlp-demo' || github.event_name != 'schedule'
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+
+    - name: Install requirements
+      run: |
+        pip install PyYAML
+
+    - name: Validate GitHub Actions config
+      run: |
+        # If this step fails, this means the model matrix in the 'endpoint_test' GitHub Actions
+        # job needs to be updated.
+        python dev/check_models_ci.py

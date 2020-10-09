@@ -1,5 +1,5 @@
 {
     "id": "next-token-lm",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/gpt2-next-word-lm-2020.06.30.tar.gz",
-    "predictor_name": "next_token_lm"
+    "pretrained_model_id": "lm-next-token-lm-gpt2",
+    "attackers": ["hotflip"]
 }

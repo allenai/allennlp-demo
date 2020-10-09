@@ -4,7 +4,6 @@ import tempfile
 from base64 import standard_b64decode
 
 from allennlp.common.util import JsonDict
-from allennlp_models import rc  # noqa: F401
 
 from allennlp_demo.common import config, http
 

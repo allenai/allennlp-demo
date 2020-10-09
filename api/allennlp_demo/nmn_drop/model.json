@@ -7,5 +7,8 @@
             "debug": true,
             "beam_size": 1
        }
-    }
+    },
+    "use_old_load_method": true,
+    "attackers": [],
+    "interpreters": []
 }
