@@ -1,14 +1,12 @@
 version: 2
 updates:
 - package-ecosystem: npm
-  directory: "/demo"
+  directory: "/ui"
   schedule:
-    interval: daily
-    time: "13:00"
+    interval: weekly
   open-pull-requests-limit: 10
 - package-ecosystem: pip
-  directory: "/"
+  directory: "/api"
   schedule:
-    interval: daily
-    time: "13:00"
+    interval: weekly
   open-pull-requests-limit: 10
