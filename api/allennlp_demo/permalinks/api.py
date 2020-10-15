@@ -112,6 +112,11 @@ class PermaLinkService(Flask):
                 self.logger.exception("Error saving permalink: %s", err)
                 raise InternalServerError("Unable to create permalink")
 
+        # noop post for image upload, we need an endpoint, but we don't need to save the image
+        @self.route("/noop", methods=["POST"])
+        def noop():
+            return ""
+
 
 if __name__ == "__main__":
     db = PostgresDemoDatabase.from_environment()

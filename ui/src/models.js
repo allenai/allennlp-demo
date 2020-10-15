@@ -3,6 +3,7 @@ import OpenIe from './components/demos/OpenIe';
 import TextualEntailment from './components/demos/TextualEntailment';
 import SentimentAnalysis from './components/demos/SentimentAnalysis';
 import ReadingComprehension from './components/demos/ReadingComprehension';
+import VisualQuestionAnswering from './components/demos/VisualQuestionAnswering';
 import Coref from './components/demos/Coref';
 import NamedEntityRecognition from './components/demos/NamedEntityRecognition';
 import ConstituencyParser from './components/demos/ConstituencyParser';
@@ -26,7 +27,8 @@ const modelGroups = [
         iconSrc: questionIcon,
         defaultOpen: true,
         models: [
-            {model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension}
+            {model: "reading-comprehension", name: "Reading Comprehension", component: ReadingComprehension},
+            {model: "visual-question-answering", name: "Visual Question Answering", component: VisualQuestionAnswering}
         ]
     },
     {

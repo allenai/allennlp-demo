@@ -1,7 +1,5 @@
 import os
 
-from allennlp_models import syntax  # noqa: F401
-
 from allennlp_demo.common import config, http
 
 

@@ -1,9 +1,16 @@
 # This is the common Dockerfile that is used to build all demos unless the demo
 # overrides this with its own Dockerfile in its directory.
-FROM allennlp/allennlp:v1.0.0rc3
+FROM allennlp/allennlp:v1.1.0
 
-# Name / sub-directory name of the demo.
-ARG MODULE
+# Ensure allennlp_demo module can be found by Python.
+ENV PYTHONPATH /app/
+
+# Ensure log messages written immediately instead of being buffered, which is
+# useful if the app crashes so the logs won't get swallowed.
+ENV PYTHONUNBUFFERED 1
+
+# Disable parallelism in tokenizers because it doesn't help, and sometimes hurts.
+ENV TOKENIZERS_PARALLELISM 0
 
 WORKDIR /app/
 
@@ -12,16 +19,15 @@ RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm
 
+COPY .allennlp_plugins .allennlp_plugins
 COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
 COPY allennlp_demo/common allennlp_demo/common
+
+# Name / sub-directory name of the demo.
+ARG MODULE
+
+# Copy model-specific stuff.
 COPY allennlp_demo/${MODULE} allennlp_demo/${MODULE}
-
-# Ensure allennlp_demo module can be found by Python.
-ENV PYTHONPATH /app/
-
-# Ensure log messages written immediately instead of being buffered, which is
-# useful if the app crashes so the logs won't get swallowed.
-ENV PYTHONUNBUFFERED 1
 
 # You might be wondering why we can't just do
 #

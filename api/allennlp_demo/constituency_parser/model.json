@@ -1,5 +1,4 @@
 {
     "id": "constituency-parser",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/elmo-constituency-parser-2020.02.10.tar.gz",
-    "predictor_name": "constituency-parser"
+    "pretrained_model_id": "structured-prediction-constituency-parser"
 }

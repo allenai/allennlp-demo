@@ -75,8 +75,12 @@ selected a model, follow these steps to port it to the new solution:
    class to provide custom behavior as needed. Don't hesitate to ping Sam as
    this point for help, as this can be nuansced.
 
-9. Push your code to a branch attached to the origin (Google Cloud Build cannot
-   access your fork by default):
+9. We need to make sure the new test you just made will run in GitHub Actions. For this, all you need
+   to do is add the name/directory of your model to the build model matrix list in
+   [.github/workflows/ci.yml](https://github.com/allenai/allennlp-demo/blob/master/.github/workflows/ci.yml).
+
+10. Push your code to a branch attached to the origin (Google Cloud Build cannot
+    access your fork by default):
 
     ```bash
     git add .
@@ -84,7 +88,7 @@ selected a model, follow these steps to port it to the new solution:
     git push origin oscar
     ```
 
-10. After pushing the code it's time to create a Google Cloud Build trigger
+11. After pushing the code it's time to create a Google Cloud Build trigger
     that deploys the endpoint. This is a multi-step process:
 
     1. Start by going [here](https://console.cloud.google.com/cloud-build/triggers?project=ai2-reviz&enabled_repos_list=%255B%257B_22k_22_3A_22_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22allennlp-demo_5C_22_22%257D%255D).
@@ -109,19 +113,19 @@ selected a model, follow these steps to port it to the new solution:
 
     8. Save the changes and go back to the list of triggers.
 
-11. Find the trigger you just edited and click "Run trigger." Once the notification
+12. Find the trigger you just edited and click "Run trigger." Once the notification
     appears informing you that a build has started, click "Show" to see the
     build progress.
 
-12. If things fail you'll need to figure out why. You might need to edit the
+13. If things fail you'll need to figure out why. You might need to edit the
     CPU, RAM or the startup time -- all of which can be changed by editing
     `oscar_drop/.skiff/webapp.jsonnet`.  Again don't hesitate to ping Sam
     here as this can be a little tricky.
 
-13. Once the deploy is working edit the trigger and change the branch back to
+14. Once the deploy is working edit the trigger and change the branch back to
     `^master$`.
 
-14. Go through the regular PR cycle. Once the code merges to `master` you're
+15. Go through the regular PR cycle. Once the code merges to `master` you're
     all set.
 
 At this point the new endpoint is deployed alongside the old one. The effort

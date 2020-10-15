@@ -240,7 +240,6 @@ local db = import 'db.libsonnet';
                 namespace: namespace.metadata.name,
                 labels: labels,
                 annotations: annotations + {
-                    'certmanager.k8s.io/cluster-issuer': 'letsencrypt-prod',
                     'kubernetes.io/ingress.class': 'nginx',
                     'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
                     'nginx.ingress.kubernetes.io/proxy-body-size': '0.5m',
@@ -251,8 +250,9 @@ local db = import 'db.libsonnet';
             },
             spec: {
                 tls: [
+                    // We explicitly omit secretName here, which is optional, so that the root
+                    // certificate that's managed by the UI is used instead.
                     {
-                        secretName: fullyQualifiedName,
                         hosts: hosts
                     }
                 ],
