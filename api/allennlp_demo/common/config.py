@@ -85,7 +85,7 @@ class Model:
         if self.pretrained_model_id is not None:
             from allennlp_models.pretrained import load_predictor
 
-            return load_predictor(self.pretrained_model_id)
+            return load_predictor(self.pretrained_model_id, overrides=self.overrides)
 
         assert self.archive_file is not None
 
