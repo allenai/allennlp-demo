@@ -154,7 +154,9 @@ const description = (
   <span>
 <p>Masked language modeling is a fill-in-the-blank task, where a model uses the context words surrounding a [MASK] token to try to predict what the [MASK] word should be.</p>
 <p>The model shown here is <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener noreferrer">BERT</a>, the first large transformer to be trained on this task.
-Enter text with one or more "[MASK]" tokens and the model will generate the most likely substitution for each.</p>
+Enter text with one or more "[MASK]" tokens and the model will generate the most likely substitution for each.  Note that in the default example, BERT demonstrates gender bias in that it thinks the doctor is more likely a man ("his")
+than a woman ("her").  An important issue in NLP is how to understand and address such biases
+in our linguistic models.</p>
   </span>
 )
 
