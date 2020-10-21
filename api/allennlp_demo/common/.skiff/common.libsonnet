@@ -28,11 +28,17 @@ local db = import 'db.libsonnet';
      * @param startupTime   {number}    The amount of time in seconds the container should take to
      *                                  start. If this is set too low your container will get into
      *                                  a restart loop when it's started. Defaults to 120 seconds.
-     * @param useDb          {boolean}  If true the required resources will provision to provide
+     * @param useDb         {boolean}   If true the required resources will provision to provide
      *                                  a secure connection to the database. The required secrets
      *                                  must be manually provisioned by system administrator.
+     * @param maxBodySize   {string}    Maximum size of allowed HTTP body payload. For example,
+     *                                  '10M'. See NGINX docs for syntax:
+     *                                      Sizes can be specified in bytes, kilobytes (suffixes k
+     *                                      and K) or megabytes (suffixes m and M), for example,
+     *                                      "1024”, "8k”, "1m”.
+     *                                  NGINX docs: http://nginx.org/en/docs/syntax.html
      */
-    APIEndpoint(id, image, cause, sha, cpu, memory, env, branch, repo, buildId, startupTime=120, useDb=false):
+    APIEndpoint(id, image, cause, sha, cpu, memory, env, branch, repo, buildId, startupTime=120, useDb=false, maxBodySize = '0.5m'):
         // Different environments are deployed to the same namespace. This serves to prevent
         // collissions.
         local fullyQualifiedName = config.appName + '-api-' + id + '-' + env;
@@ -242,7 +248,7 @@ local db = import 'db.libsonnet';
                 annotations: annotations + {
                     'kubernetes.io/ingress.class': 'nginx',
                     'nginx.ingress.kubernetes.io/ssl-redirect': 'true',
-                    'nginx.ingress.kubernetes.io/proxy-body-size': '0.5m',
+                    'nginx.ingress.kubernetes.io/proxy-body-size': maxBodySize,
                     // We trim the prefix before sending requests to the container, so a request for
                     // /api/$path_prefix/foo becomes /foo.
                     'nginx.ingress.kubernetes.io/rewrite-target': '/$2'
