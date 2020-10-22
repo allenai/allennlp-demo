@@ -3,6 +3,7 @@
     "pretrained_model_id": "lm-next-token-lm-gpt2",
     "attackers": ["hotflip"],
     "overrides": {
+        "dataset_reader.max_tokens": 512,
         "model.beam_search_generator": {
             "type": "transformer",
             "beam_search": {
