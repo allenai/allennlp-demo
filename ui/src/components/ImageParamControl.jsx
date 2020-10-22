@@ -90,7 +90,19 @@ export const ImageParamControl = (props) => {
                 );
             }
         } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed: ${info.file.error.message}`);
+            // If the image is too large, then info.file.error.message will
+            // look like "cannot post api/permalink/noop 413'"
+            const errorIs413 = info.file.error.message.match("^cannot post .* 413'$");
+
+            const maxFileSize = 5 * 1024 * 1024;
+            if (errorIs413 && info.file.size > maxFileSize) {
+                // Show a friendly "too large" error if it's appropriate to do so
+                message.error(`${info.file.name} file is too large; must be smaller than ${maxFileSize} bytes`);
+            } else {
+                // Otherwise, it's a different error.
+                message.error(`${info.file.name} file upload failed: ${info.file.error.message}`);
+            }
+
             setStateAndSendEvent({
                 imgSrc: undefined,
                 imageName: undefined,
