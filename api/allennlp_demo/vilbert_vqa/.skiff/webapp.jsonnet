@@ -14,4 +14,4 @@ function(image, cause, sha, env, branch, repo, buildId)
     // https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes
     local cpu = '50m';
     local memory = '2Gi';
-    common.APIEndpoint(model.id, image, cause, sha, cpu, memory, env, branch, repo, buildId, '5m')
+    common.APIEndpoint(model.id, image, cause, sha, cpu, memory, env, branch, repo, buildId)
