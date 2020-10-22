@@ -16,4 +16,4 @@ function(image, cause, sha, env, branch, repo, buildId)
     local startupTime = 30;
     local useDb = true;
     common.APIEndpoint('permalink', image, cause, sha, cpu, memory, env, branch, repo, buildId,
-                       startupTime, useDb)
+                       startupTime, useDb, '5m')
