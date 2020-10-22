@@ -170,6 +170,12 @@ Click the left arrow at the bottom to undo your last choice.</p>
   </span>
 )
 
+const probabilitiesNote = (
+  <span>
+<p> Note: The prediction percentages are normalized across these five sequences. The true probabilities are lower.</p>
+  </span>
+)
+
 const getGradData = ({ grad_input_1 }) => {
   return [grad_input_1];
 }
@@ -210,7 +216,7 @@ const Attacks = ({attackData, attackModel, requestData}) => {
   let hotflipData = undefined;
   if (attackData && attackData.hotflip) {
     hotflipData = attackData["hotflip"];
-    hotflipData["new_prediction"] = cleanTokensForDisplay([hotflipData["outputs"]["words"][0][0]])[0];
+    hotflipData["new_prediction"] = cleanTokensForDisplay([hotflipData["outputs"]["top_tokens"][0][0]])[0];
     hotflipData["original"] = cleanTokensForDisplay(hotflipData["original"]);
     hotflipData["final"][0] = cleanTokensForDisplay(hotflipData["final"][0]);
   }
@@ -234,7 +240,7 @@ class App extends React.Component {
 
     this.state = {
       output: loadFromUrl() || DEFAULT,
-      words: null,
+      top_tokens: null,
       logits: null,
       probabilities: null,
       loading: false,
@@ -261,7 +267,7 @@ class App extends React.Component {
 
       this.setState({
           output: value,
-          words: null,
+          top_tokens: null,
           logits: null,
           probabilities: null,
           interpretData: null,
@@ -274,7 +280,7 @@ class App extends React.Component {
     else { // Update text input without request to backend server
       this.setState({
           output: value,
-          words: null,
+          top_tokens: null,
           logits: null,
           probabilities: null,
           interpretData: null,
@@ -300,7 +306,7 @@ class App extends React.Component {
         this.setState({
           output,
           loading: true,
-          words: null,
+          top_tokens: null,
           logits: null,
           probabilities: null,
           model: this.state.model
@@ -413,11 +419,12 @@ class App extends React.Component {
                       index={0}
                       choose={this.choose}
                       logits={this.state.logits}
-                      words={this.state.words}
+                      top_tokens={this.state.top_tokens}
                       probabilities={this.state.probabilities}
                       hidden={this.state.loading}/>
             </InputOutputColumn>
           </InputOutput>
+          <p><span>{probabilitiesNote}</span></p>
         </ModelArea>
         <div className="model__content">
           <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
@@ -451,7 +458,7 @@ class App extends React.Component {
       grad_input_field: gradInput
     };
     if (target !== undefined) {
-      requestBody.target = {words: [[target]]}
+      requestBody.target = {top_tokens: [[target]]}
     }
 
     return fetch(apiUrlAttack(inputs, attacker), {
@@ -472,28 +479,36 @@ class App extends React.Component {
 }
 
 
-const formatProbability = prob => {
+const formatProbability = (probs, idx) => {
+  // normalize the displayed probabilities
+  var sum = probs.reduce(function(a, b){
+    return a + b;
+  }, 0);
+  var prob = probs[idx] / sum
   prob = prob * 100
   return `${prob.toFixed(1)}%`
 }
 
-const Choices = ({output, index, logits, words, choose, probabilities}) => {
-  if (!words) { return null }
-  if (words.length <= index) { return null }
+const Choices = ({output, index, logits, top_tokens, choose, probabilities}) => {
+  if (!top_tokens) { return null }
+  if (top_tokens.length <= index) { return null }
   if (probabilities.length <= index) { return null }
 
-  const lis = words[index].map((word, idx) => {
-    const prob = formatProbability(probabilities[idx])
+  const lis = top_tokens.map((word, idx) => {
+    const prob = formatProbability(probabilities, idx)
 
     // get rid of CRs
-    const cleanWord = word.replace(/\n/g, "↵").replace(/Ġ/g, " ").replace(/Ċ/g, "↵")
+    const cleanWord = word.join('').replace(' ,', ',').replace(/\n/g, "↵")
+        .replace(/Ġ/g, " ").replace(/Ċ/g, "↵")
+
+    const displaySeq = cleanWord.slice(-1) == "." ? cleanWord : cleanWord.concat(' ...')
 
     return (
       <ListItem key={`${idx}-${cleanWord}`}>
         <ChoiceItem onClick={() => choose(cleanWord)}>
           <Probability>{prob}</Probability>
           {' '}
-          <Token>{cleanWord}</Token>
+          <Token>{displaySeq}</Token>
         </ChoiceItem>
       </ListItem>
     )
