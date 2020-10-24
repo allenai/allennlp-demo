@@ -1,3 +1,12 @@
+/**
+ * TODO:
+ * This component was added primarily to validate that the unique mix of JavaScript
+ * and TypeScript was working on this project. It can probably be removed once there's
+ * other TypeScript in the project.
+ *
+ * I would like this to go all the way to production as to verify that things are working
+ * end to end.
+ */
 import React from 'react';
 import styled from 'styled-components';
 
