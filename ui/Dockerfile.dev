@@ -5,10 +5,10 @@ FROM node:12.16.2 as build
 
 WORKDIR /ui
 
-COPY package.json package-lock.json ./
-RUN npm install
+COPY package.json yarn.lock ./
+RUN yarn
 
-COPY config-overrides.js .
+COPY . .
 
-ENTRYPOINT [ "npm" ]
+ENTRYPOINT [ "yarn" ]
 CMD [ "start" ]
