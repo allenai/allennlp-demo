@@ -1,4 +1,4 @@
-FROM allennlp/allennlp:v1.1.0
+FROM allennlp/models:latest
 
 WORKDIR /app/
 
