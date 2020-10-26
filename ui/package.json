@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@allenai/varnish": "^1.0.0",
-    "@ant-design/icons": "^4.2.1",
+    "@ant-design/icons": "^4.2.2",
     "colormap": "^2.3.1",
     "hierplane": "^0.2.1",
     "lodash": "^4.17.11",
