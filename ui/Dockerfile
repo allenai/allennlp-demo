@@ -2,14 +2,11 @@ FROM node:12.16.2 as build
 
 WORKDIR /ui
 
-COPY package.json package-lock.json ./
-RUN npm install
+COPY package.json yarn.lock ./
+RUN yarn
 
-COPY config-overrides.js .
-COPY public public
-COPY src src
-
-RUN npm run build
+COPY . .
+RUN yarn build
 
 FROM nginx:1.17.0
 

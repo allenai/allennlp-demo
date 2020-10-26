@@ -10,6 +10,7 @@ import { ScrollToTopOnPageChange } from './components/ScrollToTopOnPageChange';
 import { modelComponents, modelRedirects } from './models'
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
+import Info from './components/Info';
 
 import './css/App.css';
 import './css/fonts.css';
@@ -55,6 +56,7 @@ const App = () => (
           <Route exact path="/" render={() => (
             <Redirect to={DEFAULT_PATH}/>
           )}/>
+          <Route path="/info" component={Info}/>
           <Route path="/:model/:slug?" component={Demo}/>
         </Switch>
       </DefaultAppLayoutProvider>
@@ -103,7 +105,7 @@ const Logo = styled.img.attrs({
 })``;
 
 const HeaderColumnsWithSpace = styled(HeaderColumns)`
-    padding: 6.5px 0;
+    padding: ${({ theme }) => theme.spacing.md} 0;
 `;
 
 class SingleTaskDemo extends React.Component {
