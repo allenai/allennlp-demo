@@ -6,7 +6,7 @@
     "@allenai/varnish": "^1.0.0",
     "@ant-design/icons": "^4.2.1",
     "colormap": "^2.3.1",
-    "hierplane": "^0.2.1",
+    "hierplane": "^0.2.2",
     "lodash": "^4.17.11",
     "react": "^16.13.1",
     "react-app-rewire-styled-components": "3.0.2",
