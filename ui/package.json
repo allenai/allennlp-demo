@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@allenai/varnish": "^1.0.0",
+    "@allenai/varnish": "^1.0.2",
     "@ant-design/icons": "^4.2.1",
     "colormap": "^2.3.1",
     "hierplane": "^0.2.1",
