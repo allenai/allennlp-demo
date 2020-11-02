@@ -4,9 +4,11 @@ FROM allennlp/allennlp:v1.1.0
 
 WORKDIR /app/
 
-RUN pip install --no-cache-dir \
+RUN pip install --upgrade --no-cache-dir \
     Flask==1.1.2 \
     pytest==6.1.1 \
+    torch==1.6.0 \
+    torchvision==0.7.0 \
     git+git://github.com/allenai/allennlp.git@0b20f80c1ea700766fe53d2eaf1c28de764f9710
 RUN pip install --no-cache-dir git+https://github.com/facebookresearch/detectron2@v0.2.1
 
