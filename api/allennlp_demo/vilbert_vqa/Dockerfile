@@ -4,13 +4,13 @@ FROM allennlp/allennlp:v1.1.0
 
 WORKDIR /app/
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir \
+    Flask==1.1.2 \
+    pytest==6.1.1 \
+    git+git://github.com/allenai/allennlp.git@0b20f80c1ea700766fe53d2eaf1c28de764f9710
+RUN pip install --no-cache-dir git+https://github.com/facebookresearch/detectron2@v0.2.1
 
 RUN spacy download en_core_web_sm
-
-RUN pip install git+git://github.com/allenai/allennlp.git@0b20f80c1ea700766fe53d2eaf1c28de764f9710
-RUN pip install git+https://github.com/facebookresearch/detectron2@v0.2.1
 
 COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
 COPY allennlp_demo/common allennlp_demo/common
