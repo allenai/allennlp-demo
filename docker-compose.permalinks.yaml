@@ -1,0 +1,40 @@
+version: '3'
+services:
+    # This runs just the permalinks service for development purposes.
+    permalinks:
+        build:
+            context: api
+            dockerfile: allennlp_demo/permalinks/Dockerfile
+        command:
+            - allennlp_demo/permalinks/api.py
+        environment:
+            - FLASK_ENV=development
+            - DEMO_POSTGRES_HOST=db
+            - DEMO_POSTGRES_USER=postgres
+            - DEMO_POSTGRES_DBNAME=demo
+        volumes:
+            - ./api/allennlp_demo/permalinks:/app/allennlp_demo/permalinks
+            - ./api/allennlp_demo/common:/app/allennlp_demo/common
+        ports:
+            - 8001:8000
+    # This container bootstraps the db if it hasn't been setup before. It just runs dev/setup_db.sh.
+    setup_db:
+        image: postgres:11.7-alpine
+        environment:
+            - DEMO_POSTGRES_HOST=db
+            - DEMO_POSTGRES_USER=postgres
+            - DEMO_POSTGRES_DBNAME=demo
+        entrypoint:
+            - /bin/bash
+        command:
+            - /src/dev/setup_db.sh
+        volumes:
+            - .:/src
+        depends_on:
+            - db
+    db:
+        image: postgres:11.7-alpine
+        environment:
+            - POSTGRES_HOST_AUTH_METHOD=trust
+        ports:
+            - 5555:5432

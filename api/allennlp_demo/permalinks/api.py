@@ -2,28 +2,12 @@ from typing import Optional
 
 import psycopg2
 
-from flask import Flask, Request, Response, jsonify, request
+from flask import Flask, Response, jsonify, request
 from werkzeug.exceptions import BadRequest, InternalServerError, NotFound
 
 from allennlp_demo.permalinks.db import DemoDatabase, PostgresDemoDatabase
 from allennlp_demo.permalinks.models import slug_to_int, int_to_slug
 from allennlp_demo.common.logs import configure_logging
-
-
-def get_client_ip(r: Request) -> str:
-    """
-    Returns the best attempt at a client IP address. If the request includes
-    the X-Forwarded-For header we accept the first IP address, otherwise we
-    fallback to the remote address. This isn't used for anything sensitive so
-    we're fine blindly trusting the client.
-    """
-    forwarded_for = r.headers.get("X-Forwarded-For")
-    if forwarded_for is None:
-        return r.remote_addr
-    ips = forwarded_for.split(",")
-    # Take the first.
-    # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For
-    return ips[0]
 
 
 class PermaLinkService(Flask):
@@ -101,7 +85,6 @@ class PermaLinkService(Flask):
 
             try:
                 id = self.db.insert_request(
-                    requester=get_client_ip(request),
                     model_name=model_name,
                     request_data=request_data,
                     model_id=model_id,

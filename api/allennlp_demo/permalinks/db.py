@@ -23,7 +23,6 @@ class DemoDatabase:
 
     def insert_request(
         self,
-        requester: str,
         request_data: Dict,
         model_name: Optional[str] = None,
         model_id: Optional[str] = None,
@@ -52,8 +51,8 @@ class DemoDatabase:
 
 # SQL for inserting requests into the database.
 INSERT_SQL = """
-        INSERT INTO queries (model_name, requester, request_data, timestamp, model_id, task_name)
-        VALUES (%(model_name)s, %(requester)s, %(request_data)s, %(timestamp)s, %(model_id)s, %(task_name)s)
+        INSERT INTO queries (model_name, request_data, timestamp, model_id, task_name)
+        VALUES (%(model_name)s, %(request_data)s, %(timestamp)s, %(model_id)s, %(task_name)s)
         RETURNING id
         """
 
@@ -117,7 +116,6 @@ class PostgresDemoDatabase(DemoDatabase):
 
     def insert_request(
         self,
-        requester: str,
         request_data: Dict,
         model_name: Optional[str] = None,
         model_id: Optional[str] = None,
@@ -132,7 +130,6 @@ class PostgresDemoDatabase(DemoDatabase):
                     INSERT_SQL,
                     {
                         "model_name": model_name,
-                        "requester": requester,
                         "request_data": json.dumps(request_data),
                         "timestamp": datetime.datetime.now(),
                         "model_id": model_id,
@@ -182,7 +179,6 @@ class InMemoryDemoDatabase(DemoDatabase):
 
     def insert_request(
         self,
-        requester: str,
         request_data: Dict,
         model_name: Optional[str] = None,
         model_id: Optional[str] = None,
