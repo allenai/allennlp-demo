@@ -65,6 +65,7 @@ module.exports = {
     output: {
         filename: 'main.[hash:6].js',
         path: path.resolve(__dirname, 'build'),
+        publicPath: '/'
     },
     devServer: {
         hot: true,
