@@ -2,7 +2,7 @@ from typing import Optional
 
 import psycopg2
 
-from flask import Flask, Request, Response, jsonify, request
+from flask import Flask, Response, jsonify, request
 from werkzeug.exceptions import BadRequest, InternalServerError, NotFound
 
 from allennlp_demo.permalinks.db import DemoDatabase, PostgresDemoDatabase
