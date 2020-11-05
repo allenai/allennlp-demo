@@ -38,7 +38,16 @@ There's three ways to run things locally:
    [http://localhost:8080](http://localhost:8080) in a browser. Changes to the code should
    be automatically applied.
 
-3. If you'd like to run an end to end environment that includes the user-interface and a model
+3. If you're only working on the Permalinks service, you can start things up by running:
+
+    ```
+    docker-compose -f docker-compose.permalinks.yaml up --build
+    ```
+
+   Once that's complete, follow the instructions in the [Permalinks
+   README](api/allennl_demo/permalinks/).
+
+4. If you'd like to run an end to end environment that includes the user-interface and a model
    endpoint, you can do so by running:
 
     ```bash

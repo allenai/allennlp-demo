@@ -24,7 +24,7 @@ def test_get_permalink():
 
     # Add something to the database and make sure it comes back
     link_id = db.insert_request(
-        requester="1.1.1.1", model_name="reading-comprehension", request_data={"slug": "zilla"}
+        model_name="reading-comprehension", request_data={"slug": "zilla"}
     )
     resp = client.get(f"/{int_to_slug(link_id)}")
     assert resp.status_code == 200
