@@ -94,7 +94,7 @@ const taskModels = [
       in <a href="https://arxiv.org/abs/1810.04805">Devlin et al</a>, with improvements borrowed from the SQuAD model in the transformers project.
       </span>,
     modelId: "transformer-qa",
-    usage: buildUsage("transformer-qa-2020-05-26.tar.gz", "transformer_qa.jsonnet")
+    usage: buildUsage("transformer-qa-2020-10-03.tar.gz", "transformer_qa.jsonnet")
   },
   {
     name: "NAQANet (trained on DROP)",
