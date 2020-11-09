@@ -16,6 +16,8 @@ class RequestLogEntry:
     method: str
     path: str
     query: dict
+    request_data: Optional[dict]
+    response_data: Optional[dict]
     ip: str
     forwarded_for: Optional[str]
     latency_ms: float
@@ -83,6 +85,8 @@ def configure_logging(app: Flask):
             request.method,
             request.path,
             request.args,
+            request.get_json(),
+            r.get_json(),
             request.remote_addr,
             request.headers.get("X-Forwarded-For"),
             latency_ms,
