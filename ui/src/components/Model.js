@@ -34,7 +34,7 @@ class Model extends React.Component {
       const { selectedModel, apiUrl } = this.props;
       this.setState({outputState: "working", interpretData: undefined, attackData: undefined});
 
-      const disablePermalinks = this.props.disablePermalinksForModel || disablePermalinksForRun;
+      const disablePermalinks = disablePermalinksForRun || this.props.disablePermalinksForModel;
 
       // replace whatever submodel is in 'model' with 'selectedSubModel'
       const {model, ...restOfTheInputs} = inputs;
