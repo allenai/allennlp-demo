@@ -427,7 +427,7 @@ class App extends React.Component {
           </InputOutput>
           <p><span>{probabilitiesNote}</span></p>
         </ModelArea>
-        <div className="model__content">
+        <div hidden className="model__content">
           <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
           <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
         </div>
