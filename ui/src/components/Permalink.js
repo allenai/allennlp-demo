@@ -1,24 +1,23 @@
 import React from 'react';
-import { Button } from '@allenai/varnish';
+import { Button } from 'antd';
 
-import { FormField, FormLabel } from '../Form';
+import { FormField, FormLabel, FormInput } from '../Form';
 
 // from https://stackoverflow.com/a/33928558/1076346
 function copyToClipboard(text) {
     if (window.clipboardData && window.clipboardData.setData) {
         // IE specific code path to prevent textarea being shown while dialog is visible.
-        return window.clipboardData.setData("Text", text);
-
-    } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-        var textarea = document.createElement("textarea");
+        return window.clipboardData.setData('Text', text);
+    } else if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
+        var textarea = document.createElement('textarea');
         textarea.textContent = text;
-        textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+        textarea.style.position = 'fixed'; // Prevent scrolling to bottom of page in MS Edge.
         document.body.appendChild(textarea);
         textarea.select();
         try {
-            return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+            return document.execCommand('copy'); // Security exception may be thrown by some browsers.
         } catch (ex) {
-            console.warn("Copy to clipboard failed.", ex);
+            console.warn('Copy to clipboard failed.', ex);
             return false;
         } finally {
             document.body.removeChild(textarea);
@@ -43,11 +42,21 @@ class Permalink extends React.Component {
             <div className="model__content">
                 <FormField>
                     <FormLabel>Permalink:</FormLabel>
-                    <FormInput variant="text" disabled className="permalink" id="permalink" value={permalink}/>
-                    <Button className="copy__to__clipboard" onClick={() => copyToClipboard(permalink)}>Copy to Clipboard</Button>
+                    <FormInput
+                        variant="text"
+                        disabled
+                        className="permalink"
+                        id="permalink"
+                        value={permalink}
+                    />
+                    <Button
+                        className="copy__to__clipboard"
+                        onClick={() => copyToClipboard(permalink)}>
+                        Copy to Clipboard
+                    </Button>
                 </FormField>
             </div>
-        )
+        );
     }
 }
 

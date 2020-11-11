@@ -10,7 +10,7 @@ This code, while fine, props have drifted and its JSX not TSX.
 
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Upload, message } from '@allenai/varnish';
+import { Upload, message } from 'antd';
 import { LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 
 /* props = {
@@ -20,7 +20,7 @@ import { LoadingOutlined, UploadOutlined } from '@ant-design/icons';
         image?: File;
     }
     onChange: (newModelParams) => void;
-}*/
+} */
 export const ImageParamControl = (props) => {
     const [localState, setLocalState] = useState({});
     const [imageLoading, setImageLoading] = useState(false);
@@ -35,12 +35,7 @@ export const ImageParamControl = (props) => {
         [props.modelParams.imgSrc]
     );
 
-    const compressAndSubmit = (
-        file,
-        maxFileBytes,
-        onSuccess,
-        onError
-    ) => {
+    const compressAndSubmit = (file, maxFileBytes, onSuccess, onError) => {
         if (file.size > maxFileBytes) {
             compressImage({ file, maxFileBytes, onSuccess, onError });
         } else {
@@ -74,16 +69,18 @@ export const ImageParamControl = (props) => {
                         setStateAndSendEvent({
                             imgSrc: URL.createObjectURL(compressedFile),
                             imageName: compressedFile.name,
-                            image: compressedFile
+                            image: compressedFile,
                         });
                         setImageLoadingAndSendEvent(false);
                     },
                     () => {
-                        message.error(`${info.file.name} file upload failed: ${info.file.error.message}`);
+                        message.error(
+                            `${info.file.name} file upload failed: ${info.file.error.message}`
+                        );
                         setStateAndSendEvent({
                             imgSrc: undefined,
                             imageName: undefined,
-                            image: undefined
+                            image: undefined,
                         });
                         setImageLoadingAndSendEvent(false);
                     }
@@ -97,7 +94,9 @@ export const ImageParamControl = (props) => {
             const maxFileSize = 5 * 1024 * 1024;
             if (errorIs413 && info.file.size > maxFileSize) {
                 // Show a friendly "too large" error if it's appropriate to do so
-                message.error(`${info.file.name} file is too large; must be smaller than ${maxFileSize} bytes`);
+                message.error(
+                    `${info.file.name} file is too large; must be smaller than ${maxFileSize} bytes`
+                );
             } else {
                 // Otherwise, it's a different error.
                 message.error(`${info.file.name} file upload failed: ${info.file.error.message}`);
@@ -106,7 +105,7 @@ export const ImageParamControl = (props) => {
             setStateAndSendEvent({
                 imgSrc: undefined,
                 imageName: undefined,
-                image: undefined
+                image: undefined,
             });
             setImageLoadingAndSendEvent(false);
         }
@@ -117,7 +116,7 @@ export const ImageParamControl = (props) => {
         let s = {
             imgSrc: imgSrc,
             imageName: undefined,
-            image: undefined
+            image: undefined,
         };
         if (imgSrc) {
             const response = await fetch(imgSrc);
@@ -129,7 +128,7 @@ export const ImageParamControl = (props) => {
             s = {
                 imgSrc: imgSrc,
                 imageName: file.name,
-                image: file
+                image: file,
             };
         }
         setStateAndSendEvent(s);
@@ -177,13 +176,7 @@ export const ImageParamControl = (props) => {
 
 // TODO: consider making a Promise<Image> instead of callback
 // TODO: consider moving to a webworker
-export const compressImage = ({
-    file,
-    maxFileBytes,
-    newFileName,
-    onSuccess,
-    onError
-}) => {
+export const compressImage = ({ file, maxFileBytes, newFileName, onSuccess, onError }) => {
     const path = require('path');
     const originalFileName = path.basename(file.name);
     const fileName = newFileName || `${originalFileName}_c.jpg`;
@@ -208,7 +201,7 @@ export const compressImage = ({
                     (blob) => {
                         const compressedFile = new File([blob], fileName, {
                             type: 'image/jpeg',
-                            lastModified: Date.now()
+                            lastModified: Date.now(),
                         });
                         // console.log(`Generated ${fileName} (${compressedFile.size}Bytes)`);
                         onSuccess(compressedFile);
@@ -255,7 +248,7 @@ const DraggerImg = styled.img`
 
 export async function blobToString(blob) {
     return new Promise((resolve, reject) => {
-        let reader = new FileReader();
+        const reader = new FileReader();
         reader.onloadend = () => {
             var base64String = reader.result;
             // Base64 Encoded String without additional data: Attributes.
@@ -263,5 +256,5 @@ export async function blobToString(blob) {
         };
         reader.onerror = reject;
         reader.readAsDataURL(blob);
-    })
+    });
 }

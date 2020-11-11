@@ -25,25 +25,22 @@ import { vs } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 *******************************************************************************/
 
 export default class SyntaxHighlight extends React.Component {
-  render() {
-    const {
-      language, // string (optional, will auto-detct if not set explicitly)
-      children  // string | object
-    } = this.props;
+    render() {
+        const {
+            language, // string (optional, will auto-detct if not set explicitly)
+            children, // string | object
+        } = this.props;
 
-    // Overriding the unwanted inline styles that `react-syntax-highlighter` adds by default:
-    const customStyle = {
-      background: 'transparent',
-      padding: '0'
-    };
+        // Overriding the unwanted inline styles that `react-syntax-highlighter` adds by default:
+        const customStyle = {
+            background: 'transparent',
+            padding: '0',
+        };
 
-    return (
-      <SyntaxHighlighter
-        language={language}
-        style={vs}
-        customStyle={customStyle}>
-        {children}
-      </SyntaxHighlighter>
-    );
-  }
+        return (
+            <SyntaxHighlighter language={language} style={vs} customStyle={customStyle}>
+                {children}
+            </SyntaxHighlighter>
+        );
+    }
 }

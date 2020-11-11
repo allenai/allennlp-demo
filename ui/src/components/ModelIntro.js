@@ -5,31 +5,32 @@ import React from 'react';
 *******************************************************************************/
 
 class ModelIntro extends React.Component {
-  constructor(props){
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.state = {
-      showFullDescription: false
+        this.state = {
+            showFullDescription: false,
+        };
     }
-  }
 
-  toggleShowMore() {
-    this.setState({showFullDescription: !this.state.showFullDescription})
-  }
+    toggleShowMore() {
+        this.setState({ showFullDescription: !this.state.showFullDescription });
+    }
 
-  render() {
+    render() {
+        const { title, description } = this.props;
 
-    const { title, description } = this.props;
-
-    return (
-      <div>
-        <h2><span>{title}</span></h2>
-        <p>
-          <span>{description}</span>
-        </p>
-      </div>
-    );
-  }
+        return (
+            <div>
+                <h2>
+                    <span>{title}</span>
+                </h2>
+                <p>
+                    <span>{description}</span>
+                </p>
+            </div>
+        );
+    }
 }
 
 export default ModelIntro;

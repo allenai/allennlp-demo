@@ -7,7 +7,7 @@ module.exports = {
     module: {
         rules: [
             // This allows for CSS to be included via import statements, like so:
-            // `import '@allenai/varnish/dist/varnish.css';`
+            // `import '@allenai/varnish/dist/theme.css';`
             {
                 test: /\.css$/,
                 loader: 'style-loader',
@@ -43,7 +43,7 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js', '.jsx']
+        extensions: ['.tsx', '.ts', '.js', '.jsx'],
     },
     plugins: [
         // This copies `public/index.html` into the build output directory.
@@ -65,7 +65,7 @@ module.exports = {
     output: {
         filename: 'main.[hash:6].js',
         path: path.resolve(__dirname, 'build'),
-        publicPath: '/'
+        publicPath: '/',
     },
     devServer: {
         hot: true,

@@ -5,17 +5,19 @@ export class LogScale {
      *                          range.
      */
     constructor(range, values) {
-      this.range = range;
-      this.values = values.map(v => Math.log(v));
-      this.factor = (this.values[1] - this.values[0]) / (this.range[1] - this.range[0]);
+        this.range = range;
+        this.values = values.map((v) => Math.log(v));
+        this.factor = (this.values[1] - this.values[0]) / (this.range[1] - this.range[0]);
     }
+
     scale(value) {
-      return this.range[0] + (Math.log(value) - this.values[0]) / this.factor;
+        return this.range[0] + (Math.log(value) - this.values[0]) / this.factor;
     }
+
     value(pos) {
-      if (pos === 0) {
-        return 0;
-      }
-      return Math.exp((pos - this.range[0]) * this.factor + this.values[0]);
+        if (pos === 0) {
+            return 0;
+        }
+        return Math.exp((pos - this.range[0]) * this.factor + this.values[0]);
     }
-  }
+}
