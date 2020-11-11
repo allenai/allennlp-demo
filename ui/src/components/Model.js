@@ -14,7 +14,7 @@ class Model extends React.Component {
     constructor(props) {
       super(props);
 
-      const { requestData, responseData, interpretData, attackData, usePermalinks } = props;
+      const { requestData, responseData, interpretData, attackData } = props;
 
       this.state = {
         outputState: responseData ? "received" : "empty", // valid values: "working", "empty", "received", "error"
@@ -23,7 +23,6 @@ class Model extends React.Component {
         interpretData: interpretData,
         attackData: attackData,
         selectedSubModel: requestData ? requestData.model : undefined,
-        usePermalinks: usePermalinks || true
       };
 
       this.runModel = this.runModel.bind(this)
@@ -31,14 +30,11 @@ class Model extends React.Component {
       this.attackModel = this.attackModel.bind(this)
     }
 
-    runModel(inputs, disablePermadata = false) {
+    runModel(inputs, disablePermadataForRun = false) {
       const { selectedModel, apiUrl } = this.props;
-
-      // If disablePermadata is true, then usePermalinks will be false. Otherwise,
-      // usePermalinks should be this.props.usePermalinks, which defaults to true.
-      const usePermalinks = this.props.usePermalinks && !disablePermadata;
-
       this.setState({outputState: "working", interpretData: undefined, attackData: undefined});
+
+      const usePermalinks = permalinksDecider(this.props.usePermalinksForModel, disablePermadataForRun);
 
       // replace whatever submodel is in 'model' with 'selectedSubModel'
       const {model, ...restOfTheInputs} = inputs;
@@ -243,6 +239,17 @@ class Model extends React.Component {
             </Wrapper>
         )
     }
+}
+
+// The decision to use permalinks is calcualted in runModel, and depends on the configuration of
+// the model (enableForModel) and the value passed to the runModel function (disableForRun).
+function permalinksDecider(enableForModel, disableForRun) {
+    if (disableForRun) {
+        return false;
+    }
+
+    // Default to having permalinks enabled if it isn't configured in the model.
+    return enableForModel === true || enableForModel === undefined;
 }
 
 const ModelDesc = styled.p`
