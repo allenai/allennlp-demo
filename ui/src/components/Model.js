@@ -14,7 +14,7 @@ class Model extends React.Component {
     constructor(props) {
       super(props);
 
-      const { requestData, responseData, interpretData, attackData, disablePermadata } = props;
+      const { requestData, responseData, interpretData, attackData, usePermalinks } = props;
 
       this.state = {
         outputState: responseData ? "received" : "empty", // valid values: "working", "empty", "received", "error"
@@ -23,7 +23,7 @@ class Model extends React.Component {
         interpretData: interpretData,
         attackData: attackData,
         selectedSubModel: requestData ? requestData.model : undefined,
-        disablePermadata: disablePermadata || false
+        usePermalinks: usePermalinks || true
       };
 
       this.runModel = this.runModel.bind(this)
@@ -31,9 +31,12 @@ class Model extends React.Component {
       this.attackModel = this.attackModel.bind(this)
     }
 
-    runModel(inputs) {
-      const { selectedModel, apiUrl } = this.props
-      console.log("runModel called, disablePermadata = ", this.props.disablePermadata);
+    runModel(inputs, disablePermadata = false) {
+      const { selectedModel, apiUrl } = this.props;
+
+      // If disablePermadata is true, then usePermalinks will be false. Otherwise,
+      // usePermalinks should be this.props.usePermalinks, which defaults to true.
+      const usePermalinks = this.props.usePermalinks && !disablePermadata;
 
       this.setState({outputState: "working", interpretData: undefined, attackData: undefined});
 
@@ -44,7 +47,7 @@ class Model extends React.Component {
       // If we're not supposed to generate a new permalink, add the `record=false` query string
       // argument.
       let url;
-      if (this.props.disablePermadata) {
+      if (!usePermalinks) {
         const u = new URL(apiUrl(inputsWithSubModel), window.location.origin);
         const queryString = { ...qs.parse(u.search), record: false };
         u.search = qs.stringify(queryString);
@@ -69,7 +72,7 @@ class Model extends React.Component {
         this.props.updateData(inputsWithSubModel, json)
         this.setState({outputState: "received"})
 
-        if (!this.props.disablePermadata) {
+        if (usePermalinks) {
           // Put together the appropriate request body.
           const u = new URL(url, window.location.origin);
           const modelId = u.pathname.split('/')[2];
