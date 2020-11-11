@@ -164,8 +164,9 @@ const description = (
 <p>Language modeling is the task of determining the probability of a given sequence of words occurring in a sentence. </p>
 <p>This demonstration uses the public 345M parameter <a href="https://github.com/openai/gpt-2" target="_blank" rel="noopener noreferrer">OpenAI GPT-2</a> language model
 to generate sentences.<br /><br />
-Provide some initial text, and the model will generate a list of the most-likely next words.
-You can click on one of those candidate words to choose it and continue, or you can keep typing.
+Provide some initial text, and the model will generate a list of candidates for the next few words
+using <a href="https://api.semanticscholar.org/CorpusID:76662039" target="_blank" rel="noopener noreferrer">Stochastic Beam Search</a>.
+You can click on one of those candidate to choose it and continue, or you can keep typing.
 Click the left arrow at the bottom to undo your last choice.</p>
   </span>
 )
@@ -426,7 +427,7 @@ class App extends React.Component {
           </InputOutput>
           <p><span>{probabilitiesNote}</span></p>
         </ModelArea>
-        <div className="model__content">
+        <div hidden className="model__content">
           <MySaliencyMaps interpretData={interpretData} tokens={tokens} interpretModel={this.interpretModel} requestData={requestData}/>
           <Attacks attackData={attackData} attackModel={this.attackModel} requestData={requestData}/>
         </div>

@@ -55,7 +55,7 @@ class JsonLogFormatter(logging.Formatter):
             return json.dumps({"logname": r.name, "severity": r.levelname, "message": m})
 
 
-def configure_logging(app: Flask):
+def configure_logging(app: Flask, log_payloads: bool = False):
     """
     Setup logging in a way that makes sense for demo API endpoints.
     """
@@ -85,8 +85,8 @@ def configure_logging(app: Flask):
             request.method,
             request.path,
             request.args,
-            request.get_json(silent=True),
-            r.get_json(silent=True),
+            None if not log_payloads else request.get_json(silent=True),
+            None if not log_payloads else r.get_json(silent=True),
             request.remote_addr,
             request.headers.get("X-Forwarded-For"),
             latency_ms,
