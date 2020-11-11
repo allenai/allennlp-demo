@@ -173,7 +173,8 @@ const modelProps = {
   examples,
   Output,
   defaultUsage,
-  exampleLabel: "Enter Image & Question or"
+  exampleLabel: "Enter Image & Question or",
+  disablePermadata: true
 }
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
