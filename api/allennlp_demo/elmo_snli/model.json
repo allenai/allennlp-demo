@@ -1,4 +1,4 @@
 {
     "id": "elmo-snli",
-    "pretrained_model_id": "pair-classification-esim"
+    "archive_file": "https://storage.googleapis.com/allennlp-public-models/esim-elmo-2020.11.11.tar.gz"
 }
