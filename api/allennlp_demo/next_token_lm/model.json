@@ -1,7 +1,8 @@
 {
     "id": "next-token-lm",
     "pretrained_model_id": "lm-next-token-lm-gpt2",
-    "attackers": ["hotflip"],
+    "attackers": [],
+    "interpreters": [],
     "overrides": {
         "dataset_reader.max_tokens": 512,
         "model.beam_search_generator": {
@@ -9,7 +10,11 @@
             "beam_search": {
                 "end_index": 50256,
                 "max_steps": 5,
-                "beam_size": 5
+                "beam_size": 5,
+                "sampler": {
+                    "type": "gumbel",
+                    "temperature": 0.7
+                }
             }
         }
     }
