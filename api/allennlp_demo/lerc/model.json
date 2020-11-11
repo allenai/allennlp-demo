@@ -1,0 +1,5 @@
+{
+    "id": "lerc",
+    "archive_file": "https://storage.googleapis.com/allennlp-public-models/drop-nmn-2020.04.04.tar.gz",
+    "predictor_name": "lerc"
+}

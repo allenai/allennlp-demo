@@ -1,5 +1,6 @@
 import SemanticRoleLabeling from './components/demos/SemanticRoleLabeling';
 import OpenIe from './components/demos/OpenIe';
+import EvaluateReadingComprehension from "./components/demos/EvaluateReadingComprehension";
 import TextualEntailment from './components/demos/TextualEntailment';
 import SentimentAnalysis from './components/demos/SentimentAnalysis';
 import ReadingComprehension from './components/demos/ReadingComprehension';
@@ -67,6 +68,7 @@ const modelGroups = [
         iconSrc: otherIcon,
         defaultOpen: true,
         models: [
+            {model: "evaluate-reading-comprehension", name: "Evaluate Reading Comprehension", component: EvaluateReadingComprehension},
             {model: "textual-entailment", name: "Textual Entailment", component: TextualEntailment},
             {model: "next-token-lm", name: "Language Modeling", component: LanguageModel, redirects: ["gpt2"]},
             {model: "masked-lm", name: "Masked Language Modeling", component: MaskedLm}
