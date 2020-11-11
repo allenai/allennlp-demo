@@ -30,11 +30,11 @@ class Model extends React.Component {
       this.attackModel = this.attackModel.bind(this)
     }
 
-    runModel(inputs, disablePermadataForRun = false) {
+    runModel(inputs, disablePermalinksForRun = false) {
       const { selectedModel, apiUrl } = this.props;
       this.setState({outputState: "working", interpretData: undefined, attackData: undefined});
 
-      const usePermalinks = permalinksDecider(this.props.usePermalinksForModel, disablePermadataForRun);
+      const disablePermalinks = this.props.disablePermalinksForModel || disablePermalinksForRun;
 
       // replace whatever submodel is in 'model' with 'selectedSubModel'
       const {model, ...restOfTheInputs} = inputs;
@@ -43,7 +43,7 @@ class Model extends React.Component {
       // If we're not supposed to generate a new permalink, add the `record=false` query string
       // argument.
       let url;
-      if (!usePermalinks) {
+      if (disablePermalinks) {
         const u = new URL(apiUrl(inputsWithSubModel), window.location.origin);
         const queryString = { ...qs.parse(u.search), record: false };
         u.search = qs.stringify(queryString);
@@ -68,7 +68,7 @@ class Model extends React.Component {
         this.props.updateData(inputsWithSubModel, json)
         this.setState({outputState: "received"})
 
-        if (usePermalinks) {
+        if (!disablePermalinks) {
           // Put together the appropriate request body.
           const u = new URL(url, window.location.origin);
           const modelId = u.pathname.split('/')[2];
@@ -239,17 +239,6 @@ class Model extends React.Component {
             </Wrapper>
         )
     }
-}
-
-// The decision to use permalinks is calcualted in runModel, and depends on the configuration of
-// the model (enableForModel) and the value passed to the runModel function (disableForRun).
-function permalinksDecider(enableForModel, disableForRun) {
-    if (disableForRun) {
-        return false;
-    }
-
-    // Default to having permalinks enabled if it isn't configured in the model.
-    return enableForModel === true || enableForModel === undefined;
 }
 
 const ModelDesc = styled.p`

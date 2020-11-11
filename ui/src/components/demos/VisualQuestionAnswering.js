@@ -174,7 +174,7 @@ const modelProps = {
   Output,
   defaultUsage,
   exampleLabel: "Enter Image & Question or",
-  usePermalinksForModel: false
+  disablePermalinksForModel: true
 }
 
 export default withRouter(props => <Model {...props} {...modelProps}/>)
