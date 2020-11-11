@@ -82,10 +82,10 @@ class ModelEndpoint:
     This class can be extended to implement custom functionality.
     """
 
-    def __init__(self, model: config.Model):
+    def __init__(self, model: config.Model, log_payloads: bool = False):
         self.model = model
         self.app = Flask(model.id)
-        self.configure_logging()
+        self.configure_logging(log_payloads)
         self.predictor = model.load_predictor()
         self.interpreters = self.load_interpreters()
         self.attackers = self.load_attackers()
@@ -187,8 +187,8 @@ class ModelEndpoint:
             raise InvalidAttackerError(attacker_id)
         return attacker.attack_from_json(**attack)
 
-    def configure_logging(self) -> None:
-        configure_logging(self.app)
+    def configure_logging(self, log_payloads: bool = False) -> None:
+        configure_logging(self.app, log_payloads=log_payloads)
 
     def configure_error_handling(self) -> None:
         def handle_invalid_json(err: json.JSONDecodeError):
