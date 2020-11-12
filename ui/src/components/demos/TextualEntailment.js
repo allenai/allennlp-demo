@@ -47,16 +47,17 @@ predictor.predict(
 
 // tasks that have only 1 model, and models that do not define usage will use this as a default
 // undefined is also fine, but no usage will be displayed for this task/model
-const buildUsage = (modelFile, configFile) => {
+const buildUsage = (modelFile, configFile, testSetUrl) => {
   const fullModelUrl = `https://storage.googleapis.com/allennlp-public-models/${modelFile}`;
   const fullConfigUrl = `https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0/training_config/pair_classification/${configFile}`;
+  const fullTestSetUrl = `https://allennlp.s3.amazonaws.com/datasets/${testSetUrl}`
   return {
     installCommand: 'pip install allennlp==1.0.0 allennlp-models==1.0.0',
     bashCommand: bashCommand(fullModelUrl),
     pythonCommand: pythonCommand(fullModelUrl),
     evaluationCommand: `allennlp evaluate \\
     ${fullModelUrl} \\
-    https://s3-us-west-2.amazonaws.com/allennlp/datasets/snli/snli_1.0_test.jsonl`,
+    ${fullTestSetUrl}`,
     trainingCommand: `allennlp train ${fullConfigUrl} -s output_path`
   }
 }
@@ -66,19 +67,19 @@ const taskModels = [
     name: "Decomposable Attention + ELMo; SNLI",
     desc: <span>The <a href = "https://www.semanticscholar.org/paper/A-Decomposable-Attention-Model-for-Natural-Languag-Parikh-T%C3%A4ckstr%C3%B6m/07a9478e87a8304fc3267fa16e83e9f3bbd98b27">decomposable attention model (Parikh et al, 2017)</a> combined with  <a href="https://arxiv.org/abs/1802.05365">ELMo embeddings</a> trained on SNLI.</span>,
     modelId: "elmo-snli",
-    usage: buildUsage("decomposable-attention-elmo-2020.04.09.tar.gz", "decomposable_attention_elmo.jsonnet")
+    usage: buildUsage("decomposable-attention-elmo-2020.04.09.tar.gz", "decomposable_attention_elmo.jsonnet", "snli/snli_1.0_test.jsonl")
   },
   {
     name: "RoBERTa; SNLI",
     desc: <span>The <a href="https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de">RoBERTa model (Liu et al, 2019)</a> trained on SNLI.<p><b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a></p></span>,
     modelId: "roberta-snli",
-    usage: buildUsage("snli_roberta-2020.06.09.tar.gz", "snli_roberta.jsonnet")
+    usage: buildUsage("snli_roberta-2020.06.09.tar.gz", "snli_roberta.jsonnet", "snli/snli_1.0_test.jsonl")
   },
   {
     name: "RoBERTa; MultiNLI",
     desc: <span>The <a href="https://www.semanticscholar.org/paper/RoBERTa%3A-A-Robustly-Optimized-BERT-Pretraining-Liu-Ott/077f8329a7b6fa3b7c877a57b81eb6c18b5f87de">RoBERTa model (Liu et al, 2019)</a> trained on <a href="https://www.nyu.edu/projects/bowman/multinli/paper.pdf">MultiNLI</a>.<p><b>Contributed by:</b> <a href = "https://zhaofengwu.github.io" target="_blank" rel="noopener noreferrer">Zhaofeng Wu</a></p></span>,
     modelId: "roberta-mnli",
-    usage: buildUsage("mnli_roberta-2020.06.09.tar.gz", "mnli_roberta.jsonnet")
+    usage: buildUsage("mnli_roberta-2020.06.09.tar.gz", "mnli_roberta.jsonnet", "multinli/multinli_1.0_dev_mismatched.jsonl")
   }
 ]
 
