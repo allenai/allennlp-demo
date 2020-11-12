@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { Table } from 'antd';
+import { BasicFilterDropdown, FilterIcon } from '@allenai/varnish';
 
 import Model from '../Model';
 import OutputField from '../OutputField';
-import { BasicFilterDropdown, FilterIcon } from '../TableExt';
 
 import baseballSrc from './exampleImages/baseball_game.jpg';
 import busStopSrc from './exampleImages/bus_stop.jpg';
