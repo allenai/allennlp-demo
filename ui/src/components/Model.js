@@ -22,7 +22,7 @@ class Model extends React.Component {
         responseData: responseData,
         interpretData: interpretData,
         attackData: attackData,
-        selectedSubModel: requestData ? requestData.model : undefined
+        selectedSubModel: requestData ? requestData.model : undefined,
       };
 
       this.runModel = this.runModel.bind(this)
@@ -30,10 +30,11 @@ class Model extends React.Component {
       this.attackModel = this.attackModel.bind(this)
     }
 
-    runModel(inputs, disablePermadata = false) {
-      const { selectedModel, apiUrl } = this.props
-
+    runModel(inputs, disablePermalinksForRun = false) {
+      const { selectedModel, apiUrl } = this.props;
       this.setState({outputState: "working", interpretData: undefined, attackData: undefined});
+
+      const disablePermalinks = disablePermalinksForRun || this.props.disablePermalinksForModel;
 
       // replace whatever submodel is in 'model' with 'selectedSubModel'
       const {model, ...restOfTheInputs} = inputs;
@@ -42,7 +43,7 @@ class Model extends React.Component {
       // If we're not supposed to generate a new permalink, add the `record=false` query string
       // argument.
       let url;
-      if (disablePermadata) {
+      if (disablePermalinks) {
         const u = new URL(apiUrl(inputsWithSubModel), window.location.origin);
         const queryString = { ...qs.parse(u.search), record: false };
         u.search = qs.stringify(queryString);
@@ -67,7 +68,7 @@ class Model extends React.Component {
         this.props.updateData(inputsWithSubModel, json)
         this.setState({outputState: "received"})
 
-        if (!disablePermadata) {
+        if (!disablePermalinks) {
           // Put together the appropriate request body.
           const u = new URL(url, window.location.origin);
           const modelId = u.pathname.split('/')[2];
