@@ -76,7 +76,7 @@ const Demo = (props) => {
             <Layout>
                 <Menu redirectedModel={redirectedModel} />
                 <Layout>
-                    <FullSizeContent>
+                    <FullSizeContent main>
                         <SingleTaskDemo model={redirectedModel} slug={slug} />
                     </FullSizeContent>
                     <Footer />
