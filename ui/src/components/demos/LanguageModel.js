@@ -490,21 +490,6 @@ const formatProbability = (probs, idx) => {
   return `${prob.toFixed(1)}%`
 }
 
-function sortWithIndeces(toSort) {
-  for (var i = 0; i < toSort.length; i++) {
-    toSort[i] = [toSort[i], i];
-  }
-  toSort.sort(function(left, right) {
-    return left[0] < right[0] ? -1 : 1;
-  });
-  toSort.sortIndices = [];
-  for (var j = 0; j < toSort.length; j++) {
-    toSort.sortIndices.push(toSort[j][1]);
-    toSort[j] = toSort[j][0];
-  }
-  return toSort;
-}
-
 const Choices = ({output, index, logits, top_tokens, choose, probabilities}) => {
   if (!top_tokens) { return null }
   if (top_tokens.length <= index) { return null }
@@ -513,8 +498,7 @@ const Choices = ({output, index, logits, top_tokens, choose, probabilities}) => 
   var len = probabilities.length;
   var indices = new Array(len);  
   for (var i = 0; i < len; ++i) indices[i] = i;
-  indices.sort(function (a, b) { return probabilities[a] < probabilities[b] ? -1 : probabilities[a] < probabilities[b] ? 1 : 0; });
-  indices.reverse();
+  indices.sort(function (a, b) { return probabilities[b] - probabilities[a]});
 
   const lis = top_tokens.map((word, idx) => {
     const prob = formatProbability(probabilities, idx)
