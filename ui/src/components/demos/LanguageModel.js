@@ -15,7 +15,7 @@ import {
   HOTFLIP_ATTACKER
 } from '../InterpretConstants'
 
-const apiUrl = () => `/api/next-token-lm/predict`
+const apiUrl = () => `/api/next-token-lm/predict?no_cache=1`
 const apiUrlInterpret = (_, interpreter) => `/api/next-token-lm/interpret/${interpreter}`;
 const apiUrlAttack = (_, attacker) => `/api/next-token-lm/attack/${attacker}`
 
@@ -490,10 +490,31 @@ const formatProbability = (probs, idx) => {
   return `${prob.toFixed(1)}%`
 }
 
+function sortWithIndeces(toSort) {
+  for (var i = 0; i < toSort.length; i++) {
+    toSort[i] = [toSort[i], i];
+  }
+  toSort.sort(function(left, right) {
+    return left[0] < right[0] ? -1 : 1;
+  });
+  toSort.sortIndices = [];
+  for (var j = 0; j < toSort.length; j++) {
+    toSort.sortIndices.push(toSort[j][1]);
+    toSort[j] = toSort[j][0];
+  }
+  return toSort;
+}
+
 const Choices = ({output, index, logits, top_tokens, choose, probabilities}) => {
   if (!top_tokens) { return null }
   if (top_tokens.length <= index) { return null }
   if (probabilities.length <= index) { return null }
+
+  var len = probabilities.length;
+  var indices = new Array(len);  
+  for (var i = 0; i < len; ++i) indices[i] = i;
+  indices.sort(function (a, b) { return probabilities[a] < probabilities[b] ? -1 : probabilities[a] < probabilities[b] ? 1 : 0; });
+  indices.reverse();
 
   const lis = top_tokens.map((word, idx) => {
     const prob = formatProbability(probabilities, idx)
@@ -515,6 +536,11 @@ const Choices = ({output, index, logits, top_tokens, choose, probabilities}) => 
     )
   })
 
+  var lis_sorted = []
+  indices.forEach(element => {
+    lis_sorted.push(lis[element])
+  });
+
   const goBack = () => {
     window.history.back();
   }
@@ -533,7 +559,7 @@ const Choices = ({output, index, logits, top_tokens, choose, probabilities}) => 
 
   return (
     <ChoiceList>
-      {lis}
+      {lis_sorted}
       {goBackItem}
     </ChoiceList>
   )
