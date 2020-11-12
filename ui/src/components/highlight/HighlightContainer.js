@@ -9,25 +9,22 @@ import '../../css/HighlightContainer.css';
 *******************************************************************************/
 
 export default class HighlightContainer extends React.Component {
-  render() {
-    const {           // All fields optional:
-      children,       // object | string
-      isClicking,     // boolean
-      layout,         // string (supported values: "bottom-labels", null)
-      className
-    } = this.props;
+    render() {
+        const {
+            // All fields optional:
+            children, // object | string
+            isClicking, // boolean
+            layout, // string (supported values: "bottom-labels", null)
+            className,
+        } = this.props;
 
-    const containerClasses = `passage
+        const containerClasses = `passage
       model__content__summary
       highlight-container
-      ${layout ? "highlight-container--" + layout : ""}
-      ${isClicking ? "clicking" : ""}
-      ${className || ""}`;
+      ${layout ? 'highlight-container--' + layout : ''}
+      ${isClicking ? 'clicking' : ''}
+      ${className || ''}`;
 
-    return (
-      <div className={containerClasses}>
-        {children}
-      </div>
-    );
-  }
+        return <div className={containerClasses}>{children}</div>;
+    }
 }
