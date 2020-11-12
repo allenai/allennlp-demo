@@ -5761,7 +5761,7 @@ pretty-error@^2.1.1:
     lodash "^4.17.20"
     renderkid "^2.0.4"
 
-prismjs@^1.21.0, prismjs@~1.22.0:
+prismjs@^1.22.0, prismjs@~1.22.0:
   version "1.22.0"
   resolved "https://registry.yarnpkg.com/prismjs/-/prismjs-1.22.0.tgz#73c3400afc58a823dd7eed023f8e1ce9fd8977fa"
   integrity sha512-lLJ/Wt9yy0AiSYBf212kK3mM5L8ycwlyTlSxHBAneXLR0nzFMlZ5y7riFPF3E33zXOF2IH95xdY5jIyZbM9z/w==
@@ -6418,16 +6418,16 @@ react-router@5.2.0, react-router@^5.0.1:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
-react-syntax-highlighter@^15.2.1:
-  version "15.2.1"
-  resolved "https://registry.yarnpkg.com/react-syntax-highlighter/-/react-syntax-highlighter-15.2.1.tgz#63a42be96a645407a394cd7b93b99622f3ea179f"
-  integrity sha512-xrSfqX5Rztf9x4Fa6W+DbbKaJmi5zvh+tAvG2MnktZPDLeX/iMkumwxJdGYn5M1jM3d4+EJTloVAB8UvD7O0nA==
+react-syntax-highlighter@^15.3.0:
+  version "15.3.0"
+  resolved "https://registry.yarnpkg.com/react-syntax-highlighter/-/react-syntax-highlighter-15.3.0.tgz#d8bf103123550e0d637fe8cb1feaf68e22bf9944"
+  integrity sha512-ghJkkmNw/3wRf9XEvfGeG7tfTuAMyThdNxJy50s9CmnwS3QusKDC+F5lX6lvX3mm+V0CwN+zpRioQb0kgdT11w==
   dependencies:
     "@babel/runtime" "^7.3.1"
     highlight.js "^10.1.1"
     lowlight "^1.14.0"
-    prismjs "^1.21.0"
-    refractor "^3.1.0"
+    prismjs "^1.22.0"
+    refractor "^3.2.0"
 
 react-tooltip@4.2.10:
   version "4.2.10"
@@ -6509,7 +6509,7 @@ redux@4.0.1:
     loose-envify "^1.4.0"
     symbol-observable "^1.2.0"
 
-refractor@^3.1.0:
+refractor@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/refractor/-/refractor-3.2.0.tgz#bc46f7cfbb6adbf45cd304e8e299b7fa854804e0"
   integrity sha512-hSo+EyMIZTLBvNNgIU5lW4yjCzNYMZ4dcEhBq/3nReGfqzd2JfVhdlPDfU9rEsgcAyWx+OimIIUoL4ZU7NtYHQ==
