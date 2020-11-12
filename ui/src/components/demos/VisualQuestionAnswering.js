@@ -183,6 +183,7 @@ const modelProps = {
     Output,
     defaultUsage,
     exampleLabel: 'Enter Image & Question or',
+    disablePermalinksForModel: true,
 };
 
 export default withRouter((props) => <Model {...props} {...modelProps} />);

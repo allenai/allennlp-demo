@@ -15,7 +15,7 @@ import {
     HOTFLIP_ATTACKER,
 } from '../InterpretConstants';
 
-const apiUrl = () => `/api/next-token-lm/predict`;
+const apiUrl = () => `/api/next-token-lm/predict?no_cache=1`;
 const apiUrlInterpret = (_, interpreter) => `/api/next-token-lm/interpret/${interpreter}`;
 const apiUrlAttack = (_, attacker) => `/api/next-token-lm/attack/${attacker}`;
 
@@ -591,6 +591,13 @@ const Choices = ({ index, top_tokens, choose, probabilities }) => {
         return null;
     }
 
+    var len = probabilities.length;
+    var indices = new Array(len);
+    for (var i = 0; i < len; ++i) indices[i] = i;
+    indices.sort(function (a, b) {
+        return probabilities[b] - probabilities[a];
+    });
+
     const lis = top_tokens.map((word, idx) => {
         const prob = formatProbability(probabilities, idx);
 
@@ -617,6 +624,11 @@ const Choices = ({ index, top_tokens, choose, probabilities }) => {
         window.history.back();
     };
 
+    var lis_sorted = [];
+    indices.forEach((element) => {
+        lis_sorted.push(lis[element]);
+    });
+
     const goBackItem = (
         <ListItem key="go-back">
             {'history' in window ? (
@@ -629,7 +641,7 @@ const Choices = ({ index, top_tokens, choose, probabilities }) => {
 
     return (
         <ChoiceList>
-            {lis}
+            {lis_sorted}
             {goBackItem}
         </ChoiceList>
     );
