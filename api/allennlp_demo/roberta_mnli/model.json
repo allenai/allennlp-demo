@@ -1,5 +1,5 @@
 {
     "id": "roberta-mnli",
-    "pretrained_model_id": "pair-classification-roberta-snli",
+    "pretrained_model_id": "pair-classification-roberta-mnli",
     "attackers": ["input_reduction"]
 }
