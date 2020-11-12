@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { Table } from 'antd';
-import { BasicFilterDropdown, FilterIcon } from '@allenai/varnish';
+import { BasicFilterDropdown, FilterIcon } from '@allenai/varnish/components';
 
 import Model from '../Model';
 import OutputField from '../OutputField';
