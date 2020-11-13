@@ -59,6 +59,11 @@ class Model:
     Some models that run on older versions need to be load differently.
     """
 
+    model_card_data: Optional[Dict[str, Any]] = None
+    """
+    Data from the official model card, if there is one.
+    """
+
     @classmethod
     def from_file(cls, path: str) -> "Model":
         with open(path, "r") as fh:
@@ -69,6 +74,7 @@ class Model:
                 model_card = get_pretrained_models()[raw["pretrained_model_id"]]
                 raw["archive_file"] = model_card.archive_file
                 raw["predictor_name"] = model_card.registered_predictor_name
+                raw["model_card_data"] = model_card.to_dict()
             out = cls(**raw)
 
         # Do some validation.
