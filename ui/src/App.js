@@ -5,7 +5,7 @@ import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/co
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
-import Menu from './components/Menu';
+import Menu, { demoMenuGroups } from './components/Menu';
 import ModelIntro from './components/ModelIntro';
 import { modelComponents, modelRedirects } from './models';
 import { PaneTop } from './components/Pane';
@@ -25,6 +25,15 @@ import '@allenai/varnish/dist/theme.css';
 
 const DEFAULT_PATH = '/reading-comprehension';
 
+// all routes in the menu
+let routes = [
+    ...demoMenuGroups.reduce((acc, c) => acc.concat(c.routes), []), // flatmap
+];
+// move any routes that are to be hidden to be prefixed by /hidden
+// this frees up the original url to open up any existing route of the same name not iun the menu
+routes = routes.map((r) => {
+    return r.status === 'hidden' ? { ...r, path: `/hidden/${r.path}` } : r;
+});
 /*
 The App is just a react-router wrapped around the Demo component.
 The design is a bit convoluted so that the same code can run
@@ -51,6 +60,18 @@ const App = () => (
             <Switch>
                 <Route exact path="/" render={() => <Redirect to={DEFAULT_PATH} />} />
                 <Route path="/info" component={Info} />
+                {routes.map(({ path, exact, component: Component, componentProps }) => (
+                    <Route
+                        exact={exact}
+                        key={path}
+                        path={path}
+                        render={(props) => (
+                            <DemoWrapper>
+                                <Component {...props} {...componentProps} />
+                            </DemoWrapper>
+                        )}
+                    />
+                ))}
                 <Route path="/:model/:slug?" component={Demo} />
             </Switch>
         </VarnishApp>
@@ -60,10 +81,10 @@ const App = () => (
 // This is the top-level demo component.
 // It handles the chrome for header and menus,
 // and it renders the specific task.
+// Note, this is older code that will be removed once the conversion ios complete
 const Demo = (props) => {
     const { model, slug } = props.match.params;
     const redirectedModel = modelRedirects[model] || model;
-
     return (
         <Layout bgcolor="white">
             <Header>
@@ -79,6 +100,30 @@ const Demo = (props) => {
                     <FullSizeContent main>
                         <SingleTaskDemo model={redirectedModel} slug={slug} />
                     </FullSizeContent>
+                    <Footer />
+                </Layout>
+            </Layout>
+        </Layout>
+    );
+};
+
+// This is the top-level demo component.
+// It handles the chrome for header and menus,
+// and it renders the specific task.
+const DemoWrapper = (props) => {
+    return (
+        <Layout bgcolor="white">
+            <Header>
+                <HeaderColumnsWithSpace columns="auto 1fr">
+                    <Header.Logo href="http://www.allennlp.org/">
+                        <Logo width="147px" height="26px" alt="AllenNLP" />
+                    </Header.Logo>
+                </HeaderColumnsWithSpace>
+            </Header>
+            <Layout>
+                <Menu />
+                <Layout>
+                    <FullSizeContent main>{props.children}</FullSizeContent>
                     <Footer />
                 </Layout>
             </Layout>
