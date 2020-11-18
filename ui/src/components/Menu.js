@@ -20,7 +20,7 @@ const { Item, SubMenu } = AntdMenu;
 *******************************************************************************/
 
 // find all demo pages to show in menu
-const demoCtxs = require.context('../demos', true, /.*\.(tsx)$/);
+const demoCtxs = require.context('../demos', true, /Main\.tsx$/);
 const demos = demoCtxs.keys().map(demoCtxs);
 
 // predefined order of known types
@@ -51,30 +51,33 @@ const demoGroups = [
     },
 ];
 
-export const demoMenuGroups = demoGroups.map((g) => {
-    return {
-        label: g.label,
-        iconSrc: g.iconSrc,
-        routes: demos
-            .filter(
-                (demo) =>
-                    !demo.demoConfig.status !== 'disabled' &&
-                    ((!g.label && demo.demoConfig.demoGroup === 'Other') ||
-                        demo.demoConfig.demoGroup === g.label)
-            )
-            .sort((a, b) => a.demoConfig.order - b.demoConfig.order)
-            .map((demo) => {
-                return {
-                    path: demo.demoConfig.routePathOverride
-                        ? demo.demoConfig.routePathOverride
-                        : `${slug(demo.demoConfig.title, '-')}`,
-                    title: demo.demoConfig.title,
-                    component: demo.default,
-                    status: demo.demoConfig.status,
-                };
-            }),
-    };
-});
+export const demoMenuGroups = demoGroups
+    .map((g) => {
+        return {
+            label: g.label,
+            iconSrc: g.iconSrc,
+            routes: demos
+                .filter(
+                    (demo) =>
+                        !demo.demoConfig.status !== 'disabled' &&
+                        ((!g.label && demo.demoConfig.group === 'Other') ||
+                            demo.demoConfig.group === g.label)
+                )
+                .sort((a, b) => a.demoConfig.order - b.demoConfig.order)
+                .map((demo) => {
+                    return {
+                        path: demo.demoConfig.path
+                            ? demo.demoConfig.path
+                            : `${slug(demo.demoConfig.title, '-')}`,
+                        title: demo.demoConfig.title,
+                        component: demo.default,
+                        status: demo.demoConfig.status,
+                    };
+                }),
+        };
+    })
+    // remove groups with no demos
+    .filter((g) => g.routes.length);
 
 export default class Menu extends React.Component {
     siderWidthExpanded = '300px';

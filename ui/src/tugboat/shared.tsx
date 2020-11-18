@@ -2,11 +2,13 @@ import styled from 'styled-components';
 import { Button } from 'antd';
 
 export interface DemoConfig {
-    demoGroup: string;
+    group: string;
     title: string;
     order: number;
     status: 'active' | 'hidden' | 'disabled';
-    routePathOverride?: string; // we want to use title as the route, but the old codebase needs specific urls
+    /* The path used to access your demo. If it's not set we make a URL safe version of your title and use that instead.
+    For instance a title of "My Cool Demo" would be accessible at "/my-cool-demo". */
+    path?: string;
 }
 
 export interface ModelCard {

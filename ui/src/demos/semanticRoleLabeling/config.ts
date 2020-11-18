@@ -1,7 +1,7 @@
-import { DemoConfig } from '../tugboat';
+import { DemoConfig } from '../../tugboat';
 
 export const demoConfig: DemoConfig = {
-    demoGroup: 'Annotate a sentence',
+    group: 'Annotate a sentence',
     title: 'Semantic Role Labeling',
     order: 6,
     status: 'hidden',

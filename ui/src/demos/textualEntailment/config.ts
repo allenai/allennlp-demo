@@ -1,7 +1,7 @@
-import { DemoConfig } from '../tugboat';
+import { DemoConfig } from '../../tugboat';
 
 export const demoConfig: DemoConfig = {
-    demoGroup: 'Other',
+    group: 'Other',
     title: 'Textual Entailment',
     order: 1,
     status: 'hidden',

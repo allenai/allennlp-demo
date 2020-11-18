@@ -3,8 +3,10 @@
 */
 
 import React from 'react';
+import { Divider, Select } from 'antd';
+import { Content } from '@allenai/varnish/components';
+
 import {
-    DemoConfig,
     Form,
     Title,
     Description,
@@ -14,18 +16,10 @@ import {
     getModelCards,
     ModelUsageModal,
     ModelCardModal,
-} from '../tugboat';
-import { Divider, Select } from 'antd';
-import { Content } from '@allenai/varnish/components';
+} from '../../tugboat';
+import { demoConfig } from './config';
 
-export const demoConfig: DemoConfig = {
-    demoGroup: 'Answer a question',
-    title: 'Reading Comprehension',
-    order: 1,
-    status: 'hidden',
-};
-
-const Demo = () => {
+const Main = () => {
     const [modelCards, setModelCards] = React.useState<ModelCard[]>([]);
     const [modelId, setModelId] = React.useState<string>();
     const [model, setModel] = React.useState<ModelCard>();
@@ -108,4 +102,5 @@ const Demo = () => {
     );
 };
 
-export default Demo;
+export { demoConfig };
+export default Main;

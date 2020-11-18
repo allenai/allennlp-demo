@@ -1,9 +1,9 @@
-import { DemoConfig } from '../tugboat';
+import { DemoConfig } from '../../tugboat';
 
 export const demoConfig: DemoConfig = {
-    demoGroup: 'Contributing',
+    group: 'Contributing',
     title: 'User Contributed Models',
-    routePathOverride: 'user-models',
+    path: 'user-models',
     order: 1,
     status: 'hidden',
 };

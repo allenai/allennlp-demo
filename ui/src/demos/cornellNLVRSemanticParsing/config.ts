@@ -1,9 +1,9 @@
-import { DemoConfig } from '../tugboat';
+import { DemoConfig } from '../../tugboat';
 
 export const demoConfig: DemoConfig = {
-    demoGroup: 'Semantic parsing',
+    group: 'Semantic parsing',
     title: 'Cornell NLVR Semantic Parsing',
-    routePathOverride: 'nlvr-parser',
+    path: 'nlvr-parser',
     order: 2,
     status: 'hidden',
 };

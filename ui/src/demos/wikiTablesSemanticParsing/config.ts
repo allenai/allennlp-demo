@@ -1,9 +1,9 @@
-import { DemoConfig } from '../tugboat';
+import { DemoConfig } from '../../tugboat';
 
 export const demoConfig: DemoConfig = {
-    demoGroup: 'Semantic parsing',
+    group: 'Semantic parsing',
     title: 'WikiTables Semantic Parsing',
-    routePathOverride: 'wikitables-parser',
+    path: 'wikitables-parser',
     order: 1,
     status: 'hidden',
 };
