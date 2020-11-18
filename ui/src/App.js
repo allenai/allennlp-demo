@@ -30,7 +30,7 @@ let routes = [
     ...demoMenuGroups.reduce((acc, c) => acc.concat(c.routes), []), // flatmap
 ];
 // move any routes that are to be hidden to be prefixed by /hidden
-// this frees up the original url to open up any existing route of the same name not iun the menu
+// this frees up the original url to open up any existing route of the same name not in the menu
 routes = routes.map((r) => {
     return r.status === 'hidden' ? { ...r, path: `/hidden/${r.path}` } : r;
 });
