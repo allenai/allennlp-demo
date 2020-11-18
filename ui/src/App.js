@@ -81,7 +81,7 @@ const App = () => (
 // This is the top-level demo component.
 // It handles the chrome for header and menus,
 // and it renders the specific task.
-// Note, this is older code that will be removed once the conversion ios complete
+// Note, this is older code that will be removed once the conversion is complete
 const Demo = (props) => {
     const { model, slug } = props.match.params;
     const redirectedModel = modelRedirects[model] || model;
