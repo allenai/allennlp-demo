@@ -5,7 +5,6 @@ export interface DemoConfig {
     demoGroup: string;
     title: string;
     order: number;
-    disabled?: boolean;
     status: 'active' | 'hidden' | 'disabled';
     routePathOverride?: string; // we want to use title as the route, but the old codebase needs specific urls
 }
