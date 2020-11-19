@@ -3,15 +3,13 @@
 */
 
 import React from 'react';
-import { Divider, Select } from 'antd';
+import { Divider, Select, Form, Input, Button } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import {
-    Form,
     Title,
     Description,
     Markdown,
-    RunButton,
     ModelCard,
     getModelCards,
     ModelUsageModal,
@@ -57,47 +55,48 @@ const Main = () => {
                     to show that the system understands the passage.
                 </Markdown>
             </Description>
-            <h6>Try it for yourself</h6>
-            <Form>
-                <Form.Field>
-                    <Form.Label>Model</Form.Label>
-                    <Form.Select
+            <Form layout="vertical">
+                <Form.Item label="Model">
+                    <Select 
                         value={modelId}
                         onChange={(mid: string) => setModelId(mid)}
                         dropdownMatchSelectWidth={false}
                         optionLabelProp="label"
-                        listHeight={370}>
+                        listHeight={370}
+                    >
                         {modelCards.map((m) => (
                             <Select.Option key={m.id} value={m.id} label={m.display_name}>
                                 <b>{m.display_name}</b>
                                 <Markdown>{m.description}</Markdown>
                             </Select.Option>
                         ))}
-                    </Form.Select>
-                </Form.Field>
-                {model ? (
-                    <>
-                        <Markdown>{model.description}</Markdown>
-                        <ModelUsageModal model={model} />
-                        <ModelCardModal model={model} />
-                    </>
-                ) : null}
-                <Form.Field>
-                    <div>Chose a Passage and a Question</div>
-                    <Form.Select placeholder="Examples..." />
-                </Form.Field>
-                <Form.Field>
-                    <Form.Label>Passage</Form.Label>
-                    <Form.TextArea />
-                </Form.Field>
-                <Form.Field>
-                    <Form.Label>Question</Form.Label>
-                    <Form.Input />
-                </Form.Field>
-                <RunButton>Run Model</RunButton>
+                    </Select>
+                </Form.Item>
+            </Form>
+            {model ? (
+                <>
+                    <Markdown>{model.description}</Markdown>
+                    <ModelUsageModal model={model} />
+                    <ModelCardModal model={model} />
+                </>
+            ) : null}
+            <Form layout="vertical">
+                <Input type="hidden" name="modelId" value={modelId} />
+                <Form.Item label="Choose an Example:">
+                    <Select placeholder="Examples…" /> 
+                </Form.Item>
+                <Form.Item label="Passage:" name="passage">
+                    <Input.TextArea placeholder="Enter a passage…" />
+                </Form.Item>
+                <Form.Item label="Question:" name="question">
+                    <Input placeholder="Enter a question…" />
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary">Run Model</Button>
+                </Form.Item>
             </Form>
             <Divider />
-            // TODO: answer
+            {/* TODO: Answer */}
         </Content>
     );
 };
