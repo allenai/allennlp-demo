@@ -30,7 +30,7 @@ const description = (
 );
 
 const modelUrl =
-    'https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.03.24.tar.gz';
+    'https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.11.19.tar.gz';
 
 const bashCommand = `echo '{"sentence": "Did Uriah honestly think he could beat the game in under three hours?"}' | \\
 allennlp predict ${modelUrl} -`;
