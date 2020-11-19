@@ -4,13 +4,16 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-d
 import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/components';
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
 
+import * as tugboat from './tugboat';
+
 import allenNlpLogo from './components/allennlp_logo.svg';
-import Menu, { demoMenuGroups } from './components/Menu';
+import Menu from './components/Menu';
 import ModelIntro from './components/ModelIntro';
 import { modelComponents, modelRedirects } from './models';
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
 import Info from './components/Info';
+import { groups } from './groups';
 
 import './css/App.css';
 import './css/fonts.css';
@@ -25,15 +28,12 @@ import '@allenai/varnish/dist/theme.css';
 
 const DEFAULT_PATH = '/reading-comprehension';
 
-// all routes in the menu
-let routes = [
-    ...demoMenuGroups.reduce((acc, c) => acc.concat(c.routes), []), // flatmap
-];
-// move any routes that are to be hidden to be prefixed by /hidden
-// this frees up the original url to open up any existing route of the same name not in the menu
-routes = routes.map((r) => {
-    return r.status === 'hidden' ? { ...r, path: `/hidden/${r.path}` } : r;
-});
+const demos = tugboat.Demos.load();
+const demosByGroup = groups.map((g) => ({
+    ...g,
+    demos: demos.forGroup(g.label),
+}));
+
 /*
 The App is just a react-router wrapped around the Demo component.
 The design is a bit convoluted so that the same code can run
@@ -60,14 +60,13 @@ const App = () => (
             <Switch>
                 <Route exact path="/" render={() => <Redirect to={DEFAULT_PATH} />} />
                 <Route path="/info" component={Info} />
-                {routes.map(({ path, exact, component: Component, componentProps }) => (
+                {demos.all().map(({ config, Component }) => (
                     <Route
-                        exact={exact}
-                        key={path}
-                        path={path}
+                        key={config.path}
+                        path={config.path}
                         render={(props) => (
                             <DemoWrapper>
-                                <Component {...props} {...componentProps} />
+                                <Component {...props} />
                             </DemoWrapper>
                         )}
                     />
@@ -95,7 +94,7 @@ const Demo = (props) => {
                 </HeaderColumnsWithSpace>
             </Header>
             <Layout>
-                <Menu redirectedModel={redirectedModel} />
+                <Menu items={demosByGroup} redirectedModel={redirectedModel} />
                 <Layout>
                     <FullSizeContent main>
                         <SingleTaskDemo model={redirectedModel} slug={slug} />
@@ -121,7 +120,7 @@ const DemoWrapper = (props) => {
                 </HeaderColumnsWithSpace>
             </Header>
             <Layout>
-                <Menu />
+                <Menu items={demosByGroup} />
                 <Layout>
                     <FullSizeContent main>{props.children}</FullSizeContent>
                     <Footer />

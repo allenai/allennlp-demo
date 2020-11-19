@@ -17,5 +17,4 @@ const Main = () => {
     );
 };
 
-export { demoConfig };
 export default Main;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Modal } from 'antd';
 
-import { ModelCard } from './shared';
+import { ModelCard } from './ModelCard';
 
 interface Props {
     model: ModelCard;

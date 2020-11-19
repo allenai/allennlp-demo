@@ -3,81 +3,14 @@ import styled from 'styled-components';
 import { Menu as AntdMenu } from 'antd';
 import { textStyles, LeftSider } from '@allenai/varnish/components';
 import { Link } from '@allenai/varnish-react-router';
-import slug from 'slug';
 
 import { ImgIcon } from './ImgIcon';
-import annotateIcon from '../icons/annotate-14px.svg';
-import otherIcon from '../icons/other-14px.svg';
-import parseIcon from '../icons/parse-14px.svg';
-import passageIcon from '../icons/passage-14px.svg';
-import questionIcon from '../icons/question-14px.svg';
-import addIcon from '../icons/add-14px.svg';
 
 const { Item, SubMenu } = AntdMenu;
 
 /*******************************************************************************
   <Menu /> Component
 *******************************************************************************/
-
-// find all demo pages to show in menu
-const demoCtxs = require.context('../demos', true, /Main\.tsx$/);
-const demos = demoCtxs.keys().map(demoCtxs);
-
-// predefined order of known types
-const demoGroups = [
-    {
-        label: 'Answer a question',
-        iconSrc: questionIcon,
-    },
-    {
-        label: 'Annotate a sentence',
-        iconSrc: annotateIcon,
-    },
-    {
-        label: 'Annotate a passage',
-        iconSrc: passageIcon,
-    },
-    {
-        label: 'Semantic parsing',
-        iconSrc: parseIcon,
-    },
-    {
-        label: 'Other',
-        iconSrc: otherIcon,
-    },
-    {
-        label: 'Contributing',
-        iconSrc: addIcon,
-    },
-];
-
-export const demoMenuGroups = demoGroups
-    .map((g) => {
-        return {
-            label: g.label,
-            iconSrc: g.iconSrc,
-            routes: demos
-                .filter(
-                    (demo) =>
-                        !demo.demoConfig.status !== 'disabled' &&
-                        ((!g.label && demo.demoConfig.group === 'Other') ||
-                            demo.demoConfig.group === g.label)
-                )
-                .sort((a, b) => a.demoConfig.order - b.demoConfig.order)
-                .map((demo) => {
-                    return {
-                        path: demo.demoConfig.path
-                            ? demo.demoConfig.path
-                            : `${slug(demo.demoConfig.title, '-')}`,
-                        title: demo.demoConfig.title,
-                        component: demo.default,
-                        status: demo.demoConfig.status,
-                    };
-                }),
-        };
-    })
-    // remove groups with no demos
-    .filter((g) => g.routes.length);
 
 export default class Menu extends React.Component {
     siderWidthExpanded = '300px';
@@ -104,9 +37,9 @@ export default class Menu extends React.Component {
                 onCollapse={this.handleMenuCollapse}>
                 <AntdMenu
                     defaultSelectedKeys={[this.props.redirectedModel]}
-                    defaultOpenKeys={demoMenuGroups.map((g) => g.label)}
+                    defaultOpenKeys={this.props.items.map((g) => g.label)}
                     mode="inline">
-                    {demoMenuGroups.map((g) => (
+                    {this.props.items.map((g) => (
                         <SubMenu
                             key={g.label}
                             title={
@@ -115,13 +48,20 @@ export default class Menu extends React.Component {
                                     <textStyles.Small>{g.label}</textStyles.Small>
                                 </IconMenuItemColumns>
                             }>
-                            {g.routes.map((m) => (
-                                <Item key={m.title}>
-                                    <Link to={`/${m.path}`} onClick={() => {}}>
-                                        <textStyles.Small>{m.title}</textStyles.Small>
-                                    </Link>
-                                </Item>
-                            ))}
+                            {g.demos.map((m) => {
+                                // TODO: Remove this, as it's an artifact of the incremental
+                                // transition. All demos are currently marked as hidden as
+                                // a mechanism for using the old code. Once we've fully
+                                // transition we won't need to do this anymore.
+                                const path = m.config.path.replace(/^\/hidden/, '');
+                                return (
+                                    <Item key={m.config.title}>
+                                        <Link to={`${path}`}>
+                                            <textStyles.Small>{m.config.title}</textStyles.Small>
+                                        </Link>
+                                    </Item>
+                                );
+                            })}
                         </SubMenu>
                     ))}
                 </AntdMenu>

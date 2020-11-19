@@ -3,7 +3,8 @@
 */
 
 import React from 'react';
-import { Divider, Select } from 'antd';
+import { Divider, Select, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { Content } from '@allenai/varnish/components';
 
 import {
@@ -12,41 +13,30 @@ import {
     Description,
     Markdown,
     RunButton,
-    ModelCard,
-    getModelCards,
+    ModelInfo,
     ModelUsageModal,
     ModelCardModal,
+    useModels,
 } from '../../tugboat';
 import { demoConfig } from './config';
 
 const Main = () => {
-    const [modelCards, setModelCards] = React.useState<ModelCard[]>([]);
-    const [modelId, setModelId] = React.useState<string>();
-    const [model, setModel] = React.useState<ModelCard>();
-
-    // TODO: make a hook to hold this code?
-    React.useEffect(() => {
-        fetch('/api/info')
-            .then((r) => r.json())
-            .then((r) =>
-                setModelCards(
-                    getModelCards(r, ['bidaf-elmo', 'bidaf', 'nmn', 'transformer-qa', 'naqanet'])
-                )
-            );
-    }, [false]);
+    const models = useModels('bidaf-elmo', 'bidaf', 'nmn', 'transformer-qa', 'naqanet');
+    const [selectedModel, setSelectedModel] = React.useState<ModelInfo>();
 
     React.useEffect(() => {
-        if (modelCards && modelCards.length) {
-            setModelId(modelCards[0].id);
+        if (models && models.length > 0 && selectedModel === undefined) {
+            setSelectedModel(models[0]);
         }
-    }, [modelCards]);
+    });
 
-    React.useEffect(() => {
-        const found = modelCards.filter((m: ModelCard) => m.id === modelId);
-        if (found.length) {
-            setModel(found[0]);
-        }
-    }, [modelId]);
+    if (!models) {
+        return (
+            <Content>
+                <Spin indicator={<LoadingOutlined style={{ fontSize: '2rem' }} spin />} />
+            </Content>
+        );
+    }
 
     return (
         <Content>
@@ -57,29 +47,40 @@ const Main = () => {
                     to show that the system understands the passage.
                 </Markdown>
             </Description>
-            <h6>Try it for yourself</h6>
             <Form>
                 <Form.Field>
                     <Form.Label>Model</Form.Label>
                     <Form.Select
-                        value={modelId}
-                        onChange={(mid: string) => setModelId(mid)}
+                        value={selectedModel ? selectedModel.id : undefined}
+                        onChange={(mid: string) => {
+                            const m = models.find((m) => m.id === mid);
+                            if (!m) {
+                                console.error(new Error(`Invalid model id: ${mid}`));
+                                return;
+                            }
+                            setSelectedModel(m);
+                        }}
                         dropdownMatchSelectWidth={false}
                         optionLabelProp="label"
                         listHeight={370}>
-                        {modelCards.map((m) => (
-                            <Select.Option key={m.id} value={m.id} label={m.display_name}>
-                                <b>{m.display_name}</b>
-                                <Markdown>{m.description}</Markdown>
-                            </Select.Option>
-                        ))}
+                        {models.map((m) =>
+                            m.model_card_data ? (
+                                <Select.Option
+                                    key={m.id}
+                                    value={m.id}
+                                    label={m.model_card_data.display_name}>
+                                    <b>{m.model_card_data.display_name}</b>
+                                    <Markdown>{m.model_card_data.description}</Markdown>
+                                </Select.Option>
+                            ) : null
+                        )}
                     </Form.Select>
                 </Form.Field>
-                {model ? (
+                {selectedModel && selectedModel.model_card_data ? (
                     <>
-                        <Markdown>{model.description}</Markdown>
-                        <ModelUsageModal model={model} />
-                        <ModelCardModal model={model} />
+                        <Markdown>{selectedModel.model_card_data.description}</Markdown>
+                        <ModelUsageModal model={selectedModel.model_card_data} />
+                        <ModelCardModal model={selectedModel.model_card_data} />
                     </>
                 ) : null}
                 <Form.Field>
@@ -102,5 +103,4 @@ const Main = () => {
     );
 };
 
-export { demoConfig };
 export default Main;
