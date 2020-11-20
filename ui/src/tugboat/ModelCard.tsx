@@ -1,3 +1,17 @@
+/**
+ * TODO: This code is tightly coupled to the AllenNLP Demo and should be moved out of
+ * `tugboat`:
+ *
+ *  1. The API endpoints we query are AllenNLP specific. We can't assert that `/api/info` or
+ *     `/api/:model` exists in the backend we're talking to. We only know this to be true
+ *     in this example.
+ *
+ *  2. The `ModelCard` includes all sorts of properties that are domain specific -- AllenNLP
+ *     models have properties like `registered_predictor_name` that won't exist in Vision,
+ *     Mosaic, etc. I like the idea of asserting some general set of properties that models
+ *     need to have to be featured via `tugboat`, but that's probably a pretty small, generic
+ *     set.
+ */
 import React from 'react';
 
 export interface ModelCard {
