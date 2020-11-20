@@ -6,15 +6,13 @@ import React from 'react';
 import { Content } from '@allenai/varnish/components';
 
 import { Title } from '../../tugboat';
-import { demoConfig } from './config';
+import { config } from './config';
 
-const Main = () => {
+export const Main = () => {
     return (
         <Content>
-            <Title>{demoConfig.title}</Title>
+            <Title>{config.title}</Title>
             NOTE: This task is under development
         </Content>
     );
 };
-
-export default Main;

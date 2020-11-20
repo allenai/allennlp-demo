@@ -1,6 +1,6 @@
 import { DemoConfig } from '../../tugboat';
 
-export const demoConfig: DemoConfig = {
+export const config: DemoConfig = {
     group: 'Other',
     title: 'Masked Language Modeling',
     path: '/masked-lm',

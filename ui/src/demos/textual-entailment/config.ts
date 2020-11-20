@@ -1,6 +1,6 @@
 import { DemoConfig } from '../../tugboat';
 
-export const demoConfig: DemoConfig = {
+export const config: DemoConfig = {
     group: 'Other',
     title: 'Textual Entailment',
     order: 1,

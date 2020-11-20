@@ -3,8 +3,7 @@
 */
 
 import React from 'react';
-import { Divider, Select, Spin } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { Divider, Select } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import {
@@ -13,14 +12,15 @@ import {
     Description,
     Markdown,
     RunButton,
+    Loading,
     ModelInfo,
     ModelUsageModal,
     ModelCardModal,
     useModels,
 } from '../../tugboat';
-import { demoConfig } from './config';
+import { config } from './config';
 
-const Main = () => {
+export const Main = () => {
     const models = useModels('bidaf-elmo', 'bidaf', 'nmn', 'transformer-qa', 'naqanet');
     const [selectedModel, setSelectedModel] = React.useState<ModelInfo>();
 
@@ -33,14 +33,14 @@ const Main = () => {
     if (!models) {
         return (
             <Content>
-                <Spin indicator={<LoadingOutlined style={{ fontSize: '2rem' }} spin />} />
+                <Loading />
             </Content>
         );
     }
 
     return (
         <Content>
-            <Title>{demoConfig.title}</Title>
+            <Title>{config.title}</Title>
             <Description>
                 <Markdown>
                     Reading comprehension is the task of answering questions about a passage of text
@@ -102,5 +102,3 @@ const Main = () => {
         </Content>
     );
 };
-
-export default Main;
