@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Modal } from 'antd';
 
-import { ModelCard } from './ModelCard';
-import { Markdown } from './Markdown';
+import { ModelCard } from '../lib';
+import { Markdown } from '../tugboat';
 
 interface Props {
     model: ModelCard;

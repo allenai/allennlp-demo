@@ -1,4 +1,4 @@
-import { Form as FormImpl, Field, Label, TextArea, Input, Select, OptDesc } from './form';
+import { Form as FormImpl, Field, TextArea, Input, Select, OptDesc } from './form';
 
 // Adding statics so that we can export a module that is useable as:
 // <Form>
@@ -6,7 +6,6 @@ import { Form as FormImpl, Field, Label, TextArea, Input, Select, OptDesc } from
 // </Form>
 const Form = FormImpl as any; // any is so we can add the random statics below
 Form.Field = Field;
-Form.Label = Label;
 Form.TextArea = TextArea;
 Form.Input = Input;
 Form.Select = Select;
@@ -16,9 +15,6 @@ export { Form };
 
 export * from './shared';
 export * from './Markdown';
-export * from './ModelUsageModal';
-export * from './ModelCardModal';
-export * from './ModelCard';
 export * from './DemoConfig';
 export * from './Demos';
 export * from './Demo';
