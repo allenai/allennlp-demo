@@ -158,8 +158,8 @@ export const Main = () => {
                 {selectedModel && selectedModel.info.model_card_data ? (
                     <>
                         <Markdown>{selectedModel.info.model_card_data.description}</Markdown>
-                        <ModelUsageModal model={selectedModel.info.model_card_data} />
-                        <ModelCardModal model={selectedModel.info.model_card_data} />
+                        <ModelUsageModal model={selectedModel.info} />
+                        <ModelCardModal model={selectedModel.info} />
                     </>
                 ) : null}
                 <Form.Field label="Select an Example">

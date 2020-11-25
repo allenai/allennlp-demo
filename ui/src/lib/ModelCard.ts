@@ -1,5 +1,4 @@
 export interface ModelCard {
-    id: string;
     archive_file?: string;
     citation?: string;
     contact?: string;
