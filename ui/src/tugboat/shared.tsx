@@ -11,9 +11,10 @@ export const Description = styled.div`
     margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
-export const RunButton = styled(Button).attrs({
+export const RunButton = styled(Button).attrs(() => ({
     type: 'primary',
-})`
+    htmlType: 'submit',
+}))`
     margin-top: ${({ theme }) => theme.spacing.sm};
     margin-right: ${({ theme }) => theme.spacing.md};
 `;

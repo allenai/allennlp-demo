@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button, Modal } from 'antd';
 
-import { ModelCard } from './ModelCard';
+import { ModelInfo } from '../lib';
 
 interface Props {
-    model: ModelCard;
+    model: ModelInfo;
 }
 
 export const ModelUsageModal = ({ model }: Props) => {
@@ -26,7 +26,7 @@ export const ModelUsageModal = ({ model }: Props) => {
                     </Button>,
                 ]}>
                 <h4>Installing AllenNLP</h4>
-                {model.display_name}
+                {model.model_card_data?.display_name}
                 <h4>Prediction</h4>
 
                 <h5>On the command line (bash):</h5>

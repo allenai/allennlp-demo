@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button, Modal } from 'antd';
 
-import { ModelCard } from './ModelCard';
-import { Markdown } from './Markdown';
+import { ModelInfo } from '../lib';
+import { Markdown } from '../tugboat';
 
 interface Props {
-    model: ModelCard;
+    model: ModelInfo;
 }
 
 export const ModelCardModal = ({ model }: Props) => {
@@ -28,9 +28,11 @@ export const ModelCardModal = ({ model }: Props) => {
                 ]}>
                 <div>
                     <h4>Name</h4>
-                    {model.display_name}
+                    {model.model_card_data?.display_name}
                     <h4>Description</h4>
-                    <Markdown>{model.description}</Markdown>
+                    {model.model_card_data ? (
+                        <Markdown>{model.model_card_data.description}</Markdown>
+                    ) : null}
                     <h4>ID</h4>
                     {model.id}
                 </div>
