@@ -8,7 +8,7 @@ import { Content } from '@allenai/varnish/components';
 
 import { Form, Title, Description, Markdown, RunButton, Loading } from '../../tugboat';
 import { ModelUsageModal, ModelCardModal } from '../../components';
-import { useModels, Model } from '../../lib';
+import { useModels } from '../../lib';
 import { config } from './config';
 
 interface Input {
@@ -66,29 +66,16 @@ type Output = BiDAFOutput | TransformerQAOutput | NAQANetOutput;
 export const Main = () => {
     // TODO: NMN doesn't return anything right now (there's no `/info` route, I think), so it's
     // not present. We need to fix this.
-    const models = useModels<Input, Output>(
+    const [models, selectModel] = useModels<Input, Output>(
         'bidaf-elmo',
         'bidaf',
         'nmn',
         'transformer-qa',
         'naqanet'
     );
-    const [selectedModel, setSelectedModel] = React.useState<Model<Input, Output>>();
     const [output, setOutput] = React.useState<Output>();
 
-    React.useEffect(() => {
-        if (models && models.length > 0 && selectedModel === undefined) {
-            // TODO: The Output type is generic, and captures all types that might be returned,
-            // as each model's output is similar but a little different. In the future when we
-            // wire up a display that isn't dumping JSON to the screen we'll want to cast the
-            // output somehow to the type we expect. To handle this I'd suggest using TypeScript's
-            // relative newish user-defined type guards:
-            // https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards
-            setSelectedModel(models[0]);
-        }
-    });
-
-    if (!models) {
+    if (!models.hasModels) {
         return (
             <Content>
                 <Loading />
@@ -100,13 +87,13 @@ export const Main = () => {
     const handleFormSubmit = async (i: Input) => {
         // TODO: Show some form of loading.
         // TODO: Implement better error handling (show something nice to the user).
-        if (!selectedModel) {
+        if (!models.selected) {
             console.error(`Attempt to submit without a selected model. This shouldn't happen.`);
             return;
         }
         input = i;
         try {
-            const p = await selectedModel.predict(i);
+            const p = await models.selected.predict(i);
             if (input !== p.input) {
                 console.warn('Disregarding stale prediction:', p);
                 return;
@@ -129,19 +116,12 @@ export const Main = () => {
             </Description>
             <Form.Field label="Model">
                 <Form.Select
-                    value={selectedModel ? selectedModel.info.id : undefined}
-                    onChange={(mid: string) => {
-                        const m = models.find((m) => m.info.id === mid);
-                        if (!m) {
-                            console.error(new Error(`Invalid model id: ${mid}`));
-                            return;
-                        }
-                        setSelectedModel(m);
-                    }}
+                    value={models.selected?.info.id}
+                    onChange={selectModel}
                     dropdownMatchSelectWidth={false}
                     optionLabelProp="label"
                     listHeight={370}>
-                    {models.map((m) =>
+                    {models.all.map((m) =>
                         m.info.model_card_data ? (
                             <Select.Option
                                 key={m.info.id}
@@ -155,11 +135,11 @@ export const Main = () => {
                 </Form.Select>
             </Form.Field>
             <Form onFinish={handleFormSubmit}>
-                {selectedModel && selectedModel.info.model_card_data ? (
+                {models.selected && models.selected.info.model_card_data ? (
                     <>
-                        <Markdown>{selectedModel.info.model_card_data.description}</Markdown>
-                        <ModelUsageModal model={selectedModel.info} />
-                        <ModelCardModal model={selectedModel.info} />
+                        <Markdown>{models.selected.info.model_card_data.description}</Markdown>
+                        <ModelUsageModal model={models.selected.info} />
+                        <ModelCardModal model={models.selected.info} />
                     </>
                 ) : null}
                 <Form.Field label="Select an Example">
