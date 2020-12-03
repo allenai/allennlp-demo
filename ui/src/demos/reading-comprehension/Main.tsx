@@ -66,14 +66,13 @@ type Output = BiDAFOutput | TransformerQAOutput | NAQANetOutput;
 export const Main = () => {
     // TODO: NMN doesn't return anything right now (there's no `/info` route, I think), so it's
     // not present. We need to fix this.
-    const [models, selectModel] = useModels<Input, Output>(
+    const [models, selectModel, fetchPredictions] = useModels<Input, Output>(
         'bidaf-elmo',
         'bidaf',
         'nmn',
         'transformer-qa',
         'naqanet'
     );
-    const [output, setOutput] = React.useState<Output>();
 
     if (!models.hasModels) {
         return (
@@ -82,28 +81,6 @@ export const Main = () => {
             </Content>
         );
     }
-
-    let input: Input | undefined;
-    const handleFormSubmit = async (i: Input) => {
-        // TODO: Show some form of loading.
-        // TODO: Implement better error handling (show something nice to the user).
-        if (!models.selected) {
-            console.error(`Attempt to submit without a selected model. This shouldn't happen.`);
-            return;
-        }
-        input = i;
-        try {
-            const p = await models.selected.predict(i);
-            if (input !== p.input) {
-                console.warn('Disregarding stale prediction:', p);
-                return;
-            }
-            setOutput(p.output);
-        } catch (err) {
-            // TODO: Implement better error handling (show something nice to the user).
-            console.error(err);
-        }
-    };
 
     return (
         <Content>
@@ -116,11 +93,12 @@ export const Main = () => {
             </Description>
             <Form.Field label="Model">
                 <Form.Select
-                    value={models.selected?.info.id}
+                    value={models.selected?.model.info.id}
                     onChange={selectModel}
                     dropdownMatchSelectWidth={false}
                     optionLabelProp="label"
-                    listHeight={370}>
+                    listHeight={370}
+                >
                     {models.all.map((m) =>
                         m.info.model_card_data ? (
                             <Select.Option
@@ -134,12 +112,12 @@ export const Main = () => {
                     )}
                 </Form.Select>
             </Form.Field>
-            <Form onFinish={handleFormSubmit}>
-                {models.selected && models.selected.info.model_card_data ? (
+            <Form onFinish={fetchPredictions}>
+                {models.selected && models.selected.model.info.model_card_data ? (
                     <>
-                        <Markdown>{models.selected.info.model_card_data.description}</Markdown>
-                        <ModelUsageModal model={models.selected.info} />
-                        <ModelCardModal model={models.selected.info} />
+                        <Markdown>{models.selected.model.info.model_card_data.description}</Markdown>
+                        <ModelUsageModal model={models.selected.model.info} />
+                        <ModelCardModal model={models.selected.model.info} />
                     </>
                 ) : null}
                 <Form.Field label="Select an Example">
@@ -161,13 +139,13 @@ export const Main = () => {
                 </Form.Field>
                 <Form.Field>
                     {/* TODO: Consider <Form.Submit>Run Model</Form.Submit>? */}
-                    <RunButton>Run Model</RunButton>
+                    <RunButton loading={models.selected?.isPredicting()}>Run Model</RunButton>
                 </Form.Field>
             </Form>
             <Divider />
-            {output ? (
+            {models.selected?.hasPredictions() ? (
                 <code>
-                    <pre>{JSON.stringify(output, null, 2)}</pre>
+                    <pre>{JSON.stringify(models.selected?.state.predictions, null, 2)}</pre>
                 </code>
             ) : null}
         </Content>
