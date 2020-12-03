@@ -66,7 +66,7 @@ type Output = BiDAFOutput | TransformerQAOutput | NAQANetOutput;
 export const Main = () => {
     // TODO: NMN doesn't return anything right now (there's no `/info` route, I think), so it's
     // not present. We need to fix this.
-    const [models, selectModel, fetchPredictions] = useModels<Input, Output>(
+    const { store, selectModelById, fetchPredictionsUsingSelectedModel } = useModels<Input, Output>(
         'bidaf-elmo',
         'bidaf',
         'nmn',
@@ -74,12 +74,17 @@ export const Main = () => {
         'naqanet'
     );
 
-    if (!models.hasModels) {
+    if (store.isLoading()) {
         return (
             <Content>
                 <Loading />
             </Content>
         );
+    }
+
+    if (!store.hasModels()) {
+        // TODO: Make this look nice.
+        return <Content>Error: Unable to load models.</Content>;
     }
 
     return (
@@ -93,13 +98,12 @@ export const Main = () => {
             </Description>
             <Form.Field label="Model">
                 <Form.Select
-                    value={models.selected?.model.info.id}
-                    onChange={selectModel}
+                    value={store.current.selected.info.id}
+                    onChange={selectModelById}
                     dropdownMatchSelectWidth={false}
                     optionLabelProp="label"
-                    listHeight={370}
-                >
-                    {models.all.map((m) =>
+                    listHeight={370}>
+                    {store.current.models.map((m) =>
                         m.info.model_card_data ? (
                             <Select.Option
                                 key={m.info.id}
@@ -112,14 +116,12 @@ export const Main = () => {
                     )}
                 </Form.Select>
             </Form.Field>
-            <Form onFinish={fetchPredictions}>
-                {models.selected && models.selected.model.info.model_card_data ? (
-                    <>
-                        <Markdown>{models.selected.model.info.model_card_data.description}</Markdown>
-                        <ModelUsageModal model={models.selected.model.info} />
-                        <ModelCardModal model={models.selected.model.info} />
-                    </>
+            <Form onFinish={fetchPredictionsUsingSelectedModel}>
+                {store.current.selected.info.model_card_data ? (
+                    <Markdown>{store.current.selected.info.model_card_data.description}</Markdown>
                 ) : null}
+                <ModelUsageModal model={store.current.selected.info} />
+                <ModelCardModal model={store.current.selected.info} />
                 <Form.Field label="Select an Example">
                     <Form.Select placeholder="Examples..." />
                 </Form.Field>
@@ -139,13 +141,13 @@ export const Main = () => {
                 </Form.Field>
                 <Form.Field>
                     {/* TODO: Consider <Form.Submit>Run Model</Form.Submit>? */}
-                    <RunButton loading={models.selected?.isPredicting()}>Run Model</RunButton>
+                    <RunButton loading={store.isPredicting()}>Run Model</RunButton>
                 </Form.Field>
             </Form>
             <Divider />
-            {models.selected?.hasPredictions() ? (
+            {store.hasPrediction() ? (
                 <code>
-                    <pre>{JSON.stringify(models.selected?.state.predictions, null, 2)}</pre>
+                    <pre>{JSON.stringify(store.current.prediction, null, 2)}</pre>
                 </code>
             ) : null}
         </Content>
