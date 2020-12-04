@@ -62,9 +62,15 @@ type Output = BiDAFOutput | TransformerQAOutput | NAQANetOutput;
 export const Main = () => {
     // TODO: NMN doesn't return anything right now (there's no `/info` route, I think), so it's
     // not present. We need to fix this.
-    const ml = useModels<Input, Output>('bidaf-elmo', 'bidaf', 'nmn', 'transformer-qa', 'naqanet');
+    const modelStore = useModels<Input, Output>(
+        'bidaf-elmo',
+        'bidaf',
+        'nmn',
+        'transformer-qa',
+        'naqanet'
+    );
 
-    if (ml.isLoadingModels()) {
+    if (modelStore.isLoadingModels()) {
         return (
             <Content>
                 <Loading />
@@ -72,15 +78,13 @@ export const Main = () => {
         );
     }
 
-    if (!ml.hasLoadedModels()) {
+    if (!modelStore.hasLoadedModels()) {
+        const message = modelStore.failedToLoadModels()
+            ? 'The demo failed to load. Please try again.'
+            : 'An unknown problem occured.';
         return (
             <Content>
-                <Alert
-                    type="error"
-                    message="Error"
-                    description="Unable to load models. Please try again."
-                    showIcon
-                />
+                <Alert type="error" message="Error" description={message} showIcon />
             </Content>
         );
     }
@@ -96,15 +100,15 @@ export const Main = () => {
             </Description>
             <form.Field label="Model">
                 <form.Select
-                    value={ml.selectedModel?.info.id}
+                    value={modelStore.selectedModel.info.id}
                     onChange={(id) => {
                         // TODO: Figure out why `toString()` here is required, it shouldn't be.
-                        ml.selectModelById(id.toString());
+                        modelStore.selectModelById(id.toString());
                     }}
                     dropdownMatchSelectWidth={false}
                     optionLabelProp="label"
                     listHeight={370}>
-                    {ml.models.map((m) =>
+                    {modelStore.models.map((m) =>
                         m.info.model_card_data ? (
                             <Select.Option
                                 key={m.info.id}
@@ -119,18 +123,14 @@ export const Main = () => {
             </form.Field>
             <form.Form
                 onFinish={(input) => {
-                    // TODO: Is there a way we can get `antd` to capture this.
-                    ml.fetchPredictionsUsingSelectedModel(input as Input);
+                    // TODO: Is there a way we can get `antd` to negate the need for this cast.
+                    modelStore.fetchPredictionsUsingSelectedModel(input as Input);
                 }}>
-                {ml.selectedModel ? (
-                    <>
-                        {ml.selectedModel.info.model_card_data ? (
-                            <Markdown>{ml.selectedModel.info.model_card_data.description}</Markdown>
-                        ) : null}
-                        <ModelUsageModal model={ml.selectedModel.info} />
-                        <ModelCardModal model={ml.selectedModel.info} />
-                    </>
-                ) : null}
+                <Markdown>
+                    {modelStore.selectedModel.info.model_card_data?.description || ''}
+                </Markdown>
+                <ModelUsageModal model={modelStore.selectedModel.info} />
+                <ModelCardModal model={modelStore.selectedModel.info} />
                 <form.Field label="Select an Example">
                     <form.Select placeholder="Examples..." />
                 </form.Field>
@@ -149,11 +149,11 @@ export const Main = () => {
                     <form.Input />
                 </form.Field>
                 <form.Field>
-                    <form.Submit loading={ml.isPredicting()}>Run Model</form.Submit>
+                    <form.Submit loading={modelStore.isPredicting()}>Run Model</form.Submit>
                 </form.Field>
             </form.Form>
             <Divider />
-            {ml.failedToPredict() ? (
+            {modelStore.failedToPredict() ? (
                 <Alert
                     type="error"
                     message="Error"
@@ -161,9 +161,9 @@ export const Main = () => {
                     showIcon
                 />
             ) : null}
-            {ml.currentPrediction ? (
+            {modelStore.hasPrediction() ? (
                 <code>
-                    <pre>{JSON.stringify(ml.currentPrediction, null, 2)}</pre>
+                    <pre>{JSON.stringify(modelStore.currentPrediction, null, 2)}</pre>
                 </code>
             ) : null}
         </Content>

@@ -1,102 +1,182 @@
+import { Dispatch } from 'react';
+
 import { Model } from '../../Model';
+import { fetchModelInfo } from '../../ModelInfo';
+import { Prediction } from '../../Prediction';
 import * as action from './action';
 import * as state from './state';
 import * as error from './error';
 
-/**
- * A finite state machine that captures information about the current set of models and
- * any relevant output that's used for demonstration purposes.
- */
-export class Store {
-    constructor(readonly current: state.State) {}
+type Loading<I, O> = Store<I, O> & { currentState: state.Loading };
+type Loaded<I, O> = Store<I, O> & { selectedModel: Model<I, O>; currentState: state.Loaded<I, O> };
+type FailedToLoad<I, O> = Store<I, O> & { currentState: state.FailedToLoad };
+type Predicting<I, O> = Store<I, O> & Loaded<I, O> & { currentState: state.Predicting<I, O> };
+type HasPrediction<I, O> = Store<I, O> &
+    Loaded<I, O> & { currentPrediction: Prediction<I, O>; currentState: state.HasPrediction<I, O> };
+type FailedToPredict<I, O> = Store<I, O> &
+    Loaded<I, O> & { currentState: state.FailedToPredict<I, O> };
+
+export class Store<I, O> {
+    constructor(readonly currentState: state.State, readonly dispatch: Dispatch<action.Action>) {}
+
+    loadModels(modelIds: string[]) {
+        return Promise.all(modelIds.map(fetchModelInfo)).then((info) => {
+            this.dispatch(
+                new action.Loaded(
+                    modelIds,
+                    info.map((i) => new Model(i))
+                )
+            );
+        });
+    }
+
+    get models(): Model<I, O>[] {
+        if (!this.hasLoadedModels()) {
+            return [];
+        }
+        return this.currentState.models;
+    }
+
+    selectModelById(id: string) {
+        this.dispatch(new action.Select(id));
+    }
+
+    get selectedModel(): Model<I, O> | undefined {
+        if (!this.hasLoadedModels()) {
+            return;
+        }
+        return this.currentState.selected;
+    }
+
+    fetchPredictionsUsingSelectedModel(i: I) {
+        if (!this.hasLoadedModels()) {
+            throw new error.InvalidState(this.currentState);
+        }
+        this.dispatch(new action.Predicting(i));
+        this.currentState.selected
+            .predict(i)
+            .then((p) => {
+                this.dispatch(new action.ReceivedPrediction(p));
+            })
+            .catch((e) => {
+                const err = e instanceof Error ? e : new Error(e);
+                this.dispatch(new action.PredictError(i, err));
+            });
+    }
+
+    isLoadingModels(): this is Loading<I, O> {
+        return this.currentState instanceof state.Loading;
+    }
+
+    hasLoadedModels(): this is Loaded<I, O> {
+        return this.currentState instanceof state.Loaded;
+    }
+
+    failedToLoadModels(): this is FailedToLoad<I, O> {
+        return this.currentState instanceof state.FailedToLoad;
+    }
+
+    isPredicting(): this is Predicting<I, O> {
+        return this.currentState instanceof state.Predicting;
+    }
+
+    hasPrediction(): this is HasPrediction<I, O> {
+        return this.currentState instanceof state.HasPrediction;
+    }
+
+    get currentPrediction(): Prediction<I, O> | undefined {
+        if (!this.hasPrediction()) {
+            return;
+        }
+        return this.currentState.prediction;
+    }
+
+    failedToPredict(): this is FailedToPredict<I, O> {
+        return this.currentState instanceof state.FailedToPredict;
+    }
+
+    hasError(): this is FailedToPredict<I, O> | FailedToLoad<I, O> {
+        return this.failedToLoadModels() || this.failedToPredict();
+    }
 
     /**
-     * The reducer is responsible for executing state changes in response to dispatched actions.
-     * The function is called with the current store and the received action, and returns the
-     * resulting state.
+     * This function processes an action and transforms the current state. The method name
+     * derived from React nomenclature: https://reactjs.org/docs/hooks-reference.html#usereducer
      *
-     * In some cases the state transition throws when responding to an action. This is meant to
-     * only occur in scenarios that shouldn't occur while things are working normally.
+     * If the action can't be processed because of a situation that's indicative of a programming
+     * error, an exception is thrown.
      *
-     * In other cases we simply return the current state. This occurs when we're handling an action
-     * whose effect should be disregarded. This is usually something that handles with asynchronous
-     * behavior -- as the UI may have transitioned to a state where the action is no longer
-     * relevant. For instance, if a user starts a prediction request but then navigations to a new
-     * model, the results will still be dispatched here when the response is returned. Instead
-     * of trying to display them, we simply discard them by returning the current state, given the
-     * desired state change shouldn't occur.
+     * In other cases the current state is returned with no change, and the effect of the action
+     * is discarded. This usually occurs due to asynchronous behavior -- for instance, when a
+     * response is received for a request that is no longer relevant to the UI.
      */
-    static reducer<I, O>(st: Store, a: action.Action): Store {
+    static reducer<I, O>(cs: state.State, a: action.Action): state.State {
         if (a instanceof action.Loading) {
-            return new Store(new state.Loading(a.modelIds));
+            return new state.Loading(a.modelIds);
         }
 
         if (a instanceof action.Loaded) {
-            if (!(st.current instanceof state.Loading)) {
-                return st;
+            if (!(cs instanceof state.Loading)) {
+                return cs;
             }
-            if (st.current.modelIds !== a.modelIds) {
-                return st;
+            if (cs.modelIds !== a.modelIds) {
+                return cs;
             }
             if (a.models.length === 0) {
                 throw new error.NoModels();
             }
-            return new Store(new state.Loaded(a.models, a.models[0]));
+            return new state.Loaded(a.models, a.models[0]);
         }
 
         if (a instanceof action.LoadError) {
-            if (!(st.current instanceof state.Loading)) {
-                return st;
+            if (!(cs instanceof state.Loading)) {
+                return cs;
             }
-            if (st.current.modelIds === a.modelIds) {
-                return st;
+            if (cs.modelIds === a.modelIds) {
+                return cs;
             }
-            return new Store(new state.FailedToLoad(a.modelIds, a.cause));
+            return new state.FailedToLoad(a.modelIds, a.cause);
         }
 
         if (a instanceof action.Select) {
-            if (!(st.current instanceof state.Loaded)) {
-                throw new error.InvalidState(st.current);
+            if (!(cs instanceof state.Loaded)) {
+                throw new error.InvalidState(cs);
             }
-            if (st.current.models.length === 0) {
+            if (cs.models.length === 0) {
                 throw new error.NoModels();
             }
-            const m = st.current.models.find((m: Model<I, O>) => m.info.id === a.modelId);
+            const m = cs.models.find((m: Model<I, O>) => m.info.id === a.modelId);
             if (!m) {
                 throw new error.ModelNotFound(a.modelId);
             }
-            return new Store(new state.Loaded(st.current.models, m));
+            return new state.Loaded(cs.models, m);
         }
 
         if (a instanceof action.Predicting) {
-            if (!(st.current instanceof state.Loaded)) {
-                throw new error.InvalidState(st.current);
+            if (!(cs instanceof state.Loaded)) {
+                throw new error.InvalidState(cs);
             }
-            return new Store(new state.Predicting(st.current.models, st.current.selected, a.input));
+            return new state.Predicting(cs.models, cs.selected, a.input);
         }
 
         if (a instanceof action.ReceivedPrediction) {
-            if (!(st.current instanceof state.Predicting)) {
-                return st;
+            if (!(cs instanceof state.Predicting)) {
+                return cs;
             }
-            if (st.current.input !== a.prediction.input) {
-                return st;
+            if (cs.input !== a.prediction.input) {
+                return cs;
             }
-            return new Store(
-                new state.HasPrediction(st.current.models, st.current.selected, a.prediction)
-            );
+            return new state.HasPrediction(cs.models, cs.selected, a.prediction);
         }
 
         if (a instanceof action.PredictError) {
-            if (!(st.current instanceof state.Predicting)) {
-                return st;
+            if (!(cs instanceof state.Predicting)) {
+                return cs;
             }
-            if (st.current.input !== a.input) {
-                return st;
+            if (cs.input !== a.input) {
+                return cs;
             }
-            return new Store(
-                new state.FailedToPredict(st.current.models, st.current.selected, a.input, a.cause)
-            );
+            return new state.FailedToPredict(cs.models, cs.selected, a.input, a.cause);
         }
 
         throw new error.UnknownAction(a);
