@@ -59,3 +59,5 @@ export const Submit = styled(Button).attrs(() => ({
     margin-top: ${({ theme }) => theme.spacing.sm};
     margin-right: ${({ theme }) => theme.spacing.md};
 `;
+
+export * from './ModelSelect';

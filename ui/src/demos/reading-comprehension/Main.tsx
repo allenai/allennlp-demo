@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Divider, Select } from 'antd';
+import { Alert, Divider } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import { form, Title, Description, Markdown, Loading } from '../../tugboat';
@@ -98,29 +98,11 @@ export const Main = () => {
                     to show that the system understands the passage.
                 </Markdown>
             </Description>
-            <form.Field label="Model">
-                <form.Select
-                    value={modelStore.selectedModel.info.id}
-                    onChange={(id) => {
-                        // TODO: Figure out why `toString()` here is required, it shouldn't be.
-                        modelStore.selectModelById(id.toString());
-                    }}
-                    dropdownMatchSelectWidth={false}
-                    optionLabelProp="label"
-                    listHeight={370}>
-                    {modelStore.models.map((m) =>
-                        m.info.model_card_data ? (
-                            <Select.Option
-                                key={m.info.id}
-                                value={m.info.id}
-                                label={m.info.model_card_data.display_name}>
-                                <b>{m.info.model_card_data.display_name}</b>
-                                <Markdown>{m.info.model_card_data.description}</Markdown>
-                            </Select.Option>
-                        ) : null
-                    )}
-                </form.Select>
-            </form.Field>
+            <form.ModelSelect
+                options={modelStore.models}
+                selected={modelStore.selectedModel}
+                onChange={(id) => modelStore.selectModelById(id)}
+            />
             <form.Form
                 onFinish={(input) => {
                     // TODO: Is there a way we can get `antd` to negate the need for this cast.
