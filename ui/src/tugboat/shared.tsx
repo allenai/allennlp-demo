@@ -13,7 +13,9 @@ export const Description = styled.div`
 
 const LoadingIcon = styled(LoadingOutlined).attrs(() => ({ spin: true }))`
     font-size: 2rem;
-    color: ${({ theme }) => theme.color.B6};
+    svg {
+        fill: ${({ theme }) => theme.color.B6};
+    }
 `;
 
 export const Loading = () => <Spin indicator={<LoadingIcon />} />;
