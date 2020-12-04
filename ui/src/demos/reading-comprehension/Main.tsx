@@ -1,8 +1,8 @@
 import React from 'react';
-import { Alert, Divider } from 'antd';
+import { Divider } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
-import { form, Title, Description, Markdown, Loading } from '../../tugboat';
+import { form, Title, Description, Markdown, Loading, ErrorMessage } from '../../tugboat';
 import { ModelUsageModal, ModelCardModal } from '../../components';
 import { useModels } from '../../lib';
 import { config } from './config';
@@ -81,10 +81,10 @@ export const Main = () => {
     if (!modelStore.hasLoadedModels()) {
         const message = modelStore.failedToLoadModels()
             ? 'The demo failed to load. Please try again.'
-            : 'An unknown problem occured.';
+            : undefined;
         return (
             <Content>
-                <Alert type="error" message="Error" description={message} showIcon />
+                <ErrorMessage message={message} />
             </Content>
         );
     }
@@ -136,12 +136,7 @@ export const Main = () => {
             </form.Form>
             <Divider />
             {modelStore.failedToPredict() ? (
-                <Alert
-                    type="error"
-                    message="Error"
-                    description="Prediction failed. Please try again"
-                    showIcon
-                />
+                <ErrorMessage message="Prediction failed. Please try again" />
             ) : null}
             {modelStore.hasPrediction() ? (
                 <pre>{JSON.stringify(modelStore.currentPrediction, null, 2)}</pre>

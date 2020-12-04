@@ -6,3 +6,4 @@ export * from './Demos';
 export * from './Demo';
 export * from './DemoGroup';
 export * from './ErrorBoundary';
+export * from './ErrorMessage';
