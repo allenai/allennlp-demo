@@ -5,8 +5,6 @@ export interface ModelInfo {
     model_card_data?: ModelCard;
 }
 
-export async function fetchModelInfo(id: string): Promise<ModelInfo> {
-    const resp = await fetch(`/api/${id}`);
-    const inf: ModelInfo = await resp.json();
-    return inf;
+export function fetchModelInfo(id: string): Promise<ModelInfo> {
+    return fetch(`/api/${id}`).then((r) => r.json());
 }

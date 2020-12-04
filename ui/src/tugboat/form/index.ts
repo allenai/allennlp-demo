@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Input as AntInput, Select as AntSelect, Form as AntForm } from 'antd';
+import { Button, Input as AntInput, Select as AntSelect, Form as AntForm } from 'antd';
 
 export const Form = styled(AntForm).attrs(() => ({
     layout: 'vertical',
@@ -51,3 +51,13 @@ export const OptDesc = styled.div`
     max-width: ${({ theme }) => theme.breakpoints.md};
     white-space: break-spaces;
 `;
+
+export const Submit = styled(Button).attrs(() => ({
+    type: 'primary',
+    htmlType: 'submit',
+}))`
+    margin-top: ${({ theme }) => theme.spacing.sm};
+    margin-right: ${({ theme }) => theme.spacing.md};
+`;
+
+export * from './ModelSelect';
