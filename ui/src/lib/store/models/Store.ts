@@ -7,6 +7,8 @@ import * as action from './action';
 import * as state from './state';
 import * as error from './error';
 
+// These types are used in combination with user-defined type guards below, which makes it
+// possible for the display code to opt out of being overly-defensive.
 type Loading<I, O> = Store<I, O> & { currentState: state.Loading };
 type Loaded<I, O> = Store<I, O> & { selectedModel: Model<I, O>; currentState: state.Loaded<I, O> };
 type FailedToLoad<I, O> = Store<I, O> & { currentState: state.FailedToLoad };
