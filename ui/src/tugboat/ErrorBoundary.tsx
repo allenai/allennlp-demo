@@ -44,15 +44,15 @@ export class ErrorBoundary extends React.PureComponent<Props, State> {
 
 const DebugInfo = styled.code`
     ${({ theme }) => `
-    display: block;
-    padding: ${theme.spacing.md};
-    margin: ${theme.spacing.sm} 0 0;
-    overflow: auto;
+        display: block;
+        padding: ${theme.spacing.md};
+        margin: ${theme.spacing.sm} 0 0;
+        overflow: auto;
 
-    pre {
-        margin: 0;
-        padding: 0;
-        overflow: initial;
-    }
-`}
+        pre {
+            margin: 0;
+            padding: 0;
+            overflow: initial;
+        }
+    `}
 `;
