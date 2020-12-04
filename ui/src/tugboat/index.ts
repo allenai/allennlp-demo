@@ -1,18 +1,4 @@
-import { Form as FormImpl, Field, TextArea, Input, Select, OptDesc } from './form';
-
-// Adding statics so that we can export a module that is useable as:
-// <Form>
-//   <Form.Field ...>
-// </Form>
-const Form = FormImpl as any; // any is so we can add the random statics below
-Form.Field = Field;
-Form.TextArea = TextArea;
-Form.Input = Input;
-Form.Select = Select;
-Form.OptDesc = OptDesc;
-
-export { Form };
-
+export * as form from './form';
 export * from './shared';
 export * from './Markdown';
 export * from './DemoConfig';

@@ -1,12 +1,8 @@
-/*
-    Note: this file is in development and should only be viewed as example code direction
-*/
-
 import React from 'react';
-import { Divider, Select } from 'antd';
+import { Alert, Divider, Select } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
-import { Form, Title, Description, Markdown, RunButton, Loading } from '../../tugboat';
+import { form, Title, Description, Markdown, Loading } from '../../tugboat';
 import { ModelUsageModal, ModelCardModal } from '../../components';
 import { useModels } from '../../lib';
 import { config } from './config';
@@ -66,15 +62,9 @@ type Output = BiDAFOutput | TransformerQAOutput | NAQANetOutput;
 export const Main = () => {
     // TODO: NMN doesn't return anything right now (there's no `/info` route, I think), so it's
     // not present. We need to fix this.
-    const { store, selectModelById, fetchPredictionsUsingSelectedModel } = useModels<Input, Output>(
-        'bidaf-elmo',
-        'bidaf',
-        'nmn',
-        'transformer-qa',
-        'naqanet'
-    );
+    const ml = useModels<Input, Output>('bidaf-elmo', 'bidaf', 'nmn', 'transformer-qa', 'naqanet');
 
-    if (store.isLoading()) {
+    if (ml.isLoadingModels()) {
         return (
             <Content>
                 <Loading />
@@ -82,9 +72,17 @@ export const Main = () => {
         );
     }
 
-    if (!store.hasModels()) {
-        // TODO: Make this look nice.
-        return <Content>Error: Unable to load models.</Content>;
+    if (!ml.hasLoadedModels()) {
+        return (
+            <Content>
+                <Alert
+                    type="error"
+                    message="Error"
+                    description="Unable to load models. Please try again."
+                    showIcon
+                />
+            </Content>
+        );
     }
 
     return (
@@ -96,14 +94,17 @@ export const Main = () => {
                     to show that the system understands the passage.
                 </Markdown>
             </Description>
-            <Form.Field label="Model">
-                <Form.Select
-                    value={store.current.selected.info.id}
-                    onChange={selectModelById}
+            <form.Field label="Model">
+                <form.Select
+                    value={ml.selectedModel?.info.id}
+                    onChange={(id) => {
+                        // TODO: Figure out why `toString()` here is required, it shouldn't be.
+                        ml.selectModelById(id.toString());
+                    }}
                     dropdownMatchSelectWidth={false}
                     optionLabelProp="label"
                     listHeight={370}>
-                    {store.current.models.map((m) =>
+                    {ml.models.map((m) =>
                         m.info.model_card_data ? (
                             <Select.Option
                                 key={m.info.id}
@@ -114,40 +115,55 @@ export const Main = () => {
                             </Select.Option>
                         ) : null
                     )}
-                </Form.Select>
-            </Form.Field>
-            <Form onFinish={fetchPredictionsUsingSelectedModel}>
-                {store.current.selected.info.model_card_data ? (
-                    <Markdown>{store.current.selected.info.model_card_data.description}</Markdown>
+                </form.Select>
+            </form.Field>
+            <form.Form
+                onFinish={(input) => {
+                    // TODO: Is there a way we can get `antd` to capture this.
+                    ml.fetchPredictionsUsingSelectedModel(input as Input);
+                }}>
+                {ml.selectedModel ? (
+                    <>
+                        {ml.selectedModel.info.model_card_data ? (
+                            <Markdown>{ml.selectedModel.info.model_card_data.description}</Markdown>
+                        ) : null}
+                        <ModelUsageModal model={ml.selectedModel.info} />
+                        <ModelCardModal model={ml.selectedModel.info} />
+                    </>
                 ) : null}
-                <ModelUsageModal model={store.current.selected.info} />
-                <ModelCardModal model={store.current.selected.info} />
-                <Form.Field label="Select an Example">
-                    <Form.Select placeholder="Examples..." />
-                </Form.Field>
-                <Form.Field
+                <form.Field label="Select an Example">
+                    <form.Select placeholder="Examples..." />
+                </form.Field>
+                <form.Field
                     label="Passage"
                     name="passage"
                     rules={[{ required: true }]}
                     tooltip="Some text that the model should use to try and answer the question.">
-                    <Form.TextArea />
-                </Form.Field>
-                <Form.Field
+                    <form.TextArea />
+                </form.Field>
+                <form.Field
                     label="Question"
                     name="question"
                     rules={[{ required: true }]}
                     tooltip="The question the model should attempt to answer using the input passage.">
-                    <Form.Input />
-                </Form.Field>
-                <Form.Field>
-                    {/* TODO: Consider <Form.Submit>Run Model</Form.Submit>? */}
-                    <RunButton loading={store.isPredicting()}>Run Model</RunButton>
-                </Form.Field>
-            </Form>
+                    <form.Input />
+                </form.Field>
+                <form.Field>
+                    <form.Submit loading={ml.isPredicting()}>Run Model</form.Submit>
+                </form.Field>
+            </form.Form>
             <Divider />
-            {store.hasPrediction() ? (
+            {ml.failedToPredict() ? (
+                <Alert
+                    type="error"
+                    message="Error"
+                    description="Prediction failed. Please try again"
+                    showIcon
+                />
+            ) : null}
+            {ml.currentPrediction ? (
                 <code>
-                    <pre>{JSON.stringify(store.current.prediction, null, 2)}</pre>
+                    <pre>{JSON.stringify(ml.currentPrediction, null, 2)}</pre>
                 </code>
             ) : null}
         </Content>

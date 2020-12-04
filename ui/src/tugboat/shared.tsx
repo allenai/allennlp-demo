@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Spin } from 'antd';
+import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
 export const Title = styled.h3`
@@ -11,16 +11,9 @@ export const Description = styled.div`
     margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
-export const RunButton = styled(Button).attrs(() => ({
-    type: 'primary',
-    htmlType: 'submit',
-}))`
-    margin-top: ${({ theme }) => theme.spacing.sm};
-    margin-right: ${({ theme }) => theme.spacing.md};
-`;
-
 const LoadingIcon = styled(LoadingOutlined).attrs(() => ({ spin: true }))`
     font-size: 2rem;
+    color: ${({ theme }) => theme.color.B6};
 `;
 
 export const Loading = () => <Spin indicator={<LoadingIcon />} />;

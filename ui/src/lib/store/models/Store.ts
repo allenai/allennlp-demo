@@ -1,27 +1,12 @@
+import { Model } from '../../Model';
 import * as action from './action';
 import * as state from './state';
 import * as error from './error';
 
-export class Store<I, O> {
+export class Store {
     constructor(readonly current: state.State) {}
 
-    isLoading(): this is { current: state.Loading } {
-        return this.current instanceof state.Loading;
-    }
-
-    hasModels(): this is { current: state.Loaded<I, O> } {
-        return this.current instanceof state.Loaded;
-    }
-
-    isPredicting(): this is { current: state.Predicting<I, O> } {
-        return this.current instanceof state.Predicting;
-    }
-
-    hasPrediction(): this is { current: state.HasPrediction<I, O> } {
-        return this.current instanceof state.HasPrediction;
-    }
-
-    static reducer<I, O>(st: Store<I, O>, a: action.Action): Store<I, O> {
+    static reducer<I, O>(st: Store, a: action.Action): Store {
         if (a instanceof action.Loading) {
             return new Store(new state.Loading(a.modelIds));
         }
@@ -56,7 +41,7 @@ export class Store<I, O> {
             if (st.current.models.length === 0) {
                 throw new error.NoModels();
             }
-            const m = st.current.models.find((m) => m.info.id === a.modelId);
+            const m = st.current.models.find((m: Model<I, O>) => m.info.id === a.modelId);
             if (!m) {
                 throw new error.ModelNotFound(a.modelId);
             }
