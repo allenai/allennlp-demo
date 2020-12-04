@@ -162,9 +162,7 @@ export const Main = () => {
                 />
             ) : null}
             {modelStore.hasPrediction() ? (
-                <code>
-                    <pre>{JSON.stringify(modelStore.currentPrediction, null, 2)}</pre>
-                </code>
+                <pre>{JSON.stringify(modelStore.currentPrediction, null, 2)}</pre>
             ) : null}
         </Content>
     );

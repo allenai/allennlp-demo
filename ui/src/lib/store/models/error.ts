@@ -3,7 +3,7 @@ import { State } from './state';
 
 export class UnknownAction extends Error {
     constructor(a: Action) {
-        super(`Unknown action: ${JSON.stringify(a)}`);
+        super(`Unknown action: ${a.constructor.name}`);
     }
 }
 
