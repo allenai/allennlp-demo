@@ -66,7 +66,9 @@ const App = () => (
                         path={config.path}
                         render={(props) => (
                             <DemoWrapper>
-                                <Component {...props} />
+                                <tugboat.ErrorBoundary>
+                                    <Component {...props} />
+                                </tugboat.ErrorBoundary>
                             </DemoWrapper>
                         )}
                     />
