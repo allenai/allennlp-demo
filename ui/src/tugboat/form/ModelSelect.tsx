@@ -24,7 +24,8 @@ export const ModelSelect = ({ options, selected, onChange }: Props) => (
                     if (onChange === undefined) {
                         return;
                     }
-                    // TODO: This cast shouldn't be necessary.
+                    // The `id` is a string, though `antd` says it's a `SelectValue`. This means
+                    // this cast is safe.
                     onChange(id as string);
                 }}
                 dropdownMatchSelectWidth={false}
