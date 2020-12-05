@@ -1,55 +1,49 @@
-/* TODO: Change Q to I and T to O for clarity. Also change symbols from query to input
- * and payload to output. */
 import { useReducer, useEffect } from 'react';
 
-class UnknownActionError extends Error {
-    constructor(action: AsyncAction) {
-        super(`Unknown action: ${action.constructor.name}`);
-    }
-}
+import { UnknownActionError } from '../error';
 
 interface AsyncAction {}
-class ChangeState<Q, T> implements AsyncAction {
-    constructor(readonly desiredState: AsyncState<Q, T>) {}
+class ChangeState<I, O> implements AsyncAction {
+    constructor(readonly desiredState: AsyncState<I, O>) {}
 }
 
-abstract class AsyncState<Q, T> {
-    isUnitialized(): this is Uninitialized<Q, T> {
+abstract class AsyncState<I, O> {
+    isUnitialized(): this is Uninitialized<I, O> {
         return this instanceof Uninitialized;
     }
 
-    isLoading(): this is Loading<Q, T> {
+    isLoading(): this is Loading<I, O> {
         return this instanceof Loading;
     }
 
-    isSuccess(): this is Success<Q, T> {
+    isSuccess(): this is Success<I, O> {
         return this instanceof Success;
     }
 
-    isFailure(): this is Failure<Q, T> {
+    isFailure(): this is Failure<I, O> {
         return this instanceof Failure;
     }
 }
-class Uninitialized<Q, T> extends AsyncState<Q, T> {
+class Uninitialized<I, O> extends AsyncState<I, O> {
     readonly isEmpty = true;
 }
-class Loading<Q, T> extends AsyncState<Q, T> {
-    constructor(readonly query: Q) {
+class Loading<I, O> extends AsyncState<I, O> {
+    constructor(readonly input: I) {
         super();
     }
 }
-class Success<Q, T> extends AsyncState<Q, T> {
-    constructor(readonly query: Q, readonly payload: T) {
+class Success<I, O> extends AsyncState<I, O> {
+    constructor(readonly input: I, readonly output: O) {
         super();
     }
 }
-class Failure<Q, T> extends AsyncState<Q, T> {
-    constructor(readonly query: Q, readonly cause: Error) {
+class Failure<I, O> extends AsyncState<I, O> {
+    constructor(readonly input: I, readonly cause: Error) {
         super();
     }
 }
 
-function reducer<Q, T>(currentState: AsyncState<Q, T>, action: AsyncAction): AsyncState<Q, T> {
+function reducer<I, O>(currentState: AsyncState<I, O>, action: AsyncAction): AsyncState<I, O> {
     if (action instanceof ChangeState) {
         if (action.desiredState instanceof Success || action.desiredState instanceof Failure) {
             // We need to make sure the desired state is still relevant. If we're not currently
@@ -60,7 +54,7 @@ function reducer<Q, T>(currentState: AsyncState<Q, T>, action: AsyncAction): Asy
 
             // ...and if whatever we loaded (or failed to load) isn't what we're currently waiting
             // on, then drop the desired state on the floor.
-            if (currentState.query !== action.desiredState.query) {
+            if (currentState.input !== action.desiredState.input) {
                 return currentState;
             }
 
@@ -71,23 +65,23 @@ function reducer<Q, T>(currentState: AsyncState<Q, T>, action: AsyncAction): Asy
         return action.desiredState;
     }
 
-    throw new UnknownActionError(action);
+    throw new UnknownActionError(action.constructor.name);
 }
 
-export function useAsync<Q, T>(query: Q, fetch: (q: Q) => Promise<T>): AsyncState<Q, T> {
+export function useAsync<I, O>(fn: (q: I) => Promise<O>, input: I): AsyncState<I, O> {
     const [state, dispatch] = useReducer(reducer, new Uninitialized());
 
     useEffect(() => {
-        dispatch(new ChangeState(new Loading(query)));
-        fetch(query)
-            .then((p) => dispatch(new ChangeState(new Success(query, p))))
+        dispatch(new ChangeState(new Loading(input)));
+        fn(input)
+            .then((o) => dispatch(new ChangeState(new Success(input, o))))
             .catch((e) => {
                 const err = e instanceof Error ? e : new Error(e);
-                dispatch(new ChangeState(new Failure(query, err)));
+                dispatch(new ChangeState(new Failure(input, err)));
             });
-    }, [query]);
+    }, [input]);
 
     // The cast here is necessary because of type erasure that occurs with `useReducer`,
     // which returns `state` as `AsyncState<unknown, unknown>`.
-    return state as AsyncState<Q, T>;
+    return state as AsyncState<I, O>;
 }

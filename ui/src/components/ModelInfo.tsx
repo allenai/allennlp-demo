@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const ModelInfo = ({ ids, children }: Props) => (
-    <AsyncOutput<string[] | undefined, MInfo[]> input={ids} fetch={fetchModelInfo}>
+    <AsyncOutput<string[] | undefined, MInfo[]> input={ids} fn={fetchModelInfo}>
         {(output) => <>{children(output)}</>}
     </AsyncOutput>
 );

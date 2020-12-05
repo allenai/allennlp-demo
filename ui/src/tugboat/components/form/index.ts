@@ -3,7 +3,7 @@ import { Button, Input as AntInput, Select as AntSelect, Form as AntForm } from 
 
 export const Form = styled(AntForm).attrs(() => ({
     layout: 'vertical',
-    hideRequiredMark: true
+    hideRequiredMark: true,
 }))`
     margin: ${({ theme }) => `0 0 ${theme.spacing.lg}`};
 

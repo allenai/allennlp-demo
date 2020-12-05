@@ -16,7 +16,6 @@ class InvalidPredictChildrenError extends Error {
     }
 }
 
-
 /**
  * The <PredictInput /> and <PredictOutput /> components defined here intentionally do
  * very little. They're used to make the separation of input and output clear where the
@@ -56,18 +55,18 @@ export const Predict = <I, O>(props: Props) => {
 
     // We do a little work to try and make sure the children look like they're supposed to.
     // We expect the following:
-    // 
+    //
     //  <Predict>
     //      <PredictInput>
     //          {/* Fields */ }
     //      </PredictInput>
     //      <PredictOutput>{ (output) => (
-    //          /* Output Visualizations */ 
+    //          /* Output Visualizations */
     //      )}</PredictOutput>
     //  </Predict>
     //
     // We don't actually check that they're the correct type (by making sure they're actually
-    // instances of <PredictInput /> and <PredictOutput>), because I couldn't find a way to 
+    // instances of <PredictInput /> and <PredictOutput>), because I couldn't find a way to
     // do this.
     const children = React.Children.toArray(props.children);
     if (!children || children.length !== 2) {
@@ -92,7 +91,7 @@ export const Predict = <I, O>(props: Props) => {
             </form.Form>
             <Divider />
             {input ? (
-                <AsyncOutput<I, O> input={input} fetch={fetchPredictions}>
+                <AsyncOutput<I, O> input={input} fn={fetchPredictions}>
                     {(output: O) => React.cloneElement(secondChild, { output })}
                 </AsyncOutput>
             ) : null}

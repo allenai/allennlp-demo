@@ -15,3 +15,9 @@ export class NoSelectedModel extends Error {
         super('No selected model.');
     }
 }
+
+export class UnknownActionError extends Error {
+    constructor(actionName: string) {
+        super(`Unknown action: ${actionName}`);
+    }
+}

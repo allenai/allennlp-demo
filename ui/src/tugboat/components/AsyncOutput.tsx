@@ -6,18 +6,18 @@ import { ErrorMessage } from './ErrorMessage';
 
 interface AsyncOutputProps<I, O> {
     input: I;
-    fetch: (i: I) => Promise<O>;
+    fn: (i: I) => Promise<O>;
     children: (o: O) => React.ReactNode;
     errorMessage?: string;
 }
 
 export const AsyncOutput = <I, O>({
     input,
-    fetch,
+    fn,
     children,
     errorMessage,
 }: AsyncOutputProps<I, O>) => {
-    const output = useAsync(input, fetch);
+    const output = useAsync(fn, input);
 
     if (output.isLoading() || output.isUnitialized()) {
         return <Loading />;
@@ -27,5 +27,5 @@ export const AsyncOutput = <I, O>({
         return <ErrorMessage message={errorMessage} />;
     }
 
-    return <>{children(output.payload)}</>;
+    return <>{children(output.output)}</>;
 };
