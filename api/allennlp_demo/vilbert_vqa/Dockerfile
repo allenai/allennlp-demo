@@ -9,7 +9,7 @@ RUN pip install --upgrade --no-cache-dir \
     pytest==6.1.1 \
     torch==1.6.0 \
     torchvision==0.7.0 \
-    git+git://github.com/allenai/allennlp.git@78871195b09fd9f5070d1028cc46d462613951ef
+    git+git://github.com/allenai/allennlp.git@7aa7e0e9537cc1e3f854e11b276c6d7063d02edc
 RUN pip install --no-cache-dir git+https://github.com/facebookresearch/detectron2@v0.2.1
 
 RUN spacy download en_core_web_sm
