@@ -1,11 +1,6 @@
 import React from 'react';
 
-// TODO: Right now the Model definition is AllenNLP specific, so it doesn't live in Tugboat.
-// That said, this code clearly needs it. We probably need to determine what our minimal viable
-// representation of a model looks like, and migrate all of the model code (back) into Tugboat.
-// Then write something that allows individual projects to define adapters that map their
-// Models (and the way to resolve them) to our more general one.
-import { Model } from '../../lib/Model';
+import { Model } from '../../../lib/Model';
 import { Form, Field, Select } from './';
 import { Markdown } from '../Markdown';
 

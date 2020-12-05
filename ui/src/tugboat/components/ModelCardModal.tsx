@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Modal } from 'antd';
 
-import { ModelInfo } from '../lib';
-import { Markdown } from '../tugboat';
+import { ModelInfo } from '../../lib';
+import { Markdown } from './Markdown';
 
 interface Props {
     model: ModelInfo;

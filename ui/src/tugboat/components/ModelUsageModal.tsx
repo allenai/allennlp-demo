@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Modal } from 'antd';
 
-import { ModelInfo } from '../lib';
+import { ModelInfo } from '../../lib';
 
 interface Props {
     model: ModelInfo;

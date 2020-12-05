@@ -2,8 +2,16 @@ import React from 'react';
 import { Divider } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
-import { form, Title, Description, Markdown, Loading, ErrorMessage } from '../../tugboat';
-import { ModelUsageModal, ModelCardModal } from '../../components';
+import { 
+    form, 
+    Title, 
+    Description, 
+    Markdown, 
+    Loading, 
+    ErrorMessage,
+    ModelUsageModal,
+    ModelCardModal
+} from '../../tugboat/components';
 import { useModels } from '../../lib';
 import { config } from './config';
 

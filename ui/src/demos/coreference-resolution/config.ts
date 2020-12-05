@@ -1,4 +1,4 @@
-import { DemoConfig } from '../../tugboat';
+import { DemoConfig } from '../../tugboat/lib';
 
 export const config: DemoConfig = {
     group: 'Annotate a passage',

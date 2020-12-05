@@ -1,4 +1,4 @@
-import { DemoGroup } from './tugboat';
+import { DemoGroup } from './tugboat/lib';
 
 /**
  * TODO: These are SVGs, so we should just convert them into React.Components that are output
