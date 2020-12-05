@@ -4,7 +4,7 @@ import { Alert } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 interface Props {
-    children: React.ReactNode | React.ReactNodeArray;
+    children: React.ReactNode;
 }
 
 interface State {

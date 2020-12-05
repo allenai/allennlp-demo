@@ -1,19 +1,38 @@
 import React from 'react';
 import { Button, Modal } from 'antd';
 
-import { ModelInfo } from '../../lib';
+import { Models } from '../context';
+import { NoSelectedModel } from '../error';
 import { Markdown } from './Markdown';
 
-interface Props {
-    model: ModelInfo;
-}
-
-export const ModelCardModal = ({ model }: Props) => {
-    const [showModelCard, setShowModelCard] = React.useState<boolean>(false);
+const ModalContent = () => {
+    const models = React.useContext(Models);
+    if (!models.selectedModel) {
+        throw new NoSelectedModel();
+    }
 
     return (
         <>
-            <Button type="link" onClick={() => setShowModelCard(true)}>
+            <h4>Name</h4>
+            {models.selectedModel.card.display_name}
+            <h4>Description</h4>
+            <Markdown>{models.selectedModel.card.description}</Markdown>
+            <h4>ID</h4>
+            {models.selectedModel.id}
+        </>
+    );
+};
+
+export const ModelCardModal = () => {
+    const [showModelCard, setShowModelCard] = React.useState<boolean>(false);
+    const models = React.useContext(Models);
+
+    return (
+        <>
+            <Button
+                type="link"
+                onClick={() => setShowModelCard(true)}
+                disabled={!models.selectedModel}>
                 Model Card
             </Button>
             <Modal
@@ -26,16 +45,7 @@ export const ModelCardModal = ({ model }: Props) => {
                         Close
                     </Button>,
                 ]}>
-                <div>
-                    <h4>Name</h4>
-                    {model.model_card_data?.display_name}
-                    <h4>Description</h4>
-                    {model.model_card_data ? (
-                        <Markdown>{model.model_card_data.description}</Markdown>
-                    ) : null}
-                    <h4>ID</h4>
-                    {model.id}
-                </div>
+                <ModalContent />
             </Modal>
         </>
     );

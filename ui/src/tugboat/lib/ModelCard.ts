@@ -1,4 +1,4 @@
-// TODO: Some of these fields are probably AllenNLP specific, the `registered_*` ones are 
+// TODO: Some of these fields are probably AllenNLP specific, the `registered_*` ones are
 // particularly suspect. We should figure out what to remove when we lift this into it's
 // own package.
 export interface ModelCard {

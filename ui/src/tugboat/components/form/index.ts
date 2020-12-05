@@ -3,9 +3,11 @@ import { Button, Input as AntInput, Select as AntSelect, Form as AntForm } from 
 
 export const Form = styled(AntForm).attrs(() => ({
     layout: 'vertical',
-    requiredMark: true,
+    hideRequiredMark: true
 }))`
     margin: ${({ theme }) => `0 0 ${theme.spacing.lg}`};
+
+    // TODO: We should use a ch value, and the text should be limited to the same width.
     max-width: 36rem;
 `;
 
@@ -59,5 +61,3 @@ export const Submit = styled(Button).attrs(() => ({
     margin-top: ${({ theme }) => theme.spacing.sm};
     margin-right: ${({ theme }) => theme.spacing.md};
 `;
-
-export * from './ModelSelect';
