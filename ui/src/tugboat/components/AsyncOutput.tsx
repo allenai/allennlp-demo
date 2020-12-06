@@ -16,8 +16,8 @@ interface AsyncOutputProps<I, O> {
  * that's obtained asynchronously. While the resource is being fetched a `<Loading />` indicator
  * is rendered, and when things fail an `<ErrorMessage />` is rendered.
  *
- * The children should be expressed a function that takes a single parameter representing the
- * output that's being waited on, e.g.:
+ * The component expects a single child which is a function that takes the output and returns
+ * React components visualizing it.
  *
  * @example
  *  <AsyncOutput<Input, Output>
