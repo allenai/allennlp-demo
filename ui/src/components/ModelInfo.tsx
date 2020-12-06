@@ -6,8 +6,8 @@ import { ModelInfo as MInfo, fetchModelInfo } from '../lib';
 
 interface Props {
     /**
-     * The ids of the models to return info for. If not set information is returned for
-     * all models.
+     * If set, only info for the specified models will be returned. If unset information for
+     * all models will be returned.
      */
     ids?: string[];
     children: (info: MInfo[]) => React.ReactNode;

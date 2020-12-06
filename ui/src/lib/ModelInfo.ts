@@ -1,5 +1,8 @@
 import { ModelCard } from '../tugboat/lib/ModelCard';
 
+/**
+ * Hitting `/api/info` returns a list of these.
+ */
 export interface ModelEndpoint {
     id: string;
     commit_sha: string;
@@ -8,6 +11,9 @@ export interface ModelEndpoint {
     info: ModelInfo;
 }
 
+/**
+ * Details about an individual model. Hitting `/api/:modelId/` directly returns one of these.
+ */
 export interface ModelInfo {
     allennlp: string;
     archive_file: string;
@@ -21,6 +27,12 @@ export interface ModelInfo {
     use_old_load_method: boolean;
 }
 
+/**
+ * Query the details for a set of models, or for all models.
+ *
+ * If ids is set, only information for the specified models will be returned. If unset, information
+ * for all models will be returned.
+ */
 export function fetchModelInfo(ids?: string[]): Promise<ModelInfo[]> {
     const includeIds = new Set(ids || []);
     return fetch('/api/info')
