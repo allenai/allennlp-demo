@@ -5,5 +5,6 @@ export const config: DemoConfig = {
     title: 'Language Modeling',
     path: '/next-token-lm',
     order: 2,
+    modelIds: [],
     status: 'hidden',
 };

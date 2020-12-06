@@ -2,30 +2,29 @@ import React from 'react';
 import { Content } from '@allenai/varnish/components';
 
 import {
-    form,
     Title,
     Description,
     ModelUsageModal,
     ModelCardModal,
     SelectModel,
-    Predict,
-    PredictInput,
-    PredictOutput,
+    Fields,
+    Output,
     Question,
     Passage,
+    Submit,
 } from '../../tugboat/components';
 
-import { MultiModelDemo } from '../../components';
+import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
-import { Input, Output } from './types';
-
-// TODO: Should we make this a property of the config?
-const modelIds = ['bidaf-elmo', 'bidaf', 'nmn', 'transformer-qa', 'naqanet'];
+import { Input, Prediction } from './types';
 
 export const Main = () => (
     <Content>
-        <MultiModelDemo ids={modelIds}>
+        <MultiModelDemo ids={config.modelIds}>
             <Title>{config.title}</Title>
+            {/* TODO: It might be nice to put the description in the config too, or put it in
+                a markdown file that we load and display to facilitate easily tweaking the content.
+             */}
             <Description>
                 Reading comprehension is the task of answering questions about a passage of text to
                 show that the system understands the passage.
@@ -33,16 +32,13 @@ export const Main = () => (
             <SelectModel />
             <ModelCardModal />
             <ModelUsageModal />
-            {/* TODO: More cleanup here. Better names. */}
-            <Predict<Input, Output> action={(modelId) => `/api/${modelId}/predict`}>
-                <PredictInput>
+            <Predict<Input, Prediction>>
+                <Fields>
                     <Passage />
                     <Question />
-                    <form.Submit>Run Model</form.Submit>
-                </PredictInput>
-                <PredictOutput>
-                    {(output: Output) => <pre>{JSON.stringify(output, null, 2)}</pre>}
-                </PredictOutput>
+                    <Submit>Run Model</Submit>
+                </Fields>
+                <Output>{(p: Prediction) => <pre>{JSON.stringify(p, null, 2)}</pre>}</Output>
             </Predict>
         </MultiModelDemo>
     </Content>

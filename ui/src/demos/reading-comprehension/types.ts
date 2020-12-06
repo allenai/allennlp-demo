@@ -3,7 +3,7 @@ export interface Input {
     question: string;
 }
 
-export interface BiDAFOutput {
+export interface BiDAFPrediction {
     best_span: number[];
     best_span_str: string;
     passage_question_attention: number[][];
@@ -16,7 +16,7 @@ export interface BiDAFOutput {
     token_offsets: number[][];
 }
 
-export interface TransformerQAOutput {
+export interface TransformerQAPrediction {
     best_span: number[];
     best_span_scores: number;
     best_span_str: string;
@@ -31,7 +31,7 @@ enum NAQANetAnswerType {
     PassageSpan = 'passage_span',
 }
 
-export interface NAQANetOutput {
+export interface NAQANetPrediction {
     answer: {
         'answer-type': NAQANetAnswerType;
         spans: number[];
@@ -48,4 +48,4 @@ export interface NAQANetOutput {
     question_tokens: string[];
 }
 
-export type Output = BiDAFOutput | TransformerQAOutput | NAQANetOutput;
+export type Prediction = BiDAFPrediction | TransformerQAPrediction | NAQANetPrediction;

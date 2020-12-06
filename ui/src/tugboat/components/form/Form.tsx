@@ -1,11 +1,10 @@
 import React from 'react';
 import { Divider } from 'antd';
 
-import { Models } from '../context';
-import { NoSelectedModel } from '../error';
-import { AsyncOutput } from './AsyncOutput';
-
-import * as form from './form';
+import { Models } from '../../context';
+import { NoSelectedModel } from '../../error';
+import { AsyncOutput } from '../AsyncOutput';
+import { FormElement } from './controls';
 
 class InvalidPredictChildrenError extends Error {
     constructor() {
@@ -16,32 +15,32 @@ class InvalidPredictChildrenError extends Error {
     }
 }
 
-/**
- * The <PredictInput /> and <PredictOutput /> components defined here intentionally do
- * very little. They're used to make the separation of input and output clear where the
- * <Predict /> component is used.
- */
-interface PredictInputProps {
-    children: React.ReactNode;
-}
-
-export const PredictInput = ({ children }: PredictInputProps) => <>{children}</>;
-
-interface PredictOutputProps<O> {
-    children: (output: O) => React.ReactNode;
-    output?: O;
-}
-
-export const PredictOutput = <O,>({ children, output }: PredictOutputProps<O>) => (
-    <>{output ? children(output) : null}</>
-);
-
 interface Props {
     action: (modelId: string) => string;
     children: React.ReactNode;
 }
 
-export const Predict = <I, O>(props: Props) => {
+/**
+ * A component for rendering a form that the user should complete, and the output that's returned
+ * when the user submits the data they entered in.
+ *
+ * The `<Form />` copmonent expects exactly two children. The first child must be a `<Fields />`
+ * component. The inputs that you want the user to provides hould be rendered as children of that
+ * element. The second child must be a `<Output />` component. It's children should display the
+ * output to the user.
+ *
+ * @example
+ *  <Form>
+ *      <Fields>
+ *          <Passage>
+ *          <Question>
+ *      </Fields>
+ *      <Output>{ (prediction) => (
+ *          <b>The model's answer was: "${prediction.best_span}".</b>
+ *      ) }</Output>
+ *  </Form>
+ */
+export const Form = <I, O>(props: Props) => {
     const [input, setInput] = React.useState<I>();
 
     const models = React.useContext(Models);
@@ -53,26 +52,13 @@ export const Predict = <I, O>(props: Props) => {
         return fetch(url, { method: 'POST', body: JSON.stringify(i) }).then((r) => r.json());
     };
 
-    // We do a little work to try and make sure the children look like they're supposed to.
-    // We expect the following:
-    //
-    //  <Predict>
-    //      <PredictInput>
-    //          {/* Fields */ }
-    //      </PredictInput>
-    //      <PredictOutput>{ (output) => (
-    //          /* Output Visualizations */
-    //      )}</PredictOutput>
-    //  </Predict>
-    //
-    // We don't actually check that they're the correct type (by making sure they're actually
-    // instances of <PredictInput /> and <PredictOutput>), because I couldn't find a way to
-    // do this.
+    // We do our best to make sure the children match the format we expect. That said we can't
+    // actually make sure that they're the specific compoent type's we expect -- or at least, I
+    // wasn't able to figure out how to do that.
     const children = React.Children.toArray(props.children);
     if (!children || children.length !== 2) {
         throw new InvalidPredictChildrenError();
     }
-
     const [firstChild, secondChild] = React.Children.toArray(children);
     if (!React.isValidElement(firstChild)) {
         throw new InvalidPredictChildrenError();
@@ -83,12 +69,12 @@ export const Predict = <I, O>(props: Props) => {
 
     return (
         <>
-            <form.Form
+            <FormElement
                 onFinish={(i) => {
                     setInput(i as I);
                 }}>
                 {firstChild}
-            </form.Form>
+            </FormElement>
             <Divider />
             {input ? (
                 <AsyncOutput<I, O> input={input} fn={fetchPredictions}>

@@ -5,5 +5,6 @@ export const config: DemoConfig = {
     title: 'WikiTables Semantic Parsing',
     path: '/wikitables-parser',
     order: 1,
+    modelIds: [],
     status: 'hidden',
 };

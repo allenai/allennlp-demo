@@ -5,5 +5,6 @@ export const config: DemoConfig = {
     title: 'Cornell NLVR Semantic Parsing',
     path: '/nlvr-parser',
     order: 2,
+    modelIds: [],
     status: 'hidden',
 };

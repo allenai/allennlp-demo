@@ -11,6 +11,21 @@ interface AsyncOutputProps<I, O> {
     errorMessage?: string;
 }
 
+/**
+ * A generic component that's responsible for rendering UI states associated with a resource
+ * that's obtained asynchronously. While the resource is being fetched a `<Loading />` indicator
+ * is rendered, and when things fail an `<ErrorMessage />` is rendered.
+ *
+ * The children should be expressed a function that takes a single parameter representing the
+ * output that's being waited on, e.g.:
+ *
+ * @example
+ *  <AsyncOutput<Input, Output>
+ *      input={"modelId"}
+ *      fn={fetchModelInfo}>{ (output) => (
+ *      <FancyOutputDisplay output={output} />
+ *  )}</AsyncOutput>
+ */
 export const AsyncOutput = <I, O>({
     input,
     fn,

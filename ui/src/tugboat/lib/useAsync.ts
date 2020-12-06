@@ -43,6 +43,10 @@ class Failure<I, O> extends AsyncState<I, O> {
     }
 }
 
+/**
+ * Responds to actions by changing the state. Sometimes the state isn't changed. This happens
+ * when the received action isn't something the UI is waiting on anymore.
+ */
 function reducer<I, O>(currentState: AsyncState<I, O>, action: AsyncAction): AsyncState<I, O> {
     if (action instanceof ChangeState) {
         if (action.desiredState instanceof Success || action.desiredState instanceof Failure) {
@@ -68,6 +72,10 @@ function reducer<I, O>(currentState: AsyncState<I, O>, action: AsyncAction): Asy
     throw new UnknownActionError(action.constructor.name);
 }
 
+/**
+ * Takes a function that returns an asynchronous promise for output. The function is given the
+ * accompanying input, and called whenever that input changes.
+ */
 export function useAsync<I, O>(fn: (q: I) => Promise<O>, input: I): AsyncState<I, O> {
     const [state, dispatch] = useReducer(reducer, new Uninitialized());
 
@@ -76,6 +84,10 @@ export function useAsync<I, O>(fn: (q: I) => Promise<O>, input: I): AsyncState<I
         fn(input)
             .then((o) => dispatch(new ChangeState(new Success(input, o))))
             .catch((e) => {
+                // The failure is of type `any`, so we convert it to an `Error` if it already isn't
+                // one. This makes sure that it has a stack trace, though admittedly when we
+                // perform the conversion that stack will point here, which might not be very
+                // helpful.
                 const err = e instanceof Error ? e : new Error(e);
                 dispatch(new ChangeState(new Failure(input, err)));
             });

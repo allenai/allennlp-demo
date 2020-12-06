@@ -5,5 +5,6 @@ export const config: DemoConfig = {
     title: 'Masked Language Modeling',
     path: '/masked-lm',
     order: 3,
+    modelIds: [],
     status: 'hidden',
 };

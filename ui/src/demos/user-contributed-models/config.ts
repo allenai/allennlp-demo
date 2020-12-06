@@ -5,5 +5,6 @@ export const config: DemoConfig = {
     title: 'User Contributed Models',
     path: '/user-models',
     order: 1,
+    modelIds: [],
     status: 'hidden',
 };

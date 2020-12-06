@@ -5,5 +5,6 @@ export const config: DemoConfig = {
     title: 'Text to SQL (ATIS)',
     path: '/atis-parser',
     order: 3,
+    modelIds: [],
     status: 'hidden',
 };
