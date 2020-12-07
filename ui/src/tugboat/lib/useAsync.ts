@@ -76,7 +76,7 @@ function reducer<I, O>(currentState: AsyncState<I, O>, action: AsyncAction): Asy
  * Takes a function that returns an asynchronous promise for output. The function is given the
  * accompanying input, and called whenever that input changes.
  */
-export function useAsync<I, O>(fn: (q: I) => Promise<O>, input: I): AsyncState<I, O> {
+export function useAsync<I, O>(fn: (input: I) => Promise<O>, input: I): AsyncState<I, O> {
     const [state, dispatch] = useReducer(reducer, new Uninitialized());
 
     useEffect(() => {
