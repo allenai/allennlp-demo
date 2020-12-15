@@ -9,4 +9,5 @@ export interface DemoConfig {
      * at "/my-cool-demo".
      */
     path?: string;
+    modelIds: string[];
 }

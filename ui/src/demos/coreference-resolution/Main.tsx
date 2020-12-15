@@ -5,7 +5,7 @@
 import React from 'react';
 import { Content } from '@allenai/varnish/components';
 
-import { Title } from '../../tugboat';
+import { Title } from '../../tugboat/components';
 import { config } from './config';
 
 export const Main = () => {

@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-d
 import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/components';
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
 
-import * as tugboat from './tugboat';
+import { Demos } from './tugboat/lib';
+import { ErrorBoundary } from './tugboat/components';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
 import Menu from './components/Menu';
@@ -28,7 +29,7 @@ import '@allenai/varnish/dist/theme.css';
 
 const DEFAULT_PATH = '/reading-comprehension';
 
-const demos = tugboat.Demos.load();
+const demos = Demos.load();
 const demosByGroup = groups.map((g) => ({
     ...g,
     demos: demos.forGroup(g.label),
@@ -66,9 +67,9 @@ const App = () => (
                         path={config.path}
                         render={(props) => (
                             <DemoWrapper>
-                                <tugboat.ErrorBoundary>
+                                <ErrorBoundary>
                                     <Component {...props} />
-                                </tugboat.ErrorBoundary>
+                                </ErrorBoundary>
                             </DemoWrapper>
                         )}
                     />

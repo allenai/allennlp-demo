@@ -1,2 +1,3 @@
-export * from './ModelCardModal';
-export * from './ModelUsageModal';
+export * from './ModelInfo';
+export * from './MultiModelDemo';
+export * from './Predict';

@@ -29,7 +29,7 @@ import { DemoConfig } from './DemoConfig';
  * one of our users will do this.
  *
  */
-const ctx = require.context('../demos', true, /\/index\.ts$/);
+const ctx = require.context('../../demos', true, /\/index\.ts$/);
 
 class ConfigError extends Error {
     constructor(message: string) {
