@@ -11,6 +11,7 @@ import {
     Output,
     Question,
     Passage,
+    PrettyPrintedJSON,
     Submit,
 } from '../../tugboat/components';
 
@@ -38,7 +39,7 @@ export const Main = () => (
                     <Question />
                     <Submit>Run Model</Submit>
                 </Fields>
-                <Output>{(p: Prediction) => <pre>{JSON.stringify(p, null, 2)}</pre>}</Output>
+                <Output>{(p: Prediction) => <PrettyPrintedJSON json={p} />}</Output>
             </Predict>
         </MultiModelDemo>
     </Content>

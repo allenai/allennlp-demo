@@ -8,3 +8,4 @@ export * from './MultiModelDemo';
 export * from './SelectModel';
 export * from './Promised';
 export * from './form';
+export * from './PrettyPrintedJSON';
