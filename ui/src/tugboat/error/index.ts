@@ -21,3 +21,9 @@ export class UnknownActionError extends Error {
         super(`Unknown action: ${actionName}`);
     }
 }
+
+export class UnknownStateError extends Error {
+    constructor(state: any) {
+        super(`Unknown state: ${state.constructor.name}`);
+    }
+}

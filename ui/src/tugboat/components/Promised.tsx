@@ -3,6 +3,7 @@ import React from 'react';
 import { usePromise } from '../lib';
 import { Loading } from './shared';
 import { ErrorMessage } from './ErrorMessage';
+import { UnknownStateError } from '../error';
 
 interface Props<I, O> {
     input: I;
@@ -34,9 +35,14 @@ export const Promised = <I, O>({ input, fetch, children, errorMessage }: Props<I
         return <Loading />;
     }
 
-    if (output.isFailure() || !output.isSuccess()) {
+    if (output.isFailure()) {
         return <ErrorMessage message={errorMessage} />;
     }
 
-    return <>{children(output.output)}</>;
+    if (output.isSuccess()) {
+        return <>{children(output.output)}</>;
+    }
+
+    // We shouldn't ever get here.
+    throw new UnknownStateError(output);
 };
