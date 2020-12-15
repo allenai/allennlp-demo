@@ -5,13 +5,14 @@ import logging  # noqa: E402
 import flask  # noqa: E402
 from werkzeug.exceptions import NotFound
 
-from typing import List, Dict # noqa: E402
+from typing import List, Dict  # noqa: E402
 from allennlp_demo.common.logs import configure_logging  # noqa: E402
-from allennlp_models.pretrained import get_tasks # noqa: E402
+from allennlp_models.pretrained import get_tasks  # noqa: E402
 from allennlp_models.common.task_card import TaskCard
 from allennlp_models.version import VERSION
 
 logger = logging.getLogger(__name__)
+
 
 class TasksService(flask.Flask):
     def __init__(self, name: str = "info"):
@@ -20,7 +21,7 @@ class TasksService(flask.Flask):
 
         @self.route("/", methods=["GET"])
         def info():
-            return flask.jsonify({ "id": "tasks", "allennlp_models": VERSION })
+            return flask.jsonify({"id": "tasks", "allennlp_models": VERSION})
 
         @self.route("/tasks", methods=["GET"])
         def tasks():
@@ -33,6 +34,7 @@ class TasksService(flask.Flask):
                 if tid == task_id:
                     return flask.jsonify(task)
             raise NotFound(f"No task card with {task_id} found.")
+
 
 if __name__ == "__main__":
     app = TasksService()

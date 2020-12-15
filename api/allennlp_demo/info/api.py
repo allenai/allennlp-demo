@@ -114,8 +114,7 @@ class InfoService(flask.Flask):
 
             # Now join the info HTTP requests concurrently.
             for endpoint, info_resp in zip(
-                endpoints,
-                grequests.map(info_requests, exception_handler=self.exception_handler),
+                endpoints, grequests.map(info_requests, exception_handler=self.exception_handler),
             ):
                 if not info_resp:
                     continue

@@ -11,10 +11,7 @@ class TestNextTokenLmModelEndpoint(ModelEndpointTestCase):
     @pytest.mark.parametrize(
         "input_text, result",
         [
-            (
-                "AllenNLP is one  of  the  most  popular ",
-                "AllenNLP is one of the most popular",
-            ),
+            ("AllenNLP is one  of  the  most  popular ", "AllenNLP is one of the most popular",),
             ("AllenNLP is a framework.\n", "AllenNLP is a framework.\n"),
             ("AllenNLP is a framework.\t", "AllenNLP is a framework."),
         ],
