@@ -5,6 +5,10 @@ import { Field, Select } from './form';
 import { Markdown } from './Markdown';
 import { Models } from '../context';
 
+/**
+ * A component that's used in to select a single model for demonstration purposes. If your
+ * demo only has a single modle, you don't need this component.
+ */
 export const SelectModel = () => {
     const ctx = React.useContext(Models);
     return (
