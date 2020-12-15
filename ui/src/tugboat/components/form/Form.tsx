@@ -1,10 +1,9 @@
 import React from 'react';
-import { Divider } from 'antd';
+import { Divider, Form as AntForm } from 'antd';
 
 import { Models } from '../../context';
 import { NoSelectedModel } from '../../error';
 import { Promised } from '../Promised';
-import { FormElement } from './controls';
 
 class InvalidPredictChildrenError extends Error {
     constructor() {
@@ -49,7 +48,8 @@ export const Form = <I, O>(props: Props) => {
             throw new NoSelectedModel();
         }
         const url = props.action(models.selectedModel.id);
-        return fetch(url, { method: 'POST', body: JSON.stringify(i) }).then((r) => r.json());
+        const opt = { method: 'POST', body: JSON.stringify(i) };
+        return fetch(url, opt).then((r) => r.json());
     };
 
     // We do our best to make sure the children match the format we expect. That said we can't
@@ -69,12 +69,14 @@ export const Form = <I, O>(props: Props) => {
 
     return (
         <>
-            <FormElement
+            <AntForm<I>
+                layout="vertical"
+                hideRequiredMark
                 onFinish={(i) => {
-                    setInput(i as I);
+                    setInput(i);
                 }}>
                 {firstChild}
-            </FormElement>
+            </AntForm>
             <Divider />
             {input ? (
                 <Promised<I, O> input={input} fetch={fetchPredictions}>

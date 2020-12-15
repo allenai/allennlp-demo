@@ -1,13 +1,14 @@
 import React from 'react';
+import { Form } from 'antd';
 
-import { FormElement, Field, Select } from './form';
+import { Field, Select } from './form';
 import { Markdown } from './Markdown';
 import { Models } from '../context';
 
 export const SelectModel = () => {
     const ctx = React.useContext(Models);
     return (
-        <FormElement>
+        <Form layout="vertical">
             <Field label="Model">
                 <Select
                     value={ctx.selectedModel?.id}
@@ -23,6 +24,6 @@ export const SelectModel = () => {
                     ))}
                 </Select>
             </Field>
-        </FormElement>
+        </Form>
     );
 };

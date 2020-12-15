@@ -1,16 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Button, Input as AntInput, Select as AntSelect, Form as AntForm } from 'antd';
 
-export const FormElement = styled(AntForm).attrs(() => ({
-    layout: 'vertical',
-    hideRequiredMark: true,
-}))`
-    ${({ theme }) => `
-        margin: 0 0 ${theme.spacing.lg};
-        max-width: ${theme.breakpoints.md};
-    `}
-`;
-
 export const Field = styled(AntForm.Item)`
     margin-top: ${({ theme }) => theme.spacing.md};
 
