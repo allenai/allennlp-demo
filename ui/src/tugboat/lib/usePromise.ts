@@ -77,8 +77,16 @@ function reducer<I, O>(currentState: State<I, O>, action: Action): State<I, O> {
 }
 
 /**
- * Takes a function that returns an asynchronous promise for output. The function called with the
- * given input when that input changes.
+ * This hook takes a function that returns a `Promise` and the input that's passed to the function
+ * when it's executed. The function will be executed once when this is called and whenever `input`
+ * changes.
+ *
+ * The returned `State` will change in response to the associated `Promise`, usually by
+ * transitioning from `Loading` to `Success`, at which point the value that was returned
+ * can be accessed.
+ *
+ * The method handles races and will only return a `Success` for the most recent `input`
+ * value that was provided.
  */
 export function usePromise<I, O>(fetch: (input: I) => Promise<O>, input: I): State<I, O> {
     const [state, dispatch] = useReducer(reducer, new Uninitialized());
