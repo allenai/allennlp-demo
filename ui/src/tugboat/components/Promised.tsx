@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { useAsync } from '../lib';
+import { usePromise } from '../lib';
 import { Loading } from './shared';
 import { ErrorMessage } from './ErrorMessage';
 
-interface AsyncOutputProps<I, O> {
+interface Props<I, O> {
     input: I;
-    fn: (i: I) => Promise<O>;
+    fetch: (i: I) => Promise<O>;
     children: (o: O) => React.ReactNode;
     errorMessage?: string;
 }
@@ -20,19 +20,15 @@ interface AsyncOutputProps<I, O> {
  * React components visualizing it.
  *
  * @example
- *  <AsyncOutput<Input, Output>
+ *  <Promised<Input, Output>
  *      input={"modelId"}
- *      fn={fetchModelInfo}>{ (output) => (
+ *      fn={fetchModelInfo}
+ *  >{ (output) => (
  *      <FancyOutputDisplay output={output} />
- *  )}</AsyncOutput>
+ *  )}</Promised>
  */
-export const AsyncOutput = <I, O>({
-    input,
-    fn,
-    children,
-    errorMessage,
-}: AsyncOutputProps<I, O>) => {
-    const output = useAsync(fn, input);
+export const Promised = <I, O>({ input, fetch, children, errorMessage }: Props<I, O>) => {
+    const output = usePromise(fetch, input);
 
     if (output.isLoading() || output.isUnitialized()) {
         return <Loading />;

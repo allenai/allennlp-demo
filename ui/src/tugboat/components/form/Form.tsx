@@ -3,7 +3,7 @@ import { Divider } from 'antd';
 
 import { Models } from '../../context';
 import { NoSelectedModel } from '../../error';
-import { AsyncOutput } from '../AsyncOutput';
+import { Promised } from '../Promised';
 import { FormElement } from './controls';
 
 class InvalidPredictChildrenError extends Error {
@@ -77,9 +77,9 @@ export const Form = <I, O>(props: Props) => {
             </FormElement>
             <Divider />
             {input ? (
-                <AsyncOutput<I, O> input={input} fn={fetchPredictions}>
+                <Promised<I, O> input={input} fetch={fetchPredictions}>
                     {(output: O) => React.cloneElement(secondChild, { output })}
-                </AsyncOutput>
+                </Promised>
             ) : null}
         </>
     );

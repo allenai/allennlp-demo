@@ -2,12 +2,12 @@ import { useReducer, useEffect } from 'react';
 
 import { UnknownActionError } from '../error';
 
-interface AsyncAction {}
-class ChangeState<I, O> implements AsyncAction {
-    constructor(readonly desiredState: AsyncState<I, O>) {}
+interface Action {}
+class ChangeState<I, O> implements Action {
+    constructor(readonly desiredState: State<I, O>) {}
 }
 
-abstract class AsyncState<I, O> {
+abstract class State<I, O> {
     isUnitialized(): this is Uninitialized<I, O> {
         return this instanceof Uninitialized;
     }
@@ -24,20 +24,24 @@ abstract class AsyncState<I, O> {
         return this instanceof Failure;
     }
 }
-class Uninitialized<I, O> extends AsyncState<I, O> {
-    readonly isEmpty = true;
+class Uninitialized<I, O> extends State<I, O> {
+    // Each class must have a unique constructor signature for the `instanceof` operator
+    // to work, so we add one here with a property that we don't end up using anywhere.
+    constructor(readonly on: Date = new Date()) {
+        super();
+    }
 }
-class Loading<I, O> extends AsyncState<I, O> {
+class Loading<I, O> extends State<I, O> {
     constructor(readonly input: I) {
         super();
     }
 }
-class Success<I, O> extends AsyncState<I, O> {
+class Success<I, O> extends State<I, O> {
     constructor(readonly input: I, readonly output: O) {
         super();
     }
 }
-class Failure<I, O> extends AsyncState<I, O> {
+class Failure<I, O> extends State<I, O> {
     constructor(readonly input: I, readonly cause: Error) {
         super();
     }
@@ -47,7 +51,7 @@ class Failure<I, O> extends AsyncState<I, O> {
  * Responds to actions by changing the state. Sometimes the state isn't changed. This happens
  * when the received action isn't something the UI is waiting on anymore.
  */
-function reducer<I, O>(currentState: AsyncState<I, O>, action: AsyncAction): AsyncState<I, O> {
+function reducer<I, O>(currentState: State<I, O>, action: Action): State<I, O> {
     if (action instanceof ChangeState) {
         if (action.desiredState instanceof Success || action.desiredState instanceof Failure) {
             // We need to make sure the desired state is still relevant. If we're not currently
@@ -73,15 +77,15 @@ function reducer<I, O>(currentState: AsyncState<I, O>, action: AsyncAction): Asy
 }
 
 /**
- * Takes a function that returns an asynchronous promise for output. The function is given the
- * accompanying input, and called whenever that input changes.
+ * Takes a function that returns an asynchronous promise for output. The function called with the
+ * given input when that input changes.
  */
-export function useAsync<I, O>(fn: (input: I) => Promise<O>, input: I): AsyncState<I, O> {
+export function usePromise<I, O>(fetch: (input: I) => Promise<O>, input: I): State<I, O> {
     const [state, dispatch] = useReducer(reducer, new Uninitialized());
 
     useEffect(() => {
         dispatch(new ChangeState(new Loading(input)));
-        fn(input)
+        fetch(input)
             .then((o) => dispatch(new ChangeState(new Success(input, o))))
             .catch((e) => {
                 // The failure is of type `any`, so we convert it to an `Error` if it already isn't
@@ -94,6 +98,6 @@ export function useAsync<I, O>(fn: (input: I) => Promise<O>, input: I): AsyncSta
     }, [input]);
 
     // The cast here is necessary because of type erasure that occurs with `useReducer`,
-    // which returns `state` as `AsyncState<unknown, unknown>`.
-    return state as AsyncState<I, O>;
+    // which returns `state` as `State<unknown, unknown>`.
+    return state as State<I, O>;
 }

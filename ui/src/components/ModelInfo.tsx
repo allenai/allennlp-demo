@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AsyncOutput } from '../tugboat/components';
+import { Promised } from '../tugboat/components';
 
 import { ModelInfo as MInfo, fetchModelInfo } from '../lib';
 
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const ModelInfo = ({ ids, children }: Props) => (
-    <AsyncOutput<string[] | undefined, MInfo[]> input={ids} fn={fetchModelInfo}>
+    <Promised<string[] | undefined, MInfo[]> input={ids} fetch={fetchModelInfo}>
         {(output) => <>{children(output)}</>}
-    </AsyncOutput>
+    </Promised>
 );

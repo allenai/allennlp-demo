@@ -6,5 +6,5 @@ export * from './ModelCardModal';
 export * from './ModelUsageModal';
 export * from './MultiModelDemo';
 export * from './SelectModel';
-export * from './AsyncOutput';
+export * from './Promised';
 export * from './form';
