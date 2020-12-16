@@ -89,6 +89,7 @@ jobs:
           "transformer_qa",
           "vilbert_vqa",
           "wikitables_parser",
+          "tasks"
         ]
     steps:
     - uses: actions/checkout@v2
