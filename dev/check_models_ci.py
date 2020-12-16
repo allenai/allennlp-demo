@@ -10,9 +10,6 @@ from typing import Iterable
 WORKFLOW_FILE_PATH = ".github/workflows/ci.yml"
 logging.basicConfig()
 
-# Sometimes models are broken, so we allow their tests to be temporarily omitted.
-SKIPPED = set([ "vilbert_vqa" ])
-
 # These are endpoints we have tests for that aren't models. This script skips these.
 NON_MODEL_ENDPOINTS = set([ "tasks" ])
 
@@ -25,12 +22,6 @@ def find_models() -> Iterable[str]:
             continue
         config_path = os.path.join(path, "model.json")
         if not os.path.isfile(config_path):
-            continue
-        if name in SKIPPED:
-            logging.getLogger().warning(
-                f"{name} is being skipped, probably because it's non-functional for one reason"
-                f"or another. If you think it's being skipped and shouldn't be, edit {__file__}."
-            )
             continue
         yield name
 
