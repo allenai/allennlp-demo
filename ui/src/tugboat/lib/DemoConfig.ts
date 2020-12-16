@@ -10,4 +10,5 @@ export interface DemoConfig {
      */
     path?: string;
     modelIds: string[];
+    taskId: string;
 }

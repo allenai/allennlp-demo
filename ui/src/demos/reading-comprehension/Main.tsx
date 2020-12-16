@@ -2,11 +2,12 @@ import React from 'react';
 import { Content } from '@allenai/varnish/components';
 
 import {
-    Title,
-    Description,
+    TaskTitle,
+    TaskDescription,
     ModelUsageModal,
     ModelCardModal,
     SelectModel,
+    SelectExample,
     Fields,
     Output,
     Question,
@@ -19,20 +20,17 @@ import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
 import { Input, Prediction } from './types';
 
+// TODO: Description should come from TaskCard?
+// TODO: Just pass config?
 export const Main = () => (
     <Content>
-        <MultiModelDemo ids={config.modelIds}>
-            <Title>{config.title}</Title>
-            {/* TODO: It might be nice to put the description in the config too, or put it in
-                a markdown file that we load and display to facilitate easily tweaking the content.
-             */}
-            <Description>
-                Reading comprehension is the task of answering questions about a passage of text to
-                show that the system understands the passage.
-            </Description>
+        <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
+            <TaskTitle />
+            <TaskDescription />
             <SelectModel />
             <ModelCardModal />
             <ModelUsageModal />
+            <SelectExample displayProp="question" placeholder="Select a Question…" />
             <Predict<Input, Prediction>>
                 <Fields>
                     <Passage />
