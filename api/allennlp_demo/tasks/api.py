@@ -21,7 +21,7 @@ class TasksService(flask.Flask):
         def info():
             return flask.jsonify({"id": "tasks", "allennlp_models": VERSION})
 
-        @self.route("/tasks", methods=["GET"])
+        @self.route("/all", methods=["GET"])
         def tasks():
             tasks = get_tasks()
             return flask.jsonify(tasks)
