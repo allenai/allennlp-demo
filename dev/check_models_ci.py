@@ -4,11 +4,16 @@ Script to verify that all demo models are covered by CI in our GitHub Actions wo
 
 import yaml
 import os
+import logging
 from typing import Iterable
 
-
 WORKFLOW_FILE_PATH = ".github/workflows/ci.yml"
+logging.basicConfig()
 
+SKIPPED = set([ "vilbert_vqa" ])
+
+# These are endpoints we have tests for that aren't models. This script skips these.
+NON_MODEL_ENDPOINTS = set([ "tasks" ])
 
 def find_models() -> Iterable[str]:
     for name in os.listdir("api/allennlp_demo"):
@@ -19,6 +24,12 @@ def find_models() -> Iterable[str]:
             continue
         config_path = os.path.join(path, "model.json")
         if not os.path.isfile(config_path):
+            continue
+        if name in SKIPPED:
+            logging.getLogger().warning(
+                f"{name} is being skipped, probably because it's non-functional for one reason"
+                f"or another. If you think it's being skipped and shouldn't be, edit {__file__}."
+            )
             continue
         yield name
 
@@ -36,6 +47,8 @@ def main():
             f"Did you forget to add '{model}' to the 'Endpoint Test' model matrix?"
         )
     for model in tested_models:
+        if model in NON_MODEL_ENDPOINTS:
+            continue
         assert model in all_models, (
             f"'{model}' is in the GitHub Actions 'Endpoint Test' job, but does not "
             f"appear to correspond to an actual demo model in 'api/allennlp_demo'. "
