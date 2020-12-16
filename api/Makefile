@@ -36,14 +36,14 @@ typecheck :
 	docker run --rm \
 		-p $(DOCKER_PORT):8000 \
 		-v $$HOME/.allennlp:/root/.allennlp \
-		-v $$HOME/.cache/:/root/.cache/ \
+		-v $$HOME/.cache:/root/.cache \
 		-v $$HOME/nltk_data:/root/nltk_data \
 		$(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG)
 
 %-test : %-build
 	docker run --rm \
 		-v $$HOME/.allennlp:/root/.allennlp \
-		-v $$HOME/.cache/:/root/.cache/ \
+		-v $$HOME/.cache:/root/.cache \
 		-v $$HOME/nltk_data:/root/nltk_data \
 		--entrypoint=python \
 		$(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG) \
