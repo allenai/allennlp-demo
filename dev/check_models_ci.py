@@ -10,6 +10,7 @@ from typing import Iterable
 WORKFLOW_FILE_PATH = ".github/workflows/ci.yml"
 logging.basicConfig()
 
+# Sometimes models are broken, so we allow their tests to be temporarily omitted.
 SKIPPED = set([ "vilbert_vqa" ])
 
 # These are endpoints we have tests for that aren't models. This script skips these.
