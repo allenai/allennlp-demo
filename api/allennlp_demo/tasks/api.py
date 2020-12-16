@@ -5,10 +5,8 @@ import logging  # noqa: E402
 import flask  # noqa: E402
 from werkzeug.exceptions import NotFound
 
-from typing import List, Dict  # noqa: E402
 from allennlp_demo.common.logs import configure_logging  # noqa: E402
 from allennlp_models.pretrained import get_tasks  # noqa: E402
-from allennlp_models.common.task_card import TaskCard
 from allennlp_models.version import VERSION
 
 logger = logging.getLogger(__name__)
