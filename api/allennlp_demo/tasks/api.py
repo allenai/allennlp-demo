@@ -1,12 +1,12 @@
 """
 The tasks endpoint lists all demo tasks and some info about them.
 """
-import logging  # noqa: E402
-import flask  # noqa: E402
+import logging
+import flask
 from werkzeug.exceptions import NotFound
 
-from allennlp_demo.common.logs import configure_logging  # noqa: E402
-from allennlp_models.pretrained import get_tasks  # noqa: E402
+from allennlp_demo.common.logs import configure_logging
+from allennlp_models.pretrained import get_tasks
 from allennlp_models.version import VERSION
 
 logger = logging.getLogger(__name__)
