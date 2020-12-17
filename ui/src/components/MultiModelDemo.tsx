@@ -15,7 +15,7 @@ class TaskNotFoundError extends Error {
 /**
  * Converts an AllenNLP Task to a TugBoat one. Ultimately this just replaces a few things
  * that can be missing with default values, since AllenNLP allows things to be undefined
- * that TugBoat doesnt.
+ * that TugBoat doesn't.
  */
 function asTugBoatTask(card: TaskCard): Task {
     return {
