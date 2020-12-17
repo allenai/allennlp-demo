@@ -76,8 +76,8 @@ export const Form = <I, O>(props: Props) => {
     const examples = React.useContext(Examples);
     React.useEffect(() => {
         if (examples.selectedExample) {
-            // The wide cast here is unfortunate, but probably worth the tradeoff. The type `antd`
-            // expects here is a RecursivePartial<I>, but really `antd` should probably just expect
+            // The wide cast here is unfortunate, but probably worth the tradeoff. The type expected by
+            // `antd` is a RecursivePartial<I>, but really `antd` should probably just expect
             // { [name: string]: any }, as the method ignores values where the corresponding `name`
             // doesn't match one of the fields the form contains.
             //
