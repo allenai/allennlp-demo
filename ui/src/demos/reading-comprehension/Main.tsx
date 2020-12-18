@@ -17,13 +17,11 @@ import {
     TextWithHighlight,
     Answer,
 } from '../../tugboat/components';
-import { Models } from '../../tugboat/context';
 import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
 import { Input, Prediction, BiDAFPrediction, NAQANetAnswerType } from './types';
 
 export const Main = () => {
-    const modelCtx = React.useContext(Models); // TODO, replace when sams code drops
     return (
         <Content>
             <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
@@ -40,14 +38,14 @@ export const Main = () => {
                         <Submit>Run Model</Submit>
                     </Fields>
                     <Output<Input, Prediction>>
-                        {({ input, output }) => {
+                        {({ input, output, model }) => {
                             let answerType = 'oldInterface';
                             if ('answerType' in output) {
                                 answerType = (output as any).answerType;
                             }
                             // TODO: we need model as part of input, hacking it in here
                             // TODO, should there be a set of const ids somewhere?
-                            if (modelCtx.selectedModel?.id === 'nmn') {
+                            if (model.id === 'nmn') {
                                 answerType = 'nmn';
                             }
 
