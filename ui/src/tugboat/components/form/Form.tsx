@@ -32,11 +32,13 @@ interface Props {
  * A component for rendering a form that the user should complete, and the output that's returned
  * when the user submits the data they entered in.
  *
- * The `<Form />` compoonent expects exactly two children. The first child must be a `<Fields />`
- * component. The inputs that you want the user to provide should be rendered as children of that
- * element. The second child must be a `<Output />` component. It's children should display the
- * output to the user. It'll receive two props at render time, `output`, the returned results,
- * and `input`, what was submitted.
+ * The `<Form />` compoonent expects exactly two children:
+ *
+ * 1. The first child must be a `<Fields />` component. The inputs that you want the user to
+ *    provide should be rendered as children of that element.
+ *
+ * 2. The second child must be a `<Output />` component. It'll be passed two props, `input`
+ *    and `output`.
  *
  * @example
  *  <Form>
@@ -44,8 +46,8 @@ interface Props {
  *          <Passage>
  *          <Question>
  *      </Fields>
- *      <Output>{ (prediction, input) => (
- *          <b>The model's answer was: "${prediction.best_span}".</b>
+ *      <Output>{ ({ input, output }) => (
+ *          <b>The model's answer to "`${input.question}`" was: "${output.best_span}".</b>
  *      ) }</Output>
  *  </Form>
  */
@@ -115,7 +117,7 @@ export const Form = <I, O>(props: Props) => {
             <Divider />
             {input ? (
                 <Promised<I, O> input={input} fetch={fetchPredictions}>
-                    {(output: O, input: I) => React.cloneElement(secondChild, { output, input })}
+                    {({ input, output }) => React.cloneElement(secondChild, { output, input })}
                 </Promised>
             ) : null}
         </>

@@ -8,7 +8,7 @@ import { UnknownStateError } from '../error';
 interface Props<I, O> {
     input?: I;
     fetch: (i?: I) => Promise<O>;
-    children: (o: O, i: I) => React.ReactNode | JSX.Element;
+    children: (io: { input: I; output: O }) => React.ReactNode | JSX.Element;
     errorMessage?: string;
 }
 
@@ -18,7 +18,7 @@ interface Props<I, O> {
  * is rendered, and when things fail an `<ErrorMessage />` is rendered.
  *
  * The component expects a single child that's a function. The function will be passed the
- * returned ouput and the input associated with it. It should return the resulting JSX.
+ * `Success` state, which has two properties, `input` and `output`.
  *
  * @example
  *  <Promised input={"modelId"} fn={fetchModelInfo}>{
@@ -37,7 +37,7 @@ export const Promised = <I, O>({ input, fetch, children, errorMessage }: Props<I
     }
 
     if (state.isSuccess()) {
-        return <>{children(state.output, state.input)}</>;
+        return <>{children(state)}</>;
     }
 
     // We shouldn't ever get here.

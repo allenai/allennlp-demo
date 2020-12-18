@@ -8,6 +8,8 @@ interface Props {
     children: (t: TaskCardsById) => React.ReactNode;
 }
 
-export const TaskCards = ({ children }: Props) => {
-    return <Promised fetch={fetchTaskCards}>{(tasksById) => <>{children(tasksById)}</>}</Promised>;
-};
+export const TaskCards = ({ children }: Props) => (
+    <Promised fetch={fetchTaskCards}>
+        {({ output: tasksById }) => <>{children(tasksById)}</>}
+    </Promised>
+);
