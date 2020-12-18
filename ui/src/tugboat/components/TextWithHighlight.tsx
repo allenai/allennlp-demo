@@ -15,7 +15,7 @@ interface Props {
 }
 
 /**
- * Nicely displays the provided text with all its highlightTanges highlighted.
+ * Displays a passage of text, highlighting the tokens indicated by `highlights`.
  */
 export const TextWithHighlight = (props: Props) => {
     let lastEndIndex = 0;
