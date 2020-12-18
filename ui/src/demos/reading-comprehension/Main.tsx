@@ -22,7 +22,17 @@ import { ModelId } from '../../lib';
 import { InvalidModelForTaskError } from '../../tugboat/error';
 import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
-import { Input, Prediction, BiDAFPrediction, NAQANetAnswerType } from './types';
+import {
+    Input,
+    Prediction,
+    NAQANetAnswerType,
+    BiDAFPrediction,
+    NAQANetPrediction,
+    TransformerQAPrediction,
+    isBiDAFPrediction,
+    isNAQANetPrediction,
+    isTransformerQAPrediction,
+} from './types';
 
 export const Main = () => {
     return (
@@ -78,34 +88,53 @@ const OutputByModel = ({
 }) => {
     switch (model.id) {
         case ModelId.Bidaf:
-        case ModelId.BidafElmo:
+        case ModelId.BidafElmo: {
+            if (isBiDAFPrediction(output)) {
+                return <BasicAnswer input={input} output={output} />;
+            }
+            break;
+        }
         case ModelId.TransformerQa: {
-            return <BasicAnswer input={input} output={output} />;
+            if (isTransformerQAPrediction(output)) {
+                return <BasicAnswer input={input} output={output} />;
+            }
+            break;
         }
         // TODO: I dont see this in the model selection... does it need to be added, or can we remove this case?
         case ModelId.Nmn: {
-            return <NmnAnswer />;
+            if (isNAQANetPrediction(output)) {
+                return <NmnAnswer />;
+            }
+            break;
         }
         case ModelId.Naqanet: {
-            return <NaqanetAnswer output={output} model={model} />;
+            if (isNAQANetPrediction(output)) {
+                return <NaqanetAnswer output={output} />;
+            }
+            break;
         }
     }
     // If we dont have an output throw.
     throw new InvalidModelForTaskError(model.id);
 };
 
-const BasicAnswer = ({ input, output }: { input: Input; output: Prediction }) => {
-    const bidafOutput = output as BiDAFPrediction;
-    let best_span = bidafOutput.best_span;
+const BasicAnswer = ({
+    input,
+    output,
+}: {
+    input: Input;
+    output: BiDAFPrediction | TransformerQAPrediction;
+}) => {
+    let best_span = output.best_span;
     if (best_span[0] >= best_span[1]) {
         // TODO: there is a bug in the response, so we need to calculate the best_span locally
-        const start = input.passage.indexOf(bidafOutput.best_span_str);
-        best_span = [start, start + bidafOutput.best_span_str.length];
+        const start = input.passage.indexOf(output.best_span_str);
+        best_span = [start, start + output.best_span_str.length];
     }
     return (
         <>
             <Answer.Section label="Answer">
-                <div>{bidafOutput.best_span_str}</div>
+                <div>{output.best_span_str}</div>
             </Answer.Section>
 
             <Answer.Section label="Passage Context">
@@ -141,23 +170,19 @@ const NmnAnswer = () => {
 };
 
 // TODO:
-const NaqanetAnswer = ({ output, model }: { output: Prediction; model: Model }) => {
-    if ('answer_type' in (output as any).answer) {
-        switch ((output as any).answer.answer_type) {
-            case NAQANetAnswerType.PassageSpan: {
-                return <>has PassageSpan answer</>;
-            }
-            case NAQANetAnswerType.QuestionSpan: {
-                return <>has QuestionSpan answer</>;
-            }
-            case NAQANetAnswerType.Count: {
-                return <>has Count answer</>;
-            }
-            case NAQANetAnswerType.Arithmetic: {
-                return <>has Arithmetic answer</>;
-            }
+const NaqanetAnswer = ({ output }: { output: NAQANetPrediction }) => {
+    switch (output.answer['answer-type']) {
+        case NAQANetAnswerType.PassageSpan: {
+            return <>has PassageSpan answer</>;
+        }
+        case NAQANetAnswerType.QuestionSpan: {
+            return <>has QuestionSpan answer</>;
+        }
+        case NAQANetAnswerType.Count: {
+            return <>has Count answer</>;
+        }
+        case NAQANetAnswerType.Arithmetic: {
+            return <>has Arithmetic answer</>;
         }
     }
-    // If we dont have an output throw.
-    throw new InvalidModelForTaskError(model.id);
 };
