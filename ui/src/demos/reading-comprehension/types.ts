@@ -16,6 +16,22 @@ export interface BiDAFPrediction {
     token_offsets: number[][];
 }
 
+export const isBiDAFPrediction = (x: Prediction): x is BiDAFPrediction => {
+    const xx = x as BiDAFPrediction;
+    return (
+        xx.best_span !== undefined &&
+        xx.best_span_str !== undefined &&
+        xx.passage_question_attention !== undefined &&
+        xx.passage_tokens !== undefined &&
+        xx.question_tokens !== undefined &&
+        xx.span_end_logits !== undefined &&
+        xx.span_end_probs !== undefined &&
+        xx.span_start_logits !== undefined &&
+        xx.span_start_probs !== undefined &&
+        xx.token_offsets !== undefined
+    );
+};
+
 export interface TransformerQAPrediction {
     best_span: number[];
     best_span_scores: number;
@@ -26,9 +42,24 @@ export interface TransformerQAPrediction {
     span_start_logits: number[];
 }
 
-// TODO: Figure out what other types of output exist.
-enum NAQANetAnswerType {
+export const isTransformerQAPrediction = (x: Prediction): x is TransformerQAPrediction => {
+    const xx = x as TransformerQAPrediction;
+    return (
+        xx.best_span !== undefined &&
+        xx.best_span_scores !== undefined &&
+        xx.best_span_str !== undefined &&
+        xx.context_tokens !== undefined &&
+        xx.id !== undefined &&
+        xx.span_end_logits !== undefined &&
+        xx.span_start_logits !== undefined
+    );
+};
+
+export enum NAQANetAnswerType {
     PassageSpan = 'passage_span',
+    QuestionSpan = 'question_span',
+    Count = 'count',
+    Arithmetic = 'arithmetic',
 }
 
 export interface NAQANetPrediction {
@@ -47,5 +78,20 @@ export interface NAQANetPrediction {
     question_id: string;
     question_tokens: string[];
 }
+
+export const isNAQANetPrediction = (x: Prediction): x is NAQANetPrediction => {
+    const xx = x as NAQANetPrediction;
+    return (
+        xx.answer !== undefined &&
+        xx.answer['answer-type'] !== undefined &&
+        xx.answer.spans !== undefined &&
+        xx.answer.value !== undefined &&
+        xx.loss !== undefined &&
+        xx.passage_question_attention !== undefined &&
+        xx.passage_tokens !== undefined &&
+        xx.question_id !== undefined &&
+        xx.question_tokens !== undefined
+    );
+};
 
 export type Prediction = BiDAFPrediction | TransformerQAPrediction | NAQANetPrediction;

@@ -9,45 +9,34 @@ import {
     SelectModel,
     SelectExample,
     Fields,
-    Output,
     Question,
     Passage,
-    PrettyPrintedJSON,
     Submit,
 } from '../../tugboat/components';
-
 import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
+import { Output } from './Output';
 import { Input, Prediction } from './types';
 
-export const Main = () => (
-    <Content>
-        <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
-            <TaskTitle />
-            <TaskDescription />
-            <SelectModel />
-            <ModelCardModal />
-            <ModelUsageModal />
-            <SelectExample displayProp="question" placeholder="Select a Question…" />
-            <Predict<Input, Prediction>>
-                <Fields>
-                    <Passage />
-                    <Question />
-                    <Submit>Run Model</Submit>
-                </Fields>
-                <Output<Input, Prediction>>
-                    {({ model, output, input }) => (
-                        <>
-                            <h4>Model:</h4>
-                            <p>{model.card.display_name}</p>
-                            <h4>Input:</h4>
-                            <PrettyPrintedJSON json={input} />
-                            <h4>Output:</h4>
-                            <PrettyPrintedJSON json={output} />
-                        </>
-                    )}
-                </Output>
-            </Predict>
-        </MultiModelDemo>
-    </Content>
-);
+export const Main = () => {
+    return (
+        <Content>
+            <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
+                <TaskTitle />
+                <TaskDescription />
+                <SelectModel />
+                <ModelCardModal />
+                <ModelUsageModal />
+                <SelectExample displayProp="question" placeholder="Select a Question…" />
+                <Predict<Input, Prediction>>
+                    <Fields>
+                        <Passage />
+                        <Question />
+                        <Submit>Run Model</Submit>
+                    </Fields>
+                    <Output />
+                </Predict>
+            </MultiModelDemo>
+        </Content>
+    );
+};

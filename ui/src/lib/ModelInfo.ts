@@ -1,5 +1,13 @@
 import { ModelCard } from '../tugboat/lib/ModelCard';
 
+export enum ModelId {
+    Bidaf = 'bidaf',
+    BidafElmo = 'bidaf-elmo',
+    Naqanet = 'naqanet',
+    TransformerQa = 'transformer-qa',
+    Nmn = 'nmn',
+}
+
 /**
  * Hitting `/api/info` returns a list of these.
  */
@@ -18,7 +26,7 @@ export interface ModelInfo {
     allennlp: string;
     archive_file: string;
     attackers: string[];
-    id: string;
+    id: ModelId;
     interpreters: string[];
     model_card_data?: ModelCard;
     overrides?: { [k: string]: any };
