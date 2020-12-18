@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface Props<O, I> {
-    children: (output: O, input: I) => React.ReactNode | JSX.Element;
+    children: (io: { input: I; output: O }) => React.ReactNode | JSX.Element;
     output?: O;
     input?: I;
 }
@@ -20,5 +20,5 @@ interface Props<O, I> {
  *  )}</Output>
  */
 export const Output = <O, I>({ children, output, input }: Props<O, I>) => (
-    <>{output && input ? children(output, input) : null}</>
+    <>{output && input ? children({ input, output }) : null}</>
 );

@@ -36,12 +36,12 @@ export const Main = () => (
                     <Submit>Run Model</Submit>
                 </Fields>
                 <Output>
-                    {(p: Prediction, i: Input) => (
+                    {({ output, input }) => (
                         <>
                             <h4>Input:</h4>
-                            <PrettyPrintedJSON json={i} />
+                            <PrettyPrintedJSON json={input} />
                             <h4>Output:</h4>
-                            <PrettyPrintedJSON json={p} />
+                            <PrettyPrintedJSON json={output} />
                         </>
                     )}
                 </Output>
