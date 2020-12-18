@@ -21,7 +21,7 @@
     "@types/webpack-env": "^1.15.3",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.7.0",
-    "antd": "^4.7.2",
+    "antd": "^4.9.4",
     "babel-loader": "^8.1.0",
     "colormap": "^2.3.1",
     "commonmark": "^0.29.2",
