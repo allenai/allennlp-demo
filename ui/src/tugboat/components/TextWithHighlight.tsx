@@ -19,22 +19,24 @@ interface Props {
  */
 export const TextWithHighlight = (props: Props) => {
     let lastEndIndex = 0;
-    const ranges = props.highlights.map((r: Highlights) => {
-        if (r.start < lastEndIndex || r.start >= r.end) {
-            throw new InvalidAttributesError(
-                'TextWithHighlight takes highlights that need to be in order and non overlapping.'
+    const ranges = props.highlights
+        .sort((a, b) => a.start - b.start)
+        .map((r: Highlights, i: number) => {
+            if (r.start < lastEndIndex || r.start >= r.end) {
+                throw new InvalidAttributesError(
+                    'TextWithHighlight takes highlights that need to be non overlapping.'
+                );
+            }
+            const leadin = props.text.slice(lastEndIndex, r.start);
+            const highlight = props.text.slice(r.start, r.end);
+            lastEndIndex = r.end;
+            return (
+                <span key={i}>
+                    {leadin}
+                    <Highlight color={r.color}>{highlight}</Highlight>
+                </span>
             );
-        }
-        const leadin = props.text.slice(lastEndIndex, r.start);
-        const highlight = props.text.slice(r.start, r.end);
-        lastEndIndex = r.end;
-        return (
-            <span>
-                {leadin}
-                <Highlight color={r.color}>{highlight}</Highlight>
-            </span>
-        );
-    });
+        });
     // add any remaining text
     const leadout = props.text.slice(lastEndIndex, props.text.length);
     ranges.push(<span>{leadout}</span>);
@@ -48,6 +50,6 @@ const Highlight = styled.span<{ color?: string }>`
             : theme.palette.text.primary};
     background: ${({ theme, color }) => theme.color[color || 'B6']};
     font-weight: 700;
-    padding: 0.1875em;
-    margin: 0 0.125em;
+    padding: 0.1875rem;
+    margin: 0 0.125rem;
 `;
