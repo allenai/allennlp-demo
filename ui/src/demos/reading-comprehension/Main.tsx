@@ -39,8 +39,8 @@ export const Main = () => {
                         <Question />
                         <Submit>Run Model</Submit>
                     </Fields>
-                    <Output>
-                        {({ output, input }: { output: Prediction; input: Input }) => {
+                    <Output<Input, Prediction>>
+                        {({ input, output }) => {
                             let answerType = 'oldInterface';
                             if ('answerType' in output) {
                                 answerType = (output as any).answerType;
