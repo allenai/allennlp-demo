@@ -27,3 +27,9 @@ export class UnknownStateError extends Error {
         super(`Unknown state: ${state.constructor.name}`);
     }
 }
+
+export class InvalidAttributesError extends Error {
+    constructor(msg: string) {
+        super(`Invalid Attributes: ${msg}`);
+    }
+}

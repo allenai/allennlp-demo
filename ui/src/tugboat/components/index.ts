@@ -9,3 +9,4 @@ export * from './SelectModel';
 export * from './Promised';
 export * from './form';
 export * from './PrettyPrintedJSON';
+export * from './TextWithHighlight';

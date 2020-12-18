@@ -16,6 +16,7 @@ export interface BiDAFPrediction {
     token_offsets: number[][];
 }
 
+// TODO: i dont think this is used
 export interface TransformerQAPrediction {
     best_span: number[];
     best_span_scores: number;
@@ -26,9 +27,11 @@ export interface TransformerQAPrediction {
     span_start_logits: number[];
 }
 
-// TODO: Figure out what other types of output exist.
-enum NAQANetAnswerType {
+export enum NAQANetAnswerType {
     PassageSpan = 'passage_span',
+    QuestionSpan = 'question_span',
+    Count = 'count',
+    Arithmetic = 'arithmetic',
 }
 
 export interface NAQANetPrediction {
