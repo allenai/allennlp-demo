@@ -22,7 +22,7 @@
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.7.0",
     "antd": "^4.7.2",
-    "babel-loader": "^8.1.0",
+    "babel-loader": "^8.2.2",
     "colormap": "^2.3.1",
     "commonmark": "^0.29.2",
     "copy-webpack-plugin": "^6.2.1",
