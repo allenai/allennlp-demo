@@ -1,10 +1,33 @@
 import React from 'react';
 
 import { ModelInfo } from './ModelInfo';
-import * as tugboat from '../tugboat';
+import { TaskCards } from './TaskCards';
+import { TaskCard } from '../lib';
+import { Model, Task } from '../tugboat/lib';
+import { MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
+
+class TaskNotFoundError extends Error {
+    constructor(taskId: string) {
+        super(`Task ${taskId} not found.`);
+    }
+}
+
+/**
+ * Converts an AllenNLP Task to a TugBoat one. Ultimately this just replaces a few things
+ * that can be missing with default values, since AllenNLP allows things to be undefined
+ * that TugBoat doesn't.
+ */
+function asTugBoatTask(card: TaskCard): Task {
+    return {
+        name: 'Unknown',
+        description: 'Unknown',
+        ...card,
+    };
+}
 
 interface Props {
     ids: string[];
+    taskId: string;
     children: React.ReactNode;
 }
 
@@ -14,10 +37,10 @@ interface Props {
  * This component exists primarily to handle the process of converting AllenNLP's specific notion
  * of a model (which is queried via API routes) to the shape expected by the tugboat package.
  */
-export const MultiModelDemo = ({ ids, children }: Props) => (
+export const MultiModelDemo = ({ ids, taskId, children }: Props) => (
     <ModelInfo ids={ids}>
         {(info) => {
-            const models = [];
+            const models: Model[] = [];
             for (const i of info) {
                 if (!i.model_card_data) {
                     console.warn(
@@ -25,12 +48,22 @@ export const MultiModelDemo = ({ ids, children }: Props) => (
                     );
                     continue;
                 }
-                models.push(new tugboat.lib.Model(i.id, i.model_card_data));
+                models.push(new Model(i.id, i.model_card_data));
             }
             return (
-                <tugboat.components.MultiModelDemo models={models}>
-                    {children}
-                </tugboat.components.MultiModelDemo>
+                <TaskCards>
+                    {(tasksById) => {
+                        if (!(taskId in tasksById)) {
+                            throw new TaskNotFoundError(taskId);
+                        }
+                        const task = tasksById[taskId];
+                        return (
+                            <TBMultiModelDemo models={models} task={asTugBoatTask(task)}>
+                                {children}
+                            </TBMultiModelDemo>
+                        );
+                    }}
+                </TaskCards>
             );
         }}
     </ModelInfo>

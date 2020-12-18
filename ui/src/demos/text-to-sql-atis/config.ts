@@ -7,4 +7,5 @@ export const config: DemoConfig = {
     order: 3,
     modelIds: [],
     status: 'hidden',
+    taskId: 'semparse-text-to-sql',
 };

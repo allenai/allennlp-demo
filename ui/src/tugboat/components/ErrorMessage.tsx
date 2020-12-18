@@ -5,6 +5,11 @@ interface Props {
     message?: string;
 }
 
-export const ErrorMessage = ({ message }: Props = { message: 'An unknown error occured.' }) => (
-    <Alert type="error" message="Error" description={message} showIcon />
+export const ErrorMessage = ({ message }: Props) => (
+    <Alert
+        type="error"
+        message="Error"
+        description={message || 'Sorry, an unknown error occured.'}
+        showIcon
+    />
 );

@@ -16,10 +16,7 @@ export const SelectModel = () => {
             <Field label="Model">
                 <Select
                     value={ctx.selectedModel?.id}
-                    onChange={(id) => ctx.selectModelById(`${id}`)}
-                    dropdownMatchSelectWidth={false}
-                    optionLabelProp="label"
-                    listHeight={370}>
+                    onChange={(id) => ctx.selectModelById(`${id}`)}>
                     {ctx.models.map((m) => (
                         <Select.Option key={m.id} value={m.id} label={m.card.display_name}>
                             <b>{m.card.display_name}</b>
