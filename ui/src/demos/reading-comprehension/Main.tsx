@@ -78,23 +78,23 @@ const OutputByModel = ({
 }) => {
     switch (model.id) {
         case ModelId.Bidaf:
-        case ModelId.BidafElmo: {
-            return <BidafAnswer input={input} output={output} />;
+        case ModelId.BidafElmo:
+        case ModelId.TransformerQa: {
+            return <BasicAnswer input={input} output={output} />;
         }
         // TODO: I dont see this in the model selection... does it need to be added, or can we remove this case?
         case ModelId.Nmn: {
             return <NmnAnswer />;
         }
-        case ModelId.Naqanet:
-        case ModelId.TransformerQa: {
-            return <AnswerTypeAnswer output={output} model={model} />;
+        case ModelId.Naqanet: {
+            return <NaqanetAnswer output={output} model={model} />;
         }
     }
     // If we dont have an output throw.
     throw new InvalidModelForTaskError(model.id);
 };
 
-const BidafAnswer = ({ input, output }: { input: Input; output: Prediction }) => {
+const BasicAnswer = ({ input, output }: { input: Input; output: Prediction }) => {
     const bidafOutput = output as BiDAFPrediction;
     let best_span = bidafOutput.best_span;
     if (best_span[0] >= best_span[1]) {
@@ -141,7 +141,7 @@ const NmnAnswer = () => {
 };
 
 // TODO:
-const AnswerTypeAnswer = ({ output, model }: { output: Prediction; model: Model }) => {
+const NaqanetAnswer = ({ output, model }: { output: Prediction; model: Model }) => {
     if ('answer_type' in (output as any).answer) {
         switch ((output as any).answer.answer_type) {
             case NAQANetAnswerType.PassageSpan: {
