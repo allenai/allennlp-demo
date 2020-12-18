@@ -16,6 +16,12 @@ export class NoSelectedModel extends Error {
     }
 }
 
+export class InvalidModelForTaskError extends Error {
+    constructor(msg: string) {
+        super(`The task does not support displaying an answer for this model: ${msg}`);
+    }
+}
+
 export class UnknownActionError extends Error {
     constructor(actionName: string) {
         super(`Unknown action: ${actionName}`);

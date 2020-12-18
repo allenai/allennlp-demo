@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { InvalidAttributesError } from '../error';
 
-interface HighlightRange {
+interface Highlights {
     start: number;
     end: number;
     color?: string;
@@ -11,7 +11,7 @@ interface HighlightRange {
 
 interface Props {
     text: string;
-    highlightRanges: HighlightRange[]; // expected to be in order
+    highlights: Highlights[]; // expected to be in order
 }
 
 /**
@@ -19,10 +19,10 @@ interface Props {
  */
 export const TextWithHighlight = (props: Props) => {
     let lastEndIndex = 0;
-    const ranges = props.highlightRanges.map((r: HighlightRange) => {
+    const ranges = props.highlights.map((r: Highlights) => {
         if (r.start < lastEndIndex || r.start >= r.end) {
             throw new InvalidAttributesError(
-                'TextWithHighlight takes highlightRanges that need to be in order and non overlapping.'
+                'TextWithHighlight takes highlights that need to be in order and non overlapping.'
             );
         }
         const leadin = props.text.slice(lastEndIndex, r.start);

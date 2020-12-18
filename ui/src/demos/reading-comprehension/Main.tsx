@@ -18,6 +18,8 @@ import {
     Answer,
 } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
+import { ModelId } from '../../lib';
+import { InvalidModelForTaskError } from '../../tugboat/error';
 import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
 import { Input, Prediction, BiDAFPrediction, NAQANetAnswerType } from './types';
@@ -75,16 +77,9 @@ const OutputByModel = ({
     output: Prediction;
     model: Model;
 }) => {
-    // Determining which output code to display is non trivial
-    // the original output interface did not include answerType, so
-    // if we will use the older (default) display in the switch below.
-    // Now, if the model is NMN, we use yet another output display, so
-    // we are setting the answertype to nmn.
-    // TODO, should there be a set of const ids somewhere?
     switch (model.id) {
-        case 'bidaf':
-        case 'bidaf-elmo': {
-            // TODO: is bidaf the only model we need here?
+        case ModelId.Bidaf:
+        case ModelId.BidafElmo: {
             const pp = output as BiDAFPrediction;
             // TODO: there is a bug in the response, so we need to calculate the best_span locally
             const start = input.passage.indexOf(pp.best_span_str);
@@ -98,7 +93,7 @@ const OutputByModel = ({
                     <Answer.Section label="Passage Context">
                         <TextWithHighlight
                             text={input.passage}
-                            highlightRanges={[
+                            highlights={[
                                 {
                                     start: best_span[0],
                                     end: best_span[1],
@@ -123,12 +118,12 @@ const OutputByModel = ({
         }
         // TODO: I dont see this in the model selection... does it need to be added, or
         // can we remove this case?
-        case 'nmn': {
+        case ModelId.Nmn: {
             // TODO: add other types
             return <>has nmn answer</>;
         }
-        // default catches the rest of the models that support the newer interface.
-        default: {
+        case ModelId.Naqanet:
+        case ModelId.TransformerQa:
             if ('answer_type' in (output as any).answer) {
                 switch ((output as any).answer.answer_type) {
                     case NAQANetAnswerType.PassageSpan: {
@@ -149,8 +144,7 @@ const OutputByModel = ({
                     }
                 }
             }
-        }
     }
-    // If we dont have an output, fall back to no answer.
-    return <Answer.NoAnswer />;
+    // If we dont have an output throw.
+    throw new InvalidModelForTaskError(model.id);
 };
