@@ -35,9 +35,11 @@ export const Main = () => (
                     <Question />
                     <Submit>Run Model</Submit>
                 </Fields>
-                <Output>
-                    {({ output, input }) => (
+                <Output<Input, Prediction>>
+                    {({ model, output, input }) => (
                         <>
+                            <h4>Model:</h4>
+                            <p>{model.card.display_name}</p>
                             <h4>Input:</h4>
                             <PrettyPrintedJSON json={input} />
                             <h4>Output:</h4>
