@@ -16,9 +16,9 @@ export class NoSelectedModel extends Error {
     }
 }
 
-export class InvalidModelForTaskError extends Error {
+export class UnexpectedModel extends Error {
     constructor(msg: string) {
-        super(`The task does not support displaying an answer for this model: ${msg}`);
+        super(`Unexpected model: ${msg}`);
     }
 }
 

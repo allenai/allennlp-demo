@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Space } from 'antd';
 
 /**
  * A component that displays an answer section with a label and some kind of children.
@@ -10,15 +11,17 @@ interface Props {
 }
 const Section = (props: Props) => {
     return (
-        <AnswerWrapper>
+        <AnswerSpace direction="vertical">
             <Label>{props.label}</Label>
             {props.children}
-        </AnswerWrapper>
+        </AnswerSpace>
     );
 };
 
-const AnswerWrapper = styled.div`
-    padding-bottom: ${({ theme }) => theme.spacing.md};
+const AnswerSpace = styled(Space)`
+    width: 100%;
+    margin-top: ${({ theme }) => theme.spacing.md};
+    margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 /**
@@ -26,16 +29,6 @@ const AnswerWrapper = styled.div`
  */
 const Label = styled.label`
     display: block;
-    margin-top: ${({ theme }) => theme.spacing.xs};
-    margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
-const NoAnswer = () => {
-    return (
-        <Section label="Answer">
-            <div>No answer returned.</div>
-        </Section>
-    );
-};
-
-export const Answer = { Section, Label, NoAnswer };
+export const Answer = { Section, Label };

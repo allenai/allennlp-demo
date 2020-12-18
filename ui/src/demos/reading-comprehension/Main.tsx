@@ -19,7 +19,7 @@ import {
 } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 import { ModelId } from '../../lib';
-import { InvalidModelForTaskError } from '../../tugboat/error';
+import { UnexpectedModel } from '../../tugboat/error';
 import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
 import {
@@ -100,7 +100,6 @@ const OutputByModel = ({
             }
             break;
         }
-        // TODO: I dont see this in the model selection... does it need to be added, or can we remove this case?
         case ModelId.Nmn: {
             if (isNAQANetPrediction(output)) {
                 return <NmnAnswer />;
@@ -115,7 +114,7 @@ const OutputByModel = ({
         }
     }
     // If we dont have an output throw.
-    throw new InvalidModelForTaskError(model.id);
+    throw new UnexpectedModel(model.id);
 };
 
 const BasicAnswer = ({
