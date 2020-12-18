@@ -1,23 +1,24 @@
 import React from 'react';
 
-interface Props<O> {
-    children: (output: O) => React.ReactNode;
+interface Props<O, I> {
+    children: (output: O, input: I) => React.ReactNode | JSX.Element;
     output?: O;
+    input?: I;
 }
 
 /**
  * A component to house the output that's displayed after a user submits a `<Form />`.
  * Your demo's visualizations should be rendered as children of this component.
  *
- * The component expects one child that's a function. The function is provided the output
- * once it's available.
+ * The component expects one child that's a function. The function is provided the output,
+ * and the associated input.
  *
  * @example:
- *  <Output>{ (predictions) => (
+ *  <Output>{ (predictions, input) => (
  *      <PredictedAnswer answer={predictions.best_span} />
  *      <LossGraph loss={predictions.loss} />
  *  )}</Output>
  */
-export const Output = <O,>({ children, output }: Props<O>) => (
-    <>{output ? children(output) : null}</>
+export const Output = <O, I>({ children, output, input }: Props<O, I>) => (
+    <>{output && input ? children(output, input) : null}</>
 );

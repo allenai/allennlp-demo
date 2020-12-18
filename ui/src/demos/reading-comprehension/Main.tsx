@@ -20,8 +20,6 @@ import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
 import { Input, Prediction } from './types';
 
-// TODO: Description should come from TaskCard?
-// TODO: Just pass config?
 export const Main = () => (
     <Content>
         <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
@@ -37,7 +35,16 @@ export const Main = () => (
                     <Question />
                     <Submit>Run Model</Submit>
                 </Fields>
-                <Output>{(p: Prediction) => <PrettyPrintedJSON json={p} />}</Output>
+                <Output>
+                    {(p: Prediction, i: Input) => (
+                        <>
+                            <h4>Input:</h4>
+                            <PrettyPrintedJSON json={i} />
+                            <h4>Output:</h4>
+                            <PrettyPrintedJSON json={p} />
+                        </>
+                    )}
+                </Output>
             </Predict>
         </MultiModelDemo>
     </Content>

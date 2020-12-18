@@ -32,10 +32,11 @@ interface Props {
  * A component for rendering a form that the user should complete, and the output that's returned
  * when the user submits the data they entered in.
  *
- * The `<Form />` copmonent expects exactly two children. The first child must be a `<Fields />`
- * component. The inputs that you want the user to provides hould be rendered as children of that
+ * The `<Form />` compoonent expects exactly two children. The first child must be a `<Fields />`
+ * component. The inputs that you want the user to provide should be rendered as children of that
  * element. The second child must be a `<Output />` component. It's children should display the
- * output to the user.
+ * output to the user. It'll receive two props at render time, `output`, the returned results,
+ * and `input`, what was submitted.
  *
  * @example
  *  <Form>
@@ -43,7 +44,7 @@ interface Props {
  *          <Passage>
  *          <Question>
  *      </Fields>
- *      <Output>{ (prediction) => (
+ *      <Output>{ (prediction, input) => (
  *          <b>The model's answer was: "${prediction.best_span}".</b>
  *      ) }</Output>
  *  </Form>
@@ -114,7 +115,7 @@ export const Form = <I, O>(props: Props) => {
             <Divider />
             {input ? (
                 <Promised<I, O> input={input} fetch={fetchPredictions}>
-                    {(output: O) => React.cloneElement(secondChild, { output })}
+                    {(output: O, input: I) => React.cloneElement(secondChild, { output, input })}
                 </Promised>
             ) : null}
         </>
