@@ -46,7 +46,6 @@ export const Main = () => {
                                 <>
                                     <OutputByModel input={input} output={output} model={model} />
 
-                                    {/* Below are displayed for all paths. */}
                                     <Answer.Section label="Model JSON (DEBUG)">
                                         <PrettyPrintedJSON json={model} />
                                     </Answer.Section>
@@ -80,73 +79,84 @@ const OutputByModel = ({
     switch (model.id) {
         case ModelId.Bidaf:
         case ModelId.BidafElmo: {
-            const bidafOutput = output as BiDAFPrediction;
-            let best_span = bidafOutput.best_span;
-            if (best_span[0] >= best_span[1]) {
-                // TODO: there is a bug in the response, so we need to calculate the best_span locally
-                const start = input.passage.indexOf(bidafOutput.best_span_str);
-                best_span = [start, start + bidafOutput.best_span_str.length];
-            }
-            return (
-                <>
-                    <Answer.Section label="Answer">
-                        <div>{bidafOutput.best_span_str}</div>
-                    </Answer.Section>
-
-                    <Answer.Section label="Passage Context">
-                        <TextWithHighlight
-                            text={input.passage}
-                            highlights={[
-                                {
-                                    start: best_span[0],
-                                    end: best_span[1],
-                                },
-                            ]}
-                        />
-                    </Answer.Section>
-
-                    <Answer.Section label="Question">
-                        <div>{input.question}</div>
-                    </Answer.Section>
-
-                    <Answer.Section label="Model Interpretations">
-                        <div>TODO</div>
-                    </Answer.Section>
-
-                    <Answer.Section label="Model Attacks">
-                        <div>TODO</div>
-                    </Answer.Section>
-                </>
-            );
+            return <BidafAnswer input={input} output={output} />;
         }
-        // TODO: I dont see this in the model selection... does it need to be added, or
-        // can we remove this case?
+        // TODO: I dont see this in the model selection... does it need to be added, or can we remove this case?
         case ModelId.Nmn: {
-            // TODO: add other types
-            return <>has nmn answer</>;
+            return <NmnAnswer />;
         }
         case ModelId.Naqanet:
-        case ModelId.TransformerQa:
-            if ('answer_type' in (output as any).answer) {
-                switch ((output as any).answer.answer_type) {
-                    case NAQANetAnswerType.PassageSpan: {
-                        // TODO: add other types
-                        return <>has PassageSpan answer</>;
-                    }
-                    case NAQANetAnswerType.QuestionSpan: {
-                        // TODO: add other types
-                        return <>has QuestionSpan answer</>;
-                    }
-                    case NAQANetAnswerType.Count: {
-                        // TODO: add other types
-                        return <>has Count answer</>;
-                    }
-                    case NAQANetAnswerType.Arithmetic: {
-                        // TODO: add other types
-                        return <>has Arithmetic answer</>;
-                    }
-                }
+        case ModelId.TransformerQa: {
+            return <AnswerTypeAnswer output={output} model={model} />;
+        }
+    }
+    // If we dont have an output throw.
+    throw new InvalidModelForTaskError(model.id);
+};
+
+const BidafAnswer = ({ input, output }: { input: Input; output: Prediction }) => {
+    const bidafOutput = output as BiDAFPrediction;
+    let best_span = bidafOutput.best_span;
+    if (best_span[0] >= best_span[1]) {
+        // TODO: there is a bug in the response, so we need to calculate the best_span locally
+        const start = input.passage.indexOf(bidafOutput.best_span_str);
+        best_span = [start, start + bidafOutput.best_span_str.length];
+    }
+    return (
+        <>
+            <Answer.Section label="Answer">
+                <div>{bidafOutput.best_span_str}</div>
+            </Answer.Section>
+
+            <Answer.Section label="Passage Context">
+                <TextWithHighlight
+                    text={input.passage}
+                    highlights={[
+                        {
+                            start: best_span[0],
+                            end: best_span[1],
+                        },
+                    ]}
+                />
+            </Answer.Section>
+
+            <Answer.Section label="Question">
+                <div>{input.question}</div>
+            </Answer.Section>
+
+            <Answer.Section label="Model Interpretations">
+                <div>TODO</div>
+            </Answer.Section>
+
+            <Answer.Section label="Model Attacks">
+                <div>TODO</div>
+            </Answer.Section>
+        </>
+    );
+};
+
+// TODO
+const NmnAnswer = () => {
+    return <>has nmn answer</>;
+};
+
+// TODO:
+const AnswerTypeAnswer = ({ output, model }: { output: Prediction; model: Model }) => {
+    if ('answer_type' in (output as any).answer) {
+        switch ((output as any).answer.answer_type) {
+            case NAQANetAnswerType.PassageSpan: {
+                return <>has PassageSpan answer</>;
             }
+            case NAQANetAnswerType.QuestionSpan: {
+                return <>has QuestionSpan answer</>;
+            }
+            case NAQANetAnswerType.Count: {
+                return <>has Count answer</>;
+            }
+            case NAQANetAnswerType.Arithmetic: {
+                return <>has Arithmetic answer</>;
+            }
+        }
     }
     // If we dont have an output throw.
     throw new InvalidModelForTaskError(model.id);
