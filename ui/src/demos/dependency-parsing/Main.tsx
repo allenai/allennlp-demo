@@ -5,13 +5,12 @@
 import React from 'react';
 import { Content } from '@allenai/varnish/components';
 
-import { Title } from '../../tugboat/components';
-import { config } from './config';
+import { TaskTitle } from '../../tugboat/components';
 
 export const Main = () => {
     return (
         <Content>
-            <Title>{config.title}</Title>
+            <TaskTitle />
             NOTE: This task is under development
         </Content>
     );

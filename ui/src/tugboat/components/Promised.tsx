@@ -6,8 +6,8 @@ import { ErrorMessage } from './ErrorMessage';
 import { UnknownStateError } from '../error';
 
 interface Props<I, O> {
-    input: I;
-    fetch: (i: I) => Promise<O>;
+    input?: I;
+    fetch: (i?: I) => Promise<O>;
     children: (o: O) => React.ReactNode;
     errorMessage?: string;
 }
@@ -21,12 +21,9 @@ interface Props<I, O> {
  * React components visualizing it.
  *
  * @example
- *  <Promised<Input, Output>
- *      input={"modelId"}
- *      fn={fetchModelInfo}
- *  >{ (output) => (
- *      <FancyOutputDisplay output={output} />
- *  )}</Promised>
+ *  <Promised input={"modelId"} fn={fetchModelInfo}>{
+ *      (output) => <FancyOutputDisplay output={output} />
+ *  }</Promised>
  */
 export const Promised = <I, O>({ input, fetch, children, errorMessage }: Props<I, O>) => {
     const output = usePromise(fetch, input);
