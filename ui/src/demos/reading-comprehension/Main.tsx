@@ -80,14 +80,17 @@ const OutputByModel = ({
     switch (model.id) {
         case ModelId.Bidaf:
         case ModelId.BidafElmo: {
-            const pp = output as BiDAFPrediction;
-            // TODO: there is a bug in the response, so we need to calculate the best_span locally
-            const start = input.passage.indexOf(pp.best_span_str);
-            const best_span = [start, start + pp.best_span_str.length];
+            const bidafOutput = output as BiDAFPrediction;
+            let best_span = bidafOutput.best_span;
+            if (best_span[0] >= best_span[1]) {
+                // TODO: there is a bug in the response, so we need to calculate the best_span locally
+                const start = input.passage.indexOf(bidafOutput.best_span_str);
+                best_span = [start, start + bidafOutput.best_span_str.length];
+            }
             return (
                 <>
                     <Answer.Section label="Answer">
-                        <div>{pp.best_span_str}</div>
+                        <div>{bidafOutput.best_span_str}</div>
                     </Answer.Section>
 
                     <Answer.Section label="Passage Context">
