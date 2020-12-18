@@ -35,7 +35,7 @@ export const Main = () => (
                     <Question />
                     <Submit>Run Model</Submit>
                 </Fields>
-                <Output>
+                <Output<Input, Prediction>>
                     {({ model, output, input }) => (
                         <>
                             <h4>Model:</h4>
