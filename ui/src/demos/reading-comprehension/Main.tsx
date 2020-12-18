@@ -46,8 +46,8 @@ export const Main = () => {
                                 answerType = (output as any).answerType;
                             }
                             // TODO: we need model as part of input, hacking it in here
+                            // TODO, should there be a set of const ids somewhere?
                             if (modelCtx.selectedModel?.id === 'nmn') {
-                                // TODO, should there be a set of const ids somewhere?
                                 answerType = 'nmn';
                             }
 
