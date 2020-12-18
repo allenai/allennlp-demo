@@ -1,9 +1,11 @@
-name: CI
+name: API CI
 
 on:
   push:
     branches:
     - master
+    paths:
+    - 'api/**/*' 
   pull_request:
     branches:
     - master
