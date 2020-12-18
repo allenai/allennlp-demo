@@ -15,6 +15,6 @@ interface Props {
 
 export const ModelInfo = ({ ids, children }: Props) => (
     <Promised input={ids} fetch={fetchModelInfo}>
-        {(output) => <>{children(output)}</>}
+        {({ output }) => <>{children(output)}</>}
     </Promised>
 );
