@@ -117,7 +117,13 @@ export const Form = <I, O>(props: Props) => {
             <Divider />
             {input ? (
                 <Promised<I, O> input={input} fetch={fetchPredictions}>
-                    {({ input, output }) => React.cloneElement(secondChild, { output, input })}
+                    {({ input, output }) =>
+                        React.cloneElement(secondChild, {
+                            model: models.selectedModel,
+                            input,
+                            output,
+                        })
+                    }
                 </Promised>
             ) : null}
         </>
