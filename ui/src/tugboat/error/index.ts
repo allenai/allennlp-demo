@@ -34,8 +34,8 @@ export class UnknownStateError extends Error {
     }
 }
 
-export class InvalidAttributesError extends Error {
+export class InvalidHighlightRangeError extends Error {
     constructor(msg: string) {
-        super(`Invalid Attributes: ${msg}`);
+        super(`Invalid Highlight Range: ${msg}`);
     }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { InvalidAttributesError } from '../error';
+import { InvalidHighlightRangeError } from '../error';
 
 interface Highlights {
     start: number;
@@ -23,7 +23,7 @@ export const TextWithHighlight = (props: Props) => {
         .sort((a, b) => a.start - b.start)
         .map((r: Highlights, i: number) => {
             if (r.start < lastEndIndex || r.start >= r.end) {
-                throw new InvalidAttributesError(
+                throw new InvalidHighlightRangeError(
                     'TextWithHighlight takes highlights that need to be non overlapping.'
                 );
             }
