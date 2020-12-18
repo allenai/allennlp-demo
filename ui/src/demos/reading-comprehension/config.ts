@@ -6,4 +6,5 @@ export const config: DemoConfig = {
     order: 1,
     modelIds: ['bidaf-elmo', 'bidaf', 'nmn', 'transformer-qa', 'naqanet'],
     status: 'hidden',
+    taskId: 'rc',
 };

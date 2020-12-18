@@ -6,4 +6,5 @@ export const config: DemoConfig = {
     order: 1,
     modelIds: [],
     status: 'hidden',
+    taskId: 'Unknown',
 };

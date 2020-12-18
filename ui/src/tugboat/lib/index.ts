@@ -5,3 +5,5 @@ export * from './DemoGroup';
 export * from './Model';
 export * from './ModelCard';
 export * from './usePromise';
+export * from './Example';
+export * from './Task';

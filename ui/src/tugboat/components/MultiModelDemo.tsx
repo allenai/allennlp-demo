@@ -1,15 +1,16 @@
 import React from 'react';
 
-import { Models } from '../context';
-import { Model } from '../lib';
+import { Models, CurrentTask, Examples } from '../context';
+import { Example, Model, Task } from '../lib';
 import { ModelNotFoundError, NoModelsError } from '../error';
 
 interface Props {
     models: Model[];
+    task: Task;
     children: React.ReactNode;
 }
 
-export const MultiModelDemo = ({ models, children }: Props) => {
+export const MultiModelDemo = ({ models, task, children }: Props) => {
     if (models.length === 0) {
         throw new NoModelsError();
     }
@@ -21,9 +22,17 @@ export const MultiModelDemo = ({ models, children }: Props) => {
         }
         selectModel(model);
     };
+
+    const [selectedExample, selectExample] = React.useState<Example | undefined>();
+
     return (
-        <Models.Provider value={{ models, selectedModel, selectModelById }}>
-            {children}
-        </Models.Provider>
+        <CurrentTask.Provider value={{ task }}>
+            <Models.Provider value={{ models, selectedModel, selectModelById }}>
+                <Examples.Provider
+                    value={{ examples: task.examples, selectedExample, selectExample }}>
+                    {children}
+                </Examples.Provider>
+            </Models.Provider>
+        </CurrentTask.Provider>
     );
 };
