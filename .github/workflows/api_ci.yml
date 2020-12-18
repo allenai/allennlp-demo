@@ -4,11 +4,11 @@ on:
   push:
     branches:
     - master
-    paths:
-    - 'api/**/*' 
   pull_request:
     branches:
     - master
+    paths:
+    - 'api/**/*' 
   schedule:
   - cron: '7 6 * * *'
 
