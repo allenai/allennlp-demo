@@ -1,5 +1,7 @@
 import React from 'react';
 import { Descriptions } from 'antd';
+import styled from 'styled-components';
+import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
 
 import { Models } from '../context';
 import { NoSelectedModel } from '../error';
@@ -12,7 +14,7 @@ export const ModelCard = () => {
     }
 
     return (
-        <Descriptions
+        <ResponsiveDescriptions
             layout="horizontal"
             size="small"
             column={{ xxl: 3, xl: 3, lg: 3, md: 1, sm: 1, xs: 1 }}
@@ -91,6 +93,17 @@ export const ModelCard = () => {
                     'Unknown'
                 )}
             </Descriptions.Item>
-        </Descriptions>
+        </ResponsiveDescriptions>
     );
 };
+
+const ResponsiveDescriptions = styled(Descriptions)`
+    &&&&&& {
+        .ant-descriptions-item-label,
+        .ant-descriptions-item-content {
+            @media ${({ theme }) => belowOrEqualTo(theme.breakpoints.md)} {
+                padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing.xxs}`};
+            }
+        }
+    }
+`;
