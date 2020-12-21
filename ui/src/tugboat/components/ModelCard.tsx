@@ -12,7 +12,11 @@ export const ModelCard = () => {
     }
 
     return (
-        <Descriptions layout="horizontal" size="small" column={3} bordered={true}>
+        <Descriptions
+            layout="horizontal"
+            size="small"
+            column={{ xxl: 3, xl: 3, lg: 3, md: 1, sm: 1, xs: 1 }}
+            bordered={true}>
             <Descriptions.Item label="Name">
                 {models.selectedModel.card.display_name || 'Unknown'}
             </Descriptions.Item>
