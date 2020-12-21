@@ -1,11 +1,13 @@
 import React from 'react';
+import { Tabs } from 'antd';
+
 import { Content } from '@allenai/varnish/components';
 
 import {
     TaskTitle,
     TaskDescription,
-    ModelUsageModal,
-    ModelCardModal,
+    ModelUsage,
+    ModelCard,
     SelectModel,
     SelectExample,
     Fields,
@@ -25,17 +27,25 @@ export const Main = () => {
                 <TaskTitle />
                 <TaskDescription />
                 <SelectModel />
-                <ModelCardModal />
-                <ModelUsageModal />
-                <SelectExample displayProp="question" placeholder="Select a Question…" />
-                <Predict<Input, Prediction>>
-                    <Fields>
-                        <Passage />
-                        <Question />
-                        <Submit>Run Model</Submit>
-                    </Fields>
-                    <Output />
-                </Predict>
+                <Tabs>
+                    <Tabs.TabPane tab="Demo" key="Demo">
+                        <SelectExample displayProp="question" placeholder="Select a Question…" />
+                        <Predict<Input, Prediction>>
+                            <Fields>
+                                <Passage />
+                                <Question />
+                                <Submit>Run Model</Submit>
+                            </Fields>
+                            <Output />
+                        </Predict>
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="Model Card" key="Card">
+                        <ModelCard />
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="Model Usage" key="Usage">
+                        <ModelUsage />
+                    </Tabs.TabPane>
+                </Tabs>
             </MultiModelDemo>
         </Content>
     );
