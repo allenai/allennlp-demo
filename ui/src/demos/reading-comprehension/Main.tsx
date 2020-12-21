@@ -6,7 +6,6 @@ import { Content } from '@allenai/varnish/components';
 import {
     TaskTitle,
     TaskDescription,
-    ModelUsage,
     ModelCard,
     SelectModel,
     SelectExample,
@@ -18,6 +17,7 @@ import {
 import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
 import { Output } from './Output';
+import { Usage } from './Usage';
 import { Input, Prediction } from './types';
 
 export const Main = () => {
@@ -43,7 +43,7 @@ export const Main = () => {
                         <ModelCard />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Model Usage" key="Usage">
-                        <ModelUsage />
+                        <Usage />
                     </Tabs.TabPane>
                 </Tabs>
             </MultiModelDemo>

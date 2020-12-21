@@ -14,3 +14,4 @@ export * from './shared';
 export * from './TaskDescription';
 export * from './TaskTitle';
 export * from './TextWithHighlight';
+export * from './SyntaxHighlight';
