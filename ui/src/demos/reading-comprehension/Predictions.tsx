@@ -1,11 +1,7 @@
 import React from 'react';
+import { Collapse } from 'antd';
 
-import {
-    PrettyPrintedJSON,
-    TextWithHighlight,
-    Answer,
-    Output as TBOutput,
-} from '../../tugboat/components';
+import { PrettyPrintedJSON, TextWithHighlight, Output, Result } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 import { ModelId } from '../../lib';
 import { UnexpectedModel } from '../../tugboat/error';
@@ -21,28 +17,24 @@ import {
     isTransformerQAPrediction,
 } from './types';
 
-export const Output = (props: any) => (
-    <TBOutput<Input, Prediction> {...props}>
-        {({ input, output, model }) => {
-            return (
-                <>
-                    <OutputByModel input={input} output={output} model={model} />
+export const Predictions = ({ input, output, model }: Result<Input, Prediction>) => (
+    <>
+        <OutputByModel input={input} output={output} model={model} />
 
-                    <Answer.Section label="Model JSON (DEBUG)">
-                        <PrettyPrintedJSON json={model} />
-                    </Answer.Section>
-
-                    <Answer.Section label="Input JSON (DEBUG)">
-                        <PrettyPrintedJSON json={input} />
-                    </Answer.Section>
-
-                    <Answer.Section label="Output JSON (DEBUG)">
-                        <PrettyPrintedJSON json={output} />
-                    </Answer.Section>
-                </>
-            );
-        }}
-    </TBOutput>
+        <Output.SubSection title="Debug Output">
+            <Collapse>
+                <Collapse.Panel key="model-debug" header="Model">
+                    <PrettyPrintedJSON json={model} />
+                </Collapse.Panel>
+                <Collapse.Panel key="input-debug" header="Input">
+                    <PrettyPrintedJSON json={input} />
+                </Collapse.Panel>
+                <Collapse.Panel key="output-debug" header="Output">
+                    <PrettyPrintedJSON json={output} />
+                </Collapse.Panel>
+            </Collapse>
+        </Output.SubSection>
+    </>
 );
 
 const OutputByModel = ({
@@ -100,11 +92,11 @@ const BasicAnswer = ({
     }
     return (
         <>
-            <Answer.Section label="Answer">
+            <Output.SubSection title="Answer">
                 <div>{output.best_span_str}</div>
-            </Answer.Section>
+            </Output.SubSection>
 
-            <Answer.Section label="Passage Context">
+            <Output.SubSection title="Passage Context">
                 <TextWithHighlight
                     text={input.passage}
                     highlights={[
@@ -114,19 +106,11 @@ const BasicAnswer = ({
                         },
                     ]}
                 />
-            </Answer.Section>
+            </Output.SubSection>
 
-            <Answer.Section label="Question">
+            <Output.SubSection title="Question">
                 <div>{input.question}</div>
-            </Answer.Section>
-
-            <Answer.Section label="Model Interpretations">
-                <div>TODO</div>
-            </Answer.Section>
-
-            <Answer.Section label="Model Attacks">
-                <div>TODO</div>
-            </Answer.Section>
+            </Output.SubSection>
         </>
     );
 };

@@ -56,7 +56,7 @@ export const Form = <I, O>(props: Props) => {
     const [form] = AntForm.useForm<I>();
 
     const models = React.useContext(Models);
-    const fetchPredictions = (i?: I) => {
+    const submit = (i?: I) => {
         if (!i) {
             throw new EmptyFormError();
         }
@@ -116,7 +116,7 @@ export const Form = <I, O>(props: Props) => {
             </AntForm>
             <Divider />
             {input ? (
-                <Promised<I, O> input={input} fetch={fetchPredictions}>
+                <Promised<I, O> input={input} fetch={submit}>
                     {({ input, output }) =>
                         React.cloneElement(secondChild, {
                             model: models.selectedModel,
