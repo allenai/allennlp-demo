@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Models } from '../context';
-import { NoSelectedModel } from '../error';
-import { SyntaxHighlight } from './SyntaxHighlight';
+import { Models } from '../tugboat/context';
+import { NoSelectedModel } from '../tugboat/error';
+import { SyntaxHighlight } from '../tugboat/components/SyntaxHighlight';
 
 interface Props {
     installNote?: string;
@@ -74,11 +74,5 @@ export const ModelUsage = (props: Props) => {
  * usage sections, for readability and spacing.
  */
 const UsageCode = styled.div`
-    padding: ${({ theme }) => theme.spacing.sm};
-    border: 1px solid ${({ theme }) => theme.palette.border.default};
     margin: ${({ theme }) => `${theme.spacing.sm} 0 ${theme.spacing.md}`};
-
-    pre {
-        margin: 0;
-    }
 `;
