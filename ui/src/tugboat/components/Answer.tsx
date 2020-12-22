@@ -6,7 +6,7 @@ import { Space } from 'antd';
  * A component that displays an answer section with a label and some kind of children.
  */
 interface Props {
-    label: string;
+    label: string | JSX.Element;
     children: React.ReactNode;
 }
 const Section = (props: Props) => {
