@@ -77,7 +77,7 @@ export const Interpreters = ({ model, input, tokens }: Props) => {
                                     <a
                                         href="https://arxiv.org/abs/1312.6034"
                                         target="_blank"
-                                        rel="noopener noreferrer">
+                                        rel="noopener,noreferrer">
                                         visualizing the gradient
                                     </a>
                                     .{' '}
