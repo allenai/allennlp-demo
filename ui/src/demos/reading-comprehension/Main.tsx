@@ -7,6 +7,7 @@ import {
     TaskTitle,
     TaskDescription,
     ModelCard,
+    Output,
     SelectModel,
     SelectExample,
     Fields,
@@ -16,8 +17,9 @@ import {
 } from '../../tugboat/components';
 import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
-import { Output } from './Output';
 import { Usage } from './Usage';
+import { Predictions } from './Predictions';
+import { Interpreters } from './Interpreters';
 import { Input, Prediction } from './types';
 
 export const Main = () => {
@@ -36,7 +38,22 @@ export const Main = () => {
                                 <Question />
                                 <Submit>Run Model</Submit>
                             </Fields>
-                            <Output />
+                            <Output<Input, Prediction>>
+                                {({ model, input, output }) => (
+                                    <Output.Sections>
+                                        <Output.Section title="Model Predictions">
+                                            <Predictions
+                                                model={model}
+                                                input={input}
+                                                output={output}
+                                            />
+                                        </Output.Section>
+                                        <Output.Section title="Model Interpretations">
+                                            <Interpreters model={model} input={input} />
+                                        </Output.Section>
+                                    </Output.Sections>
+                                )}
+                            </Output>
                         </Predict>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Model Card" key="Card">
