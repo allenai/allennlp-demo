@@ -14,11 +14,10 @@ import {
     Passage,
     Submit,
 } from '../../tugboat/components';
-import { MultiModelDemo, Predict } from '../../components';
+import { MultiModelDemo, Predict, Interpreters } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Interpreters } from './Interpreters';
 import { Input, Prediction, isInputTokens } from './types';
 
 export const Main = () => {

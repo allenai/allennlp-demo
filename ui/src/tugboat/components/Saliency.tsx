@@ -3,14 +3,6 @@ import styled from 'styled-components';
 import colormap from 'colormap';
 import { Tooltip } from 'antd';
 
-const getTokenWeightPairs = (grads: number[], tokens: string[]) => {
-    return tokens.map((token, idx: number) => {
-        const weight = grads[idx];
-        // We do 1 - weight because the colormap is inverted
-        return { token, weight: 1 - weight };
-    });
-};
-
 interface DefaultProps {
     colormapProps: ColorMapProps;
 }
@@ -100,6 +92,14 @@ export class Saliency extends React.Component<Props, State> {
         },
     };
 
+    getTokenWeightPairs(grads: number[], tokens: string[]) {
+        return tokens.map((token, idx: number) => {
+            const weight = grads[idx];
+            // We do 1 - weight because the colormap is inverted
+            return { token, weight: 1 - weight };
+        });
+    }
+
     colorize(tokensWithWeights: TokensWithWeight[], topKIdx: Set<number>) {
         const { colormapProps } = this.props;
         // colormap package takes minimum of 6 shades
@@ -163,7 +163,7 @@ export class Saliency extends React.Component<Props, State> {
             const grads = interpretData[i];
             const tokens = inputTokens[i];
             const header = inputHeaders[i];
-            const tokenWeights = getTokenWeightPairs(grads, tokens);
+            const tokenWeights = this.getTokenWeightPairs(grads, tokens);
             // indices with the top gradient values
             const topKIdx = new Set(this.getTopKIndices(tokenWeights, i));
             // the tokens highlighted based on their top values

@@ -1,17 +1,9 @@
+import { InputTokens, isInputTokens } from '../../components';
+
 export interface Input {
     passage: string;
     question: string;
 }
-
-export interface InputTokens {
-    passage_tokens: string[];
-    question_tokens: string[];
-}
-
-export const isInputTokens = (x: any): x is InputTokens => {
-    const xx = x as InputTokens;
-    return xx.passage_tokens !== undefined && xx.question_tokens !== undefined;
-};
 
 export interface BiDAFPrediction extends InputTokens {
     best_span: number[];

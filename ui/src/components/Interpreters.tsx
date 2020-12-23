@@ -1,13 +1,13 @@
 import React from 'react';
 import { Collapse } from 'antd';
 
-import { Output } from '../../tugboat/components';
-import { Model } from '../../tugboat/lib';
+import { Output, Saliency } from '../tugboat/components';
+import { Model } from '../tugboat/lib';
 
-import { Interpret } from '../../components';
-import { ModelInfoList } from '../../context';
-import { InterpreterId, Saliency } from '../../lib';
-import { Input, InputTokens } from './types';
+import { Interpret } from '.';
+import { ModelInfoList } from '../context';
+import { InterpreterId } from '../lib';
+import { Input } from '../demos/reading-comprehension/types';
 
 export interface InterpreterData {
     instance_1: {
@@ -15,6 +15,16 @@ export interface InterpreterData {
         grad_input_2: number[];
     };
 }
+
+export interface InputTokens {
+    passage_tokens: string[];
+    question_tokens: string[];
+}
+
+export const isInputTokens = (x: any): x is InputTokens => {
+    const xx = x as InputTokens;
+    return xx.passage_tokens !== undefined && xx.question_tokens !== undefined;
+};
 
 interface Props {
     model: Model;
