@@ -14,12 +14,12 @@ import {
     Question,
     Passage,
     Submit,
-    PrettyPrintedJSON,
 } from '../../tugboat/components';
-import { MultiModelDemo, Predict, Interpret } from '../../components';
+import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
+import { Interpreters } from './Interpreters';
 import { Input, Prediction } from './types';
 
 export const Main = () => {
@@ -49,13 +49,7 @@ export const Main = () => {
                                             />
                                         </Output.Section>
                                         <Output.Section title="Model Interpretations">
-                                            <Interpret<Input, any>
-                                                interpreter="simple_gradient"
-                                                input={input}>
-                                                {({ output }) => (
-                                                    <PrettyPrintedJSON json={output} />
-                                                )}
-                                            </Interpret>
+                                            <Interpreters model={model} input={input} />
                                         </Output.Section>
                                     </Output.Sections>
                                 )}
