@@ -138,13 +138,7 @@ export const Interpreters = ({ model, input, tokens }: Props) => {
     );
 };
 
-const Interpreter = ({
-    output,
-    tokens,
-}: {
-    output: InterpreterData;
-    tokens: InputTokens;
-}) => {
+const Interpreter = ({ output, tokens }: { output: InterpreterData; tokens: InputTokens }) => {
     return (
         <Saliency
             interpretData={[output.instance_1.grad_input_2, output.instance_1.grad_input_1]}
