@@ -5,7 +5,7 @@
 
 import React from 'react';
 
-import { ModelUsage } from '../../lib';
+import { ModelUsage } from '../../components';
 import { Models, Examples } from '../../tugboat/context';
 import { NoSelectedModel, InvalidExamplesFormat } from '../../tugboat/error';
 import { isGroupedExamples } from '../../tugboat/lib';

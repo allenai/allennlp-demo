@@ -1,12 +1,12 @@
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, List
 
 from allennlp.predictors import Predictor
 
 
-VALID_ATTACKERS = ("hotflip", "input_reduction")
-VALID_INTERPRETERS = ("simple_gradient", "smooth_gradient", "integrated_gradient")
+VALID_ATTACKERS = ["hotflip", "input_reduction"]
+VALID_INTERPRETERS = ["simple_gradient", "smooth_gradient", "integrated_gradient"]
 
 
 @dataclass(frozen=True)
@@ -44,12 +44,12 @@ class Model:
     This is ignored if `pretrained_model_id` is given.
     """
 
-    attackers: Optional[List[str]] = None
+    attackers: List[str] = field(default_factory=lambda: VALID_ATTACKERS)
     """
     List of valid attackers to use.
     """
 
-    interpreters: Optional[List[str]] = None
+    interpreters: List[str] = field(default_factory=lambda: VALID_INTERPRETERS)
     """
     List of valid interpreters to use.
     """
@@ -78,9 +78,9 @@ class Model:
             out = cls(**raw)
 
         # Do some validation.
-        for attacker in out.attackers or []:
+        for attacker in out.attackers:
             assert attacker in VALID_ATTACKERS, f"invalid attacker {attacker}"
-        for interpreter in out.interpreters or []:
+        for interpreter in out.interpreters:
             assert interpreter in VALID_INTERPRETERS, f"invalid interpreter {interpreter}"
         if out.use_old_load_method:
             assert out.pretrained_model_id is None

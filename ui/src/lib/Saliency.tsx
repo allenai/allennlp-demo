@@ -8,7 +8,7 @@ import colormap from 'colormap';
 import { Popover, Collapse, Tooltip, Button } from 'antd';
 import { LinkCSS } from '@allenai/varnish/components';
 
-import { Answer } from '../tugboat/components';
+import { Output } from '../tugboat/components';
 
 export enum Interpreter {
     GRAD_INTERPRETER = 'simple_gradient',
@@ -134,7 +134,7 @@ export const SaliencyMaps = <I,>({
         </>
     );
     return (
-        <Answer.Section label={interpretationHeader}>
+        <Output.Section title={interpretationHeader}>
             <Collapse>
                 {simpleGradData ? (
                     <Collapse.Panel key="Simple" header="Simple Gradients Visualization">
@@ -173,7 +173,7 @@ export const SaliencyMaps = <I,>({
                     </Collapse.Panel>
                 ) : null}
             </Collapse>
-        </Answer.Section>
+        </Output.Section>
     );
 };
 
