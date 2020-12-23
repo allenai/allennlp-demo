@@ -1,3 +1,10 @@
+/**
+ * Renders a component that displays each word of the tokens with a different color based on the
+ * associated weight.
+ *
+ * There is also a slider used to decide a cutoff on what weights to not render.
+ */
+
 import React from 'react';
 import styled from 'styled-components';
 import colormap from 'colormap';
@@ -203,7 +210,7 @@ const ColorizedToken = styled.span<{ backgroundColor: string }>`
 `;
 
 const Info = styled.span`
-    color: ${({ theme }) => theme.color.B3};
+    color: ${({ theme }) => theme.color.B6};
 `;
 
 // TODO: just use antd slider
