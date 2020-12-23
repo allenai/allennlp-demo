@@ -6,7 +6,7 @@ import { Model } from '../../tugboat/lib';
 
 import { Interpret } from '../../components';
 import { ModelInfoList } from '../../context';
-import { InterpreterId, SaliencyComponent } from '../../lib';
+import { InterpreterId, Saliency } from '../../lib';
 import { Input, Prediction } from './types';
 
 interface Props {
@@ -62,7 +62,7 @@ export const Interpreters = ({ model, input, prediction }: Props) => {
                             {({ output }) => (
                                 <>
                                     {/* TODO: get tokens */}
-                                    <SaliencyComponent
+                                    <Saliency
                                         interpretData={[
                                             output.instance_1.grad_input_2,
                                             output.instance_1.grad_input_1,
@@ -88,7 +88,13 @@ export const Interpreters = ({ model, input, prediction }: Props) => {
                         <Interpret<Input, any>
                             interpreter={InterpreterId.IntegratedGradient}
                             input={input}>
-                            {({ output }) => <PrettyPrintedJSON json={output} />}
+                            {({ output }) => (
+                                <>
+                                    {/* TODO: add viz */}
+                                    DEBUG
+                                    <PrettyPrintedJSON json={output} />
+                                </>
+                            )}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
@@ -99,7 +105,13 @@ export const Interpreters = ({ model, input, prediction }: Props) => {
                         <Interpret<Input, any>
                             interpreter={InterpreterId.SmoothGradient}
                             input={input}>
-                            {({ output }) => <PrettyPrintedJSON json={output} />}
+                            {({ output }) => (
+                                <>
+                                    {/* TODO: add viz */}
+                                    DEBUG
+                                    <PrettyPrintedJSON json={output} />
+                                </>
+                            )}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}

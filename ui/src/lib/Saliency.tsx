@@ -72,19 +72,19 @@ const getTokenWeightPairs = (grads: number[], tokens: string[]) => {
     });
 };
 
-interface SaliencyComponentProps extends DefaultSaliencyComponentProps {
+interface DefaultProps {
+    colormapProps: ColorMapProps;
+}
+
+interface Props extends DefaultProps {
     interpretData: [number[], number[]];
     inputTokens: [string[], string[]];
     inputHeaders: JSX.Element[];
     interpreter: InterpreterId;
 }
 
-interface SaliencyComponentState {
+interface State {
     topK: { [id: string]: number };
-}
-
-interface DefaultSaliencyComponentProps {
-    colormapProps: ColorMapProps;
 }
 
 interface ColorMapProps {
@@ -145,11 +145,8 @@ interface TokensWithWeight {
     weight: number;
 }
 
-export class SaliencyComponent extends React.Component<
-    SaliencyComponentProps,
-    SaliencyComponentState
-> {
-    constructor(props: SaliencyComponentProps) {
+export class Saliency extends React.Component<Props, State> {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -157,7 +154,7 @@ export class SaliencyComponent extends React.Component<
         };
     }
 
-    static defaultProps: DefaultSaliencyComponentProps = {
+    static defaultProps: DefaultProps = {
         colormapProps: {
             colormap: 'copper',
             format: 'hex',
