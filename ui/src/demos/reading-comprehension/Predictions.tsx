@@ -18,7 +18,7 @@ import {
 } from './types';
 
 export const Predictions = ({ input, output, model }: Result<Input, Prediction>) => (
-    <>
+    <Output.Section title="Model Output">
         <OutputByModel input={input} output={output} model={model} />
 
         <Output.SubSection title="Debug Output">
@@ -34,7 +34,7 @@ export const Predictions = ({ input, output, model }: Result<Input, Prediction>)
                 </Collapse.Panel>
             </Collapse>
         </Output.SubSection>
-    </>
+    </Output.Section>
 );
 
 const OutputByModel = ({

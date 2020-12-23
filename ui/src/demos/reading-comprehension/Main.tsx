@@ -40,45 +40,12 @@ export const Main = () => {
                             <Output<Input, Prediction>>
                                 {({ model, input, output }) => (
                                     <Output.Sections>
-                                        <Output.Section title="Model Predictions">
-                                            <Predictions
-                                                model={model}
-                                                input={input}
-                                                output={output}
-                                            />
-                                        </Output.Section>
-                                        <Output.Section
-                                            title="Model Interpretations"
-                                            helpLabel="What is this?"
-                                            helpContent={
-                                                <div>
-                                                    <p>
-                                                        Despite constant advances and seemingly
-                                                        super-human performance on constrained
-                                                        domains, state-of-the-art models for NLP are
-                                                        imperfect. These imperfections, coupled with
-                                                        today's advances being driven by (seemingly
-                                                        black-box) neural models, leave researchers
-                                                        and practitioners scratching their heads
-                                                        asking,{' '}
-                                                        <i>
-                                                            why did my model make this prediction?
-                                                        </i>
-                                                    </p>
-                                                    <a
-                                                        href="https://allennlp.org/interpret"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer">
-                                                        Learn More
-                                                    </a>
-                                                </div>
-                                            }>
-                                            <Interpreters
-                                                model={model}
-                                                input={input}
-                                                prediction={output}
-                                            />
-                                        </Output.Section>
+                                        <Predictions model={model} input={input} output={output} />
+                                        <Interpreters
+                                            model={model}
+                                            input={input}
+                                            prediction={output}
+                                        />
                                     </Output.Sections>
                                 )}
                             </Output>

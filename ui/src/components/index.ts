@@ -1,4 +1,3 @@
-export * from './ModelInfo';
 export * from './ModelUsage';
 export * from './MultiModelDemo';
 export * from './Predict';
