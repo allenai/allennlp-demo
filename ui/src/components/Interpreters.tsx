@@ -123,7 +123,7 @@ export const Interpreters = ({ model, input, tokens }: Props) => {
                                     <a
                                         href="https://arxiv.org/abs/1706.03825"
                                         target="_blank"
-                                        rel="noopener noreferrer">
+                                        rel="noopener,noreferrer">
                                         SmoothGrad
                                     </a>
                                     .
