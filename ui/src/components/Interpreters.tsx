@@ -100,7 +100,7 @@ export const Interpreters = ({ model, input, tokens }: Props) => {
                                     <a
                                         href="https://arxiv.org/abs/1703.01365"
                                         target="_blank"
-                                        rel="noopener noreferrer">
+                                        rel="noopener,noreferrer">
                                         Integrated Gradients
                                     </a>
                                     .
