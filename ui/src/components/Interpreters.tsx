@@ -138,7 +138,7 @@ export const Interpreters = ({ model, input, tokens }: Props) => {
     );
 };
 
-export const Interpreter = ({
+const Interpreter = ({
     output,
     tokens,
 }: {
