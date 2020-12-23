@@ -8,7 +8,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import colormap from 'colormap';
-import { Tooltip } from 'antd';
+import { Tooltip, Slider } from 'antd';
 
 interface DefaultProps {
     colormapProps: ColorMapProps;
@@ -116,15 +116,14 @@ export class Saliency extends React.Component<Props, State> {
         const colorizedString = tokensWithWeights.map((obj, idx) => {
             // Again, 1 -, in this case because low extreme is blue and high extreme is red
             return (
-                <Tooltip title={(1 - obj.weight).toFixed(3)}>
-                    <span key={idx}>
+                <Tooltip key={idx} title={(1 - obj.weight).toFixed(3)}>
+                    <span>
                         <ColorizedToken
                             backgroundColor={
                                 topKIdx.has(idx)
                                     ? colors[Math.round(obj.weight * (colormapProps.nshades - 1))]
                                     : 'transparent'
-                            }
-                            key={idx}>
+                            }>
                             {obj.token}
                         </ColorizedToken>
                     </span>
@@ -135,13 +134,9 @@ export class Saliency extends React.Component<Props, State> {
     }
 
     // when the user changes the slider for input 1, update how many tokens are highlighted
-    handleInputTopKChange = (inputIndex: number) => (e: any) => {
+    handleInputTopKChange = (inputIndex: number) => (e: number) => {
         const stateUpdate = Object.assign({}, this.state);
-        if (e.target.value.trim() === '') {
-            stateUpdate.topK[inputIndex] = e.target.value;
-        } else {
-            stateUpdate.topK[inputIndex] = parseInt(e.target.value, 10);
-        }
+        stateUpdate.topK[inputIndex] = e;
         this.setState(stateUpdate);
     };
 
@@ -181,11 +176,11 @@ export class Saliency extends React.Component<Props, State> {
                     {header}
                     {colorMap}
                     <Slider
-                        type="range"
                         min={0}
                         max={colorMap.length}
-                        step="1"
-                        value={k}
+                        step={1}
+                        defaultValue={k}
+                        value={this.state.topK[i.toString()]}
                         onChange={this.handleInputTopKChange(i)}
                     />
                     <br />
@@ -211,43 +206,4 @@ const ColorizedToken = styled.span<{ backgroundColor: string }>`
 
 const Info = styled.span`
     color: ${({ theme }) => theme.color.B6};
-`;
-
-// TODO: just use antd slider
-const Slider = styled.input`
-    padding: 0;
-    margin: ${({ theme }) => theme.spacing.sm} 0;
-    width: 100%;
-    height: ${({ theme }) => theme.spacing.sm};
-    background-image: linear-gradient(to right, rgb(211, 235, 255), rgb(78, 172, 255));
-    outline: none;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-    border-radius: ${({ theme }) => theme.shape.borderRadius.lg};
-    padding: 0 ${({ theme }) => theme.spacing.md};
-
-    &:hover {
-        opacity: 1;
-    }
-
-    &::-webkit-slider-thumb {
-        appearance: none;
-        width: ${({ theme }) => theme.spacing.lg};
-        height: ${({ theme }) => theme.spacing.lg};
-        margin-right: ${({ theme }) => theme.spacing.lg};
-        background: ${({ theme }) => theme.color.B4};
-        cursor: pointer;
-    }
-
-    &::-moz-range-thumb,
-    &::-webkit-slider-thumb {
-        width: ${({ theme }) => theme.spacing.lg};
-        height: ${({ theme }) => theme.spacing.lg};
-        background: ${({ theme }) => theme.color.B4};
-        cursor: pointer;
-    }
-
-    &::-webkit-slider-thumb {
-        appearance: none;
-    }
 `;

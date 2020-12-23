@@ -39,7 +39,7 @@ export const TextWithHighlight = (props: Props) => {
         });
     // add any remaining text
     const leadout = props.text.slice(lastEndIndex, props.text.length);
-    ranges.push(<span>{leadout}</span>);
+    ranges.push(<span key="leadout">{leadout}</span>);
     return <>{ranges}</>;
 };
 
