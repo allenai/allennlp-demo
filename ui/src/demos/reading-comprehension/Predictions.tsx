@@ -51,19 +51,19 @@ const OutputByModel = ({
         case ModelId.BidafElmo:
         case ModelId.TransformerQa: {
             if (isBiDAFPrediction(output) || isTransformerQAPrediction(output)) {
-                return <BasicPredictionAnswer input={input} output={output} />;
+                return <BasicPrediction input={input} output={output} />;
             }
             break;
         }
         case ModelId.Nmn: {
             if (isNAQANetPrediction(output)) {
-                return <NmnAnswer />;
+                return <NmnPrediction />;
             }
             break;
         }
         case ModelId.Naqanet: {
             if (isNAQANetPrediction(output)) {
-                return <NaqanetAnswer output={output} />;
+                return <NaqanetPrediction output={output} />;
             }
             break;
         }
@@ -72,7 +72,7 @@ const OutputByModel = ({
     throw new UnexpectedModel(model.id);
 };
 
-const BasicPredictionAnswer = ({
+const BasicPrediction = ({
     input,
     output,
 }: {
@@ -111,12 +111,12 @@ const BasicPredictionAnswer = ({
 };
 
 // TODO
-const NmnAnswer = () => {
+const NmnPrediction = () => {
     return <>has nmn answer</>;
 };
 
 // TODO:
-const NaqanetAnswer = ({ output }: { output: NAQANetPrediction }) => {
+const NaqanetPrediction = ({ output }: { output: NAQANetPrediction }) => {
     switch (output.answer['answer-type']) {
         case NAQANetAnswerType.PassageSpan: {
             return <>has PassageSpan answer</>;
