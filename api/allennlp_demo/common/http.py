@@ -119,17 +119,12 @@ class ModelEndpoint:
         `/interpret/:id` will invoke the interpreter with the provided `:id`. Override this method
         to add or remove interpreters.
         """
-        interpreter_names = (
-            config.VALID_INTERPRETERS
-            if self.model.interpreters is None
-            else self.model.interpreters
-        )
         interpreters: Dict[str, SaliencyInterpreter] = {}
-        if "simple_gradient" in interpreter_names:
+        if "simple_gradient" in self.model.interpreters:
             interpreters["simple_gradient"] = SimpleGradient(self.predictor)
-        if "smooth_gradient" in interpreter_names:
+        if "smooth_gradient" in self.model.interpreters:
             interpreters["smooth_gradient"] = SmoothGradient(self.predictor)
-        if "integrated_gradient" in interpreter_names:
+        if "integrated_gradient" in self.model.interpreters:
             interpreters["integrated_gradient"] = IntegratedGradient(self.predictor)
         return interpreters
 
@@ -139,15 +134,12 @@ class ModelEndpoint:
         will invoke the attacker with the provided `:id`. Override this method to add or remove
         attackers.
         """
-        attacker_names = (
-            config.VALID_ATTACKERS if self.model.attackers is None else self.model.attackers
-        )
         attackers: Dict[str, Attacker] = {}
-        if "hotflip" in attacker_names:
+        if "hotflip" in self.model.attackers:
             hotflip = Hotflip(self.predictor)
             hotflip.initialize()
             attackers["hotflip"] = hotflip
-        if "input_reduction" in attacker_names:
+        if "input_reduction" in self.model.attackers:
             attackers["input_reduction"] = InputReduction(self.predictor)
         return attackers
 
