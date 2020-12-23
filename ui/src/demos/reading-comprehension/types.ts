@@ -3,12 +3,20 @@ export interface Input {
     question: string;
 }
 
-export interface BiDAFPrediction {
+export interface InputTokens {
+    passage_tokens: string[];
+    question_tokens: string[];
+}
+
+export const isInputTokens = (x: any): x is InputTokens => {
+    const xx = x as InputTokens;
+    return xx.passage_tokens !== undefined && xx.question_tokens !== undefined;
+};
+
+export interface BiDAFPrediction extends InputTokens {
     best_span: number[];
     best_span_str: string;
     passage_question_attention: number[][];
-    passage_tokens: string[];
-    question_tokens: string[];
     span_end_logits: number[];
     span_end_probs: number[];
     span_start_logits: number[];
@@ -19,11 +27,10 @@ export interface BiDAFPrediction {
 export const isBiDAFPrediction = (x: Prediction): x is BiDAFPrediction => {
     const xx = x as BiDAFPrediction;
     return (
+        isInputTokens(x) &&
         xx.best_span !== undefined &&
         xx.best_span_str !== undefined &&
         xx.passage_question_attention !== undefined &&
-        xx.passage_tokens !== undefined &&
-        xx.question_tokens !== undefined &&
         xx.span_end_logits !== undefined &&
         xx.span_end_probs !== undefined &&
         xx.span_start_logits !== undefined &&
@@ -62,7 +69,7 @@ export enum NAQANetAnswerType {
     Arithmetic = 'arithmetic',
 }
 
-export interface NAQANetPrediction {
+export interface NAQANetPrediction extends InputTokens {
     answer: {
         'answer-type': NAQANetAnswerType;
         spans: number[];
@@ -70,27 +77,24 @@ export interface NAQANetPrediction {
     };
     loss: number;
     passage_question_attention: number[][];
-    passage_tokens: string[];
     /* NOTE: This might be "None", which is Python's equivalent for undefined / null. There's
      * some errant serialization in the backend that should in the long run be fixed to correct
      * this.
      */
     question_id: string;
-    question_tokens: string[];
 }
 
 export const isNAQANetPrediction = (x: Prediction): x is NAQANetPrediction => {
     const xx = x as NAQANetPrediction;
     return (
+        isInputTokens(x) &&
         xx.answer !== undefined &&
         xx.answer['answer-type'] !== undefined &&
         xx.answer.spans !== undefined &&
         xx.answer.value !== undefined &&
         xx.loss !== undefined &&
         xx.passage_question_attention !== undefined &&
-        xx.passage_tokens !== undefined &&
-        xx.question_id !== undefined &&
-        xx.question_tokens !== undefined
+        xx.question_id !== undefined
     );
 };
 

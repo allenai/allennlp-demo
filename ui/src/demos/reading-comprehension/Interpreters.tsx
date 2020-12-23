@@ -1,18 +1,25 @@
 import React from 'react';
 import { Collapse } from 'antd';
 
-import { Output, PrettyPrintedJSON } from '../../tugboat/components';
+import { Output } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 
 import { Interpret } from '../../components';
 import { ModelInfoList } from '../../context';
 import { InterpreterId, Saliency } from '../../lib';
-import { Input, Prediction } from './types';
+import { Input, InputTokens } from './types';
+
+export interface InterpreterData {
+    instance_1: {
+        grad_input_1: number[];
+        grad_input_2: number[];
+    };
+}
 
 interface Props {
     model: Model;
     input: Input;
-    prediction: Prediction;
+    tokens: InputTokens;
 }
 
 /**
@@ -20,7 +27,7 @@ interface Props {
  * that support intepretation can use this code. The bit we need to figure out before doing so it
  * what the output looks like, and how generic it actually is.
  */
-export const Interpreters = ({ model, input, prediction }: Props) => {
+export const Interpreters = ({ model, input, tokens }: Props) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -56,28 +63,10 @@ export const Interpreters = ({ model, input, prediction }: Props) => {
                     <Collapse.Panel
                         key={InterpreterId.SimpleGradient}
                         header="Simple Gradient Visualization">
-                        <Interpret<Input, any>
+                        <Interpret<Input, InterpreterData>
                             interpreter={InterpreterId.SimpleGradient}
                             input={input}>
-                            {({ output }) => (
-                                <>
-                                    {/* TODO: get tokens */}
-                                    <Saliency
-                                        interpretData={[
-                                            output.instance_1.grad_input_2,
-                                            output.instance_1.grad_input_1,
-                                        ]}
-                                        inputTokens={[
-                                            (prediction as any).question_tokens,
-                                            (prediction as any).passage_tokens,
-                                        ]}
-                                        inputHeaders={[<div>Question</div>, <div>Passage</div>]}
-                                        interpreter={InterpreterId.SimpleGradient}
-                                    />
-                                    DEBUG
-                                    <PrettyPrintedJSON json={output} />
-                                </>
-                            )}
+                            {({ output }) => <Interpreter output={output} tokens={tokens} />}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
@@ -85,16 +74,10 @@ export const Interpreters = ({ model, input, prediction }: Props) => {
                     <Collapse.Panel
                         key={InterpreterId.IntegratedGradient}
                         header="Integrated Gradient Visualization">
-                        <Interpret<Input, any>
+                        <Interpret<Input, InterpreterData>
                             interpreter={InterpreterId.IntegratedGradient}
                             input={input}>
-                            {({ output }) => (
-                                <>
-                                    {/* TODO: add viz */}
-                                    DEBUG
-                                    <PrettyPrintedJSON json={output} />
-                                </>
-                            )}
+                            {({ output }) => <Interpreter output={output} tokens={tokens} />}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
@@ -102,20 +85,30 @@ export const Interpreters = ({ model, input, prediction }: Props) => {
                     <Collapse.Panel
                         key={InterpreterId.SmoothGradient}
                         header="Smooth Gradient Visualization">
-                        <Interpret<Input, any>
+                        <Interpret<Input, InterpreterData>
                             interpreter={InterpreterId.SmoothGradient}
                             input={input}>
-                            {({ output }) => (
-                                <>
-                                    {/* TODO: add viz */}
-                                    DEBUG
-                                    <PrettyPrintedJSON json={output} />
-                                </>
-                            )}
+                            {({ output }) => <Interpreter output={output} tokens={tokens} />}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
             </Collapse>
         </Output.Section>
+    );
+};
+
+export const Interpreter = ({
+    output,
+    tokens,
+}: {
+    output: InterpreterData;
+    tokens: InputTokens;
+}) => {
+    return (
+        <Saliency
+            interpretData={[output.instance_1.grad_input_2, output.instance_1.grad_input_1]}
+            inputTokens={[tokens.question_tokens, tokens.passage_tokens]}
+            inputHeaders={[<h6>Question</h6>, <h6>Passage</h6>]}
+        />
     );
 };
