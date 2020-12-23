@@ -110,8 +110,8 @@ export class Saliency extends React.Component<Props, State> {
     colorize(tokensWithWeights: TokensWithWeight[], topKIdx: Set<number>) {
         const { colormapProps } = this.props;
         // colormap package takes minimum of 6 shades
-        colormapProps.nshades = Math.min(Math.max(colormapProps.nshades, 6), 72);
-        const colors = colormap(colormapProps);
+        const nshades = Math.min(Math.max(colormapProps.nshades, 6), 72);
+        const colors = colormap({ ...colormapProps, nshades });
 
         const colorizedString = tokensWithWeights.map((obj, idx) => {
             // Again, 1 -, in this case because low extreme is blue and high extreme is red
