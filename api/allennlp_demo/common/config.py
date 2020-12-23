@@ -5,8 +5,8 @@ from typing import Dict, Any, Optional, List
 from allennlp.predictors import Predictor
 
 
-VALID_ATTACKERS = ("hotflip", "input_reduction")
-VALID_INTERPRETERS = ("simple_gradient", "smooth_gradient", "integrated_gradient")
+VALID_ATTACKERS = ["hotflip", "input_reduction"]
+VALID_INTERPRETERS = ["simple_gradient", "smooth_gradient", "integrated_gradient"]
 
 
 @dataclass(frozen=True)
