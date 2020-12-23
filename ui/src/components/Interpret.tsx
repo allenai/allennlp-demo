@@ -26,3 +26,9 @@ export const Interpret = <I extends { [k: string]: any }, O>({
         <Output>{children}</Output>
     </Form>
 );
+
+export enum Interpreter {
+    GRAD_INTERPRETER = 'simple_gradient',
+    IG_INTERPRETER = 'integrated_gradient',
+    SG_INTERPRETER = 'smooth_gradient',
+}

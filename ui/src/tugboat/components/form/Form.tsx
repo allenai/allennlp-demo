@@ -114,17 +114,19 @@ export const Form = <I, O>(props: Props) => {
                 form={form}>
                 {firstChild}
             </AntForm>
-            <Divider />
             {input ? (
-                <Promised<I, O> input={input} fetch={submit}>
-                    {({ input, output }) =>
-                        React.cloneElement(secondChild, {
-                            model: models.selectedModel,
-                            input,
-                            output,
-                        })
-                    }
-                </Promised>
+                <>
+                    <Divider />
+                    <Promised<I, O> input={input} fetch={submit}>
+                        {({ input, output }) =>
+                            React.cloneElement(secondChild, {
+                                model: models.selectedModel,
+                                input,
+                                output,
+                            })
+                        }
+                    </Promised>
+                </>
             ) : null}
         </>
     );

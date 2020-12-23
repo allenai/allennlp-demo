@@ -1,5 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
+import { Popover } from 'antd';
+import { LinkCSS } from '@allenai/varnish/components';
 
 import { Model } from '../../lib/Model';
 
@@ -60,17 +62,47 @@ Output.Sections = styled.section`
     gap: ${({ theme }) => theme.spacing.xl};
 `;
 
+const PopoverWidthFix = createGlobalStyle`
+  .ant-popover{
+    max-width: 70%;
+  }
+`;
+
 interface OutputSectionProps {
-    title: string | JSX.Element;
+    title: string;
+    helpLabel?: string;
+    helpContent?: React.ReactNode | string;
     children: React.ReactNode;
 }
 
-Output.Section = ({ title, children }: OutputSectionProps) => (
-    <OutputSection>
-        <OutputSectionTitle>{title}</OutputSectionTitle>
-        {children}
-    </OutputSection>
-);
+Output.Section = ({
+    title,
+    helpLabel = 'More Info',
+    helpContent,
+    children,
+}: OutputSectionProps) => {
+    const row = (
+        <TitleRow>
+            <OutputSectionTitle>{title}</OutputSectionTitle>
+            {helpContent ? <PopoverTarget>{helpLabel}</PopoverTarget> : null}
+        </TitleRow>
+    );
+    return (
+        <OutputSection>
+            {helpContent ? (
+                <>
+                    <PopoverWidthFix />
+                    <Popover content={helpContent} title={title}>
+                        {row}
+                    </Popover>
+                </>
+            ) : (
+                row
+            )}
+            {children}
+        </OutputSection>
+    );
+};
 
 const OutputSection = styled.section`
     display: grid;
@@ -80,6 +112,13 @@ const OutputSection = styled.section`
 
 const OutputSectionTitle = styled.h4`
     margin: 0;
+`;
+
+const TitleRow = styled.div`
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
 `;
 
 Output.SubSection = ({ title, children }: OutputSectionProps) => (
@@ -98,4 +137,10 @@ const OutputSubSection = styled.div`
 const OutputSubSectionTitle = styled.h5`
     margin: 0;
     text-transform: none;
+`;
+
+const PopoverTarget = styled.span`
+    ${LinkCSS.default()}
+    padding-left: ${({ theme }) => theme.spacing.md};
+    font-style: italic;
 `;

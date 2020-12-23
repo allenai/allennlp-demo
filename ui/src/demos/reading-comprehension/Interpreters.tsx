@@ -4,16 +4,17 @@ import { Collapse } from 'antd';
 import { PrettyPrintedJSON } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 
-import { Interpret } from '../../components';
-import { ModelId } from '../../lib';
-import { Input } from './types';
+import { Interpret, Interpreter } from '../../components';
+import { ModelId, SaliencyComponent } from '../../lib';
+import { Input, Prediction } from './types';
 
 interface Props {
     model: Model;
     input: Input;
+    prediction: Prediction;
 }
 
-export const Interpreters = ({ model, input }: Props) => {
+export const Interpreters = ({ model, input, prediction }: Props) => {
     // NMN doesn't support the interpret endpoints.
     if (model.id === ModelId.Nmn) {
         return null;
@@ -21,17 +22,30 @@ export const Interpreters = ({ model, input }: Props) => {
     return (
         <Collapse>
             <Collapse.Panel key="simple" header="Simple Gradient Visualization">
-                <Interpret<Input, any> interpreter="simple_gradient" input={input}>
+                <Interpret<Input, any> interpreter={Interpreter.GRAD_INTERPRETER} input={input}>
                     {({ output }) => (
                         <>
-                            {/* TODO add viz */}
+                            {/* TODO: get tokens */}
+                            <SaliencyComponent
+                                interpretData={[
+                                    output.instance_1.grad_input_2,
+                                    output.instance_1.grad_input_1,
+                                ]}
+                                inputTokens={[
+                                    (prediction as any).question_tokens,
+                                    (prediction as any).passage_tokens,
+                                ]}
+                                inputHeaders={[<div>Question</div>, <div>Passage</div>]}
+                                interpreter={Interpreter.GRAD_INTERPRETER}
+                            />
+                            DEBUG
                             <PrettyPrintedJSON json={output} />
                         </>
                     )}
                 </Interpret>
             </Collapse.Panel>
             <Collapse.Panel key="integrated" header="Integrated Gradients Visualization">
-                <Interpret<Input, any> interpreter="integrated_gradient" input={input}>
+                <Interpret<Input, any> interpreter={Interpreter.IG_INTERPRETER} input={input}>
                     {({ output }) => (
                         <>
                             {/* TODO add viz */}
@@ -41,7 +55,7 @@ export const Interpreters = ({ model, input }: Props) => {
                 </Interpret>
             </Collapse.Panel>
             <Collapse.Panel key="smooth" header="SmoothGrad Visualization">
-                <Interpret<Input, any> interpreter="smooth_gradient" input={input}>
+                <Interpret<Input, any> interpreter={Interpreter.SG_INTERPRETER} input={input}>
                     {({ output }) => (
                         <>
                             {/* TODO add viz */}

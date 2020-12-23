@@ -1,6 +1,5 @@
 import React from 'react';
 import { Tabs } from 'antd';
-
 import { Content } from '@allenai/varnish/components';
 
 import {
@@ -48,8 +47,37 @@ export const Main = () => {
                                                 output={output}
                                             />
                                         </Output.Section>
-                                        <Output.Section title="Model Interpretations">
-                                            <Interpreters model={model} input={input} />
+                                        <Output.Section
+                                            title="Model Interpretations"
+                                            helpLabel="What is this?"
+                                            helpContent={
+                                                <div>
+                                                    <p>
+                                                        Despite constant advances and seemingly
+                                                        super-human performance on constrained
+                                                        domains, state-of-the-art models for NLP are
+                                                        imperfect. These imperfections, coupled with
+                                                        today's advances being driven by (seemingly
+                                                        black-box) neural models, leave researchers
+                                                        and practitioners scratching their heads
+                                                        asking,{' '}
+                                                        <i>
+                                                            why did my model make this prediction?
+                                                        </i>
+                                                    </p>
+                                                    <a
+                                                        href="https://allennlp.org/interpret"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer">
+                                                        Learn More
+                                                    </a>
+                                                </div>
+                                            }>
+                                            <Interpreters
+                                                model={model}
+                                                input={input}
+                                                prediction={output}
+                                            />
                                         </Output.Section>
                                     </Output.Sections>
                                 )}
