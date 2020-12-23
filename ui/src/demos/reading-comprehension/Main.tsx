@@ -41,16 +41,8 @@ export const Main = () => {
                             <Output<Input, Prediction>>
                                 {({ model, input, output }) => (
                                     <Output.Sections>
-                                        <Output.Section title="Model Predictions">
-                                            <Predictions
-                                                model={model}
-                                                input={input}
-                                                output={output}
-                                            />
-                                        </Output.Section>
-                                        <Output.Section title="Model Interpretations">
-                                            <Interpreters model={model} input={input} />
-                                        </Output.Section>
+                                        <Predictions model={model} input={input} output={output} />
+                                        <Interpreters model={model} input={input} />
                                     </Output.Sections>
                                 )}
                             </Output>

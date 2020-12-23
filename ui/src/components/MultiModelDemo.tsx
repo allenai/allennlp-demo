@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { ModelInfo } from './ModelInfo';
 import { TaskCards } from './TaskCards';
-import { TaskCard } from '../lib';
+import { TaskCard, fetchModelInfo } from '../lib';
 import { Model, Task } from '../tugboat/lib';
-import { MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
+import { ModelInfoList } from '../context';
+import { Promised, MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
 
 class TaskNotFoundError extends Error {
     constructor(taskId: string) {
@@ -38,8 +38,8 @@ interface Props {
  * of a model (which is queried via API routes) to the shape expected by the tugboat package.
  */
 export const MultiModelDemo = ({ ids, taskId, children }: Props) => (
-    <ModelInfo ids={ids}>
-        {(info) => {
+    <Promised input={ids} fetch={fetchModelInfo}>
+        {({ output: info }) => {
             const models: Model[] = [];
             for (const i of info) {
                 if (!i.model_card_data) {
@@ -51,20 +51,22 @@ export const MultiModelDemo = ({ ids, taskId, children }: Props) => (
                 models.push(new Model(i.id, i.model_card_data));
             }
             return (
-                <TaskCards>
-                    {(tasksById) => {
-                        if (!(taskId in tasksById)) {
-                            throw new TaskNotFoundError(taskId);
-                        }
-                        const task = tasksById[taskId];
-                        return (
-                            <TBMultiModelDemo models={models} task={asTugBoatTask(task)}>
-                                {children}
-                            </TBMultiModelDemo>
-                        );
-                    }}
-                </TaskCards>
+                <ModelInfoList.Provider value={info}>
+                    <TaskCards>
+                        {(tasksById) => {
+                            if (!(taskId in tasksById)) {
+                                throw new TaskNotFoundError(taskId);
+                            }
+                            const task = tasksById[taskId];
+                            return (
+                                <TBMultiModelDemo models={models} task={asTugBoatTask(task)}>
+                                    {children}
+                                </TBMultiModelDemo>
+                            );
+                        }}
+                    </TaskCards>
+                </ModelInfoList.Provider>
             );
         }}
-    </ModelInfo>
+    </Promised>
 );
