@@ -23,7 +23,7 @@ export interface InputTokens {
 
 export const isInputTokens = (x: any): x is InputTokens => {
     const xx = x as InputTokens;
-    return xx.passage_tokens !== undefined && xx.question_tokens !== undefined;
+    return Array.isArray(xx.passage_tokens) && Array.isArray(xx.question_tokens);
 };
 
 interface Props {
