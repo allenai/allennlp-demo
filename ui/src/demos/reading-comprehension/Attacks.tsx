@@ -34,6 +34,7 @@ export const Attacks = ({ model, input }: Props) => {
             <Collapse>
                 {supportedAttackTypes.has(AttackType.InputReduction) ? (
                     <Collapse.Panel key={AttackType.InputReduction} header="Input Reduction">
+                        {/* TODO: Replace `any` with a better type once we know what it is. */}
                         <Attack<Input, any>
                             type={AttackType.InputReduction}
                             target="question"
@@ -45,6 +46,7 @@ export const Attacks = ({ model, input }: Props) => {
                 ) : null}
                 {supportedAttackTypes.has(AttackType.HotFlip) ? (
                     <Collapse.Panel key={AttackType.HotFlip} header="HotFlip">
+                        {/* TODO: Replace `any` with a better type once we know what it is. */}
                         <Attack<Input, any>
                             type={AttackType.HotFlip}
                             target="question"
