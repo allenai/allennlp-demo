@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Models } from '../tugboat/context';
-import { NoSelectedModel } from '../tugboat/error';
+import { NoSelectedModelError } from '../tugboat/error';
 import { SyntaxHighlight } from '../tugboat/components/SyntaxHighlight';
 
 interface Props {
@@ -21,7 +21,7 @@ interface Props {
 export const ModelUsage = (props: Props) => {
     const models = React.useContext(Models);
     if (!models.selectedModel) {
-        throw new NoSelectedModel();
+        throw new NoSelectedModelError();
     }
 
     return (

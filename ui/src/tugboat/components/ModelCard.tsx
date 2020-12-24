@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
 
 import { Models } from '../context';
-import { NoSelectedModel } from '../error';
+import { NoSelectedModelError } from '../error';
 import { Markdown } from './Markdown';
 
 export const ModelCard = () => {
     const models = React.useContext(Models);
     if (!models.selectedModel) {
-        throw new NoSelectedModel();
+        throw new NoSelectedModelError();
     }
 
     return (

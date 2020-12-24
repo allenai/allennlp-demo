@@ -7,14 +7,14 @@ import React from 'react';
 
 import { ModelUsage } from '../../components';
 import { Models, Examples } from '../../tugboat/context';
-import { NoSelectedModel, InvalidExamplesFormat } from '../../tugboat/error';
+import { NoSelectedModelError, InvalidExamplesFormatError } from '../../tugboat/error';
 import { isGroupedExamples } from '../../tugboat/lib';
 
 export const Usage = () => {
     const models = React.useContext(Models);
     const examples = React.useContext(Examples);
     if (!models.selectedModel) {
-        throw new NoSelectedModel();
+        throw new NoSelectedModelError();
     }
     const x = examples.examples;
     // Reading comp uses GroupedExamples
@@ -47,6 +47,8 @@ export const Usage = () => {
             />
         );
     } else {
-        throw new InvalidExamplesFormat(`The examples aren't grouped, but we expect them to be`);
+        throw new InvalidExamplesFormatError(
+            `The examples aren't grouped, but we expect them to be`
+        );
     }
 };

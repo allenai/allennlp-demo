@@ -4,3 +4,4 @@ export * from './Predict';
 export * from './Interpret';
 export * from './Interpreters';
 export * from './TaskCards';
+export * from './Attack';

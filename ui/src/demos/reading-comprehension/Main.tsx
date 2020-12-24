@@ -19,6 +19,7 @@ import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
+import { Attacks } from './Attacks';
 import { Input, Prediction } from './types';
 
 export const Main = () => {
@@ -48,6 +49,7 @@ export const Main = () => {
                                                 tokens={output}
                                             />
                                         ) : null}
+                                        <Attacks model={model} input={input} />
                                     </Output.Sections>
                                 )}
                             </Output>
