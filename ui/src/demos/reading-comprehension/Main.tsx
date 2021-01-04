@@ -14,7 +14,8 @@ import {
     Passage,
     Submit,
 } from '../../tugboat/components';
-import { MultiModelDemo, Predict, Interpreters, isInputTokens } from '../../components';
+import { MultiModelDemo, Predict, Interpreters } from '../../components';
+import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
@@ -40,7 +41,7 @@ export const Main = () => {
                                 {({ model, input, output }) => (
                                     <Output.Sections>
                                         <Predictions model={model} input={input} output={output} />
-                                        {isInputTokens(output) ? (
+                                        {isWithTokenizedInput(output) ? (
                                             <Interpreters
                                                 model={model}
                                                 input={input}

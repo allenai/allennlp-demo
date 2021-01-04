@@ -1,11 +1,4 @@
-/**
- * Renders a component that displays each word of the tokens with a different color based on the
- * associated weight.
- *
- * There is also a slider used to decide a cutoff on what weights to not render.
- */
-
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import colormap from 'colormap';
 import { Tooltip, Slider } from 'antd';
@@ -17,11 +10,7 @@ interface DefaultProps {
 interface Props extends DefaultProps {
     interpretData: [number[], number[]];
     inputTokens: [string[], string[]];
-    inputHeaders: JSX.Element[];
-}
-
-interface State {
-    topK: { [id: string]: number };
+    inputHeaders: string[];
 }
 
 interface ColorMapProps {
@@ -82,33 +71,25 @@ interface TokensWithWeight {
     weight: number;
 }
 
-export class Saliency extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
+/**
+ * Renders a component that displays each word of the tokens with a different color based on the
+ * associated weight.
+ *
+ * There is also a slider used to decide a cutoff on what weights to not render.
+ */
+export const Saliency = (props: Props) => {
+    const [topK, setTopK] = useState<{ [id: string]: number }>({ all: 3 }); // 3 words are highlighted by default
 
-        this.state = {
-            topK: { all: 3 }, // 3 words are highlighted by default
-        };
-    }
-
-    static defaultProps: DefaultProps = {
-        colormapProps: {
-            colormap: 'copper',
-            format: 'hex',
-            nshades: 20,
-        },
-    };
-
-    getTokenWeightPairs(grads: number[], tokens: string[]) {
+    const getTokenWeightPairs = (grads: number[], tokens: string[]) => {
         return tokens.map((token, idx: number) => {
             const weight = grads[idx];
             // We do 1 - weight because the colormap is inverted
             return { token, weight: 1 - weight };
         });
-    }
+    };
 
-    colorize(tokensWithWeights: TokensWithWeight[], topKIdx: Set<number>) {
-        const { colormapProps } = this.props;
+    const colorize = (tokensWithWeights: TokensWithWeight[], topKIdx: Set<number>) => {
+        const { colormapProps } = props;
         // colormap package takes minimum of 6 shades
         const nshades = Math.min(Math.max(colormapProps.nshades, 6), 72);
         const colors = colormap({ ...colormapProps, nshades });
@@ -131,17 +112,17 @@ export class Saliency extends React.Component<Props, State> {
             );
         });
         return colorizedString;
-    }
+    };
 
     // when the user changes the slider for input 1, update how many tokens are highlighted
-    handleInputTopKChange = (inputIndex: number) => (e: number) => {
-        const stateUpdate = Object.assign({}, this.state);
-        stateUpdate.topK[inputIndex] = e;
-        this.setState(stateUpdate);
+    const handleInputTopKChange = (inputIndex: number) => (e: number) => {
+        const update = Object.assign({}, topK);
+        update[inputIndex] = e;
+        setTopK(update);
     };
 
     // Extract top K tokens by saliency value and return only the indices of the top tokens
-    getTopKIndices(tokensWithWeights: TokensWithWeight[], inputIndex: number) {
+    const getTopKIndices = (tokensWithWeights: TokensWithWeight[], inputIndex: number) => {
         function gradCompare(obj1: TokensWithWeight, obj2: TokensWithWeight) {
             return obj1.weight - obj2.weight;
         }
@@ -152,49 +133,55 @@ export class Saliency extends React.Component<Props, State> {
         });
         indexedTokens.sort(gradCompare);
 
-        const k = inputIndex in this.state.topK ? this.state.topK[inputIndex] : this.state.topK.all;
+        const k = inputIndex in topK ? topK[inputIndex] : topK.all;
         const topKTokens = indexedTokens.slice(0, k);
         return topKTokens.map((obj) => obj.idx);
+    };
+
+    const { interpretData, inputTokens, inputHeaders } = props;
+
+    const saliencyMaps = [];
+    for (let i = 0; i < inputTokens.length; i++) {
+        const grads = interpretData[i];
+        const tokens = inputTokens[i];
+        const header = inputHeaders[i];
+        const tokenWeights = getTokenWeightPairs(grads, tokens);
+        // indices with the top gradient values
+        const topKIdx = new Set(getTopKIndices(tokenWeights, i));
+        // the tokens highlighted based on their top values
+        const colorMap = colorize(tokenWeights, topKIdx);
+        const k = i in topK ? topK[i] : topK.all;
+        const saliencyMap = (
+            <div key={i}>
+                <h6>{header}</h6>
+                {colorMap}
+                <Slider
+                    min={0}
+                    max={colorMap.length}
+                    step={1}
+                    defaultValue={k}
+                    value={topK[i.toString()]}
+                    onChange={handleInputTopKChange(i)}
+                />
+                <br />
+                <Info>Visualizing the top {k} most important words.</Info>
+                <br />
+                <br />
+            </div>
+        );
+        saliencyMaps.push(saliencyMap);
     }
 
-    render() {
-        const { interpretData, inputTokens, inputHeaders } = this.props;
+    return <div>{saliencyMaps}</div>;
+};
 
-        const saliencyMaps = [];
-        for (let i = 0; i < inputTokens.length; i++) {
-            const grads = interpretData[i];
-            const tokens = inputTokens[i];
-            const header = inputHeaders[i];
-            const tokenWeights = this.getTokenWeightPairs(grads, tokens);
-            // indices with the top gradient values
-            const topKIdx = new Set(this.getTopKIndices(tokenWeights, i));
-            // the tokens highlighted based on their top values
-            const colorMap = this.colorize(tokenWeights, topKIdx);
-            const k = i in this.state.topK ? this.state.topK[i] : this.state.topK.all;
-            const saliencyMap = (
-                <div key={i}>
-                    {header}
-                    {colorMap}
-                    <Slider
-                        min={0}
-                        max={colorMap.length}
-                        step={1}
-                        defaultValue={k}
-                        value={this.state.topK[i.toString()]}
-                        onChange={this.handleInputTopKChange(i)}
-                    />
-                    <br />
-                    <Info>Visualizing the top {k} most important words.</Info>
-                    <br />
-                    <br />
-                </div>
-            );
-            saliencyMaps.push(saliencyMap);
-        }
-
-        return <div>{saliencyMaps}</div>;
-    }
-}
+Saliency.defaultProps = {
+    colormapProps: {
+        colormap: 'copper',
+        format: 'hex',
+        nshades: 20,
+    },
+};
 
 const ColorizedToken = styled.span<{ backgroundColor: string }>`
     background-color: ${({ backgroundColor }) => backgroundColor};
@@ -205,5 +192,5 @@ const ColorizedToken = styled.span<{ backgroundColor: string }>`
 `;
 
 const Info = styled.span`
-    color: ${({ theme }) => theme.color.B6};
+    color: ${({ theme }) => theme.color.G9};
 `;

@@ -1,11 +1,11 @@
-import { InputTokens, isInputTokens } from '../../components';
+import { WithTokenizedInput, isWithTokenizedInput } from '../../lib';
 
 export interface Input {
     passage: string;
     question: string;
 }
 
-export interface BiDAFPrediction extends InputTokens {
+export interface BiDAFPrediction extends WithTokenizedInput {
     best_span: number[];
     best_span_str: string;
     passage_question_attention: number[][];
@@ -19,7 +19,7 @@ export interface BiDAFPrediction extends InputTokens {
 export const isBiDAFPrediction = (x: Prediction): x is BiDAFPrediction => {
     const xx = x as BiDAFPrediction;
     return (
-        isInputTokens(x) &&
+        isWithTokenizedInput(x) &&
         xx.best_span !== undefined &&
         xx.best_span_str !== undefined &&
         xx.passage_question_attention !== undefined &&
@@ -61,7 +61,7 @@ export enum NAQANetAnswerType {
     Arithmetic = 'arithmetic',
 }
 
-export interface NAQANetPrediction extends InputTokens {
+export interface NAQANetPrediction extends WithTokenizedInput {
     answer: {
         'answer-type': NAQANetAnswerType;
         spans: number[];
@@ -79,7 +79,7 @@ export interface NAQANetPrediction extends InputTokens {
 export const isNAQANetPrediction = (x: Prediction): x is NAQANetPrediction => {
     const xx = x as NAQANetPrediction;
     return (
-        isInputTokens(x) &&
+        isWithTokenizedInput(x) &&
         xx.answer !== undefined &&
         xx.answer['answer-type'] !== undefined &&
         xx.answer.spans !== undefined &&

@@ -6,7 +6,7 @@ import { Model } from '../tugboat/lib';
 
 import { Interpret } from '.';
 import { ModelInfoList } from '../context';
-import { InterpreterId } from '../lib';
+import { InterpreterId, WithTokenizedInput } from '../lib';
 import { Input } from '../demos/reading-comprehension/types';
 
 export interface InterpreterData {
@@ -16,20 +16,10 @@ export interface InterpreterData {
     };
 }
 
-export interface InputTokens {
-    passage_tokens: string[];
-    question_tokens: string[];
-}
-
-export const isInputTokens = (x: any): x is InputTokens => {
-    const xx = x as InputTokens;
-    return Array.isArray(xx.passage_tokens) && Array.isArray(xx.question_tokens);
-};
-
 interface Props {
     model: Model;
     input: Input;
-    tokens: InputTokens;
+    tokens: WithTokenizedInput;
 }
 
 export const Interpreters = ({ model, input, tokens }: Props) => {
@@ -138,12 +128,18 @@ export const Interpreters = ({ model, input, tokens }: Props) => {
     );
 };
 
-const Interpreter = ({ output, tokens }: { output: InterpreterData; tokens: InputTokens }) => {
+const Interpreter = ({
+    output,
+    tokens,
+}: {
+    output: InterpreterData;
+    tokens: WithTokenizedInput;
+}) => {
     return (
         <Saliency
             interpretData={[output.instance_1.grad_input_2, output.instance_1.grad_input_1]}
             inputTokens={[tokens.question_tokens, tokens.passage_tokens]}
-            inputHeaders={[<h6>Question</h6>, <h6>Passage</h6>]}
+            inputHeaders={['Question', 'Passage']}
         />
     );
 };
