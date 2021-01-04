@@ -4,7 +4,7 @@ import { Collapse } from 'antd';
 import { PrettyPrintedJSON, TextWithHighlight, Output, Result } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 import { ModelId } from '../../lib';
-import { UnexpectedModel } from '../../tugboat/error';
+import { UnexpectedModelError } from '../../tugboat/error';
 import {
     Input,
     Prediction,
@@ -69,7 +69,7 @@ const OutputByModel = ({
         }
     }
     // If we dont have an output throw.
-    throw new UnexpectedModel(model.id);
+    throw new UnexpectedModelError(model.id);
 };
 
 const BasicPrediction = ({

@@ -2,7 +2,7 @@ import React from 'react';
 import { Divider, Form as AntForm } from 'antd';
 
 import { Models, Examples } from '../../context';
-import { NoSelectedModel } from '../../error';
+import { NoSelectedModelError } from '../../error';
 import { Promised } from '../Promised';
 
 class EmptyFormError extends Error {
@@ -61,7 +61,7 @@ export const Form = <I, O>(props: Props) => {
             throw new EmptyFormError();
         }
         if (!models.selectedModel) {
-            throw new NoSelectedModel();
+            throw new NoSelectedModelError();
         }
         const url = props.action(models.selectedModel.id);
         const opt = { method: 'POST', body: JSON.stringify(i) };
@@ -91,7 +91,6 @@ export const Form = <I, O>(props: Props) => {
     }, [examples.selectedExample]);
 
     // We do our best to make sure the children match the format we expect. That said we can't
-    // actually make sure that they're the specific compoent type's we expect -- or at least, I
     // wasn't able to figure out how to do that.
     const children = React.Children.toArray(props.children);
     if (!children || children.length !== 2) {

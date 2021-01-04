@@ -18,6 +18,7 @@ import { MultiModelDemo, Predict, Interpreters } from '../../components';
 import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
+import { Attacks } from './Attacks';
 import { Predictions } from './Predictions';
 import { Input, Prediction } from './types';
 
@@ -48,6 +49,7 @@ export const Main = () => {
                                                 tokens={output}
                                             />
                                         ) : null}
+                                        <Attacks model={model} input={input} target="question" />
                                     </Output.Sections>
                                 )}
                             </Output>

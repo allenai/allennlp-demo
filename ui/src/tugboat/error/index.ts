@@ -10,13 +10,13 @@ export class ModelNotFoundError extends Error {
     }
 }
 
-export class NoSelectedModel extends Error {
+export class NoSelectedModelError extends Error {
     constructor() {
         super('No selected model.');
     }
 }
 
-export class UnexpectedModel extends Error {
+export class UnexpectedModelError extends Error {
     constructor(msg: string) {
         super(`Unexpected model: ${msg}`);
     }
@@ -37,11 +37,5 @@ export class UnknownStateError extends Error {
 export class InvalidHighlightRangeError extends Error {
     constructor(msg: string) {
         super(`Invalid Highlight Range: ${msg}`);
-    }
-}
-
-export class InvalidExamplesFormat extends Error {
-    constructor(msg: string) {
-        super(`Examples are in the wrong format: ${msg}`);
     }
 }
