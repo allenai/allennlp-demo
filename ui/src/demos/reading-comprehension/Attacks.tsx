@@ -9,6 +9,7 @@ import { ModelInfoList } from '../../context';
 import { AttackType, GradientInputField } from '../../lib';
 import { Input } from './types';
 
+// TODO: Add actual types.
 type InputReductionAttackOutput = any;
 type HotflipAttackOutput = any;
 
