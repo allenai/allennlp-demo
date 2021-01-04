@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { Popover } from 'antd';
 import { LinkCSS } from '@allenai/varnish/components';
+import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
 
 import { Model } from '../../lib/Model';
 
@@ -64,7 +65,7 @@ Output.Sections = styled.section`
 
 const PopoverWidthFix = createGlobalStyle`
   .ant-popover{
-    max-width: 70%;
+    max-width: 70vw;
   }
 `;
 
@@ -119,6 +120,12 @@ const TitleRow = styled.div`
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
+    gap: ${({ theme }) => theme.spacing.md};
+
+    @media ${({ theme }) => belowOrEqualTo(theme.breakpoints.md)} {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
 `;
 
 Output.SubSection = ({ title, children }: OutputSectionProps) => (
@@ -141,6 +148,5 @@ const OutputSubSectionTitle = styled.h5`
 
 const PopoverTarget = styled.span`
     ${LinkCSS.default()}
-    padding-left: ${({ theme }) => theme.spacing.md};
     font-style: italic;
 `;

@@ -82,7 +82,7 @@ export const Saliency = (props: Props) => {
 
     const getTokenWeightPairs = (grads: number[], tokens: string[]) => {
         return tokens.map((token, idx: number) => {
-            const weight = grads[idx];
+            const weight = grads[idx] || 1;
             // We do 1 - weight because the colormap is inverted
             return { token, weight: 1 - weight };
         });
@@ -97,7 +97,11 @@ export const Saliency = (props: Props) => {
         const colorizedString = tokensWithWeights.map((obj, idx) => {
             // Again, 1 -, in this case because low extreme is blue and high extreme is red
             return (
-                <Tooltip key={idx} title={(1 - obj.weight).toFixed(3)}>
+                <Tooltip
+                    key={idx}
+                    title={new Intl.NumberFormat(undefined, { minimumFractionDigits: 3 }).format(
+                        1 - obj.weight
+                    )}>
                     <span>
                         <ColorizedToken
                             backgroundColor={
@@ -123,13 +127,13 @@ export const Saliency = (props: Props) => {
 
     // Extract top K tokens by saliency value and return only the indices of the top tokens
     const getTopKIndices = (tokensWithWeights: TokensWithWeight[], inputIndex: number) => {
-        function gradCompare(obj1: TokensWithWeight, obj2: TokensWithWeight) {
+        const gradCompare = (obj1: TokensWithWeight, obj2: TokensWithWeight) => {
             return obj1.weight - obj2.weight;
-        }
+        };
 
         // Add indices so we can keep track after sorting
         const indexedTokens = tokensWithWeights.map((obj, idx) => {
-            return { ...obj, ...{ idx } };
+            return { ...obj, idx };
         });
         indexedTokens.sort(gradCompare);
 
