@@ -32,7 +32,7 @@ interface Props {
  * A component for rendering a form that the user should complete, and the output that's returned
  * when the user submits the data they entered in.
  *
- * The `<Form />` compoonent expects exactly two children:
+ * The `<Form />` component expects exactly two children:
  *
  * 1. The first child must be a `<Fields />` component. The inputs that you want the user to
  *    provide should be rendered as children of that element.
@@ -114,17 +114,19 @@ export const Form = <I, O>(props: Props) => {
                 form={form}>
                 {firstChild}
             </AntForm>
-            <Divider />
             {input ? (
-                <Promised<I, O> input={input} fetch={submit}>
-                    {({ input, output }) =>
-                        React.cloneElement(secondChild, {
-                            model: models.selectedModel,
-                            input,
-                            output,
-                        })
-                    }
-                </Promised>
+                <>
+                    <Divider />
+                    <Promised<I, O> input={input} fetch={submit}>
+                        {({ input, output }) =>
+                            React.cloneElement(secondChild, {
+                                model: models.selectedModel,
+                                input,
+                                output,
+                            })
+                        }
+                    </Promised>
+                </>
             ) : null}
         </>
     );

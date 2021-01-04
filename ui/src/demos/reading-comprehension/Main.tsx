@@ -1,6 +1,5 @@
 import React from 'react';
 import { Tabs } from 'antd';
-
 import { Content } from '@allenai/varnish/components';
 
 import {
@@ -15,11 +14,11 @@ import {
     Passage,
     Submit,
 } from '../../tugboat/components';
-import { MultiModelDemo, Predict } from '../../components';
+import { MultiModelDemo, Predict, Interpreters } from '../../components';
+import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Interpreters } from './Interpreters';
 import { Input, Prediction } from './types';
 
 export const Main = () => {
@@ -42,7 +41,13 @@ export const Main = () => {
                                 {({ model, input, output }) => (
                                     <Output.Sections>
                                         <Predictions model={model} input={input} output={output} />
-                                        <Interpreters model={model} input={input} />
+                                        {isWithTokenizedInput(output) ? (
+                                            <Interpreters
+                                                model={model}
+                                                input={input}
+                                                tokens={output}
+                                            />
+                                        ) : null}
                                     </Output.Sections>
                                 )}
                             </Output>

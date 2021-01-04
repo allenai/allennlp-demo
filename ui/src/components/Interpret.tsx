@@ -5,6 +5,7 @@ import { Form, Field, Fields, Output, Result, Submit } from '../tugboat/componen
 
 interface Props<I, O> {
     input: I;
+    description?: React.ReactNode;
     interpreter: string;
     children: (interpretation: Result<I, O>) => React.ReactNode | JSX.Element;
 }
@@ -12,17 +13,21 @@ interface Props<I, O> {
 export const Interpret = <I extends { [k: string]: any }, O>({
     interpreter,
     input,
+    description,
     children,
 }: Props<I, O>) => (
-    <Form<I, O> action={(modelId) => `/api/${modelId}/interpret/${interpreter}`}>
-        <Fields>
-            {Object.keys(input).map((fieldName) => (
-                <Field key={fieldName} name={fieldName} hidden>
-                    <Input value={input[fieldName]} />
-                </Field>
-            ))}
-            <Submit>Interpret Prediction</Submit>
-        </Fields>
-        <Output>{children}</Output>
-    </Form>
+    <>
+        {description}
+        <Form<I, O> action={(modelId) => `/api/${modelId}/interpret/${interpreter}`}>
+            <Fields>
+                {Object.keys(input).map((fieldName) => (
+                    <Field key={fieldName} name={fieldName} hidden>
+                        <Input value={input[fieldName]} />
+                    </Field>
+                ))}
+                <Submit>Interpret Prediction</Submit>
+            </Fields>
+            <Output>{children}</Output>
+        </Form>
+    </>
 );

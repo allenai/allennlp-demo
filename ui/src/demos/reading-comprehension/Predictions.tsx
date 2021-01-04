@@ -48,27 +48,22 @@ const OutputByModel = ({
 }) => {
     switch (model.id) {
         case ModelId.Bidaf:
-        case ModelId.BidafElmo: {
-            if (isBiDAFPrediction(output)) {
-                return <BasicAnswer input={input} output={output} />;
-            }
-            break;
-        }
+        case ModelId.BidafElmo:
         case ModelId.TransformerQa: {
-            if (isTransformerQAPrediction(output)) {
-                return <BasicAnswer input={input} output={output} />;
+            if (isBiDAFPrediction(output) || isTransformerQAPrediction(output)) {
+                return <BasicPrediction input={input} output={output} />;
             }
             break;
         }
         case ModelId.Nmn: {
             if (isNAQANetPrediction(output)) {
-                return <NmnAnswer />;
+                return <NmnPrediction />;
             }
             break;
         }
         case ModelId.Naqanet: {
             if (isNAQANetPrediction(output)) {
-                return <NaqanetAnswer output={output} />;
+                return <NaqanetPrediction output={output} />;
             }
             break;
         }
@@ -77,12 +72,12 @@ const OutputByModel = ({
     throw new UnexpectedModel(model.id);
 };
 
-const BasicAnswer = ({
+const BasicPrediction = ({
     input,
     output,
 }: {
     input: Input;
-    output: BiDAFPrediction | TransformerQAPrediction;
+    output: TransformerQAPrediction | BiDAFPrediction;
 }) => {
     let best_span = output.best_span;
     if (best_span[0] >= best_span[1]) {
@@ -116,12 +111,12 @@ const BasicAnswer = ({
 };
 
 // TODO
-const NmnAnswer = () => {
+const NmnPrediction = () => {
     return <>has nmn answer</>;
 };
 
 // TODO:
-const NaqanetAnswer = ({ output }: { output: NAQANetPrediction }) => {
+const NaqanetPrediction = ({ output }: { output: NAQANetPrediction }) => {
     switch (output.answer['answer-type']) {
         case NAQANetAnswerType.PassageSpan: {
             return <>has PassageSpan answer</>;
