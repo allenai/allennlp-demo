@@ -41,13 +41,13 @@ export const Attack = <I, O>({ type, input, children, target, gradient, action }
         grad_input_field: gradient,
         inputs: input,
     };
-    const fetchAttackOutput = (i?: AttackRequest<I>) => {
-        if (!i) {
+    const fetchAttackOutput = (attack?: AttackRequest<I>) => {
+        if (!attack) {
             throw new EmptyAttackRequestError();
         }
         return fetch(`/api/${model.id}/attack/${type}`, {
             method: 'POST',
-            body: JSON.stringify(i),
+            body: JSON.stringify(attack),
         }).then((r) => r.json());
     };
 
