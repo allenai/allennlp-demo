@@ -14,12 +14,11 @@ import {
     Passage,
     Submit,
 } from '../../tugboat/components';
-import { MultiModelDemo, Predict, Interpreters } from '../../components';
+import { MultiModelDemo, Predict, Interpreters, Attacks } from '../../components';
 import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Attacks } from './Attacks';
 import { Input, Prediction } from './types';
 
 export const Main = () => {
@@ -49,7 +48,7 @@ export const Main = () => {
                                                 tokens={output}
                                             />
                                         ) : null}
-                                        <Attacks model={model} input={input} />
+                                        <Attacks model={model} input={input} target="question" />
                                     </Output.Sections>
                                 )}
                             </Output>

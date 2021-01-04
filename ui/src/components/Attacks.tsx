@@ -1,25 +1,20 @@
 import React from 'react';
 import { Collapse } from 'antd';
 
-import { Output, PrettyPrintedJSON } from '../../tugboat/components';
-import { Model } from '../../tugboat/lib';
+import { Output, PrettyPrintedJSON } from '../tugboat/components';
+import { Model } from '../tugboat/lib';
 
-import { Attack } from '../../components';
-import { ModelInfoList } from '../../context';
-import { AttackType, GradientInputField } from '../../lib';
-import { Input } from './types';
+import { Attack } from './Attack';
+import { ModelInfoList } from '../context';
+import { AttackType, GradientInputField } from '../lib';
 
-interface Props {
+interface Props<I> {
     model: Model;
-    input: Input;
+    input: I;
+    target: keyof I & string;
 }
 
-/**
- * TODO: Bits and pieces of this can and should move into `../../components` so that other demos
- * that support attacks can use this code. The bit we need to figure out before doing so it
- * what the output looks like, and how generic it actually is.
- */
-export const Attacks = ({ model, input }: Props) => {
+export const Attacks = <I,>({ model, input, target }: Props<I>) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -35,11 +30,12 @@ export const Attacks = ({ model, input }: Props) => {
                 {supportedAttackTypes.has(AttackType.InputReduction) ? (
                     <Collapse.Panel key={AttackType.InputReduction} header="Input Reduction">
                         {/* TODO: Replace `any` with a better type once we know what it is. */}
-                        <Attack<Input, any>
+                        <Attack<I, any>
                             type={AttackType.InputReduction}
-                            target="question"
+                            target={target}
                             gradient={GradientInputField.Input2}
-                            input={input}>
+                            input={input}
+                            action="Reduce Input">
                             {({ output }) => <PrettyPrintedJSON json={output} />}
                         </Attack>
                     </Collapse.Panel>
@@ -47,11 +43,12 @@ export const Attacks = ({ model, input }: Props) => {
                 {supportedAttackTypes.has(AttackType.HotFlip) ? (
                     <Collapse.Panel key={AttackType.HotFlip} header="HotFlip">
                         {/* TODO: Replace `any` with a better type once we know what it is. */}
-                        <Attack<Input, any>
+                        <Attack<I, any>
                             type={AttackType.HotFlip}
-                            target="question"
+                            target={target}
                             gradient={GradientInputField.Input2}
-                            input={input}>
+                            input={input}
+                            action="Flip Words">
                             {({ output }) => <PrettyPrintedJSON json={output} />}
                         </Attack>
                     </Collapse.Panel>

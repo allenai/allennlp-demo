@@ -25,9 +25,10 @@ interface Props<I, O> {
     target: keyof I & string;
     gradient: GradientInputField;
     children: (io: { input: AttackRequest<I>; output: O }) => React.ReactNode | JSX.Element;
+    action: string;
 }
 
-export const Attack = <I, O>({ type, input, children, target, gradient }: Props<I, O>) => {
+export const Attack = <I, O>({ type, input, children, target, gradient, action }: Props<I, O>) => {
     const [submitted, setSubmitted] = React.useState(false);
 
     const ctx = React.useContext(Models);
@@ -53,7 +54,7 @@ export const Attack = <I, O>({ type, input, children, target, gradient }: Props<
     return (
         <>
             <Button type="primary" onClick={() => setSubmitted(true)}>
-                Submit Attack
+                {action}
             </Button>
             {submitted ? (
                 <Promised input={attackInput} fetch={fetchAttackOutput}>

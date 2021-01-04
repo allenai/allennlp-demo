@@ -39,9 +39,3 @@ export class InvalidHighlightRangeError extends Error {
         super(`Invalid Highlight Range: ${msg}`);
     }
 }
-
-export class InvalidExamplesFormatError extends Error {
-    constructor(msg: string) {
-        super(`Examples are in the wrong format: ${msg}`);
-    }
-}
