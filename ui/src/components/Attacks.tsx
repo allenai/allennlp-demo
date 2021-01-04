@@ -14,7 +14,7 @@ interface Props<I> {
     target: keyof I & string;
 }
 
-export const Attacks = <I,>({ model, input, target }: Props<I>) => {
+export const Attacks = <I, O>({ model, input, target }: Props<I>) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -29,26 +29,24 @@ export const Attacks = <I,>({ model, input, target }: Props<I>) => {
             <Collapse>
                 {supportedAttackTypes.has(AttackType.InputReduction) ? (
                     <Collapse.Panel key={AttackType.InputReduction} header="Input Reduction">
-                        {/* TODO: Replace `any` with a better type once we know what it is. */}
-                        <Attack<I, any>
+                        <Attack<I, O>
                             type={AttackType.InputReduction}
                             target={target}
                             gradient={GradientInputField.Input2}
                             input={input}
-                            action="Reduce Input">
+                            label="Reduce Input">
                             {({ output }) => <PrettyPrintedJSON json={output} />}
                         </Attack>
                     </Collapse.Panel>
                 ) : null}
                 {supportedAttackTypes.has(AttackType.HotFlip) ? (
                     <Collapse.Panel key={AttackType.HotFlip} header="HotFlip">
-                        {/* TODO: Replace `any` with a better type once we know what it is. */}
-                        <Attack<I, any>
+                        <Attack<I, O>
                             type={AttackType.HotFlip}
                             target={target}
                             gradient={GradientInputField.Input2}
                             input={input}
-                            action="Flip Words">
+                            label="Flip Words">
                             {({ output }) => <PrettyPrintedJSON json={output} />}
                         </Attack>
                     </Collapse.Panel>
