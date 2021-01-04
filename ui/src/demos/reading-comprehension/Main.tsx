@@ -14,10 +14,11 @@ import {
     Passage,
     Submit,
 } from '../../tugboat/components';
-import { MultiModelDemo, Predict, Interpreters, Attacks } from '../../components';
+import { MultiModelDemo, Predict, Interpreters } from '../../components';
 import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
+import { Attacks } from './Attacks';
 import { Predictions } from './Predictions';
 import { Input, Prediction } from './types';
 

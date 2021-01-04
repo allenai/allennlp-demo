@@ -1,20 +1,24 @@
 import React from 'react';
 import { Collapse } from 'antd';
 
-import { Output, PrettyPrintedJSON } from '../tugboat/components';
-import { Model } from '../tugboat/lib';
+import { Output, PrettyPrintedJSON } from '../../tugboat/components';
+import { Model } from '../../tugboat/lib';
 
-import { Attack } from './Attack';
-import { ModelInfoList } from '../context';
-import { AttackType, GradientInputField } from '../lib';
+import { Attack } from '../../components/Attack';
+import { ModelInfoList } from '../../context';
+import { AttackType, GradientInputField } from '../../lib';
+import { Input } from './types';
 
-interface Props<I> {
+type InputReductionAttackOutput = any;
+type HotflipAttackOutput = any;
+
+interface Props {
     model: Model;
-    input: I;
-    target: keyof I & string;
+    input: Input;
+    target: keyof Input & string;
 }
 
-export const Attacks = <I, O>({ model, input, target }: Props<I>) => {
+export const Attacks = ({ model, input, target }: Props) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -29,7 +33,7 @@ export const Attacks = <I, O>({ model, input, target }: Props<I>) => {
             <Collapse>
                 {supportedAttackTypes.has(AttackType.InputReduction) ? (
                     <Collapse.Panel key={AttackType.InputReduction} header="Input Reduction">
-                        <Attack<I, O>
+                        <Attack<Input, InputReductionAttackOutput>
                             type={AttackType.InputReduction}
                             target={target}
                             gradient={GradientInputField.Input2}
@@ -41,7 +45,7 @@ export const Attacks = <I, O>({ model, input, target }: Props<I>) => {
                 ) : null}
                 {supportedAttackTypes.has(AttackType.HotFlip) ? (
                     <Collapse.Panel key={AttackType.HotFlip} header="HotFlip">
-                        <Attack<I, O>
+                        <Attack<Input, HotflipAttackOutput>
                             type={AttackType.HotFlip}
                             target={target}
                             gradient={GradientInputField.Input2}
