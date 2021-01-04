@@ -9,7 +9,6 @@ import {
     Output,
     SelectModel,
     SelectExample,
-    Fields,
     Question,
     Passage,
     Submit,
@@ -32,27 +31,23 @@ export const Main = () => {
                 <Tabs>
                     <Tabs.TabPane tab="Demo" key="Demo">
                         <SelectExample displayProp="question" placeholder="Select a Question…" />
-                        <Predict<Input, Prediction>>
-                            <Fields>
-                                <Passage />
-                                <Question />
-                                <Submit>Run Model</Submit>
-                            </Fields>
-                            <Output<Input, Prediction>>
-                                {({ model, input, output }) => (
-                                    <Output.Sections>
-                                        <Predictions model={model} input={input} output={output} />
-                                        {isWithTokenizedInput(output) ? (
-                                            <Interpreters
-                                                model={model}
-                                                input={input}
-                                                tokens={output}
-                                            />
-                                        ) : null}
-                                        <Attacks model={model} input={input} target="question" />
-                                    </Output.Sections>
-                                )}
-                            </Output>
+                        <Predict<Input, Prediction>
+                            fields={
+                                <>
+                                    <Passage />
+                                    <Question />
+                                    <Submit>Run Model</Submit>
+                                </>
+                            }>
+                            {({ model, input, output }) => (
+                                <Output>
+                                    <Predictions model={model} input={input} output={output} />
+                                    {isWithTokenizedInput(output) ? (
+                                        <Interpreters model={model} input={input} tokens={output} />
+                                    ) : null}
+                                    <Attacks model={model} input={input} target="question" />
+                                </Output>
+                            )}
                         </Predict>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Model Card" key="Card">
