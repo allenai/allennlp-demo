@@ -40,7 +40,7 @@ export const TextWithHighlight = (props: Props) => {
     // add any remaining text
     const leadout = props.text.slice(lastEndIndex, props.text.length);
     ranges.push(<span key="leadout">{leadout}</span>);
-    return <>{ranges}</>;
+    return <span>{ranges}</span>;
 };
 
 const Highlight = styled.span<{ color?: string }>`

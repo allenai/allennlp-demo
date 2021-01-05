@@ -61,11 +61,20 @@ export enum NAQANetAnswerType {
     Arithmetic = 'arithmetic',
 }
 
+export interface NumberWithSign {
+    value: number;
+    span: [number, number];
+    sign: number;
+}
+
 export interface NAQANetPrediction extends WithTokenizedInput {
     answer: {
-        'answer-type': NAQANetAnswerType;
-        spans: number[];
-        value: string;
+        answer_type: NAQANetAnswerType;
+        // NOTE: the backend returns very different responses based on the type
+        spans?: [number, number][];
+        value?: string;
+        numbers?: NumberWithSign[];
+        count?: number;
     };
     loss: number;
     passage_question_attention: number[][];
@@ -81,13 +90,29 @@ export const isNAQANetPrediction = (x: Prediction): x is NAQANetPrediction => {
     return (
         isWithTokenizedInput(x) &&
         xx.answer !== undefined &&
-        xx.answer['answer-type'] !== undefined &&
-        xx.answer.spans !== undefined &&
-        xx.answer.value !== undefined &&
+        xx.answer.answer_type !== undefined &&
+        (xx.answer.spans !== undefined ||
+            xx.answer.value !== undefined ||
+            xx.answer.numbers !== undefined ||
+            xx.answer.count !== undefined) &&
         xx.loss !== undefined &&
         xx.passage_question_attention !== undefined &&
         xx.question_id !== undefined
     );
 };
 
-export type Prediction = BiDAFPrediction | TransformerQAPrediction | NAQANetPrediction;
+export interface NMNPrediction {
+    // TODO
+}
+
+export const isNMNPrediction = (x: Prediction): x is NMNPrediction => {
+    // TODO
+    // const xx = x as NMNPrediction;
+    return false;
+};
+
+export type Prediction =
+    | BiDAFPrediction
+    | TransformerQAPrediction
+    | NAQANetPrediction
+    | NMNPrediction;
