@@ -22,6 +22,12 @@ export class UnexpectedModelError extends Error {
     }
 }
 
+export class InvalidModelResponseError extends Error {
+    constructor(modelId: string) {
+        super(`Unexpected response from model: ${modelId}`);
+    }
+}
+
 export class UnknownActionError extends Error {
     constructor(actionName: string) {
         super(`Unknown action: ${actionName}`);
@@ -31,11 +37,5 @@ export class UnknownActionError extends Error {
 export class UnknownStateError extends Error {
     constructor(state: any) {
         super(`Unknown state: ${state.constructor.name}`);
-    }
-}
-
-export class InvalidHighlightRangeError extends Error {
-    constructor(msg: string) {
-        super(`Invalid Highlight Range: ${msg}`);
     }
 }

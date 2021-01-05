@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { InvalidHighlightRangeError } from '../error';
+export class InvalidHighlightRangeError extends Error {
+    constructor(msg: string) {
+        super(`Invalid Highlight Range: ${msg}`);
+    }
+}
 
 interface Highlights {
     start: number;
@@ -40,7 +44,7 @@ export const TextWithHighlight = (props: Props) => {
     // add any remaining text
     const leadout = props.text.slice(lastEndIndex, props.text.length);
     ranges.push(<span key="leadout">{leadout}</span>);
-    return <>{ranges}</>;
+    return <span>{ranges}</span>;
 };
 
 const Highlight = styled.span<{ color?: string }>`
