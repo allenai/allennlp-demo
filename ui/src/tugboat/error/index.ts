@@ -24,7 +24,7 @@ export class UnexpectedModelError extends Error {
 
 export class InvalidModelResponseError extends Error {
     constructor(modelId: string) {
-        super(`The type of the response does not match the model: ${modelId}`);
+        super(`Unexpected response from model: ${modelId}`);
     }
 }
 
