@@ -1,7 +1,12 @@
 import React from 'react';
 import { Collapse } from 'antd';
 
-import { PrettyPrintedJSON, TextWithHighlight, Output, Result } from '../../tugboat/components';
+import {
+    PrettyPrintedJSON,
+    TextWithHighlight,
+    Output,
+    ModelSuccess,
+} from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 import { ModelId } from '../../lib';
 import { UnexpectedModelError } from '../../tugboat/error';
@@ -17,7 +22,7 @@ import {
     isTransformerQAPrediction,
 } from './types';
 
-export const Predictions = ({ input, output, model }: Result<Input, Prediction>) => (
+export const Predictions = ({ input, output, model }: ModelSuccess<Input, Prediction>) => (
     <Output.Section title="Model Output">
         <OutputByModel input={input} output={output} model={model} />
 

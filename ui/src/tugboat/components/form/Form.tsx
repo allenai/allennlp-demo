@@ -3,7 +3,8 @@ import { Divider, Form as AntForm } from 'antd';
 
 import { Models, Examples } from '../../context';
 import { NoSelectedModelError } from '../../error';
-import { Promised } from '../Promised';
+import { Promised, Success } from '../Promised';
+import { Model } from '../../lib';
 
 class EmptyFormError extends Error {
     constructor() {
@@ -14,57 +15,62 @@ class EmptyFormError extends Error {
     }
 }
 
-class InvalidPredictChildrenError extends Error {
-    constructor() {
-        super(
-            'The <Predict /> element expects exactly 2 children. The first must be a ' +
-                '<PredictInput /> and the second must be a <PredictOutput />.'
-        );
-    }
-}
+export type ModelSuccess<I, O> = Success<I, O> & { model: Model };
+export type ModelSuccessRenderer<I, O> = (io: ModelSuccess<I, O>) => React.ReactNode | JSX.Element;
 
-interface Props {
+interface Props<I, O> {
     action: (modelId: string) => string;
-    children: React.ReactNode;
+    fields: React.ReactNode | JSX.Element;
+    children: ModelSuccessRenderer<I, O>;
 }
 
 /**
- * A component for rendering a form that the user should complete, and the output that's returned
- * when the user submits the data they entered in.
+ * A component for rendering a form for user-provided input.
  *
- * The `<Form />` component expects exactly two children:
+ * The inputs you'd like from the user should be passed as the `fields` property. Any valid
+ * JSX expression can be passed, though for the data to be captured and dispatched to your
+ * `action` each input must derive from `antd.Input`. There's probably an appropriate
+ * input for the field type you're looking for provided by tugboat.
  *
- * 1. The first child must be a `<Fields />` component. The inputs that you want the user to
- *    provide should be rendered as children of that element.
+ * The form expects a single child that's a function. The function will be passed a single
+ * property which has information about the selected `model`, the user submitted `input`
+ * and the `output` that was returned via the provided `action`.
  *
- * 2. The second child must be a `<Output />` component. It'll be passed two props, `input`
- *    and `output`.
+ * The function is only called when the `action` succeeds. While the `action` is being processed
+ * a loading indicator is shown. If the `action` failds an error is shown to the user.
  *
  * @example
- *  <Form>
- *      <Fields>
- *          <Passage>
- *          <Question>
- *      </Fields>
- *      <Output>{ ({ input, output }) => (
- *          <b>The model's answer to "`${input.question}`" was: "${output.best_span}".</b>
- *      ) }</Output>
- *  </Form>
+ * <Form<Input, Prediction>
+ *     fields={
+ *         <>
+ *             <Question>
+ *             <Passage>
+ *         </>
+ *     }>
+ *     {({ model, input, output }) => (
+ *         <Output>
+ *             <Output.Section>
+ *                 <h3>Returned Output</h3>
+ *                 <code>{JSON.stringify(output, null, 2)}</code>
+ *             </Output.Section>
+ *         </Output>
+ *     )}
+ * </Form>
  */
-export const Form = <I, O>(props: Props) => {
+export const Form = <I, O>(props: Props<I, O>) => {
     const [input, setInput] = React.useState<I>();
     const [form] = AntForm.useForm<I>();
 
     const models = React.useContext(Models);
-    const submit = (i?: I) => {
-        if (!i) {
+    const submit = (body?: I) => {
+        if (!body) {
             throw new EmptyFormError();
         }
         if (!models.selectedModel) {
             throw new NoSelectedModelError();
         }
         const url = props.action(models.selectedModel.id);
-        const opt = { method: 'POST', body: JSON.stringify(i) };
+        const opt = { method: 'POST', body: JSON.stringify(body) };
         return fetch(url, opt).then((r) => r.json());
     };
 
@@ -90,20 +96,6 @@ export const Form = <I, O>(props: Props) => {
         }
     }, [examples.selectedExample]);
 
-    // We do our best to make sure the children match the format we expect. That said we can't
-    // wasn't able to figure out how to do that.
-    const children = React.Children.toArray(props.children);
-    if (!children || children.length !== 2) {
-        throw new InvalidPredictChildrenError();
-    }
-    const [firstChild, secondChild] = React.Children.toArray(children);
-    if (!React.isValidElement(firstChild)) {
-        throw new InvalidPredictChildrenError();
-    }
-    if (!React.isValidElement(secondChild)) {
-        throw new InvalidPredictChildrenError();
-    }
-
     return (
         <>
             <AntForm<I>
@@ -111,19 +103,18 @@ export const Form = <I, O>(props: Props) => {
                 hideRequiredMark
                 onFinish={(v) => setInput(v)}
                 form={form}>
-                {firstChild}
+                {props.fields}
             </AntForm>
             {input ? (
                 <>
                     <Divider />
                     <Promised<I, O> input={input} fetch={submit}>
-                        {({ input, output }) =>
-                            React.cloneElement(secondChild, {
-                                model: models.selectedModel,
-                                input,
-                                output,
-                            })
-                        }
+                        {(io) => {
+                            if (!models.selectedModel) {
+                                throw new NoSelectedModelError();
+                            }
+                            return props.children({ ...io, model: models.selectedModel });
+                        }}
                     </Promised>
                 </>
             ) : null}

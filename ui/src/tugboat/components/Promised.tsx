@@ -5,10 +5,16 @@ import { Loading } from './shared';
 import { ErrorMessage } from './ErrorMessage';
 import { UnknownStateError } from '../error';
 
+export interface Success<I, O> {
+    input: I;
+    output: O;
+}
+export type SuccessRenderer<I, O> = (io: Success<I, O>) => React.ReactNode | JSX.Element;
+
 interface Props<I, O> {
     input?: I;
     fetch: (i?: I) => Promise<O>;
-    children: (io: { input: I; output: O }) => React.ReactNode | JSX.Element;
+    children: SuccessRenderer<I, O>;
     errorMessage?: string;
 }
 
