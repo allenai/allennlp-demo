@@ -5,8 +5,8 @@ import {
     PrettyPrintedJSON,
     TextWithHighlight,
     Output,
-    Result,
     ArithmeticEquation,
+    ModelSuccess,
 } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 import { ModelId } from '../../lib';
@@ -24,7 +24,7 @@ import {
     isNMNPrediction,
 } from './types';
 
-export const Predictions = ({ input, output, model }: Result<Input, Prediction>) => (
+export const Predictions = ({ input, output, model }: ModelSuccess<Input, Prediction>) => (
     <Output.Section title="Model Output">
         <OutputByModel input={input} output={output} model={model} />
 
