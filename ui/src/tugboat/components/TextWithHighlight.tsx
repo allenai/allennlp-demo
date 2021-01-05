@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { InvalidHighlightRangeError } from '../error';
+export class InvalidHighlightRangeError extends Error {
+    constructor(msg: string) {
+        super(`Invalid Highlight Range: ${msg}`);
+    }
+}
 
 interface Highlights {
     start: number;

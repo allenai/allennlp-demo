@@ -2,24 +2,34 @@ import React from 'react';
 
 interface NumberWithSign {
     value: number;
-    span: [number, number];
     sign: number;
 }
-
 interface Props {
     numbersWithSign: NumberWithSign[];
+    answer: string;
+    answerAtEnd?: boolean;
 }
-
-export const ArithmeticEquation = ({ numbersWithSign }: Props) => {
-    if (numbersWithSign) {
-        let ret = numbersWithSign
-            .filter((n) => n.sign !== 0)
-            .map((n) => `${n.sign > 0 ? '+' : '-'} ${n.value}`)
-            .join(' ');
-        while (ret.charAt(0) === '+' || ret.charAt(0) === ' ') {
-            ret = ret.substr(1);
+export const ArithmeticEquation = ({ numbersWithSign, answer, answerAtEnd }: Props) => {
+    let expression = '';
+    for (const { sign, value } of numbersWithSign) {
+        // Filter expressions that evaluate to 0
+        if (sign === 0) {
+            continue;
         }
-        return <span>{ret}</span>;
+
+        // Trim leading "+" characters
+        if (sign > 0 && expression.length === 0) {
+            expression = `${value}`;
+            continue;
+        }
+
+        expression += ` ${sign > 0 ? '+' : '-'} ${value}`;
     }
-    return null;
+    if (answerAtEnd) {
+        expression = `${expression.trim()} = ${answer}`;
+    } else {
+        expression = `${answer} = ${expression.trim()}`;
+    }
+
+    return <code>{expression}</code>;
 };

@@ -61,20 +61,9 @@ export enum NAQANetAnswerType {
     Arithmetic = 'arithmetic',
 }
 
-export interface NumberWithSign {
-    value: number;
-    span: [number, number];
-    sign: number;
-}
-
 export interface NAQANetPrediction extends WithTokenizedInput {
     answer: {
         answer_type: NAQANetAnswerType;
-        // NOTE: the backend returns very different responses based on the type
-        spans?: [number, number][];
-        value?: string;
-        numbers?: NumberWithSign[];
-        count?: number;
     };
     loss: number;
     passage_question_attention: number[][];
@@ -91,13 +80,71 @@ export const isNAQANetPrediction = (x: Prediction): x is NAQANetPrediction => {
         isWithTokenizedInput(x) &&
         xx.answer !== undefined &&
         xx.answer.answer_type !== undefined &&
-        (xx.answer.spans !== undefined ||
-            xx.answer.value !== undefined ||
-            xx.answer.numbers !== undefined ||
-            xx.answer.count !== undefined) &&
         xx.loss !== undefined &&
         xx.passage_question_attention !== undefined &&
         xx.question_id !== undefined
+    );
+};
+
+export interface NAQANetPredictionSpan extends NAQANetPrediction {
+    answer: {
+        answer_type: NAQANetAnswerType;
+        spans: [number, number][];
+        value: string;
+    };
+}
+
+export const isNAQANetPredictionSpan = (x: Prediction): x is NAQANetPredictionSpan => {
+    const xx = x as NAQANetPredictionSpan;
+    return (
+        isNAQANetPrediction(x) &&
+        xx.answer !== undefined &&
+        (xx.answer.answer_type === NAQANetAnswerType.PassageSpan ||
+            xx.answer.answer_type === NAQANetAnswerType.QuestionSpan) &&
+        xx.answer.spans !== undefined &&
+        xx.answer.value !== undefined
+    );
+};
+
+export interface NAQANetPredictionCount extends NAQANetPrediction {
+    answer: {
+        answer_type: NAQANetAnswerType;
+        count: number;
+    };
+}
+
+export const isNAQANetPredictionCount = (x: Prediction): x is NAQANetPredictionCount => {
+    const xx = x as NAQANetPredictionCount;
+    return (
+        isNAQANetPrediction(x) &&
+        xx.answer !== undefined &&
+        xx.answer.answer_type === NAQANetAnswerType.Count &&
+        xx.answer.count !== undefined
+    );
+};
+
+export interface NumberWithSign {
+    value: number;
+    span: [number, number];
+    sign: number;
+}
+
+export interface NAQANetPredictionArithmetic extends NAQANetPrediction {
+    answer: {
+        answer_type: NAQANetAnswerType;
+        value: string;
+        numbers: NumberWithSign[];
+    };
+}
+
+export const isNAQANetPredictionArithmetic = (x: Prediction): x is NAQANetPredictionArithmetic => {
+    const xx = x as NAQANetPredictionArithmetic;
+    return (
+        isNAQANetPrediction(x) &&
+        xx.answer !== undefined &&
+        xx.answer.answer_type === NAQANetAnswerType.Arithmetic &&
+        xx.answer.value !== undefined &&
+        xx.answer.numbers !== undefined
     );
 };
 
