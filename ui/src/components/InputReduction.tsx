@@ -1,9 +1,11 @@
 import React from 'react';
 import { RedToken, TransparentToken, BlankToken } from './Tokens';
 
-// takes in the input before and after input reduction and highlights
-// the words that were removed in red with strikeout. The reducedInput
-// will have a less than or equal to length than the originalInput.
+/**
+ * Takes in the input before and after input reduction and highlights
+ * the words that were removed in red with strikeout. The reducedInput
+ * will have a less than or equal to length than the originalInput.
+ */
 const colorizeTokensForInputReductionUI = (originalInput: string[], reducedInput: string[]) => {
     const originalStringColorized = [];
     const reducedStringColorized = [];
@@ -21,9 +23,11 @@ const colorizeTokensForInputReductionUI = (originalInput: string[], reducedInput
             idx++;
             idx2++;
         } else {
-            // if the words are not equal, keep traversing along the original list, making
-            // each token red as you go along. Also add a blank placeholder into the
-            // reduced list to make the words line up spacing wise in the UI.
+            /**
+             * If the words are not equal, keep traversing along the original list, making
+             * each token red as you go along. Also add a blank placeholder into the
+             * reduced list to make the words line up spacing wise in the UI.
+             */
             while (idx <= originalInput.length && originalInput[idx] !== reducedInput[idx2]) {
                 originalStringColorized.push(
                     <RedToken key={idx}>
@@ -51,11 +55,13 @@ export interface InputReductionAttackOutput {
 }
 
 export const InputReduction = (reducedInput: InputReductionAttackOutput) => {
-    // There are a number of ways to tweak the output of this component:
-    // (1) you can provide a context, which shows up on top, e.g., for displaying the
-    // premise for SNLI.
-    // (2) you can format the original input and the reduced input yourself, to
-    // customize the display for, e.g., NER.
+    /**
+     * There are a number of ways to tweak the output of this component:
+     * (1) you can provide a context, which shows up on top, e.g., for displaying the
+     * premise for SNLI.
+     * (2) you can format the original input and the reduced input yourself, to
+     * customize the display for, e.g., NER.
+     */
     const original = reducedInput.original;
     const formattedOriginal = reducedInput.formattedOriginal;
     return (
