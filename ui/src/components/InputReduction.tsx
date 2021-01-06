@@ -51,7 +51,7 @@ const highlightRemovedTokens = (originalInput: string[], reducedInput: string[])
 
 export interface InputReductionAttackOutput {
     original: string[];
-    final: string[][]; // odd, the current api returns 'final' but the old ui code used 'reduced', makes me worried about the rest of these props
+    final: string[][];
     formattedOriginal?: string;
     formattedReduced?: string[];
     context?: string;
@@ -76,44 +76,77 @@ export const InputReduction = ({
             {formattedOriginal ? <span>{formattedOriginal}</span> : null}
 
             {formattedReduced ? (
-                <>
-                    {!formattedOriginal ? (
-                        <p>
-                            <h6>Original Input:</h6> {original}
-                        </p>
-                    ) : null}
-
-                    {(formattedReduced || []).map((formattedReduced: string) => (
-                        <span key={formattedReduced}>{formattedReduced}</span>
-                    ))}
-                </>
+                <PreformatedOutput
+                    original={original}
+                    formattedOriginal={formattedOriginal}
+                    formattedReduced={formattedReduced}
+                />
             ) : (
-                <>
-                    {final.map((reduced: string[]) => {
-                        const [originalColored, reducedColored] = highlightRemovedTokens(
-                            original,
-                            reduced
-                        );
-                        return (
-                            <>
-                                {!formattedOriginal ? (
-                                    <p>
-                                        <h6>Original Input:</h6> {originalColored}
-                                    </p>
-                                ) : null}
-
-                                <p>
-                                    <h6>Reduced Input:</h6> {reducedColored}
-                                </p>
-
-                                {original.length === reduced.length ? (
-                                    <p>(No reduction was possible)</p>
-                                ) : null}
-                            </>
-                        );
-                    })}
-                </>
+                <DefaultOutput
+                    original={original}
+                    final={final}
+                    formattedOriginal={formattedOriginal}
+                />
             )}
         </div>
+    );
+};
+
+const PreformatedOutput = ({
+    original,
+    formattedOriginal,
+    formattedReduced,
+}: {
+    original: string[];
+    formattedOriginal?: string;
+    formattedReduced: string[];
+}) => {
+    return (
+        <>
+            {!formattedOriginal ? (
+                <p>
+                    <h6>Original Input:</h6> {original}
+                </p>
+            ) : null}
+
+            {formattedReduced.map((formattedReduced: string) => (
+                <span key={formattedReduced}>{formattedReduced}</span>
+            ))}
+        </>
+    );
+};
+
+const DefaultOutput = ({
+    original,
+    final,
+    formattedOriginal,
+}: {
+    original: string[];
+    final: string[][];
+    formattedOriginal?: string;
+}) => {
+    return (
+        <>
+            {final.map((reduced: string[]) => {
+                const [originalColored, reducedColored] = highlightRemovedTokens(original, reduced);
+                return (
+                    <>
+                        {!formattedOriginal ? (
+                            <p>
+                                <h6>Original Input:</h6> {originalColored}
+                            </p>
+                        ) : null}
+
+                        <p>
+                            <h6>Reduced Input:</h6> {reducedColored}
+                        </p>
+
+                        {original.length === reduced.length ? (
+                            <p>(No reduction was possible)</p>
+                        ) : null}
+                    </>
+                );
+            })}
+        </>
     );
 };
