@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-export const ColorizedToken = styled.span<{ backgroundColor?: string }>`
-    background-color: ${({ backgroundColor }) => backgroundColor};
+export const HighlightedToken = styled.span<{ background?: string }>`
+    background-color: ${({ background: backgroundColor }) => backgroundColor};
     padding: 1px 2px;
     margin: 1px 2px;
     display: inline-block;
@@ -9,22 +9,22 @@ export const ColorizedToken = styled.span<{ backgroundColor?: string }>`
 `;
 
 // red token used to represent deletion in InputReduction and replacement in HotFlip
-export const RedToken = styled(ColorizedToken)`
+export const RedToken = styled(HighlightedToken)`
     background-color: ${({ theme }) => theme.color.R5};
 `;
 
 // green token used to represent addition in HotFlip
-export const GreenToken = styled(ColorizedToken)`
+export const GreenToken = styled(HighlightedToken)`
     background-color: ${({ theme }) => theme.color.G5};
 `;
 
 // transparent token used to have correct spacing of elements in HotFlip
-export const TransparentToken = styled(ColorizedToken)`
+export const TransparentToken = styled(HighlightedToken)`
     background-color: 'transparent';
 `;
 
 // all white (the UI doesn't display it) token used in InputReduction to show removal
-export const BlankToken = styled(ColorizedToken)`
+export const BlankToken = styled(HighlightedToken)`
     background-color: transparent;
     color: transparent;
 `;

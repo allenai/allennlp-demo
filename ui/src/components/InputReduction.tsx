@@ -6,40 +6,43 @@ import { RedToken, TransparentToken, BlankToken } from './Tokens';
  * the words that were removed in red with strikeout. The reducedInput
  * will have a less than or equal to length than the originalInput.
  */
-const colorizeTokensForInputReductionUI = (originalInput: string[], reducedInput: string[]) => {
+const highlightRemovedTokens = (originalInput: string[], reducedInput: string[]) => {
+    // TODO: consider moveing the logic of what to remove to the backend api
+    // payload could be: [ { "token": "The", "removed": false }, { "token": "quick", "removed": true } ]
     const originalStringColorized = [];
     const reducedStringColorized = [];
-    let idx = 0;
-    let idx2 = 0;
-    while (idx2 <= reducedInput.length) {
+    let originalIdx = 0;
+    let reducedIdx = 0;
+    while (reducedIdx <= reducedInput.length) {
         // if the words are equal, then no red highlight needed (transparent background)
-        if (originalInput[idx] === reducedInput[idx2]) {
+        if (originalInput[originalIdx] === reducedInput[reducedIdx]) {
             originalStringColorized.push(
-                <TransparentToken key={idx}>{originalInput[idx]}</TransparentToken>
+                <TransparentToken key={originalIdx}>{originalInput[originalIdx]}</TransparentToken>
             );
             reducedStringColorized.push(
-                <TransparentToken key={idx}>{reducedInput[idx2]}</TransparentToken>
+                <TransparentToken key={originalIdx}>{reducedInput[reducedIdx]}</TransparentToken>
             );
-            idx++;
-            idx2++;
+            originalIdx++;
+            reducedIdx++;
         } else {
-            /**
-             * If the words are not equal, keep traversing along the original list, making
-             * each token red as you go along. Also add a blank placeholder into the
-             * reduced list to make the words line up spacing wise in the UI.
-             */
-            while (idx <= originalInput.length && originalInput[idx] !== reducedInput[idx2]) {
+            // If the words are not equal, keep traversing along the original list, making
+            // each token red as you go along. Also add a blank placeholder into the
+            // reduced list to make the words line up spacing wise in the UI.
+            while (
+                originalIdx <= originalInput.length &&
+                originalInput[originalIdx] !== reducedInput[reducedIdx]
+            ) {
                 originalStringColorized.push(
-                    <RedToken key={idx}>
-                        <s>{originalInput[idx]}</s>
+                    <RedToken key={originalIdx}>
+                        <s>{originalInput[originalIdx]}</s>
                     </RedToken>
                 );
                 reducedStringColorized.push(
-                    <BlankToken color="transparent" key={idx}>
-                        {originalInput[idx]}
+                    <BlankToken color="transparent" key={originalIdx}>
+                        {originalInput[originalIdx]}
                     </BlankToken>
                 );
-                idx++;
+                originalIdx++;
             }
         }
     }
@@ -48,29 +51,31 @@ const colorizeTokensForInputReductionUI = (originalInput: string[], reducedInput
 
 export interface InputReductionAttackOutput {
     original: string[];
-    final: string[][]; // odd, the current api retuns 'final' but the old ui code used 'reduced', makes me worried about the rest of these props
+    final: string[][]; // odd, the current api returns 'final' but the old ui code used 'reduced', makes me worried about the rest of these props
     formattedOriginal?: string;
     formattedReduced?: string[];
     context?: string;
 }
 
-export const InputReduction = (reducedInput: InputReductionAttackOutput) => {
-    /**
-     * There are a number of ways to tweak the output of this component:
-     * (1) you can provide a context, which shows up on top, e.g., for displaying the
-     * premise for SNLI.
-     * (2) you can format the original input and the reduced input yourself, to
-     * customize the display for, e.g., NER.
-     */
-    const original = reducedInput.original;
-    const formattedOriginal = reducedInput.formattedOriginal;
+export const InputReduction = ({
+    original,
+    final,
+    formattedOriginal,
+    formattedReduced,
+    context,
+}: InputReductionAttackOutput) => {
+    // There are a number of ways to tweak the output of this component:
+    // (1) you can provide a context, which shows up on top, e.g., for displaying the
+    // premise for SNLI.
+    // (2) you can format the original input and the reduced input yourself, to
+    // customize the display for, e.g., NER.
     return (
         <div>
-            {reducedInput.context ? <span>{reducedInput.context}</span> : null}
+            {context ? <span>{context}</span> : null}
 
             {formattedOriginal ? <span>{formattedOriginal}</span> : null}
 
-            {reducedInput.formattedReduced ? (
+            {formattedReduced ? (
                 <>
                     {!formattedOriginal ? (
                         <p>
@@ -78,15 +83,14 @@ export const InputReduction = (reducedInput: InputReductionAttackOutput) => {
                         </p>
                     ) : null}
 
-                    {(reducedInput.formattedReduced || []).map((formattedReduced: string) => (
+                    {(formattedReduced || []).map((formattedReduced: string) => (
                         <span key={formattedReduced}>{formattedReduced}</span>
                     ))}
                 </>
             ) : (
                 <>
-                    {reducedInput.final.map((reduced: string[]) => {
-                        const noReduction = JSON.stringify(original) === JSON.stringify(reduced);
-                        const [originalColored, reducedColored] = colorizeTokensForInputReductionUI(
+                    {final.map((reduced: string[]) => {
+                        const [originalColored, reducedColored] = highlightRemovedTokens(
                             original,
                             reduced
                         );
@@ -102,7 +106,9 @@ export const InputReduction = (reducedInput: InputReductionAttackOutput) => {
                                     <h6>Reduced Input:</h6> {reducedColored}
                                 </p>
 
-                                {noReduction ? <p>(No reduction was possible)</p> : null}
+                                {original.length === reduced.length ? (
+                                    <p>(No reduction was possible)</p>
+                                ) : null}
                             </>
                         );
                     })}
