@@ -61,7 +61,7 @@ export const InputReduction = (reducedInput: InputReductionAttackOutput) => {
     const original = reducedInput.original;
     const formattedOriginal = reducedInput.formattedOriginal;
     return (
-        <>
+        <div>
             {reducedInput.context ? <span>{reducedInput.context}</span> : null}
 
             {formattedOriginal ? <span>{formattedOriginal}</span> : null}
@@ -70,7 +70,7 @@ export const InputReduction = (reducedInput: InputReductionAttackOutput) => {
                 <>
                     {!formattedOriginal ? (
                         <p>
-                            <strong>Original Input:</strong> {original}
+                            <h6>Original Input:</h6> {original}
                         </p>
                     ) : null}
 
@@ -90,12 +90,12 @@ export const InputReduction = (reducedInput: InputReductionAttackOutput) => {
                             <>
                                 {!formattedOriginal ? (
                                     <p>
-                                        <strong>Original Input:</strong> {originalColored}
+                                        <h6>Original Input:</h6> {originalColored}
                                     </p>
                                 ) : null}
 
                                 <p>
-                                    <strong>Reduced Input:</strong> {reducedColored}
+                                    <h6>Reduced Input:</h6> {reducedColored}
                                 </p>
 
                                 {noReduction ? <p>(No reduction was possible)</p> : null}
@@ -104,6 +104,6 @@ export const InputReduction = (reducedInput: InputReductionAttackOutput) => {
                     })}
                 </>
             )}
-        </>
+        </div>
     );
 };
