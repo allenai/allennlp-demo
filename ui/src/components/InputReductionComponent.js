@@ -4,8 +4,6 @@ import { Collapse } from 'antd';
 
 import { RedToken, TransparentToken, BlankToken } from './Shared';
 
-// TODO: revert the file name cahnge here after moving the other file to tugboat
-
 // takes in the input before and after input reduction and highlights
 // the words that were removed in red with strikeout. The reducedInput
 // will have a less than or equal to length than the originalInput.

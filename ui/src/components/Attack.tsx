@@ -1,5 +1,3 @@
-// TODO: move to tugboat?
-
 import React from 'react';
 import { Button } from 'antd';
 

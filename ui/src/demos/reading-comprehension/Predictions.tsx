@@ -274,7 +274,7 @@ const NaqanetPrediction = ({
     throw new InvalidModelResponseError(model.id);
 };
 
-// TODO
+// TODO: add NMN viz
 const NmnPrediction = () => {
     return <span>has nmn answer</span>;
 };

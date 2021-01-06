@@ -1,5 +1,3 @@
-// TODO: move to tugboat?
-
 import styled from 'styled-components';
 
 export const ColorizedToken = styled.span<{ backgroundColor?: string }>`
@@ -20,7 +18,7 @@ export const GreenToken = styled(ColorizedToken)`
     background-color: ${({ theme }) => theme.color.G5};
 `;
 
-// green token used to represent addition in HotFlip
+// transparent token used to have correct spacing of elements in HotFlip
 export const TransparentToken = styled(ColorizedToken)`
     background-color: 'transparent';
 `;
