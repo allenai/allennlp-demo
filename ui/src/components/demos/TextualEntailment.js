@@ -6,7 +6,7 @@ import HeatMap from '../HeatMap';
 import Model from '../Model';
 import OutputField from '../OutputField';
 import SaliencyMaps from '../Saliency';
-import InputReductionComponent, { InputReductionPanel } from '../InputReduction';
+import InputReductionComponent, { InputReductionPanel } from '../InputReductionComponent';
 import {
     GRAD_INTERPRETER,
     IG_INTERPRETER,
