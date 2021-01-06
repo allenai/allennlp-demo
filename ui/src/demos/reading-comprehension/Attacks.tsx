@@ -4,10 +4,12 @@ import { Collapse } from 'antd';
 import { Output, PrettyPrintedJSON } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 
-import { Attack } from '../../components/Attack';
+import { Attack, InputReduction } from '../../components';
 import { ModelInfoList } from '../../context';
 import { AttackType, GradientInputField } from '../../lib';
 import { Input } from './types';
+
+// TODO: this file can likely be made general for use on multiple tasks
 
 // TODO: Add actual types.
 type InputReductionAttackOutput = any;
@@ -39,8 +41,20 @@ export const Attacks = ({ model, input, target }: Props) => {
                             target={target}
                             gradient={GradientInputField.Input2}
                             input={input}
-                            label="Reduce Input">
-                            {({ output }) => <PrettyPrintedJSON json={output} />}
+                            label="Reduce Input"
+                            description={
+                                <p>
+                                    <a
+                                        href="https://arxiv.org/abs/1804.07781"
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+                                        Input Reduction
+                                    </a>{' '}
+                                    removes as many words from the input as possible without
+                                    changing the model's prediction.
+                                </p>
+                            }>
+                            {({ output }) => <InputReduction {...output} />}
                         </Attack>
                     </Collapse.Panel>
                 ) : null}
@@ -51,7 +65,20 @@ export const Attacks = ({ model, input, target }: Props) => {
                             target={target}
                             gradient={GradientInputField.Input2}
                             input={input}
-                            label="Flip Words">
+                            label="Flip Words"
+                            description={
+                                <p>
+                                    <a
+                                        href="https://arxiv.org/abs/1712.06751"
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+                                        HotFlip
+                                    </a>{' '}
+                                    flips words in the input to change the model's prediction. We
+                                    iteratively flip the input word with the highest gradient until
+                                    the prediction changes.
+                                </p>
+                            }>
                             {({ output }) => <PrettyPrintedJSON json={output} />}
                         </Attack>
                     </Collapse.Panel>
