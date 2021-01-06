@@ -4,7 +4,7 @@ import { Collapse } from 'antd';
 import { Output, PrettyPrintedJSON } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 
-import { Attack, InputReduction } from '../../components';
+import { Attack, InputReduction, InputReductionAttackOutput } from '../../components';
 import { ModelInfoList } from '../../context';
 import { AttackType, GradientInputField } from '../../lib';
 import { Input } from './types';
@@ -12,7 +12,6 @@ import { Input } from './types';
 // TODO: this file can likely be made general for use on multiple tasks
 
 // TODO: Add actual types.
-type InputReductionAttackOutput = any;
 type HotflipAttackOutput = any;
 
 interface Props {

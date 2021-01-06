@@ -44,7 +44,7 @@ const colorizeTokensForInputReductionUI = (originalInput: string[], reducedInput
     return [originalStringColorized, reducedStringColorized];
 };
 
-interface Props {
+export interface InputReductionAttackOutput {
     original: string[];
     final: string[][]; // odd, the current api retuns 'final' but the old ui code used 'reduced', makes me worried about the rest of these props
     formattedOriginal?: string;
@@ -52,7 +52,7 @@ interface Props {
     context?: string;
 }
 
-export const InputReduction = (reducedInput: Props) => {
+export const InputReduction = (reducedInput: InputReductionAttackOutput) => {
     // There are a number of ways to tweak the output of this component:
     // (1) you can provide a context, which shows up on top, e.g., for displaying the
     // premise for SNLI.
