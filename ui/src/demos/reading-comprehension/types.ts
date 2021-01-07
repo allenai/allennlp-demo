@@ -163,3 +163,14 @@ export type Prediction =
     | TransformerQAPrediction
     | NAQANetPrediction
     | NMNPrediction;
+
+export const isPrediction = (x: Prediction): x is Prediction => {
+    const xx = x as Prediction;
+    return (
+        isNAQANetPrediction(xx) ||
+        isBiDAFPrediction(xx) ||
+        isTransformerQAPrediction(xx) ||
+        isNAQANetPrediction(xx) ||
+        isNMNPrediction(xx)
+    );
+};

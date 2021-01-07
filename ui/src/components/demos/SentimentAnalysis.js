@@ -7,7 +7,7 @@ import Model from '../Model';
 import OutputField from '../OutputField';
 import SaliencyMaps from '../Saliency';
 import InputReductionComponent, { InputReductionPanel } from '../InputReductionComponent';
-import HotflipComponent, { HotflipPanel } from '../Hotflip';
+import HotflipComponent, { HotflipPanel } from '../HotflipComponent';
 import {
     GRAD_INTERPRETER,
     IG_INTERPRETER,

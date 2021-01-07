@@ -6,7 +6,7 @@ import { Collapse } from 'antd';
 
 import OutputField from '../OutputField';
 import SaliencyMaps from '../Saliency';
-import HotflipComponent, { HotflipPanel } from '../Hotflip';
+import HotflipComponent, { HotflipPanel } from '../HotflipComponent';
 import { FormField, FormLabel, FormTextArea } from '../Form';
 import {
     GRAD_INTERPRETER,
