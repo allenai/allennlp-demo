@@ -7,7 +7,7 @@ import {
     TaskDescription,
     ModelCard,
     Output,
-    SelectModel,
+    SelectModelAndDescription,
     SelectExample,
     Question,
     Passage,
@@ -27,7 +27,7 @@ export const Main = () => {
             <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
                 <TaskTitle />
                 <TaskDescription />
-                <SelectModel />
+                <SelectModelAndDescription />
                 <Tabs>
                     <Tabs.TabPane tab="Demo" key="Demo">
                         <SelectExample displayProp="question" placeholder="Select a Question…" />
