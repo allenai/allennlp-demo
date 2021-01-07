@@ -34,32 +34,40 @@ const highlightFlippedTokens = (originalInput: string[], flippedInput: string[])
 export interface HotflipAttackOutput {
     final: string[][];
     original: string[];
-    new_prediction?: string;
     context?: string;
+    outputs: Output[];
+}
+export interface Output {
+    best_span: number[];
+    best_span_str: string;
+    loss: number;
+    passage_question_attention: number[][];
+    passage_tokens: string[];
+    question_tokens: string[];
+    span_end_logits: number[];
+    span_end_probs: number[];
+    span_start_logits: number[];
+    span_start_probs: number[];
+    token_offsets: number[][];
 }
 
-export const Hotflip = ({ final, original, new_prediction, context }: HotflipAttackOutput) => {
+export const Hotflip = ({ final, original, outputs, context }: HotflipAttackOutput) => {
+    const finalIndexToShow = 0;
     const [originalString, flippedString] = highlightFlippedTokens(
         original,
-        final[0] // just the first one, huh,... yuck
+        final[finalIndexToShow]
     );
 
     return (
-        <div>
+        <p>
             {context ? <span>{context}</span> : null}
-
-            <p>
-                <h6>Original Input:</h6> {originalString}
-            </p>
-            <p>
-                <h6>Flipped Input:</h6> {flippedString}
-            </p>
-
-            {new_prediction ? (
-                <p>
-                    <h6>New Prediction:</h6> {new_prediction}
-                </p>
+            <h6>Original Input:</h6> {originalString}
+            <h6>Flipped Input:</h6> {flippedString}
+            {outputs.length && outputs[0].best_span_str ? (
+                <>
+                    <h6>New Prediction:</h6> {outputs[finalIndexToShow].best_span_str}
+                </>
             ) : null}
-        </div>
+        </p>
     );
 };
