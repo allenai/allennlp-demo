@@ -2,7 +2,7 @@ import React from 'react';
 
 import { RedToken, GreenToken, TransparentToken } from './Tokens';
 
-// NOTE: The original HotFlipComponent handled targeted words to flip.  This was used in the
+// NOTE: The original HotFlipComponent handled targeted words to flip.  This was only used in the
 // masked-lm task. I have removed this functionality from this component.  We can either add it
 // back, or make a new HotflipComponent when we port masked-lm.
 
