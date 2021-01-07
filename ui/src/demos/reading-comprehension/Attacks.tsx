@@ -1,18 +1,21 @@
 import React from 'react';
 import { Collapse } from 'antd';
 
-import { Output, PrettyPrintedJSON } from '../../tugboat/components';
+import { Output } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 
-import { Attack, InputReduction, InputReductionAttackOutput } from '../../components';
+import {
+    Attack,
+    InputReduction,
+    InputReductionAttackOutput,
+    Hotflip,
+    HotflipAttackOutput,
+} from '../../components';
 import { ModelInfoList } from '../../context';
 import { AttackType, GradientInputField } from '../../lib';
 import { Input } from './types';
 
 // TODO: this file can likely be made general for use on multiple tasks
-
-// TODO: Add actual types.
-type HotflipAttackOutput = any;
 
 interface Props {
     model: Model;
@@ -78,7 +81,7 @@ export const Attacks = ({ model, input, target }: Props) => {
                                     the prediction changes.
                                 </p>
                             }>
-                            {({ output }) => <PrettyPrintedJSON json={output} />}
+                            {({ output }) => <Hotflip {...output} />}
                         </Attack>
                     </Collapse.Panel>
                 ) : null}
