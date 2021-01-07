@@ -10,6 +10,7 @@ export * from './Promised';
 export * from './Saliency';
 export * from './SelectExample';
 export * from './SelectModel';
+export * from './SelectModelAndDescription';
 export * from './shared';
 export * from './TaskDescription';
 export * from './TaskTitle';

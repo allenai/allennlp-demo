@@ -16,18 +16,18 @@ export interface BiDAFPrediction extends WithTokenizedInput {
     token_offsets: number[][];
 }
 
-export const isBiDAFPrediction = (x: Prediction): x is BiDAFPrediction => {
-    const xx = x as BiDAFPrediction;
+export const isBiDAFPrediction = (pred: Prediction): pred is BiDAFPrediction => {
+    const typedPred = pred as BiDAFPrediction;
     return (
-        isWithTokenizedInput(x) &&
-        xx.best_span !== undefined &&
-        xx.best_span_str !== undefined &&
-        xx.passage_question_attention !== undefined &&
-        xx.span_end_logits !== undefined &&
-        xx.span_end_probs !== undefined &&
-        xx.span_start_logits !== undefined &&
-        xx.span_start_probs !== undefined &&
-        xx.token_offsets !== undefined
+        isWithTokenizedInput(pred) &&
+        typedPred.best_span !== undefined &&
+        typedPred.best_span_str !== undefined &&
+        typedPred.passage_question_attention !== undefined &&
+        typedPred.span_end_logits !== undefined &&
+        typedPred.span_end_probs !== undefined &&
+        typedPred.span_start_logits !== undefined &&
+        typedPred.span_start_probs !== undefined &&
+        typedPred.token_offsets !== undefined
     );
 };
 
@@ -41,16 +41,16 @@ export interface TransformerQAPrediction {
     span_start_logits: number[];
 }
 
-export const isTransformerQAPrediction = (x: Prediction): x is TransformerQAPrediction => {
-    const xx = x as TransformerQAPrediction;
+export const isTransformerQAPrediction = (pred: Prediction): pred is TransformerQAPrediction => {
+    const typedPred = pred as TransformerQAPrediction;
     return (
-        xx.best_span !== undefined &&
-        xx.best_span_scores !== undefined &&
-        xx.best_span_str !== undefined &&
-        xx.context_tokens !== undefined &&
-        xx.id !== undefined &&
-        xx.span_end_logits !== undefined &&
-        xx.span_start_logits !== undefined
+        typedPred.best_span !== undefined &&
+        typedPred.best_span_scores !== undefined &&
+        typedPred.best_span_str !== undefined &&
+        typedPred.context_tokens !== undefined &&
+        typedPred.id !== undefined &&
+        typedPred.span_end_logits !== undefined &&
+        typedPred.span_start_logits !== undefined
     );
 };
 
@@ -74,15 +74,15 @@ export interface NAQANetPrediction extends WithTokenizedInput {
     question_id: string;
 }
 
-export const isNAQANetPrediction = (x: Prediction): x is NAQANetPrediction => {
-    const xx = x as NAQANetPrediction;
+export const isNAQANetPrediction = (pred: Prediction): pred is NAQANetPrediction => {
+    const typedPred = pred as NAQANetPrediction;
     return (
-        isWithTokenizedInput(x) &&
-        xx.answer !== undefined &&
-        xx.answer.answer_type !== undefined &&
-        xx.loss !== undefined &&
-        xx.passage_question_attention !== undefined &&
-        xx.question_id !== undefined
+        isWithTokenizedInput(pred) &&
+        typedPred.answer !== undefined &&
+        typedPred.answer.answer_type !== undefined &&
+        typedPred.loss !== undefined &&
+        typedPred.passage_question_attention !== undefined &&
+        typedPred.question_id !== undefined
     );
 };
 
@@ -94,15 +94,15 @@ export interface NAQANetPredictionSpan extends NAQANetPrediction {
     };
 }
 
-export const isNAQANetPredictionSpan = (x: Prediction): x is NAQANetPredictionSpan => {
-    const xx = x as NAQANetPredictionSpan;
+export const isNAQANetPredictionSpan = (pred: Prediction): pred is NAQANetPredictionSpan => {
+    const typedPred = pred as NAQANetPredictionSpan;
     return (
-        isNAQANetPrediction(x) &&
-        xx.answer !== undefined &&
-        (xx.answer.answer_type === NAQANetAnswerType.PassageSpan ||
-            xx.answer.answer_type === NAQANetAnswerType.QuestionSpan) &&
-        xx.answer.spans !== undefined &&
-        xx.answer.value !== undefined
+        isNAQANetPrediction(pred) &&
+        typedPred.answer !== undefined &&
+        (typedPred.answer.answer_type === NAQANetAnswerType.PassageSpan ||
+            typedPred.answer.answer_type === NAQANetAnswerType.QuestionSpan) &&
+        typedPred.answer.spans !== undefined &&
+        typedPred.answer.value !== undefined
     );
 };
 
@@ -113,13 +113,13 @@ export interface NAQANetPredictionCount extends NAQANetPrediction {
     };
 }
 
-export const isNAQANetPredictionCount = (x: Prediction): x is NAQANetPredictionCount => {
-    const xx = x as NAQANetPredictionCount;
+export const isNAQANetPredictionCount = (pred: Prediction): pred is NAQANetPredictionCount => {
+    const typedPred = pred as NAQANetPredictionCount;
     return (
-        isNAQANetPrediction(x) &&
-        xx.answer !== undefined &&
-        xx.answer.answer_type === NAQANetAnswerType.Count &&
-        xx.answer.count !== undefined
+        isNAQANetPrediction(pred) &&
+        typedPred.answer !== undefined &&
+        typedPred.answer.answer_type === NAQANetAnswerType.Count &&
+        typedPred.answer.count !== undefined
     );
 };
 
@@ -137,14 +137,16 @@ export interface NAQANetPredictionArithmetic extends NAQANetPrediction {
     };
 }
 
-export const isNAQANetPredictionArithmetic = (x: Prediction): x is NAQANetPredictionArithmetic => {
-    const xx = x as NAQANetPredictionArithmetic;
+export const isNAQANetPredictionArithmetic = (
+    pred: Prediction
+): pred is NAQANetPredictionArithmetic => {
+    const typedPred = pred as NAQANetPredictionArithmetic;
     return (
-        isNAQANetPrediction(x) &&
-        xx.answer !== undefined &&
-        xx.answer.answer_type === NAQANetAnswerType.Arithmetic &&
-        xx.answer.value !== undefined &&
-        xx.answer.numbers !== undefined
+        isNAQANetPrediction(pred) &&
+        typedPred.answer !== undefined &&
+        typedPred.answer.answer_type === NAQANetAnswerType.Arithmetic &&
+        typedPred.answer.value !== undefined &&
+        typedPred.answer.numbers !== undefined
     );
 };
 
@@ -152,9 +154,9 @@ export interface NMNPrediction {
     // TODO
 }
 
-export const isNMNPrediction = (x: Prediction): x is NMNPrediction => {
+export const isNMNPrediction = (pred: Prediction): pred is NMNPrediction => {
     // TODO
-    // const xx = x as NMNPrediction;
+    // const typedPred = pred as NMNPrediction;
     return false;
 };
 
@@ -164,13 +166,13 @@ export type Prediction =
     | NAQANetPrediction
     | NMNPrediction;
 
-export const isPrediction = (x: Prediction): x is Prediction => {
-    const xx = x as Prediction;
+export const isPrediction = (pred: Prediction): pred is Prediction => {
+    const typedPred = pred as Prediction;
     return (
-        isNAQANetPrediction(xx) ||
-        isBiDAFPrediction(xx) ||
-        isTransformerQAPrediction(xx) ||
-        isNAQANetPrediction(xx) ||
-        isNMNPrediction(xx)
+        isNAQANetPrediction(typedPred) ||
+        isBiDAFPrediction(typedPred) ||
+        isTransformerQAPrediction(typedPred) ||
+        isNAQANetPrediction(typedPred) ||
+        isNMNPrediction(typedPred)
     );
 };
