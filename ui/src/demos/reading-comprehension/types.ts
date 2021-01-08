@@ -7,7 +7,7 @@ export interface Input {
 }
 
 export interface BiDAFPrediction extends WithTokenizedInput {
-    best_span: number[];
+    best_span: number[]; // index into the token list
     best_span_str: string;
     passage_question_attention: number[][];
     span_end_logits: number[];
@@ -33,7 +33,7 @@ export const isBiDAFPrediction = (pred: Prediction): pred is BiDAFPrediction => 
 };
 
 export interface TransformerQAPrediction {
-    best_span: number[];
+    best_span: number[]; // index into the token list
     best_span_scores: number;
     best_span_str: string;
     context_tokens: string[];

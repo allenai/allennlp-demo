@@ -98,12 +98,17 @@ const BasicPrediction = ({
     input: Input;
     output: TransformerQAPrediction | BiDAFPrediction;
 }) => {
-    let best_span = output.best_span;
-    if (best_span[0] >= best_span[1]) {
-        // TODO: there is a bug in the response, so we need to calculate the best_span locally
-        const start = input.passage.indexOf(output.best_span_str);
-        best_span = [start, start + output.best_span_str.length];
+    // Best_span is a span of tokens, we dont render the tokens here,
+    // so we just find the highlightSpan locally.
+    const start = input.passage.indexOf(output.best_span_str);
+    const highlightSpan = [start, start + output.best_span_str.length];
+
+    if (highlightSpan[0] < 0 || highlightSpan[1] <= highlightSpan[0]) {
+        throw new InvalidModelResponseError(
+            `"${output.best_span_str}" does not exist in the passage.`
+        );
     }
+
     return (
         <>
             <BasicAnswer output={output} />
@@ -113,8 +118,8 @@ const BasicPrediction = ({
                     text={input.passage}
                     highlights={[
                         {
-                            start: best_span[0],
-                            end: best_span[1],
+                            start: highlightSpan[0],
+                            end: highlightSpan[1],
                         },
                     ]}
                 />
