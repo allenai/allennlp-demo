@@ -44,17 +44,22 @@ export interface HotflipAttackOutput<T> {
 }
 
 interface Props {
-    final?: string[];
-    original: string[];
-    originalPrediction: string | number;
+    newTokens?: string[];
+    originalTokens: string[];
     newPrediction?: string | number;
+    originalPrediction: string | number;
 }
 
-export const Hotflip = ({ final, original, originalPrediction, newPrediction }: Props) => {
-    if (!final) {
+export const Hotflip = ({
+    newTokens,
+    originalTokens,
+    newPrediction,
+    originalPrediction,
+}: Props) => {
+    if (!newTokens) {
         throw new EmptyHotflipRequestError();
     }
-    const [originalString, flippedString] = highlightFlippedTokens(original, final);
+    const [originalString, flippedString] = highlightFlippedTokens(originalTokens, newTokens);
     return (
         <>
             <h6>Original Input:</h6> {originalString}

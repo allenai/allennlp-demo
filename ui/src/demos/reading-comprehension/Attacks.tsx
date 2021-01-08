@@ -63,7 +63,7 @@ export const Attacks = ({ model, input, target, prediction }: Props) => {
                 ) : null}
                 {supportedAttackTypes.has(AttackType.HotFlip) ? (
                     <Collapse.Panel key={AttackType.HotFlip} header="HotFlip">
-                        <Attack<Input, HotflipAttackOutput<typeof prediction>>
+                        <Attack<Input, HotflipAttackOutput<Prediction>>
                             type={AttackType.HotFlip}
                             target={target}
                             gradient={GradientInputField.Input2}
@@ -84,14 +84,14 @@ export const Attacks = ({ model, input, target, prediction }: Props) => {
                             }>
                             {({ output }) => (
                                 <Hotflip
-                                    final={output.final ? output.final[0] : undefined}
-                                    original={output.original}
-                                    originalPrediction={getBasicAnswer(prediction)}
+                                    newTokens={output.final ? output.final[0] : undefined}
+                                    originalTokens={output.original}
                                     newPrediction={
                                         output.outputs.length
                                             ? getBasicAnswer(output.outputs[0])
                                             : undefined
                                     }
+                                    originalPrediction={getBasicAnswer(prediction)}
                                 />
                             )}
                         </Attack>
