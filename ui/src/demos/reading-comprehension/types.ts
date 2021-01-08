@@ -152,13 +152,37 @@ export const isNAQANetPredictionArithmetic = (
 };
 
 export interface NMNPrediction {
-    // TODO
+    inputs: NMNInput[];
+    program_execution: { [id: string]: NMNProgramStep[] }[];
+    answer: string;
+    program_nested_expression: NMNProgram | NMNProgram[];
+    // TODO: more values are returned, but UI doesn't use them
+}
+
+interface NMNProgramStep {
+    input_name: string;
+    values: number[];
+    label: string;
+}
+
+export interface NMNProgram {
+    name: string;
+    identifier: string;
+}
+
+interface NMNInput {
+    name: string;
+    tokens: string[];
 }
 
 export const isNMNPrediction = (pred: Prediction): pred is NMNPrediction => {
-    // TODO
-    // const typedPred = pred as NMNPrediction;
-    return false;
+    const typedPred = pred as NMNPrediction;
+    return (
+        typedPred.inputs !== undefined &&
+        typedPred.program_execution !== undefined &&
+        typedPred.answer !== undefined &&
+        typedPred.program_nested_expression !== undefined
+    );
 };
 
 export type Prediction =
@@ -189,7 +213,7 @@ export const getBasicAnswer = (pred: Prediction): number | string => {
         return pred.answer.count;
     }
     if (isNMNPrediction(pred)) {
-        return 'TODO';
+        return pred.answer;
     }
     throw new InvalidModelResponseError('Answer not found.');
 };

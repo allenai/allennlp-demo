@@ -27,6 +27,7 @@ import {
     isNAQANetPredictionArithmetic,
     getBasicAnswer,
 } from './types';
+import { NMNOutput } from './nmn';
 
 export const Predictions = ({ input, output, model }: ModelSuccess<Input, Prediction>) => (
     <Output.Section title="Model Output">
@@ -74,7 +75,7 @@ const OutputByModel = ({
         }
         case ModelId.Nmn: {
             if (isNMNPrediction(output)) {
-                return <NmnPrediction />;
+                return <NMNOutput {...output} />;
             }
             break;
         }
@@ -276,9 +277,4 @@ const NaqanetPrediction = ({
 
     // payload matched no known viz
     throw new InvalidModelResponseError(model.id);
-};
-
-// TODO: add NMN viz
-const NmnPrediction = () => {
-    return <span>has nmn answer</span>;
 };
