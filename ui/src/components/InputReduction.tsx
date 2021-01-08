@@ -132,17 +132,13 @@ const DefaultOutput = ({
                 return (
                     <>
                         {!formattedOriginal ? (
-                            <p>
-                                <h6>Original Input:</h6> {originalColored}
-                            </p>
+                            <>
+                                <h6>Original Input:</h6> <span>{originalColored}</span>
+                            </>
                         ) : null}
-
-                        <p>
-                            <h6>Reduced Input:</h6> {reducedColored}
-                        </p>
-
+                        <h6>Reduced Input:</h6> {reducedColored}
                         {original.length === reduced.length ? (
-                            <p>(No reduction was possible)</p>
+                            <span>(No reduction was possible)</span>
                         ) : null}
                     </>
                 );

@@ -23,8 +23,8 @@ export class UnexpectedModelError extends Error {
 }
 
 export class InvalidModelResponseError extends Error {
-    constructor(modelId: string) {
-        super(`Unexpected response from model: ${modelId}`);
+    constructor(msg: string) {
+        super(`Unexpected response from model: ${msg}`);
     }
 }
 

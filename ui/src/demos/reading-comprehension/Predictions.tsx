@@ -25,6 +25,7 @@ import {
     isNAQANetPredictionSpan,
     isNAQANetPredictionCount,
     isNAQANetPredictionArithmetic,
+    getBasicAnswer,
 } from './types';
 
 export const Predictions = ({ input, output, model }: ModelSuccess<Input, Prediction>) => (
@@ -82,6 +83,14 @@ const OutputByModel = ({
     throw new UnexpectedModelError(model.id);
 };
 
+const BasicAnswer = ({ output }: { output: Prediction }) => {
+    return (
+        <Output.SubSection title="Answer">
+            <div>{getBasicAnswer(output)}</div>
+        </Output.SubSection>
+    );
+};
+
 const BasicPrediction = ({
     input,
     output,
@@ -97,9 +106,7 @@ const BasicPrediction = ({
     }
     return (
         <>
-            <Output.SubSection title="Answer">
-                <div>{output.best_span_str}</div>
-            </Output.SubSection>
+            <BasicAnswer output={output} />
 
             <Output.SubSection title="Passage Context">
                 <TextWithHighlight
@@ -136,9 +143,7 @@ const NaqanetPrediction = ({
     ) {
         return (
             <>
-                <Output.SubSection title="Answer">
-                    <div>{output.answer.value}</div>
-                </Output.SubSection>
+                <BasicAnswer output={output} />
 
                 <Output.SubSection title="Explanation">
                     The model decided the answer was in the passage.
@@ -170,9 +175,7 @@ const NaqanetPrediction = ({
     ) {
         return (
             <>
-                <Output.SubSection title="Answer">
-                    <div>{output.answer.value}</div>
-                </Output.SubSection>
+                <BasicAnswer output={output} />
 
                 <Output.SubSection title="Explanation">
                     The model decided the answer was in the question.
@@ -201,9 +204,7 @@ const NaqanetPrediction = ({
     if (isNAQANetPredictionCount(output)) {
         return (
             <>
-                <Output.SubSection title="Answer">
-                    <div>{output.answer.count}</div>
-                </Output.SubSection>
+                <BasicAnswer output={output} />
 
                 <Output.SubSection title="Explanation">
                     The model decided this was a counting problem.
@@ -227,9 +228,7 @@ const NaqanetPrediction = ({
 
         return (
             <>
-                <Output.SubSection title="Answer">
-                    <div>{output.answer.value}</div>
-                </Output.SubSection>
+                <BasicAnswer output={output} />
 
                 <Output.SubSection title="Explanation">
                     {releventNumbers.length ? (
