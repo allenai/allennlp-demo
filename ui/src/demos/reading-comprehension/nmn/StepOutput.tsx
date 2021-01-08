@@ -2,11 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { Popover } from 'antd';
 
-import NestedHighlight, { getHighlightColor } from '../../../highlight/NestedHighlight'; // TODO: fix this
-
 import { ModuleInfo, DEFAULT_MIN_ATTN } from './ModuleInfo';
 import { Input, Step } from './Explanation';
-import { WithLogScaleSlider } from '../../../tugboat/components';
+import {
+    WithLogScaleSlider,
+    NestedHighlight,
+    getHighlightColor,
+} from '../../../tugboat/components';
 import { Output } from '../../../tugboat/components/form';
 
 interface StepOutputProps {

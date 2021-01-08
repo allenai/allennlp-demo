@@ -18,7 +18,7 @@ import Menu from './Menu';
 
 import allenNLPLogo from './allennlp_logo.svg';
 
-const Info = () => {
+export const Info = () => {
     const [info, setInfo] = React.useState<{}>();
 
     React.useEffect(() => {
@@ -63,5 +63,3 @@ const Logo = styled.img.attrs({
 const HeaderColumnsWithSpace = styled(Header.Columns)`
     padding: ${({ theme }) => theme.spacing.md} 0;
 `;
-
-export default Info;

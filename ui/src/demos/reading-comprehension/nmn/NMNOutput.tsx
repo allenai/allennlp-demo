@@ -14,6 +14,7 @@ interface ProgramExpressionProps {
     program: NMNProgram | NMNProgram[];
     parentKey?: string;
 }
+
 export const ProgramExpression = ({ program, parentKey }: ProgramExpressionProps) => {
     if (Array.isArray(program)) {
         const lastIdx = program.length - 1;
