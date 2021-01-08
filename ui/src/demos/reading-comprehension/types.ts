@@ -1,4 +1,5 @@
 import { WithTokenizedInput, isWithTokenizedInput } from '../../lib';
+import { InvalidModelResponseError } from '../../tugboat/error';
 
 export interface Input {
     passage: string;
@@ -175,4 +176,20 @@ export const isPrediction = (pred: Prediction): pred is Prediction => {
         isNAQANetPrediction(typedPred) ||
         isNMNPrediction(typedPred)
     );
+};
+
+export const getBasicAnswer = (pred: Prediction): number | string => {
+    if (isBiDAFPrediction(pred) || isTransformerQAPrediction(pred)) {
+        return pred.best_span_str;
+    }
+    if (isNAQANetPredictionSpan(pred) || isNAQANetPredictionArithmetic(pred)) {
+        return pred.answer.value;
+    }
+    if (isNAQANetPredictionCount(pred)) {
+        return pred.answer.count;
+    }
+    if (isNMNPrediction(pred)) {
+        return 'TODO';
+    }
+    throw new InvalidModelResponseError('Answer not found.');
 };

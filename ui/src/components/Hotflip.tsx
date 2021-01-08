@@ -6,6 +6,12 @@ import { RedToken, GreenToken, TransparentToken } from './Tokens';
 // masked-lm task. I have removed this functionality from this component.  We can either add it
 // back, or make a new HotflipComponent when we port masked-lm.
 
+class EmptyHotflipRequestError extends Error {
+    constructor() {
+        super('A Hotflip request cannot be empty.');
+    }
+}
+
 /**
  * Takes in the input before and after the hotflip attack and highlights
  * the words that were replaced in red and the new words in green
@@ -31,35 +37,35 @@ const highlightFlippedTokens = (originalInput: string[], flippedInput: string[])
     return [originalStringColorized, flippedStringColorized];
 };
 
-export interface HotflipAttackOutput {
+export interface HotflipAttackOutput<T> {
     final: string[][];
     original: string[];
-    new_prediction?: string;
-    context?: string;
+    outputs: T[];
 }
 
-export const Hotflip = ({ final, original, new_prediction, context }: HotflipAttackOutput) => {
-    const [originalString, flippedString] = highlightFlippedTokens(
-        original,
-        final[0] // just the first one, huh,... yuck
-    );
+interface Props {
+    newTokens?: string[];
+    originalTokens: string[];
+    newPrediction?: string | number;
+    originalPrediction: string | number;
+}
 
+export const Hotflip = ({
+    newTokens,
+    originalTokens,
+    newPrediction,
+    originalPrediction,
+}: Props) => {
+    if (!newTokens) {
+        throw new EmptyHotflipRequestError();
+    }
+    const [originalString, flippedString] = highlightFlippedTokens(originalTokens, newTokens);
     return (
-        <div>
-            {context ? <span>{context}</span> : null}
-
-            <p>
-                <h6>Original Input:</h6> {originalString}
-            </p>
-            <p>
-                <h6>Flipped Input:</h6> {flippedString}
-            </p>
-
-            {new_prediction ? (
-                <p>
-                    <h6>New Prediction:</h6> {new_prediction}
-                </p>
-            ) : null}
-        </div>
+        <>
+            <h6>Original Input:</h6> {originalString}
+            <h6>Original Prediction:</h6> {originalPrediction}
+            <h6>Flipped Input:</h6> {flippedString}
+            <h6>New Prediction:</h6> {newPrediction || 'Unknown'}
+        </>
     );
 };

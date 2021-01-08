@@ -13,17 +13,18 @@ import {
 } from '../../components';
 import { ModelInfoList } from '../../context';
 import { AttackType, GradientInputField } from '../../lib';
-import { Input } from './types';
+import { Input, Prediction, getBasicAnswer } from './types';
 
 // TODO: this file can likely be made general for use on multiple tasks
 
 interface Props {
     model: Model;
     input: Input;
+    prediction: Prediction;
     target: keyof Input & string;
 }
 
-export const Attacks = ({ model, input, target }: Props) => {
+export const Attacks = ({ model, input, target, prediction }: Props) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -62,7 +63,7 @@ export const Attacks = ({ model, input, target }: Props) => {
                 ) : null}
                 {supportedAttackTypes.has(AttackType.HotFlip) ? (
                     <Collapse.Panel key={AttackType.HotFlip} header="HotFlip">
-                        <Attack<Input, HotflipAttackOutput>
+                        <Attack<Input, HotflipAttackOutput<Prediction>>
                             type={AttackType.HotFlip}
                             target={target}
                             gradient={GradientInputField.Input2}
@@ -81,7 +82,18 @@ export const Attacks = ({ model, input, target }: Props) => {
                                     the prediction changes.
                                 </p>
                             }>
-                            {({ output }) => <Hotflip {...output} />}
+                            {({ output }) => (
+                                <Hotflip
+                                    newTokens={output.final ? output.final[0] : undefined}
+                                    originalTokens={output.original}
+                                    newPrediction={
+                                        output.outputs.length
+                                            ? getBasicAnswer(output.outputs[0])
+                                            : undefined
+                                    }
+                                    originalPrediction={getBasicAnswer(prediction)}
+                                />
+                            )}
                         </Attack>
                     </Collapse.Panel>
                 ) : null}

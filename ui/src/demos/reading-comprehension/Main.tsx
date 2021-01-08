@@ -45,7 +45,12 @@ export const Main = () => {
                                     {isWithTokenizedInput(output) ? (
                                         <Interpreters model={model} input={input} tokens={output} />
                                     ) : null}
-                                    <Attacks model={model} input={input} target="question" />
+                                    <Attacks
+                                        model={model}
+                                        input={input}
+                                        prediction={output}
+                                        target="question"
+                                    />
                                 </Output>
                             )}
                         </Predict>
