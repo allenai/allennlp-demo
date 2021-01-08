@@ -62,7 +62,6 @@ export const InputReduction = ({
     final,
     formattedOriginal,
     formattedReduced,
-    context,
 }: InputReductionAttackOutput) => {
     // There are a number of ways to tweak the output of this component:
     // (1) you can provide a context, which shows up on top, e.g., for displaying the
@@ -71,8 +70,6 @@ export const InputReduction = ({
     // customize the display for, e.g., NER.
     return (
         <div>
-            {context ? <span>{context}</span> : null}
-
             {formattedOriginal ? <span>{formattedOriginal}</span> : null}
 
             {formattedReduced ? (
