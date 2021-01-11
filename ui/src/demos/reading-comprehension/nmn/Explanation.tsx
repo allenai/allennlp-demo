@@ -1,7 +1,9 @@
 import { NMNPrediction } from '../types';
 
-class Output {
-    constructor(public inputName: string, public values: number[], public label?: string) {}
+interface Output {
+    inputName: string;
+    values: number[];
+    label?: string;
 }
 
 export class Step {
@@ -12,8 +14,9 @@ export class Step {
     };
 }
 
-export class Input {
-    constructor(public name: string, public tokens: string[]) {}
+export interface Input {
+    name: string;
+    tokens: string[];
 }
 
 export class Explanation {
@@ -21,12 +24,20 @@ export class Explanation {
 
     // Returns an Explanation instance, provided a raw response from the inference API.
     static fromResponse = (response: NMNPrediction): Explanation => {
-        const inputs = response.inputs.map((i) => new Input(i.name, i.tokens));
+        const inputs = response.inputs.map((i) => {
+            return { name: i.name, tokens: i.tokens };
+        });
 
         const steps = [];
         for (const step of response.program_execution) {
             for (const [key, value] of Object.entries(step)) {
-                const outputs = value.map((o) => new Output(o.input_name, o.values, o.label));
+                const outputs: Output[] = value.map((o) => {
+                    return {
+                        inputName: o.input_name,
+                        values: o.values,
+                        label: o.label,
+                    };
+                });
                 steps.push(new Step(key, outputs));
             }
         }
