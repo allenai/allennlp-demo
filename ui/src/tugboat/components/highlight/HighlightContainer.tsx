@@ -1,15 +1,13 @@
-// NOTE: DON'T REVIEW THIS FILE YET, IT'S IN PROGRESS
-
 import React from 'react';
 import styled, { css } from 'styled-components';
 
 interface Props {
     children: JSX.Element;
-    bottomLabels?: boolean;
+    bottomLabels?: boolean; // TODO: convert back to a string?
     isClicking?: boolean;
     className?: string;
 }
-export const HighlightContainer = ({ bottomLabels, className, children }: Props) => {
+export const HighlightContainer = ({ bottomLabels, className, isClicking, children }: Props) => {
     return (
         <Wrapper className={className} bottomLabels={bottomLabels} isClicking={isClicking}>
             {children}

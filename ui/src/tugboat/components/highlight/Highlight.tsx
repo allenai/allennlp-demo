@@ -1,22 +1,7 @@
-// NOTE: DON'T REVIEW THIS FILE YET, IT'S IN PROGRESS
-
 import React from 'react';
 
-interface Conditions {
-    labelPosition;
-    label;
-    color;
-    isClickable;
-    selectedId;
-    isClicking;
-    id;
-    activeDepths;
-    deepestIndex;
-    activeIds;
-    children;
-}
-
-export const getHighlightConditionalClasses = (conditions) => {
+// TODO
+export const getHighlightConditionalClasses = (conditions: any) => {
     const {
         labelPosition,
         label,
@@ -40,29 +25,47 @@ export const getHighlightConditionalClasses = (conditions) => {
     ${typeof children === 'string' && children.length < 8 ? 'short-text' : ''}`;
 };
 
-export const Highlight = (props) => {
-    const {
-        // All fields optional:
-        activeDepths, // object
-        activeIds, // string[] | number[]
-        children, // object | string
-        color, // string (see highlightColors above for supported values)
-        depth, // number
-        id, // string | number
-        isClickable, // boolean
-        isClicking, // boolean
-        label, // string
-        labelPosition, // string (supported values: "top", "left", "right", "bottom")
-        onClick, // function
-        onMouseDown, // function
-        onMouseOver, // function
-        onMouseOut, // function
-        onMouseUp, // function
-        selectedId, // string | number
-        secondaryLabel, // string
-        tooltip, // string
-    } = props;
+interface Props {
+    activeDepths?: { ids: (string | number)[]; depths: number[] };
+    activeIds?: (string | number)[] | number[];
+    children?: object | string;
+    color?: HighlightColors;
+    depth: number;
+    id: string | number;
+    isClickable?: boolean;
+    isClicking?: boolean;
+    label?: string;
+    labelPosition?: 'top' | 'left' | 'right' | 'bottom';
+    onClick?: Function; // TODO
+    onMouseDown?: (id: string | number, depth: number) => void;
+    onMouseOut?: (id: string | number) => void;
+    onMouseOver?: (id: string | number) => void;
+    onMouseUp?: (id: string | number) => void;
+    selectedId?: string | number;
+    secondaryLabel?: string;
+    tooltip?: string;
+}
 
+export const Highlight = ({
+    activeDepths,
+    activeIds,
+    children,
+    color,
+    depth,
+    id,
+    isClickable,
+    isClicking,
+    label,
+    labelPosition,
+    onClick,
+    onMouseDown,
+    onMouseOver,
+    onMouseOut,
+    onMouseUp,
+    selectedId,
+    secondaryLabel,
+    tooltip,
+}: Props) => {
     const deepestIndex = activeDepths
         ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths))
         : null;
@@ -80,6 +83,7 @@ export const Highlight = (props) => {
         children,
     });
 
+    // TODO: classname
     const labelTemplate = (
         <span className="highlight__label">
             <strong>{label}</strong>
@@ -89,6 +93,7 @@ export const Highlight = (props) => {
         </span>
     );
 
+    // TODO: classname
     return (
         <span
             className={conditionalClasses}
@@ -100,35 +105,35 @@ export const Highlight = (props) => {
                     ? () => {
                           onClick(id);
                       }
-                    : null
+                    : undefined
             }
             onMouseDown={
                 onMouseDown
                     ? () => {
                           onMouseDown(id, depth);
                       }
-                    : null
+                    : undefined
             }
             onMouseOver={
                 onMouseOver
                     ? () => {
                           onMouseOver(id);
                       }
-                    : null
+                    : undefined
             }
             onMouseOut={
                 onMouseOut
                     ? () => {
                           onMouseOut(id);
                       }
-                    : null
+                    : undefined
             }
             onMouseUp={
                 onMouseUp
                     ? () => {
                           onMouseUp(id);
                       }
-                    : null
+                    : undefined
             }>
             {labelPosition === 'left' || labelPosition === 'top' ? labelTemplate : null}
             {children ? <span className="highlight__content">{children}</span> : null}
@@ -138,4 +143,30 @@ export const Highlight = (props) => {
             {tooltip ? <span className="highlight__tooltip">{tooltip}</span> : null}
         </span>
     );
+};
+
+export enum HighlightColors { // TODO: use varnish colors
+    'blue',
+    'green',
+    'pink',
+    'orange',
+    'purple',
+    'teal',
+    'tan',
+    'red',
+    'cobalt',
+    'brown',
+    'slate',
+    'fuchsia',
+    'gray',
+}
+
+/**
+ * Matches an index with a color. If index is greater than number of colors, cycle through colors.
+ * @param {number} index
+ */
+export const getHighlightColor = (index: number): HighlightColors => {
+    return HighlightColors[
+        HighlightColors[index % Object.keys(HighlightColors).length] as keyof typeof HighlightColors
+    ];
 };

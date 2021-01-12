@@ -8,6 +8,7 @@ import {
     WithLogScaleSlider,
     NestedHighlight,
     getHighlightColor,
+    HighlightColors,
 } from '../../../tugboat/components';
 import { Output } from '../../../tugboat/components/form';
 
@@ -24,7 +25,7 @@ export const StepOutput = ({ inputs, step }: StepOutputProps) => {
 
     // We'll be displaying outputs across different inputs, and would like their color to be
     // consistent from one input to another.
-    const highlightColorByLabel: { [label: string]: string } = {};
+    const highlightColorByLabel: { [label: string]: HighlightColors } = {};
     let colorIdx = -1;
     return (
         <>
@@ -51,7 +52,7 @@ export const StepOutput = ({ inputs, step }: StepOutputProps) => {
                             input.name === 'question' || input.name === 'passage';
                         // Compute the clusters that should be highlighted, given the selected minimum
                         // attention value.
-                        const clusters: { [label: string]: number[][] } = {};
+                        const clusters: { [label: string]: number[][] } = {}; // TODO: reuse type
                         // We also prepare a reverse map of values for each out by token index, as to
                         // display them in a tooltip that shows when hovering over an individual token.
                         const valuesByTokenIndex: {
