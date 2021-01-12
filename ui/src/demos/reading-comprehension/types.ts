@@ -152,11 +152,14 @@ export const isNAQANetPredictionArithmetic = (
 };
 
 export interface NMNPrediction {
-    inputs: NMNInput[];
-    program_execution: { [id: string]: NMNProgramStep[] }[];
     answer: string;
-    program_nested_expression: NMNProgram | NMNProgram[];
-    // TODO: more values are returned, but UI doesn't use them
+    inputs: NMNInput[];
+    passage: string;
+    predicted_ans: string;
+    program_execution: { [id: string]: NMNProgramStep[] }[];
+    program_lisp: string;
+    program_nested_expression: NestedNMNProgram;
+    question: string;
 }
 
 interface NMNProgramStep {
@@ -167,8 +170,10 @@ interface NMNProgramStep {
 
 export interface NMNProgram {
     name: string;
-    identifier: string;
+    identifier: number;
 }
+
+export type NestedNMNProgram = NMNProgram | (NMNProgram | NestedNMNProgram)[];
 
 interface NMNInput {
     name: string;

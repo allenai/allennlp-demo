@@ -177,14 +177,17 @@ const Info = styled.div`
     ${({ theme }) => `
     padding: ${theme.spacing.sm};
     border: 1px solid ${theme.palette.border.info};
-    border-radius: ${theme.palette.shape.borderRadius.default};
+    border-radius: ${theme.shape.borderRadius.default};
     background: ${theme.palette.background.info};
     color: ${theme.palette.text.info};
     margin: 0 0 ${theme.spacing.md};
   `}
 `;
 
+// TODO: remove model__content__summary class
 const SpacingFix = styled.div`
+    margin-bottom: ${({ theme }) => theme.spacing.lg};
+
     .model__content__summary {
         margin: 0;
         padding: 0;

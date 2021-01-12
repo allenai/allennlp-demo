@@ -3,7 +3,7 @@ import { Tabs } from 'antd';
 
 import { Explanation } from './Explanation';
 import { Output } from '../../../tugboat/components/form';
-import { NMNProgram, NMNPrediction } from '../types';
+import { NMNPrediction, NestedNMNProgram } from '../types';
 import { StepOutput } from './StepOutput';
 
 /**
@@ -11,7 +11,7 @@ import { StepOutput } from './StepOutput';
  * (potentially nested) array of modules.
  */
 interface ProgramExpressionProps {
-    program: NMNProgram | NMNProgram[];
+    program: NestedNMNProgram;
     parentKey?: string;
 }
 

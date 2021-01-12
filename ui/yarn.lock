@@ -12,10 +12,10 @@
   resolved "https://registry.yarnpkg.com/@allenai/varnish-react-router/-/varnish-react-router-2.0.0.tgz#8e56c7b30f779443b32785e18e7da08859518d4c"
   integrity sha512-BZ+ejZ82bRjN2x9h2b5Ofh6QM2UbkWmEZfMzDAEPllbDVa0vdcexcsADClWzoJH5roHDK9CvhEpsfdskmull4Q==
 
-"@allenai/varnish@^2.0.7":
-  version "2.0.11"
-  resolved "https://registry.yarnpkg.com/@allenai/varnish/-/varnish-2.0.11.tgz#c1e8a2c30b877e992ec90794b28f9530c037123b"
-  integrity sha512-DwqLvNdSeTHerC8ZPBoEDlfGUvFzKQQ0oe1aypjbocYy2K+hnXadTaG6NP7munq0ngU1ha22fcDcfchEMeUQBQ==
+"@allenai/varnish@^2.0.12":
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/@allenai/varnish/-/varnish-2.0.12.tgz#152f27e58cca504ef883fda5e4b9ddc6a22a5d85"
+  integrity sha512-y3QVJxd+/O5ZblRbQ/tMS/Eh2D/VPBrvt+uriH6cRY275XfVHwY+eyiBibu1S/jWZbKY6NyFd+fSB4eY8UHVbw==
 
 "@ant-design/colors@^5.0.0":
   version "5.0.1"

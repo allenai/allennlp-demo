@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@allenai/eslint-config-varnish": "^1.0.1",
-    "@allenai/varnish": "^2.0.7",
+    "@allenai/varnish": "^2.0.12",
     "@allenai/varnish-react-router": "^2.0.0",
     "@ant-design/icons": "^4.2.1",
     "@babel/core": "^7.12.3",
