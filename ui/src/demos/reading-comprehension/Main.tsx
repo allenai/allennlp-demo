@@ -11,6 +11,7 @@ import {
     SelectExample,
     Question,
     Passage,
+    ShareLink,
     Submit,
 } from '../../tugboat/components';
 import { MultiModelDemo, Predict, Interpreters } from '../../components';
@@ -41,16 +42,24 @@ export const Main = () => {
                             }>
                             {({ model, input, output }) => (
                                 <Output>
-                                    <Predictions model={model} input={input} output={output} />
-                                    {isWithTokenizedInput(output) ? (
-                                        <Interpreters model={model} input={input} tokens={output} />
-                                    ) : null}
-                                    <Attacks
-                                        model={model}
-                                        input={input}
-                                        prediction={output}
-                                        target="question"
-                                    />
+                                    <Output.Section
+                                        title="Model Output"
+                                        extra={<ShareLink input={input} app="allennlp-demo" />}>
+                                        <Predictions model={model} input={input} output={output} />
+                                        {isWithTokenizedInput(output) ? (
+                                            <Interpreters
+                                                model={model}
+                                                input={input}
+                                                tokens={output}
+                                            />
+                                        ) : null}
+                                        <Attacks
+                                            model={model}
+                                            input={input}
+                                            prediction={output}
+                                            target="question"
+                                        />
+                                    </Output.Section>
                                 </Output>
                             )}
                         </Predict>

@@ -30,7 +30,7 @@ import {
 import { NMNOutput } from './nmn';
 
 export const Predictions = ({ input, output, model }: ModelSuccess<Input, Prediction>) => (
-    <Output.Section title="Model Output">
+    <Output.Section>
         <OutputByModel input={input} output={output} model={model} />
 
         <Output.SubSection title="Debug Output">
