@@ -7,7 +7,7 @@ import { RedToken, TransparentToken, BlankToken } from './Tokens';
  * will have a less than or equal to length than the originalInput.
  */
 const highlightRemovedTokens = (originalInput: string[], reducedInput: string[]) => {
-    // TODO: consider moveing the logic of what to remove to the backend api
+    // TODO: consider moving the logic of what to remove to the backend api
     // payload could be: [ { "token": "The", "removed": false }, { "token": "quick", "removed": true } ]
     const originalStringColorized = [];
     const reducedStringColorized = [];

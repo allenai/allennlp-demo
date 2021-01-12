@@ -90,7 +90,7 @@ const transformToTree = (
     return insideClusters[0].contents;
 };
 
-// TODO: can we share any of these interfaces?
+// TODO: [jon] can we share any of these interfaces?
 interface InnerProps {
     activeDepths?: { ids: (string | number)[]; depths: number[] };
     activeIds?: (string | number)[];
@@ -181,10 +181,10 @@ const InnerHighlight = ({
 interface Props {
     activeDepths?: { ids: (string | number)[]; depths: number[] };
     activeIds?: (string | number)[];
-    clusters: { [key: string]: number[][] }; // TODO: make a type
+    clusters: { [key: string]: number[][] }; // TODO: [jon] make a type
     isClickable?: boolean;
     isClicking?: boolean;
-    labelPosition?: 'top' | 'left' | 'right' | 'bottom'; // TODO: make a type
+    labelPosition?: 'top' | 'left' | 'right' | 'bottom'; // TODO: [jon] make a type
     onMouseDown?: (id: string | number, depth: number) => void;
     onMouseOut?: (id: string | number) => void;
     onMouseOver?: (id: string | number) => void;

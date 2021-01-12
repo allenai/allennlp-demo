@@ -15,9 +15,9 @@ export const HighlightContainer = ({ bottomLabels, className, isClicking, childr
     );
 };
 
-// TODO: convert from flex to grid?
-// TODO: replace .bottom with a component
-// TODO: test all this css
+// TODO: [jon] convert from flex to grid?
+// TODO: [jon] replace .bottom with a component
+// TODO: [jon] test all this css
 
 const Wrapper = styled.div<{ bottomLabels?: boolean; isClicking?: boolean }>`
     line-height: 42px;

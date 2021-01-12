@@ -36,7 +36,7 @@ interface Props {
     isClicking?: boolean;
     label?: string;
     labelPosition?: 'top' | 'left' | 'right' | 'bottom';
-    onClick?: Function; // TODO
+    onClick?: Function; // TODO: [jon] function
     onMouseDown?: (id: string | number, depth: number) => void;
     onMouseOut?: (id: string | number) => void;
     onMouseOver?: (id: string | number) => void;
@@ -83,7 +83,7 @@ export const Highlight = ({
         children,
     });
 
-    // TODO: classname
+    // TODO: [jon] classname
     const labelTemplate = (
         <span className="highlight__label">
             <strong>{label}</strong>
@@ -93,7 +93,7 @@ export const Highlight = ({
         </span>
     );
 
-    // TODO: classname
+    // TODO: [jon] classname
     return (
         <span
             className={conditionalClasses}
@@ -145,7 +145,7 @@ export const Highlight = ({
     );
 };
 
-export enum HighlightColors { // TODO: use varnish colors
+export enum HighlightColors { // TODO: [jon] use varnish colors
     'blue',
     'green',
     'pink',

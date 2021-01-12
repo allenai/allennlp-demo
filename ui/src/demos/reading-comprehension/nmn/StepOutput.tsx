@@ -52,7 +52,7 @@ export const StepOutput = ({ inputs, step }: StepOutputProps) => {
                             input.name === 'question' || input.name === 'passage';
                         // Compute the clusters that should be highlighted, given the selected minimum
                         // attention value.
-                        const clusters: { [label: string]: number[][] } = {}; // TODO: reuse type
+                        const clusters: { [label: string]: number[][] } = {}; // TODO: [jon] reuse type
                         // We also prepare a reverse map of values for each out by token index, as to
                         // display them in a tooltip that shows when hovering over an individual token.
                         const valuesByTokenIndex: {
@@ -189,7 +189,7 @@ const Info = styled.div`
   `}
 `;
 
-// TODO: remove model__content__summary class
+// TODO: [jon] remove model__content__summary class
 const SpacingFix = styled.div`
     margin-bottom: ${({ theme }) => theme.spacing.lg};
 

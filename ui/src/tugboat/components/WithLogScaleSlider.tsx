@@ -46,7 +46,7 @@ export const WithLogScaleSlider = ({ values, range, defaultValue, children, labe
     );
 };
 
-// TODO: Let's use display: grid and gap here instead
+// TODO: [jon] Let's use display: grid and gap here instead
 
 // The slider's slider gets cut off on the left w/o this.
 const ColWithLeftPadding = styled(Col)`
