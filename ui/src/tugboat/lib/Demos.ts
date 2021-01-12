@@ -58,34 +58,32 @@ export const Demos = {
      *
      * 2. A symbol named `config` that is an instance of `tugboat.DemoConfig`.
      *
-     * If an `index.ts` file exists and doesn't export both of these symbols, a `ConfigError`
-     * is thrown.
+     * If an `index.ts` file exists and doesn't export both of these symbols, it is not added.
      */
     load(): DemoList {
         const demos: Demo[] = [];
         for (const path of ctx.keys()) {
             const d = ctx(path);
-            if (!('Main' in d)) {
-                throw new ConfigError(`${path}/Main.tsx doesn't exist.`);
-            }
-            if (!('config' in d)) {
-                throw new ConfigError(`${path}/config.ts doesn't exist`);
-            }
+            if ('Main' in d && 'config' in d) {
+                const config: DemoConfig = d.config;
 
-            const config: DemoConfig = d.config;
+                // If there isn't a path, we generate a URL safe version of the title and use that.
+                if (!config.path) {
+                    config.path = `/${slug(config.title, '-')}`;
+                }
 
-            // If there isn't a path, we generate a URL safe version of the title and use that.
-            if (!config.path) {
-                config.path = `/${slug(config.title, '-')}`;
+                // We prefix demos that are hidden from view with a prefix that makes them harder to
+                // find. Someone can still access them, they're just less likely to.
+                if (config.status === 'hidden') {
+                    config.path = `/hidden${config.path}`;
+                }
+
+                demos.push({ Component: d.Main, config });
+            } else if ('Main' in d || 'config' in d) {
+                throw new ConfigError(
+                    `${path}/config.ts and ${path}/Main.ts are required to include a Demo`
+                );
             }
-
-            // We prefix demos that are hidden from view with a prefix that makes them harder to
-            // find. Someone can still access them, they're just less likely to.
-            if (config.status === 'hidden') {
-                config.path = `/hidden${config.path}`;
-            }
-
-            demos.push({ Component: d.Main, config });
         }
         return new DemoList(demos.sort((a, b) => a.config.order - b.config.order));
     },
