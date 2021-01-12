@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
     Highlight,
     getHighlightColor,
@@ -256,26 +257,26 @@ export const withHighlightClickHandling = (
         }
 
         handleHighlightMouseDown = (id: Value, depth: number) => {
-            const { activeDepths: depthTable } = this.state;
-            depthTable.ids.push(id);
-            depthTable.depths.push(depth);
+            const { activeDepths } = this.state;
+            activeDepths.ids.push(id);
+            activeDepths.depths.push(depth);
 
             this.setState({
                 activeIds: [id],
-                activeDepths: depthTable,
+                activeDepths,
                 isClicking: true,
             });
         };
 
         handleHighlightMouseUp = (id: Value) => {
-            const { activeDepths: depthTable } = this.state;
-            const deepestIndex = depthTable.depths.indexOf(Math.max(...depthTable.depths));
+            const { activeDepths } = this.state;
+            const deepestIndex = activeDepths.depths.indexOf(Math.max(...activeDepths.depths));
 
             this.setState((prevState) => ({
                 selectedId:
-                    prevState.selectedId === depthTable.ids[deepestIndex]
+                    prevState.selectedId === activeDepths.ids[deepestIndex]
                         ? undefined
-                        : depthTable.ids[deepestIndex],
+                        : activeDepths.ids[deepestIndex],
                 isClicking: false,
                 activeDepths: { ids: [], depths: [] },
                 activeIds: [...(prevState.activeIds || []), id],

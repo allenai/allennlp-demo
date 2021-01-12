@@ -2,7 +2,7 @@ import React from 'react';
 
 export type Value = string | number;
 
-// TODO: [jon] classname
+// TODO: [jon 1] classname
 export const getHighlightConditionalClasses = (conditions: any) => {
     const {
         labelPosition,
@@ -41,7 +41,7 @@ export interface BaseHighlightProps {
 }
 
 interface Props extends BaseHighlightProps {
-    children?: object | string;
+    children: React.ReactNode | JSX.Element;
     color?: HighlightColors;
     depth: number;
     id: Value;
@@ -74,6 +74,7 @@ export const Highlight = ({
     const deepestIndex = activeDepths
         ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths))
         : null;
+    // TODO: [jon 1] classname
     const conditionalClasses = getHighlightConditionalClasses({
         labelPosition,
         label,
@@ -88,7 +89,7 @@ export const Highlight = ({
         children,
     });
 
-    // TODO: [jon] classname
+    // TODO: [jon 1] classname
     const labelTemplate = (
         <span className="highlight__label">
             <strong>{label}</strong>
@@ -98,7 +99,7 @@ export const Highlight = ({
         </span>
     );
 
-    // TODO: [jon] classname
+    // TODO: [jon 1] classname
     return (
         <span
             className={conditionalClasses}
@@ -150,7 +151,7 @@ export const Highlight = ({
     );
 };
 
-export enum HighlightColors { // TODO: [jon] use varnish colors
+export enum HighlightColors { // TODO: [jon 2] use varnish colors
     'blue',
     'green',
     'pink',
@@ -168,7 +169,7 @@ export enum HighlightColors { // TODO: [jon] use varnish colors
 
 /**
  * Matches an index with a color. If index is greater than number of colors, cycle through colors.
- * @param {number} index
+ * @param index
  */
 export const getHighlightColor = (index: number): HighlightColors => {
     return HighlightColors[

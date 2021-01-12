@@ -190,7 +190,7 @@ const Info = styled.div`
   `}
 `;
 
-// TODO: [jon] remove model__content__summary class
+// TODO: [jon 5] remove model__content__summary class
 const SpacingFix = styled.div`
     margin-bottom: ${({ theme }) => theme.spacing.lg};
 

@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 
 interface Props {
-    children: JSX.Element;
+    children: JSX.Element | React.ReactNode;
     bottomLabels?: boolean; // TODO: convert back to a string?
     isClicking?: boolean;
     className?: string;
@@ -15,8 +15,8 @@ export const HighlightContainer = ({ bottomLabels, className, isClicking, childr
     );
 };
 
-// TODO: [jon] convert from flex to grid?
-// TODO: [jon] replace .bottom with a component
+// TODO: [jon 3] convert from flex to grid?
+// TODO: [jon 4] replace .bottom with a component
 const Wrapper = styled.div<{ bottomLabels?: boolean; isClicking?: boolean }>`
     line-height: 42px;
     align-items: center;
