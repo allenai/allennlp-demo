@@ -122,7 +122,12 @@ export const StepOutput = ({ inputs, step }: StepOutputProps) => {
                             );
 
                         return (
-                            <Output.SubSection key={`${inputIdx}/${input.name}`} title={input.name}>
+                            <Output.SubSection
+                                key={`${inputIdx}/${input.name}`}
+                                title={
+                                    input.name.charAt(0).toUpperCase() +
+                                    input.name.replace('_', ' ').slice(1)
+                                }>
                                 <SpacingFix>
                                     <NestedHighlight
                                         highlightColor={(token: { cluster: string }) =>
