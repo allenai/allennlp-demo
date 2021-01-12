@@ -9,6 +9,7 @@ import {
     NestedHighlight,
     getHighlightColor,
     HighlightColors,
+    ClusterMap,
 } from '../../../tugboat/components';
 import { Output } from '../../../tugboat/components/form';
 
@@ -52,7 +53,7 @@ export const StepOutput = ({ inputs, step }: StepOutputProps) => {
                             input.name === 'question' || input.name === 'passage';
                         // Compute the clusters that should be highlighted, given the selected minimum
                         // attention value.
-                        const clusters: { [label: string]: number[][] } = {}; // TODO: [jon] reuse type
+                        const clusters: ClusterMap = {};
                         // We also prepare a reverse map of values for each out by token index, as to
                         // display them in a tooltip that shows when hovering over an individual token.
                         const valuesByTokenIndex: {

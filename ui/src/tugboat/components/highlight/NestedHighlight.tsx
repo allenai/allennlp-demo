@@ -1,6 +1,17 @@
 import React from 'react';
-import { Highlight, getHighlightColor, HighlightColors } from './Highlight';
+import {
+    Highlight,
+    getHighlightColor,
+    HighlightColors,
+    Value,
+    BaseHighlightProps,
+} from './Highlight';
 import { HighlightContainer } from './HighlightContainer';
+
+interface BaseNestedHighlightProps extends BaseHighlightProps {
+    highlightColor?: HighlightColors | ((index: Cluster) => HighlightColors);
+    tokenSeparator?: JSX.Element;
+}
 
 interface Cluster {
     cluster: string;
@@ -9,7 +20,7 @@ interface Cluster {
     clusterIndex: number;
 }
 
-export const isCluster = (pred: any): pred is Cluster => {
+const isCluster = (pred: any): pred is Cluster => {
     const typedPred = pred as Cluster;
     return (
         typedPred.cluster !== undefined &&
@@ -19,16 +30,17 @@ export const isCluster = (pred: any): pred is Cluster => {
     );
 };
 
+export interface ClusterMap {
+    [key: string]: number[][];
+}
+
 /**
  * Helper function for transforming response data into a tree object.
  *
  * @param tokens a list of strings of each of the tokens (words or punctuation) present
  * @param clusters a collection of arrays that specify spans to be clustered in the original list of tokens
  */
-const transformToTree = (
-    tokens: (JSX.Element | string)[],
-    clusters: { [key: string]: number[][] }
-) => {
+const transformToTree = (tokens: (JSX.Element | string)[], clusters: ClusterMap) => {
     const contains = (span: number[], index: number) => {
         return index >= span[0] && index <= span[1];
     };
@@ -90,22 +102,9 @@ const transformToTree = (
     return insideClusters[0].contents;
 };
 
-// TODO: [jon] can we share any of these interfaces?
-interface InnerProps {
-    activeDepths?: { ids: (string | number)[]; depths: number[] };
-    activeIds?: (string | number)[];
+interface InnerProps extends BaseNestedHighlightProps {
     data: (string | JSX.Element | Cluster | undefined)[];
     depth: number;
-    isClickable?: boolean;
-    isClicking?: boolean;
-    labelPosition?: 'top' | 'left' | 'right' | 'bottom';
-    onMouseDown?: (id: string | number, depth: number) => void;
-    onMouseOut?: (id: string | number) => void;
-    onMouseOver?: (id: string | number) => void;
-    onMouseUp?: (id: string | number) => void;
-    selectedId?: string | number;
-    highlightColor?: HighlightColors | ((index: Cluster) => HighlightColors);
-    tokenSeparator?: JSX.Element;
 }
 
 /**
@@ -178,21 +177,9 @@ const InnerHighlight = ({
     );
 };
 
-interface Props {
-    activeDepths?: { ids: (string | number)[]; depths: number[] };
-    activeIds?: (string | number)[];
-    clusters: { [key: string]: number[][] }; // TODO: [jon] make a type
-    isClickable?: boolean;
-    isClicking?: boolean;
-    labelPosition?: 'top' | 'left' | 'right' | 'bottom'; // TODO: [jon] make a type
-    onMouseDown?: (id: string | number, depth: number) => void;
-    onMouseOut?: (id: string | number) => void;
-    onMouseOver?: (id: string | number) => void;
-    onMouseUp?: (id: string | number) => void;
-    selectedId?: string | number;
+interface NestedHighlightProps extends BaseNestedHighlightProps {
+    clusters: ClusterMap;
     tokens: (JSX.Element | string)[];
-    highlightColor?: HighlightColors | ((index: Cluster) => HighlightColors);
-    tokenSeparator?: JSX.Element;
 }
 
 /**
@@ -214,7 +201,7 @@ export const NestedHighlight = ({
     tokens,
     highlightColor,
     tokenSeparator,
-}: Props) => {
+}: NestedHighlightProps) => {
     const data = transformToTree(tokens, clusters);
     return (
         <HighlightContainer>
@@ -238,14 +225,14 @@ export const NestedHighlight = ({
     );
 };
 
-interface HocProps extends Props {}
+interface HocProps extends NestedHighlightProps {}
 
 interface HocState {
+    activeDepths: { ids: Value[]; depths: number[] };
+    activeIds?: Value[];
+    isClicking?: boolean;
     selectedCluster: number;
-    activeIds: (string | number)[];
-    activeDepths: { ids: (string | number)[]; depths: number[] };
-    selectedId?: string | number;
-    isClicking: boolean;
+    selectedId?: Value;
 }
 
 /**
@@ -254,9 +241,11 @@ interface HocState {
  *
  * @param WrappedComponent Any component that requires highlight click handling
  */
-export const withHighlightClickHandling = (WrappedComponent: React.ComponentType<Props>) => {
+export const withHighlightClickHandling = (
+    WrappedComponent: React.ComponentType<NestedHighlightProps>
+) => {
     return class _withHighlightClickHandling extends React.Component<HocProps, HocState> {
-        constructor(props: Props) {
+        constructor(props: NestedHighlightProps) {
             super(props);
             this.state = {
                 selectedCluster: -1,
@@ -266,8 +255,8 @@ export const withHighlightClickHandling = (WrappedComponent: React.ComponentType
             };
         }
 
-        handleHighlightMouseDown = (id: string | number, depth: number) => {
-            const depthTable = this.state.activeDepths;
+        handleHighlightMouseDown = (id: Value, depth: number) => {
+            const { activeDepths: depthTable } = this.state;
             depthTable.ids.push(id);
             depthTable.depths.push(depth);
 
@@ -278,8 +267,8 @@ export const withHighlightClickHandling = (WrappedComponent: React.ComponentType
             });
         };
 
-        handleHighlightMouseUp = (id: string | number) => {
-            const depthTable = this.state.activeDepths;
+        handleHighlightMouseUp = (id: Value) => {
+            const { activeDepths: depthTable } = this.state;
             const deepestIndex = depthTable.depths.indexOf(Math.max(...depthTable.depths));
 
             this.setState((prevState) => ({
@@ -289,19 +278,19 @@ export const withHighlightClickHandling = (WrappedComponent: React.ComponentType
                         : depthTable.ids[deepestIndex],
                 isClicking: false,
                 activeDepths: { ids: [], depths: [] },
-                activeIds: [...prevState.activeIds, id],
+                activeIds: [...(prevState.activeIds || []), id],
             }));
         };
 
-        handleHighlightMouseOver = (id: string | number) => {
+        handleHighlightMouseOver = (id: Value) => {
             this.setState((prevState) => ({
-                activeIds: [...prevState.activeIds, id],
+                activeIds: [...(prevState.activeIds || []), id],
             }));
         };
 
         handleHighlightMouseOut = () => {
             this.setState((prevState) => ({
-                activeIds: prevState.activeIds.filter((i) => i === this.state.selectedId),
+                activeIds: (prevState.activeIds || []).filter((i) => i === this.state.selectedId),
             }));
         };
 

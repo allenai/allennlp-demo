@@ -1,6 +1,8 @@
 import React from 'react';
 
-// TODO
+export type Value = string | number;
+
+// TODO: [jon] classname
 export const getHighlightConditionalClasses = (conditions: any) => {
     const {
         labelPosition,
@@ -25,23 +27,26 @@ export const getHighlightConditionalClasses = (conditions: any) => {
     ${typeof children === 'string' && children.length < 8 ? 'short-text' : ''}`;
 };
 
-interface Props {
-    activeDepths?: { ids: (string | number)[]; depths: number[] };
-    activeIds?: (string | number)[] | number[];
+export interface BaseHighlightProps {
+    activeDepths?: { ids: Value[]; depths: number[] };
+    activeIds?: Value[];
+    isClickable?: boolean;
+    isClicking?: boolean;
+    labelPosition?: 'top' | 'left' | 'right' | 'bottom';
+    onMouseDown?: (id: Value, depth: number) => void;
+    onMouseOut?: (id: Value) => void;
+    onMouseOver?: (id: Value) => void;
+    onMouseUp?: (id: Value) => void;
+    selectedId?: Value;
+}
+
+interface Props extends BaseHighlightProps {
     children?: object | string;
     color?: HighlightColors;
     depth: number;
-    id: string | number;
-    isClickable?: boolean;
-    isClicking?: boolean;
+    id: Value;
     label?: string;
-    labelPosition?: 'top' | 'left' | 'right' | 'bottom';
-    onClick?: Function; // TODO: [jon] function
-    onMouseDown?: (id: string | number, depth: number) => void;
-    onMouseOut?: (id: string | number) => void;
-    onMouseOver?: (id: string | number) => void;
-    onMouseUp?: (id: string | number) => void;
-    selectedId?: string | number;
+    onClick?: (id: Value) => void;
     secondaryLabel?: string;
     tooltip?: string;
 }

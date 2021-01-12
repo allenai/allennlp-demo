@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Col, Row, Slider } from 'antd';
+import { Slider } from 'antd';
 
 import { Output } from './form';
 import { LogScale } from '../lib/LogScale';
@@ -24,33 +24,28 @@ export const WithLogScaleSlider = ({ values, range, defaultValue, children, labe
     return (
         <>
             <Output.SubSection title={label}>
-                <Row>
-                    <ColWithLeftPadding span={12}>
-                        <Slider
-                            min={log.range[0]}
-                            max={log.range[1]}
-                            step={(log.range[1] - log.range[0]) / 100}
-                            tipFormatter={(v?: number) =>
-                                v !== undefined ? log.value(v) : undefined
-                            }
-                            onChange={(v: number) => setSelectedValue(log.value(v))}
-                            value={log.scale(value)}
-                            disabled={!values}
-                        />
-                    </ColWithLeftPadding>
-                    <Col span={8}>{value}</Col>
-                </Row>
+                <Wrapper>
+                    <Slider
+                        min={log.range[0]}
+                        max={log.range[1]}
+                        step={(log.range[1] - log.range[0]) / 100}
+                        tipFormatter={(v?: number) => (v !== undefined ? log.value(v) : undefined)}
+                        onChange={(v: number) => setSelectedValue(log.value(v))}
+                        value={log.scale(value)}
+                        disabled={!values}
+                    />
+                    <span>
+                        {Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 }).format(value)}
+                    </span>
+                </Wrapper>
             </Output.SubSection>
             {children(value)}
         </>
     );
 };
 
-// TODO: [jon] Let's use display: grid and gap here instead
-
-// The slider's slider gets cut off on the left w/o this.
-const ColWithLeftPadding = styled(Col)`
-    ${({ theme }) => `
-        padding-left: ${theme.spacing.xs};
-  `}
+const Wrapper = styled.div`
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    padding-left: ${({ theme }) => theme.spacing.xs};
 `;
