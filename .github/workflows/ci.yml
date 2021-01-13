@@ -93,7 +93,8 @@ jobs:
           "transformer_qa",
           "vilbert_vqa",
           "wikitables_parser",
-          "tasks"
+          "tasks",
+          "model-card"
         ]
     steps:
     - uses: actions/checkout@v2

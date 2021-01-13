@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class TasksService(flask.Flask):
-    def __init__(self, name: str = "info"):
+    def __init__(self, name: str = "tasks"):
         super().__init__(name)
         configure_logging(self)
 
