@@ -26,9 +26,6 @@ class ModelCardService(flask.Flask):
 
         @self.route("/<string:model_id>", methods=["GET"])
         def model_card(model_id: str):
-            from pprint import pprint
-
-            pprint(get_pretrained_models())
             card = get_pretrained_models().get(model_id)
             if card is None:
                 raise NotFound(f"No model with id {model_id} found.")
