@@ -23,10 +23,10 @@ const Wrapper = styled.div<{ centerLabels?: boolean; isClicking?: boolean }>`
     flex-wrap: wrap;
     white-space: pre;
     cursor: default;
-    align-items: flex-start;
+    align-items: center;
 
     ${({ centerLabels }) =>
-        centerLabels &&
+        !centerLabels &&
         css`
             align-items: initial;
         `}

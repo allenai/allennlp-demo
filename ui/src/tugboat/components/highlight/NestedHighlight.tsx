@@ -10,14 +10,14 @@ import {
 import { HighlightContainer } from './HighlightContainer';
 
 interface BaseNestedHighlightProps extends BaseHighlightProps {
-    // TODO: [jon 3] yuck we have a value or a function
+    // TODO: It's bad design to have prop evaluate to a value OR a function.
     highlightColor?: HighlightColor | ((index: Cluster) => HighlightColor);
     tokenSeparator?: JSX.Element;
 }
 
 interface Cluster {
     cluster: string;
-    // TODO: [jon 4] yuck, just put almost anything in here
+    // TODO: It's bad design to have contents have so many valid types.
     contents: (JSX.Element | string | Cluster | undefined)[];
     end: number;
     clusterIndex: number;

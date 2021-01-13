@@ -50,7 +50,7 @@ export const Predictions = ({ input, output, model }: ModelSuccess<Input, Predic
     </Output.Section>
 );
 
-// TODO: [jon 5] remove mock data
+// TODO: remove mock data before merging
 const mockData: NMNPrediction = {
     answer: '2',
     inputs: [
@@ -846,6 +846,7 @@ const mockData: NMNPrediction = {
     ],
     question: 'How many partially reusable launch systems were developed?',
 };
+// TODO: remove mock data before merging
 const useMock = true;
 
 const OutputByModel = ({
