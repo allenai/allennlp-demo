@@ -8,9 +8,18 @@ export namespace emory {
     type DocId = string;
     type Doc = {};
 
-    interface AppDoc {
+    interface Entry {
         app: AppId;
+        type?: string;
         doc: Doc;
+    }
+
+    /**
+     * Emory returns a URL path when an item is created, i.e. `/d/:id`. We strip `/d/` so that 
+     * the caller only gets the id back.
+     */
+    function removePrefix(url: string): DocId {
+        return url.replace(/^\/d\//, '');
     }
 
     const origin = 'https://emory.apps.allenai.org';
@@ -18,20 +27,24 @@ export namespace emory {
     /**
      * Creates a document and returns the resulting id.
      */
-    export function createDoc(app: AppId, doc: Doc): Promise<DocId> {
-        const body: AppDoc = { app, doc };
-        return fetch(`${origin}/api/v1/document/`, {
-            method: 'POST',
-            body: JSON.stringify(body),
-        }).then((r) => r.text());
+    export function createDoc(entry: Entry): Promise<DocId> {
+        return (
+            fetch(`${origin}/api/v1/document/`, {
+                method: 'POST',
+                body: JSON.stringify(entry),
+            })
+            .then((r) => r.text())
+            .then((url) => removePrefix(url))
+        );
     }
 
     /**
      * Retrieves a document by it's id.
      */
-    export function getDoc(id: DocId): Promise<Doc> {
-        return fetch(`${origin}/d/${id}`)
-            .then((r) => r.json())
-            .then((d: AppDoc) => d.doc);
+    export function getDoc(id: DocId): Promise<Entry> {
+        return (
+            fetch(`${origin}/d/${id}`)
+                .then((r) => r.json())
+        );
     }
 }

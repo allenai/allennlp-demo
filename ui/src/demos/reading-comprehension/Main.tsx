@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
@@ -44,7 +45,15 @@ export const Main = () => {
                                 <Output>
                                     <Output.Section
                                         title="Model Output"
-                                        extra={<ShareLink input={input} app="allennlp-demo" />}>
+                                        extra={
+                                            <AlignRight>
+                                                <ShareLink
+                                                    input={input}
+                                                    type="reading-comprehension-v1"
+                                                    slug={ShareLink.slug(input.question)}
+                                                    app="allennlp-demo" />
+                                            </AlignRight>
+                                        }>
                                         <Predictions model={model} input={input} output={output} />
                                         {isWithTokenizedInput(output) ? (
                                             <Interpreters
@@ -75,3 +84,9 @@ export const Main = () => {
         </Content>
     );
 };
+
+const AlignRight = styled.span`
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+`;

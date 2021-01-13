@@ -88,10 +88,12 @@ function reducer<I, O>(currentState: State<I, O>, action: Action): State<I, O> {
  * The method handles races and will only return a `Success` for the most recent `input`
  * value that was provided.
  */
-export function usePromise<I, O>(fetch: (input?: I) => Promise<O>, input?: I): State<I, O> {
+export function usePromise<I, O>(fetch: (input?: I) => Promise<O>, input?: I, disableFetch: boolean = false): State<I, O> {
     const [state, dispatch] = useReducer(reducer, new Uninitialized());
-
     useEffect(() => {
+        if (disableFetch) {
+            return;
+        }
         dispatch(new ChangeState(new Loading(input)));
         fetch(input)
             .then((o) => dispatch(new ChangeState(new Success(input, o))))
@@ -103,7 +105,7 @@ export function usePromise<I, O>(fetch: (input?: I) => Promise<O>, input?: I): S
                 const err = e instanceof Error ? e : new Error(e);
                 dispatch(new ChangeState(new Failure(input, err)));
             });
-    }, [input]);
+    }, [input, disableFetch]);
 
     // The cast here is necessary because of type erasure that occurs with `useReducer`,
     // which returns `state` as `State<unknown, unknown>`.

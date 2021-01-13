@@ -1,40 +1,84 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Button, Space, Typography } from 'antd';
+import { Button, Popover, Typography } from 'antd';
 
-import { Promised } from './Promised';
-import { emory } from '../lib';
+import { emory, usePromise } from '../lib';
+
+// TODO: When we create @allenai/tugboat, this dependency should be remove from the AllenNLP
+// demo's dependencies.
+import slug from 'slug';
+
+function makeURL({ docId, slug }: { docId: string, slug?: string }) {
+    // TODO: For use outside of the AllenNLP Demo we might need to make this more flexible,
+    // as applications will probably want to change the final URL.
+    const origin = document.location.origin;
+    const path = document.location.pathname.replace(/\/$/, '')
+    if (!slug) {
+        return `${origin}${path}/s/${docId}`;
+    }
+    return `${origin}${path}/s/${slug}/${docId}`;
+}
 
 interface Props<I extends {}> {
     app: string;
+    type?: string;
     input: I;
+    slug?: string;
 }
 
-export const ShareLink = <I,>({ app, input }: Props<I>) => {
-    const [hasClicked, setHasClicked] = useState(false);
+export const ShareLink = <I,>({ app, type, input, slug }: Props<I>) => {
+    const [hasBeenClicked, setHasBeenClicked] = useState(false);
+    const disableFetch = !hasBeenClicked;
+    const state = usePromise(
+        () => emory.createDoc({ app, type, doc: input }),
+        input,
+        disableFetch
+    );
+
+    const btn = (
+        <Button
+            onClick={() => setHasBeenClicked(true)}
+            loading={state.isLoading()}>Share</Button>
+    );
+
+    if (state.isUnitialized() || state.isLoading()) {
+        return btn;
+    }
+
+    if (!state.isSuccess()) {
+        // TODO
+        return <>Error</>;
+    }
+
+    const docId = state.output;
+    const url = makeURL({ docId, slug });
+
     return (
-        <Space size="middle">
-            <ShareButton onClick={() => setHasClicked(true)}>Share</ShareButton>
-            {hasClicked ? (
-                <Promised fetch={() => emory.createDoc(app, input)} input={[app, input]}>
-                    {({ output }) => (
-                        <ShareURL>{`${document.location.toString()}${output}`}</ShareURL>
-                    )}
-                </Promised>
-            ) : null}
-        </Space>
+        <Popover content={<ShareURL>{url}</ShareURL>} placement="left" defaultVisible>
+            {btn}
+        </Popover>
     );
 };
 
-const ShareButton = styled(Button).attrs(() => ({ size: 'small' }))`
-    ${({ theme }) => `
-    font-size: ${theme.typography.textStyles.small.fontSize};
-`}
-`;
+function shorten(s: string, max: number) {
+    const words = s.replace(/\W/g ,'').split(/\s+/);
+    if (words.length <= max) {
+        return s;
+    }
+    const selected = words.slice(0, max - 1).concat(words.reverse().slice(0, 1));
+    return selected.join(' ');
+}
+
+ShareLink.slug = (s: string, maxWords: number = 5) => {
+    if (maxWords === Infinity) {
+        return slug(s);
+    }
+    return slug(shorten(s, maxWords));
+}
 
 const ShareURL = styled(Typography.Text).attrs(() => ({ copyable: true }))`
     ${({ theme }) => `
-    font-size: ${theme.typography.textStyles.small.fontSize};
-    color: ${theme.color.B8};
-`}
+        font-size: ${theme.typography.textStyles.small.fontSize};
+        font-weight: ${theme.typography.font.weight.bold};
+    `}
 `;
