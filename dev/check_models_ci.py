@@ -11,7 +11,7 @@ WORKFLOW_FILE_PATH = ".github/workflows/ci.yml"
 logging.basicConfig()
 
 # These are endpoints we have tests for that aren't models. This script skips these.
-NON_MODEL_ENDPOINTS = set([ "tasks", "model-card" ])
+NON_MODEL_ENDPOINTS = set([ "tasks", "model_card" ])
 
 def find_models() -> Iterable[str]:
     for name in os.listdir("api/allennlp_demo"):
