@@ -3,19 +3,21 @@ import React from 'react';
 import {
     Highlight,
     getHighlightColor,
-    HighlightColors,
+    HighlightColor,
     Value,
     BaseHighlightProps,
 } from './Highlight';
 import { HighlightContainer } from './HighlightContainer';
 
 interface BaseNestedHighlightProps extends BaseHighlightProps {
-    highlightColor?: HighlightColors | ((index: Cluster) => HighlightColors);
+    // TODO: [jon 3] yuck we have a value or a function
+    highlightColor?: HighlightColor | ((index: Cluster) => HighlightColor);
     tokenSeparator?: JSX.Element;
 }
 
 interface Cluster {
     cluster: string;
+    // TODO: [jon 4] yuck, just put almost anything in here
     contents: (JSX.Element | string | Cluster | undefined)[];
     end: number;
     clusterIndex: number;
@@ -181,6 +183,7 @@ const InnerHighlight = ({
 interface NestedHighlightProps extends BaseNestedHighlightProps {
     clusters: ClusterMap;
     tokens: (JSX.Element | string)[];
+    className?: string;
 }
 
 /**
@@ -202,10 +205,11 @@ export const NestedHighlight = ({
     tokens,
     highlightColor,
     tokenSeparator,
+    className,
 }: NestedHighlightProps) => {
     const data = transformToTree(tokens, clusters);
     return (
-        <HighlightContainer>
+        <HighlightContainer className={className} centerLabels={true}>
             <InnerHighlight
                 activeDepths={activeDepths}
                 activeIds={activeIds}

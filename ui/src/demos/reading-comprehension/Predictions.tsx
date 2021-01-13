@@ -50,7 +50,7 @@ export const Predictions = ({ input, output, model }: ModelSuccess<Input, Predic
     </Output.Section>
 );
 
-// TODO: [jon 6] remove mock data
+// TODO: [jon 5] remove mock data
 const mockData: NMNPrediction = {
     answer: '2',
     inputs: [

@@ -3,36 +3,32 @@ import styled, { css } from 'styled-components';
 
 interface Props {
     children: JSX.Element | React.ReactNode;
-    bottomLabels?: boolean; // TODO: convert back to a string?
+    centerLabels?: boolean;
     isClicking?: boolean;
     className?: string;
 }
-export const HighlightContainer = ({ bottomLabels, className, isClicking, children }: Props) => {
+export const HighlightContainer = ({ centerLabels, className, isClicking, children }: Props) => {
+    console.log(centerLabels);
     return (
-        <Wrapper className={className} bottomLabels={bottomLabels} isClicking={isClicking}>
+        <Wrapper className={className} centerLabels={centerLabels} isClicking={isClicking}>
             {children}
         </Wrapper>
     );
 };
 
-// TODO: [jon 3] convert from flex to grid?
-// TODO: [jon 4] replace .bottom with a component
-const Wrapper = styled.div<{ bottomLabels?: boolean; isClicking?: boolean }>`
+const Wrapper = styled.div<{ centerLabels?: boolean; isClicking?: boolean }>`
     line-height: 42px;
     align-items: center;
     display: flex;
     flex-wrap: wrap;
     white-space: pre;
     cursor: default;
+    align-items: flex-start;
 
-    ${({ bottomLabels, theme }) =>
-        bottomLabels &&
+    ${({ centerLabels }) =>
+        centerLabels &&
         css`
-            padding: ${theme.spacing.xs} ${theme.spacing.md};
-            align-items: flex-start;
-            .bottom {
-                margin-top: ${theme.spacing.xs2};
-            }
+            align-items: initial;
         `}
 
     ${({ isClicking }) =>

@@ -8,7 +8,7 @@ import {
     WithLogScaleSlider,
     NestedHighlight,
     getHighlightColor,
-    HighlightColors,
+    HighlightColor,
     ClusterMap,
 } from '../../../tugboat/components';
 import { Output } from '../../../tugboat/components/form';
@@ -26,7 +26,7 @@ export const StepOutput = ({ inputs, step }: StepOutputProps) => {
 
     // We'll be displaying outputs across different inputs, and would like their color to be
     // consistent from one input to another.
-    const highlightColorByLabel: { [label: string]: HighlightColors } = {};
+    const highlightColorByLabel: { [label: string]: HighlightColor } = {};
     let colorIdx = -1;
     return (
         <>
@@ -129,47 +129,42 @@ export const StepOutput = ({ inputs, step }: StepOutputProps) => {
                                     input.name.charAt(0).toUpperCase() +
                                     input.name.replace('_', ' ').slice(1)
                                 }>
-                                <SpacingFix>
-                                    <NestedHighlight
-                                        highlightColor={(token: { cluster: string }) =>
-                                            highlightColorByLabel[token.cluster]
+                                <SpacedNestedHighlight
+                                    highlightColor={(token: { cluster: string }) =>
+                                        highlightColorByLabel[token.cluster]
+                                    }
+                                    tokens={input.tokens.map((t, i) => {
+                                        const valuesForIdx = valuesByTokenIndex[i];
+
+                                        // If there's no values for this token then don't wrap it in a <Popover />.
+                                        if (
+                                            !Array.isArray(valuesForIdx) ||
+                                            valuesForIdx.length === 0
+                                        ) {
+                                            return t;
                                         }
-                                        tokens={input.tokens.map((t, i) => {
-                                            const valuesForIdx = valuesByTokenIndex[i];
 
-                                            // If there's no values for this token then don't wrap it in a <Popover />.
-                                            if (
-                                                !Array.isArray(valuesForIdx) ||
-                                                valuesForIdx.length === 0
-                                            ) {
-                                                return t;
-                                            }
+                                        // Show a tooltip with the values for each token on hover.
+                                        const content = (
+                                            <>
+                                                {valuesForIdx.map(({ label, value }, i) => (
+                                                    <div key={`${i}/${label}`}>
+                                                        <strong>{label}:</strong>&nbsp;
+                                                        {nf.format(value)}
+                                                    </div>
+                                                ))}
+                                            </>
+                                        );
 
-                                            // Show a tooltip with the values for each token on hover.
-                                            const content = (
-                                                <>
-                                                    {valuesForIdx.map(({ label, value }, i) => (
-                                                        <div key={`${i}/${label}`}>
-                                                            <strong>{label}:</strong>&nbsp;
-                                                            {nf.format(value)}
-                                                        </div>
-                                                    ))}
-                                                </>
-                                            );
-
-                                            return (
-                                                <Popover
-                                                    key={`${i}/${t}`}
-                                                    title={t}
-                                                    content={content}>
-                                                    {t}
-                                                </Popover>
-                                            );
-                                        })}
-                                        clusters={clusters}
-                                        tokenSeparator={tokenSeparator}
-                                    />
-                                </SpacingFix>
+                                        return (
+                                            <Popover key={`${i}/${t}`} title={t} content={content}>
+                                                {t}
+                                            </Popover>
+                                        );
+                                    })}
+                                    clusters={clusters}
+                                    tokenSeparator={tokenSeparator}
+                                />
                             </Output.SubSection>
                         );
                     })
@@ -190,12 +185,7 @@ const Info = styled.div`
   `}
 `;
 
-// TODO: [jon 5] remove model__content__summary class
-const SpacingFix = styled.div`
-    margin-bottom: ${({ theme }) => theme.spacing.lg};
-
-    .model__content__summary {
-        margin: 0;
-        padding: 0;
-    }
+const SpacedNestedHighlight = styled(NestedHighlight)`
+    padding: 0;
+    margin: 0 0 ${({ theme }) => theme.spacing.lg} 0;
 `;
