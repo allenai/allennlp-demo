@@ -28,10 +28,9 @@ export interface ModelInfo {
     attackers: string[];
     id: ModelId;
     interpreters: string[];
-    model_card_data?: ModelCard;
     overrides?: { [k: string]: any };
     predictor_name: string;
-    pretrained_model_id: string;
+    pretrained_model_id?: string;
     use_old_load_method: boolean;
 }
 
