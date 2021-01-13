@@ -10,5 +10,6 @@
     },
     "use_old_load_method": true,
     "attackers": [],
-    "interpreters": []
+    "interpreters": [],
+    "pretrained_model_id": "rc-nmn"
 }
