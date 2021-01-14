@@ -23,7 +23,7 @@ export class Explanation {
     constructor(public answer: string, public inputs: Input[], public steps: Step[]) {}
 
     // Returns an Explanation instance, provided a raw response from the inference API.
-    static fromResponse = (response: NMNPrediction): Explanation => {
+    static fromResponse(response: NMNPrediction): Explanation {
         const inputs = response.inputs.map((i) => {
             return { name: i.name, tokens: i.tokens };
         });
