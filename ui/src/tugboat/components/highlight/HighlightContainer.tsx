@@ -8,7 +8,6 @@ interface Props {
     className?: string;
 }
 export const HighlightContainer = ({ centerLabels, className, isClicking, children }: Props) => {
-    console.log(centerLabels);
     return (
         <Wrapper className={className} centerLabels={centerLabels} isClicking={isClicking}>
             {children}

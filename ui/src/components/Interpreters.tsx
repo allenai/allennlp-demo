@@ -1,5 +1,8 @@
 import React from 'react';
-import { Collapse } from 'antd';
+import styled from 'styled-components';
+import { Collapse, Popover } from 'antd';
+
+import { LinkCSS } from '@allenai/varnish/components';
 
 import { Output, Saliency } from '../tugboat/components';
 import { Model } from '../tugboat/lib';
@@ -31,26 +34,29 @@ export const Interpreters = <I,>({ model, input, tokens }: Props<I>) => {
 
     const supportedInterpreters = new Set(info.interpreters);
 
+    const title = 'Model Interpretations';
+    const helpContent = (
+        <HelpContent>
+            <p>
+                Despite constant advances and seemingly super-human performance on constrained
+                domains, state-of-the-art models for NLP are imperfect. These imperfections, coupled
+                with today's advances being driven by (seemingly black-box) neural models, leave
+                researchers and practitioners scratching their heads asking,{' '}
+                <i>why did my model make this prediction?</i>
+            </p>
+            <a href="https://allennlp.org/interpret" target="_blank" rel="noopener noreferrer">
+                Learn More
+            </a>
+        </HelpContent>
+    );
+
     return (
         <Output.Section
-            title="Model Interpretations"
-            helpLabel="What is this?"
-            helpContent={
-                <div>
-                    <p>
-                        Despite constant advances and seemingly super-human performance on
-                        constrained domains, state-of-the-art models for NLP are imperfect. These
-                        imperfections, coupled with today's advances being driven by (seemingly
-                        black-box) neural models, leave researchers and practitioners scratching
-                        their heads asking, <i>why did my model make this prediction?</i>
-                    </p>
-                    <a
-                        href="https://allennlp.org/interpret"
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        Learn More
-                    </a>
-                </div>
+            title={title}
+            extra={
+                <Popover content={helpContent} title={<strong>{title}</strong>}>
+                    <PopoverTarget>What is this?</PopoverTarget>
+                </Popover>
             }>
             <Collapse>
                 {supportedInterpreters.has(InterpreterId.SimpleGradient) ? (
@@ -142,3 +148,16 @@ const Interpreter = ({
         />
     );
 };
+
+const HelpContent = styled.div`
+    width: 60ch;
+
+    p {
+        margin: 0 0 ${({ theme }) => theme.spacing.sm};
+    }
+`;
+
+const PopoverTarget = styled.span`
+    ${LinkCSS.default()}
+    font-style: italic;
+`;

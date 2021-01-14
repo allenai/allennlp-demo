@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
@@ -11,6 +12,7 @@ import {
     SelectExample,
     Question,
     Passage,
+    ShareLink,
     Submit,
 } from '../../tugboat/components';
 import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
@@ -40,17 +42,34 @@ export const Main = () => {
                             }>
                             {({ model, input, output }) => (
                                 <Output>
-                                    <Predictions model={model} input={input} output={output} />
-                                    {isWithTokenizedInput(output) ? (
-                                        <Interpreters model={model} input={input} tokens={output} />
-                                    ) : null}
-                                    <Attackers
-                                        model={model}
-                                        input={input}
-                                        prediction={output}
-                                        target="question">
-                                        {(pred) => getBasicAnswer(pred)}
-                                    </Attackers>
+                                    <Output.Section
+                                        title="Model Output"
+                                        extra={
+                                            <AlignRight>
+                                                <ShareLink
+                                                    input={input}
+                                                    type="reading-comprehension-v1"
+                                                    slug={ShareLink.slug(input.question)}
+                                                    app="allennlp-demo"
+                                                />
+                                            </AlignRight>
+                                        }>
+                                        <Predictions model={model} input={input} output={output} />
+                                        {isWithTokenizedInput(output) ? (
+                                            <Interpreters
+                                                model={model}
+                                                input={input}
+                                                tokens={output}
+                                            />
+                                        ) : null}
+                                        <Attackers
+                                            model={model}
+                                            input={input}
+                                            prediction={output}
+                                            target="question">
+                                            {(pred) => getBasicAnswer(pred)}
+                                        </Attackers>
+                                    </Output.Section>
                                 </Output>
                             )}
                         </Predict>
@@ -66,3 +85,9 @@ export const Main = () => {
         </Content>
     );
 };
+
+const AlignRight = styled.span`
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+`;
