@@ -3,6 +3,7 @@ export * from './DemoConfig';
 export * from './DemoGroup';
 export * from './Demos';
 export * from './Example';
+export * from './emory';
 export * from './LogScale';
 export * from './Model';
 export * from './ModelCard';

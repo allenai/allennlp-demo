@@ -93,6 +93,9 @@ export const Form = <I, O>(props: Props<I, O>) => {
             // In other words, we can pass any ole' object to here, and if the keys of the object
             // match the names of fields that belong to the form, their values be updated.
             form.setFieldsValue(examples.selectedExample as any);
+
+            // Again, when things change clear the input so that stale output isn't displayed.
+            setInput(undefined);
         }
     }, [examples.selectedExample]);
 
@@ -101,6 +104,10 @@ export const Form = <I, O>(props: Props<I, O>) => {
             <AntForm<I>
                 layout="vertical"
                 hideRequiredMark
+                onChange={
+                    // Clear the output whenever a field is changed.
+                    () => setInput(undefined)
+                }
                 onFinish={(v) => setInput(v)}
                 form={form}>
                 {props.fields}
