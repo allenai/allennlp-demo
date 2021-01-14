@@ -46,8 +46,8 @@ export interface HotflipAttackOutput<T> {
 interface Props {
     newTokens?: string[];
     originalTokens: string[];
-    newPrediction?: string | number;
-    originalPrediction: string | number;
+    newPrediction?: React.ReactNode | JSX.Element;
+    originalPrediction?: React.ReactNode | JSX.Element;
 }
 
 export const Hotflip = ({
@@ -63,7 +63,7 @@ export const Hotflip = ({
     return (
         <>
             <h6>Original Input:</h6> {originalString}
-            <h6>Original Prediction:</h6> {originalPrediction}
+            <h6>Original Prediction:</h6> {originalPrediction || 'Unknown'}
             <h6>Flipped Input:</h6> {flippedString}
             <h6>New Prediction:</h6> {newPrediction || 'Unknown'}
         </>
