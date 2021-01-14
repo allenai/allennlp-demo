@@ -52,20 +52,21 @@ export const Highlight = ({
     const deepestIndex = activeDepths
         ? activeDepths.depths.indexOf(Math.max(...activeDepths.depths))
         : null;
-    const hColor = color || 'B';
-    const hLabelPosition = labelPosition || (label ? 'bottom' : undefined);
-    const hClicking =
+    const colorOrDefault = color || 'B';
+    const labelPositionOrDefault = labelPosition || (label ? 'bottom' : undefined);
+    const isClickingOnDeepestIndex =
         isClicking &&
         activeDepths !== undefined &&
         deepestIndex !== undefined &&
         deepestIndex !== null &&
         activeDepths.ids[deepestIndex] === id;
-    const hActive = hClicking || (!isClicking && activeIds && activeIds.includes(id));
+    const isActiveOrClicking =
+        isClickingOnDeepestIndex || (!isClicking && activeIds && activeIds.includes(id));
     const isString = (val: any): val is string => {
         return typeof val === 'string';
     };
     const labelTemplate = (
-        <PrimaryLabel color={hColor}>
+        <PrimaryLabel color={colorOrDefault}>
             <strong>{label}</strong>
             {secondaryLabel ? <SecondaryLabel>{secondaryLabel}</SecondaryLabel> : null}
         </PrimaryLabel>
@@ -73,24 +74,25 @@ export const Highlight = ({
 
     return (
         <HighlightSpan
-            color={hColor}
-            labelPosition={hLabelPosition}
+            color={colorOrDefault}
+            labelPosition={labelPositionOrDefault}
             clickable={isClickable}
             selected={selectedId === id}
-            clicking={hClicking}
-            active={hActive}
+            clicking={isClickingOnDeepestIndex}
+            active={isActiveOrClicking}
             shortText={isString(children) && children.length < 8}
-            data-label={label}
-            data-id={id}
-            data-depth={depth}
             onClick={onClick ? () => onClick(id) : undefined}
             onMouseDown={onMouseDown ? () => onMouseDown(id, depth) : undefined}
             onMouseOver={onMouseOver ? () => onMouseOver(id) : undefined}
             onMouseOut={onMouseOut ? () => onMouseOut(id) : undefined}
             onMouseUp={onMouseUp ? () => onMouseUp(id) : undefined}>
-            {hLabelPosition === 'left' || hLabelPosition === 'top' ? labelTemplate : null}
-            {children ? <Content labelPosition={hLabelPosition}>{children}</Content> : null}
-            {(label || label !== null) && hLabelPosition !== 'left' && hLabelPosition !== 'top'
+            {labelPositionOrDefault === 'left' || labelPositionOrDefault === 'top'
+                ? labelTemplate
+                : null}
+            {children ? <Content labelPosition={labelPositionOrDefault}>{children}</Content> : null}
+            {(label || label !== null) &&
+            labelPositionOrDefault !== 'left' &&
+            labelPositionOrDefault !== 'top'
                 ? labelTemplate
                 : null}
             {tooltip ? <Tooltip>{tooltip}</Tooltip> : null}
@@ -126,7 +128,6 @@ const PrimaryLabel = styled.span<{ labelPosition?: LabelPosition; color: string 
     strong {
         display: block;
         color: ${({ theme }) => theme.palette.common.white};
-        -webkit-font-smoothing: subpixel-antialiased;
         letter-spacing: 0.1em;
         text-transform: uppercase;
     }
@@ -142,6 +143,7 @@ const PrimaryLabel = styled.span<{ labelPosition?: LabelPosition; color: string 
         labelPosition &&
         labelPosition === 'bottom' &&
         css`
+            /* TODO: lets remove line-height and use flex with align-items */
             line-height: 14px;
             padding-top: 1px;
         `}
@@ -150,7 +152,6 @@ const PrimaryLabel = styled.span<{ labelPosition?: LabelPosition; color: string 
 const SecondaryLabel = styled.span`
     display: block;
     color: ${({ theme }) => theme.palette.common.white};
-    -webkit-font-smoothing: subpixel-antialiased;
     letter-spacing: 0.1em;
     opacity: 0.75;
     padding-left: ${({ theme }) => theme.spacing.xs2};
@@ -175,6 +176,7 @@ const Content = styled.span<{ labelPosition?: LabelPosition }>`
     }
 `;
 
+// TODO: replace this with antd tooltip when we add NER
 const Tooltip = styled.span`
     display: block;
     position: absolute;
@@ -233,6 +235,7 @@ const HighlightSpan = styled.span<{
     position: relative;
     cursor: default;
     min-width: ${({ theme }) => theme.spacing.lg};
+    /* TODO: lets remove line-height and use flex with align-items */
     line-height: 22px;
     display: flex;
     background: ${({ theme, color }) => theme.color[color + '1']};

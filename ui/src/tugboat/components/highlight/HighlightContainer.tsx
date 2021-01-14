@@ -17,6 +17,7 @@ export const HighlightContainer = ({ centerLabels, className, isClicking, childr
 };
 
 const Wrapper = styled.div<{ centerLabels?: boolean; isClicking?: boolean }>`
+    /* TODO: lets remove line-height and use flex with align-items */
     line-height: 42px;
     align-items: center;
     display: flex;

@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import { usePromise } from '../lib';
 import { Loading } from './shared';
@@ -36,7 +35,7 @@ export const Promised = <I, O>({ input, fetch, children, errorMessage }: Props<I
     const state = usePromise(fetch, input);
 
     if (state.isLoading() || state.isUnitialized()) {
-        return <LoadingWithSpace />;
+        return <Loading />;
     }
 
     if (state.isFailure()) {
@@ -50,7 +49,3 @@ export const Promised = <I, O>({ input, fetch, children, errorMessage }: Props<I
     // We shouldn't ever get here.
     throw new UnknownStateError(state);
 };
-
-const LoadingWithSpace = styled(Loading)`
-    margin-top: ${({ theme }) => theme.spacing.md};
-`;
