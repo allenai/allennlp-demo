@@ -1,30 +1,33 @@
 import React from 'react';
 import { Collapse } from 'antd';
 
-import { Output } from '../../tugboat/components';
-import { Model } from '../../tugboat/lib';
-
+import { Output } from '../tugboat/components';
+import { Model } from '../tugboat/lib';
 import {
     Attack,
     InputReduction,
     InputReductionAttackOutput,
     Hotflip,
     HotflipAttackOutput,
-} from '../../components';
-import { ModelInfoList } from '../../context';
-import { AttackType, GradientInputField } from '../../lib';
-import { Input, Prediction, getBasicAnswer } from './types';
+} from '.';
+import { ModelInfoList } from '../context';
+import { AttackType, GradientInputField } from '../lib';
 
-// TODO: this file can likely be made general for use on multiple tasks
-
-interface Props {
+interface Props<I, O> {
     model: Model;
-    input: Input;
-    prediction: Prediction;
-    target: keyof Input & string;
+    input: I;
+    prediction: O;
+    getBasicAnswer?: (pred: O) => string | number;
+    target: keyof I & string;
 }
 
-export const Attacks = ({ model, input, target, prediction }: Props) => {
+export const Attackers = <I, O>({
+    model,
+    input,
+    target,
+    prediction,
+    getBasicAnswer,
+}: Props<I, O>) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -39,7 +42,7 @@ export const Attacks = ({ model, input, target, prediction }: Props) => {
             <Collapse>
                 {supportedAttackTypes.has(AttackType.InputReduction) ? (
                     <Collapse.Panel key={AttackType.InputReduction} header="Input Reduction">
-                        <Attack<Input, InputReductionAttackOutput>
+                        <Attack<I, InputReductionAttackOutput>
                             type={AttackType.InputReduction}
                             target={target}
                             gradient={GradientInputField.Input2}
@@ -63,7 +66,7 @@ export const Attacks = ({ model, input, target, prediction }: Props) => {
                 ) : null}
                 {supportedAttackTypes.has(AttackType.HotFlip) ? (
                     <Collapse.Panel key={AttackType.HotFlip} header="HotFlip">
-                        <Attack<Input, HotflipAttackOutput<Prediction>>
+                        <Attack<I, HotflipAttackOutput<O>>
                             type={AttackType.HotFlip}
                             target={target}
                             gradient={GradientInputField.Input2}
@@ -87,11 +90,13 @@ export const Attacks = ({ model, input, target, prediction }: Props) => {
                                     newTokens={output.final ? output.final[0] : undefined}
                                     originalTokens={output.original}
                                     newPrediction={
-                                        output.outputs.length
+                                        getBasicAnswer && output.outputs.length
                                             ? getBasicAnswer(output.outputs[0])
                                             : undefined
                                     }
-                                    originalPrediction={getBasicAnswer(prediction)}
+                                    originalPrediction={
+                                        getBasicAnswer ? getBasicAnswer(prediction) : undefined
+                                    }
                                 />
                             )}
                         </Attack>

@@ -7,7 +7,6 @@ import { Model } from '../tugboat/lib';
 import { Interpret } from '.';
 import { ModelInfoList } from '../context';
 import { InterpreterId, WithTokenizedInput } from '../lib';
-import { Input } from '../demos/reading-comprehension/types';
 
 export interface InterpreterData {
     instance_1: {
@@ -16,13 +15,13 @@ export interface InterpreterData {
     };
 }
 
-interface Props {
+interface Props<I> {
     model: Model;
-    input: Input;
+    input: I;
     tokens: WithTokenizedInput;
 }
 
-export const Interpreters = ({ model, input, tokens }: Props) => {
+export const Interpreters = <I,>({ model, input, tokens }: Props<I>) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -58,7 +57,7 @@ export const Interpreters = ({ model, input, tokens }: Props) => {
                     <Collapse.Panel
                         key={InterpreterId.SimpleGradient}
                         header="Simple Gradient Visualization">
-                        <Interpret<Input, InterpreterData>
+                        <Interpret<I, InterpreterData>
                             interpreter={InterpreterId.SimpleGradient}
                             input={input}
                             description={
@@ -81,7 +80,7 @@ export const Interpreters = ({ model, input, tokens }: Props) => {
                     <Collapse.Panel
                         key={InterpreterId.IntegratedGradient}
                         header="Integrated Gradient Visualization">
-                        <Interpret<Input, InterpreterData>
+                        <Interpret<I, InterpreterData>
                             interpreter={InterpreterId.IntegratedGradient}
                             input={input}
                             description={
@@ -104,7 +103,7 @@ export const Interpreters = ({ model, input, tokens }: Props) => {
                     <Collapse.Panel
                         key={InterpreterId.SmoothGradient}
                         header="Smooth Gradient Visualization">
-                        <Interpret<Input, InterpreterData>
+                        <Interpret<I, InterpreterData>
                             interpreter={InterpreterId.SmoothGradient}
                             input={input}
                             description={

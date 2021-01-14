@@ -13,13 +13,12 @@ import {
     Passage,
     Submit,
 } from '../../tugboat/components';
-import { MultiModelDemo, Predict, Interpreters } from '../../components';
+import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
 import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
-import { Attacks } from './Attacks';
 import { Predictions } from './Predictions';
-import { Input, Prediction } from './types';
+import { Input, Prediction, getBasicAnswer } from './types';
 
 export const Main = () => {
     return (
@@ -45,10 +44,11 @@ export const Main = () => {
                                     {isWithTokenizedInput(output) ? (
                                         <Interpreters model={model} input={input} tokens={output} />
                                     ) : null}
-                                    <Attacks
+                                    <Attackers
                                         model={model}
                                         input={input}
                                         prediction={output}
+                                        getBasicAnswer={getBasicAnswer}
                                         target="question"
                                     />
                                 </Output>
