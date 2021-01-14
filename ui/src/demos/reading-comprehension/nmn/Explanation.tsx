@@ -9,7 +9,7 @@ interface Output {
 export class Step {
     constructor(public moduleName: string, public outputs: Output[]) {}
 
-    getOutputsForInput = (inputName: string) => {
+    getOutputsForInput(inputName: string) {
         return this.outputs.filter((o) => o.inputName === inputName);
     };
 }
