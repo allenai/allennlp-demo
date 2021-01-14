@@ -11,7 +11,7 @@ export class Step {
 
     getOutputsForInput(inputName: string) {
         return this.outputs.filter((o) => o.inputName === inputName);
-    };
+    }
 }
 
 export interface Input {
