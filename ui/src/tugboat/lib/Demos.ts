@@ -58,18 +58,32 @@ export const Demos = {
      *
      * 2. A symbol named `config` that is an instance of `tugboat.DemoConfig`.
      *
-     * If an `index.ts` file exists and doesn't export both of these symbols, a `ConfigError`
-     * is thrown.
+     * If an `index.ts` file exists and doesn't export both of these symbols, a `ConfigError` is
+     * thrown.
      */
     load(): DemoList {
         const demos: Demo[] = [];
         for (const path of ctx.keys()) {
+            // The paths are relative, and look like so:
+            //
+            //  ./task/config.ts
+            //  ./task/Main.tsx
+            //  ./task/lib/types.ts
+            //
+            // We only want to process top-level directories, so that people are free to
+            // add additional structure to their demo however they see fit. Here we do that
+            // by skipping everything other than the files defined in the directory for each
+            // task.
+            if (path.split('/').length !== 3) {
+                continue;
+            }
+
             const d = ctx(path);
             if (!('Main' in d)) {
                 throw new ConfigError(`${path}/Main.tsx doesn't exist.`);
             }
             if (!('config' in d)) {
-                throw new ConfigError(`${path}/config.ts doesn't exist`);
+                throw new ConfigError(`${path}/config.ts doesn't exist.`);
             }
 
             const config: DemoConfig = d.config;

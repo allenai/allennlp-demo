@@ -37,7 +37,6 @@ function getFallbackPretrainedModelId(id: ModelId): string | undefined {
     if (id === ModelId.Nmn) {
         return 'rc-nmn';
     }
-    return;
 }
 
 interface ModelInfoAndCard {
@@ -46,28 +45,22 @@ interface ModelInfoAndCard {
 }
 
 function fetchAllModelInfoAndCard(ids?: string[]): Promise<ModelInfoAndCard[]> {
-    return (
-        fetchModelInfo(ids)
-            .then(info => {
-                const cards: Promise<ModelInfoAndCard>[] = [];
-                for (const i of info) {
-                    const pretrainedModelId = i.pretrained_model_id ?? getFallbackPretrainedModelId(i.id);
-                    if (!pretrainedModelId) {
-                        console.warn(
-                            `Model ${i.id} doesn't have a pretrained_model_id, so it won't be included.`
-                        );
-                        continue;
-                    }
-                    // TODO (@codeviking): Right now this API is really slow. We need to make it
-                    // faster.
-                    cards.push(
-                        fetchModelCard(pretrainedModelId)
-                            .then(c => ({ card: c, info: i }))
-                    );
-                }
-                return Promise.all(cards);
-            })
-    );
+    return fetchModelInfo(ids).then((info) => {
+        const cards: Promise<ModelInfoAndCard>[] = [];
+        for (const i of info) {
+            const pretrainedModelId = i.pretrained_model_id ?? getFallbackPretrainedModelId(i.id);
+            if (!pretrainedModelId) {
+                console.warn(
+                    `Model ${i.id} doesn't have a pretrained_model_id, so it won't be included.`
+                );
+                continue;
+            }
+            // TODO (@codeviking): Right now this API is really slow. We need to make it
+            // faster.
+            cards.push(fetchModelCard(pretrainedModelId).then((c) => ({ card: c, info: i })));
+        }
+        return Promise.all(cards);
+    });
 }
 
 interface Props {

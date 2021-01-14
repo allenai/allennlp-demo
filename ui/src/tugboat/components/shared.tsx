@@ -10,4 +10,6 @@ const LoadingIcon = styled(LoadingOutlined).attrs(() => ({ spin: true }))`
     }
 `;
 
-export const Loading = () => <Spin indicator={<LoadingIcon />} />;
+export const Loading = (props: { className?: string }) => (
+    <Spin className={props.className} indicator={<LoadingIcon />} />
+);

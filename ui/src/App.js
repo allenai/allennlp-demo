@@ -13,7 +13,6 @@ import ModelIntro from './components/ModelIntro';
 import { modelComponents, modelRedirects } from './models';
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
-import Info from './components/Info';
 import { groups } from './groups';
 
 import './css/App.css';
@@ -60,7 +59,6 @@ const App = () => (
         <VarnishApp layout="left-aligned">
             <Switch>
                 <Route exact path="/" render={() => <Redirect to={DEFAULT_PATH} />} />
-                <Route path="/info" component={Info} />
                 {demos.all().map(({ config, Component }) => (
                     <Route
                         key={config.path}
