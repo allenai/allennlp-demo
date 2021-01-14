@@ -48,9 +48,9 @@ export const Main = () => {
                                         model={model}
                                         input={input}
                                         prediction={output}
-                                        getBasicAnswer={getBasicAnswer}
-                                        target="question"
-                                    />
+                                        target="question">
+                                        {(pred) => getBasicAnswer(pred)}
+                                    </Attackers>
                                 </Output>
                             )}
                         </Predict>

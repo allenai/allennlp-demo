@@ -17,17 +17,11 @@ interface Props<I, O> {
     model: Model;
     input: I;
     prediction: O;
-    getBasicAnswer?: (pred: O) => string | number;
     target: keyof I & string;
+    children?: (pred: O) => React.ReactNode | JSX.Element;
 }
 
-export const Attackers = <I, O>({
-    model,
-    input,
-    target,
-    prediction,
-    getBasicAnswer,
-}: Props<I, O>) => {
+export const Attackers = <I, O>({ model, input, target, prediction, children }: Props<I, O>) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -90,13 +84,11 @@ export const Attackers = <I, O>({
                                     newTokens={output.final ? output.final[0] : undefined}
                                     originalTokens={output.original}
                                     newPrediction={
-                                        getBasicAnswer && output.outputs.length
-                                            ? getBasicAnswer(output.outputs[0])
+                                        children && output.outputs.length
+                                            ? children(output.outputs[0])
                                             : undefined
                                     }
-                                    originalPrediction={
-                                        getBasicAnswer ? getBasicAnswer(prediction) : undefined
-                                    }
+                                    originalPrediction={children ? children(prediction) : undefined}
                                 />
                             )}
                         </Attack>
