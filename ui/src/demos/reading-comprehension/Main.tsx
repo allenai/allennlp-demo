@@ -20,7 +20,7 @@ import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Input, Prediction, getBasicAnswer } from './types';
+import { Input, Prediction, getBasicAnswer, InterpreterData } from './types';
 
 export const Main = () => {
     return (
@@ -56,10 +56,23 @@ export const Main = () => {
                                         }>
                                         <Predictions model={model} input={input} output={output} />
                                         {isWithTokenizedInput(output) ? (
-                                            <Interpreters
+                                            <Interpreters<Input, InterpreterData>
                                                 model={model}
                                                 input={input}
-                                                tokens={output}
+                                                saliencyData={[
+                                                    {
+                                                        header: 'Question',
+                                                        tokens: output.question_tokens,
+                                                        interpretData: (o: InterpreterData) =>
+                                                            o.instance_1.grad_input_2,
+                                                    },
+                                                    {
+                                                        header: 'Passage',
+                                                        tokens: output.passage_tokens,
+                                                        interpretData: (o: InterpreterData) =>
+                                                            o.instance_1.grad_input_1,
+                                                    },
+                                                ]}
                                             />
                                         ) : null}
                                         <Attackers

@@ -8,8 +8,8 @@ interface DefaultProps {
 }
 
 interface Props extends DefaultProps {
-    interpretData: [number[], number[]];
-    inputTokens: [string[], string[]];
+    interpretData: number[][];
+    inputTokens: string[][];
     inputHeaders: string[];
 }
 

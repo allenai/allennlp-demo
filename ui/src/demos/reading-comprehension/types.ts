@@ -1,10 +1,19 @@
-import { WithTokenizedInput, isWithTokenizedInput } from '../../lib';
 import { InvalidModelResponseError } from '../../tugboat/error';
 
 export interface Input {
     passage: string;
     question: string;
 }
+
+export interface WithTokenizedInput {
+    passage_tokens: string[];
+    question_tokens: string[];
+}
+
+export const isWithTokenizedInput = (x: any): x is WithTokenizedInput => {
+    const xx = x as WithTokenizedInput;
+    return Array.isArray(xx.passage_tokens) && Array.isArray(xx.question_tokens);
+};
 
 export interface BiDAFPrediction extends WithTokenizedInput {
     best_span: number[]; // index into the token list
@@ -206,6 +215,13 @@ export const isPrediction = (pred: Prediction): pred is Prediction => {
         isNMNPrediction(typedPred)
     );
 };
+
+export interface InterpreterData {
+    instance_1: {
+        grad_input_1: number[];
+        grad_input_2: number[];
+    };
+}
 
 export const getBasicAnswer = (pred: Prediction): number | string => {
     if (isBiDAFPrediction(pred) || isTransformerQAPrediction(pred)) {
