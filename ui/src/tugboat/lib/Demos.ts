@@ -63,27 +63,42 @@ export const Demos = {
     load(): DemoList {
         const demos: Demo[] = [];
         for (const path of ctx.keys()) {
-            const d = ctx(path);
-            if ('Main' in d && 'config' in d) {
-                const config: DemoConfig = d.config;
-
-                // If there isn't a path, we generate a URL safe version of the title and use that.
-                if (!config.path) {
-                    config.path = `/${slug(config.title, '-')}`;
-                }
-
-                // We prefix demos that are hidden from view with a prefix that makes them harder to
-                // find. Someone can still access them, they're just less likely to.
-                if (config.status === 'hidden') {
-                    config.path = `/hidden${config.path}`;
-                }
-
-                demos.push({ Component: d.Main, config });
-            } else if ('Main' in d || 'config' in d) {
-                throw new ConfigError(
-                    `${path}/config.ts and ${path}/Main.ts are required to include a Demo`
-                );
+            // The paths are relative, and look like so:
+            //
+            //  ./task/config.ts
+            //  ./task/Main.tsx
+            //  ./task/lib/types.ts
+            //
+            // We only want to process top-level directories, so that people are free to
+            // add additional structure to their demo however they see fit. Here we do that
+            // by skipping everything other than the files defined in the directory for each
+            // task.
+            if (path.split('/').length !== 3) {
+                continue;
             }
+
+            const d = ctx(path);
+            if (!('Main' in d)) {
+                throw new ConfigError(`${path}/Main.tsx doesn't exist.`);
+            }
+            if (!('config' in d)) {
+                throw new ConfigError(`${path}/config.ts doesn't exist.`);
+            }
+
+            const config: DemoConfig = d.config;
+
+            // If there isn't a path, we generate a URL safe version of the title and use that.
+            if (!config.path) {
+                config.path = `/${slug(config.title, '-')}`;
+            }
+
+            // We prefix demos that are hidden from view with a prefix that makes them harder to
+            // find. Someone can still access them, they're just less likely to.
+            if (config.status === 'hidden') {
+                config.path = `/hidden${config.path}`;
+            }
+
+            demos.push({ Component: d.Main, config });
         }
         return new DemoList(demos.sort((a, b) => a.config.order - b.config.order));
     },
