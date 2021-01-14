@@ -58,7 +58,8 @@ export const Demos = {
      *
      * 2. A symbol named `config` that is an instance of `tugboat.DemoConfig`.
      *
-     * If an `index.ts` file exists and doesn't export both of these symbols, it is not added.
+     * If an `index.ts` file exists and doesn't export both of these symbols, a `ConfigError` is
+     * thrown.
      */
     load(): DemoList {
         const demos: Demo[] = [];
