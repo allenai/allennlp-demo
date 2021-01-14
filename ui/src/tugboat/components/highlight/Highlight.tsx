@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { Tooltip } from 'antd';
 
 export type Value = string | number;
 
@@ -86,16 +87,19 @@ export const Highlight = ({
             onMouseOver={onMouseOver ? () => onMouseOver(id) : undefined}
             onMouseOut={onMouseOut ? () => onMouseOut(id) : undefined}
             onMouseUp={onMouseUp ? () => onMouseUp(id) : undefined}>
-            {labelPositionOrDefault === 'left' || labelPositionOrDefault === 'top'
-                ? labelTemplate
-                : null}
-            {children ? <Content labelPosition={labelPositionOrDefault}>{children}</Content> : null}
-            {(label || label !== null) &&
-            labelPositionOrDefault !== 'left' &&
-            labelPositionOrDefault !== 'top'
-                ? labelTemplate
-                : null}
-            {tooltip ? <Tooltip>{tooltip}</Tooltip> : null}
+            <Tooltip title={tooltip}>
+                {labelPositionOrDefault === 'left' || labelPositionOrDefault === 'top'
+                    ? labelTemplate
+                    : null}
+                {children ? (
+                    <Content labelPosition={labelPositionOrDefault}>{children}</Content>
+                ) : null}
+                {(label || label !== null) &&
+                labelPositionOrDefault !== 'left' &&
+                labelPositionOrDefault !== 'top'
+                    ? labelTemplate
+                    : null}
+            </Tooltip>
         </HighlightSpan>
     );
 };
@@ -176,48 +180,6 @@ const Content = styled.span<{ labelPosition?: LabelPosition }>`
     }
 `;
 
-// TODO: replace this with antd tooltip when we add NER
-const Tooltip = styled.span`
-    display: block;
-    position: absolute;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-    border-radius: ${({ theme }) => theme.shape.borderRadius.default};
-    background: rgba(70, 70, 70, 0.9);
-    padding: ${({ theme }) => `${theme.spacing.xs2} ${theme.spacing.xs}`};
-    opacity: 0;
-    z-index: -8;
-    left: 50%;
-    top: 100%;
-    margin-top: ${({ theme }) => theme.spacing.sm};
-    color: ${({ theme }) => theme.palette.common.white};
-    transform: ${({ theme }) => `translate(-50%, -${theme.spacing.xs2}`};
-    transition: opacity 0.2s ease, z-index 0.2s ease, transform 0.2s ease 0.3s;
-    font-weight: bold;
-    white-space: nowrap;
-    user-select: none;
-    cursor: default;
-
-    &:before {
-        display: block;
-        position: absolute;
-        left: 50%;
-        top: 0;
-        margin-top: -${({ theme }) => theme.spacing.xs2};
-        margin-left: -${({ theme }) => theme.spacing.xs2};
-        content: '';
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: ${({ theme }) =>
-            `0 ${theme.spacing.xs2} ${theme.spacing.xs2} ${theme.spacing.xs2}`};
-        border-color: transparent transparent rgba(70, 70, 70, 0.9) transparent;
-    }
-
-    &:hover {
-        z-index: -8 !important;
-    }
-`;
-
 const HighlightSpan = styled.span<{
     labelPosition?: LabelPosition;
     color: string;
@@ -241,15 +203,6 @@ const HighlightSpan = styled.span<{
     background: ${({ theme, color }) => theme.color[color + '1']};
     border-color: ${({ theme, color }) => theme.color[color + '5']};
     transition: background-color 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
-
-    &:hover {
-        ${Tooltip} {
-            z-index: 8;
-            opacity: 1;
-            transform: translate(-50%, 0);
-            transition-delay: 0s;
-        }
-    }
 
     &:last-child {
         margin-right: ${({ theme }) => theme.spacing.xs2};
