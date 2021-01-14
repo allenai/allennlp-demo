@@ -60,15 +60,22 @@ export const ShareLink = <I,>({ app, type, input, slug }: Props<I>) => {
     );
 };
 
+/**
+ * Removes non-word characters and shortens the provided string to include up to `max` words.
+ */
 function shorten(s: string, max: number) {
-    const words = s.replace(/\W/g ,'').split(/\s+/);
+    const words = s.replace(/[^\w\s]/g ,'').split(/\s+/);
     if (words.length <= max) {
-        return s;
+        return words.join(' ');
     }
     const selected = words.slice(0, max - 1).concat(words.reverse().slice(0, 1));
     return selected.join(' ');
 }
 
+/**
+ * Produces a URL safe slug from the provided string. By default the slug's length is limited to
+ * 5 words, if you'd like a slug without a limit set `maxWords` to `Infinity`.
+ */
 ShareLink.slug = (s: string, maxWords: number = 5) => {
     if (maxWords === Infinity) {
         return slug(s);
