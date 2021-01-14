@@ -51,7 +51,8 @@ export const Main = () => {
                                                     input={input}
                                                     type="reading-comprehension-v1"
                                                     slug={ShareLink.slug(input.question)}
-                                                    app="allennlp-demo" />
+                                                    app="allennlp-demo"
+                                                />
                                             </AlignRight>
                                         }>
                                         <Predictions model={model} input={input} output={output} />

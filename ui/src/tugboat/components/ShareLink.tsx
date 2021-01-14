@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button, Popover, Typography } from 'antd';
+import { Button, Popover, notification, Typography } from 'antd';
 
 import { emory, usePromise } from '../lib';
 
@@ -8,11 +8,11 @@ import { emory, usePromise } from '../lib';
 // demo's dependencies.
 import slug from 'slug';
 
-function makeURL({ docId, slug }: { docId: string, slug?: string }) {
+function makeURL({ docId, slug }: { docId: string; slug?: string }) {
     // TODO: For use outside of the AllenNLP Demo we might need to make this more flexible,
     // as applications will probably want to change the final URL.
     const origin = document.location.origin;
-    const path = document.location.pathname.replace(/\/$/, '')
+    const path = document.location.pathname.replace(/\/$/, '');
     if (!slug) {
         return `${origin}${path}/s/${docId}`;
     }
@@ -29,16 +29,12 @@ interface Props<I extends {}> {
 export const ShareLink = <I,>({ app, type, input, slug }: Props<I>) => {
     const [hasBeenClicked, setHasBeenClicked] = useState(false);
     const disableFetch = !hasBeenClicked;
-    const state = usePromise(
-        () => emory.createDoc({ app, type, doc: input }),
-        input,
-        disableFetch
-    );
+    const state = usePromise(() => emory.createDoc({ app, type, doc: input }), input, disableFetch);
 
     const btn = (
-        <Button
-            onClick={() => setHasBeenClicked(true)}
-            loading={state.isLoading()}>Share</Button>
+        <Button onClick={() => setHasBeenClicked(true)} loading={state.isLoading()}>
+            Share
+        </Button>
     );
 
     if (state.isUnitialized() || state.isLoading()) {
@@ -46,13 +42,17 @@ export const ShareLink = <I,>({ app, type, input, slug }: Props<I>) => {
     }
 
     if (!state.isSuccess()) {
-        // TODO
-        return <>Error</>;
+        notification.warning({
+            message: 'Something went Wrong',
+            description:
+                'An error occured which prevented us from creating a shareable URL. ' +
+                'Please try again.',
+        });
+        return btn;
     }
 
     const docId = state.output;
     const url = makeURL({ docId, slug });
-
     return (
         <Popover content={<ShareURL>{url}</ShareURL>} placement="left" defaultVisible>
             {btn}
@@ -64,7 +64,7 @@ export const ShareLink = <I,>({ app, type, input, slug }: Props<I>) => {
  * Removes non-word characters and shortens the provided string to include up to `max` words.
  */
 function shorten(s: string, max: number) {
-    const words = s.replace(/[^\w\s]/g ,'').split(/\s+/);
+    const words = s.replace(/[^\w\s]/g, '').split(/\s+/);
     if (words.length <= max) {
         return words.join(' ');
     }
@@ -81,7 +81,7 @@ ShareLink.slug = (s: string, maxWords: number = 5) => {
         return slug(s);
     }
     return slug(shorten(s, maxWords));
-}
+};
 
 const ShareURL = styled(Typography.Text).attrs(() => ({ copyable: true }))`
     ${({ theme }) => `

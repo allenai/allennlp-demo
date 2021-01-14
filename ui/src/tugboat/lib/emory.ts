@@ -15,7 +15,7 @@ export namespace emory {
     }
 
     /**
-     * Emory returns a URL path when an item is created, i.e. `/d/:id`. We strip `/d/` so that 
+     * Emory returns a URL path when an item is created, i.e. `/d/:id`. We strip `/d/` so that
      * the caller only gets the id back.
      */
     function removePrefix(url: string): DocId {
@@ -28,23 +28,18 @@ export namespace emory {
      * Creates a document and returns the resulting id.
      */
     export function createDoc(entry: Entry): Promise<DocId> {
-        return (
-            fetch(`${origin}/api/v1/document/`, {
-                method: 'POST',
-                body: JSON.stringify(entry),
-            })
+        return fetch(`${origin}/api/v1/document/`, {
+            method: 'POST',
+            body: JSON.stringify(entry),
+        })
             .then((r) => r.text())
-            .then((url) => removePrefix(url))
-        );
+            .then((url) => removePrefix(url));
     }
 
     /**
      * Retrieves a document by it's id.
      */
     export function getDoc(id: DocId): Promise<Entry> {
-        return (
-            fetch(`${origin}/d/${id}`)
-                .then((r) => r.json())
-        );
+        return fetch(`${origin}/d/${id}`).then((r) => r.json());
     }
 }

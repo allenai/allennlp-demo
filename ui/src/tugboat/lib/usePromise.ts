@@ -88,7 +88,11 @@ function reducer<I, O>(currentState: State<I, O>, action: Action): State<I, O> {
  * The method handles races and will only return a `Success` for the most recent `input`
  * value that was provided.
  */
-export function usePromise<I, O>(fetch: (input?: I) => Promise<O>, input?: I, disableFetch: boolean = false): State<I, O> {
+export function usePromise<I, O>(
+    fetch: (input?: I) => Promise<O>,
+    input?: I,
+    disableFetch: boolean = false
+): State<I, O> {
     const [state, dispatch] = useReducer(reducer, new Uninitialized());
     useEffect(() => {
         if (disableFetch) {
