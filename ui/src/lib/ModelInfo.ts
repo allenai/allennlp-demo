@@ -1,5 +1,3 @@
-import { ModelCard } from '../tugboat/lib/ModelCard';
-
 export enum ModelId {
     Bidaf = 'bidaf',
     BidafElmo = 'bidaf-elmo',
