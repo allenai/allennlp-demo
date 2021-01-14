@@ -43,5 +43,5 @@ export class Explanation {
         }
 
         return new Explanation(response.answer, inputs, steps);
-    };
+    }
 }
