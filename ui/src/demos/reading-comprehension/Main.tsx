@@ -4,17 +4,17 @@ import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import {
-    TaskTitle,
-    TaskDescription,
     ModelCard,
     Output,
-    SelectModelAndDescription,
-    SelectExample,
-    Question,
     Passage,
+    Question,
     Saliency,
+    SelectExample,
+    SelectModelAndDescription,
     ShareLink,
     Submit,
+    TaskDescription,
+    TaskTitle,
 } from '../../tugboat/components';
 import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
 import { isWithTokenizedInput } from '../../lib';
