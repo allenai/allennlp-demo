@@ -1,4 +1,5 @@
 {
     "id": "named-entity-recognition",
-    "pretrained_model_id": "tagging-elmo-crf-tagger"
+    "pretrained_model_id": "tagging-elmo-crf-tagger",
+    "attackers": ["input_reduction"]
 }
