@@ -12,7 +12,7 @@ export interface BaseHighlightProps {
     isClickable?: boolean;
     isClicking?: boolean;
     labelPosition?: LabelPosition;
-    onMouseDown?: (id: Value, depth: number) => void;
+    onMouseDown?: (id: Value, depth?: number) => void;
     onMouseOut?: (id: Value) => void;
     onMouseOver?: (id: Value) => void;
     onMouseUp?: (id: Value) => void;
@@ -22,7 +22,7 @@ export interface BaseHighlightProps {
 interface Props extends BaseHighlightProps {
     children: React.ReactNode | JSX.Element;
     color?: HighlightColor;
-    depth: number;
+    depth?: number;
     id: Value;
     label?: string;
     onClick?: (id: Value) => void;

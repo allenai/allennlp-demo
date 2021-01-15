@@ -8,7 +8,7 @@ import React from 'react';
 import { ModelUsage } from '../../components';
 import { Models, Examples } from '../../tugboat/context';
 import { NoSelectedModelError } from '../../tugboat/error';
-import { isGroupedExamples, UngroupedExamplesError } from '../../tugboat/lib';
+import { isGroupedExamples, GroupedExamplesError } from '../../tugboat/lib';
 
 export const Usage = () => {
     const models = React.useContext(Models);
@@ -18,44 +18,44 @@ export const Usage = () => {
         throw new NoSelectedModelError();
     }
 
-    if (!isGroupedExamples(examples)) {
-        throw new UngroupedExamplesError();
+    if (isGroupedExamples(examples)) {
+        throw new GroupedExamplesError();
     }
 
     // TODO: This seems brittle. If the examples change this will fail at runtime.
-    const ex = examples['SQuAD-like Argument Finding'][2]; // matrix example
+    const ex = examples[2]; // legend of zelda example
 
     const installCommand = 'pip install allennlp==1.0.0 allennlp-models==1.0.0';
 
     const bashCommand = `
-echo '{"passage": "${ex.passage.slice(0, 182)}.", "question": "${ex.question}"}' | \\
+echo '{"sentence": "${ex.sentence}."}' | \\
     allennlp predict ${models.selectedModel.card.archive_file} -
 `.trim();
 
     const pythonCommand = `
 from allennlp.predictors.predictor import Predictor
-import allennlp_models.rc
+import allennlp_models.tagging
 
 predictor = Predictor.from_path("${models.selectedModel.card.archive_file}")
 predictor.predict(
-    passage="${ex.passage.slice(0, 182)}.",
-    question="${ex.question}"
+    sentence="${ex.sentence}."
 )`.trim();
 
-    // TODO: Get this from the model card.
-    const evalDataPath =
-        'https://s3-us-west-2.amazonaws.com/allennlp/datasets/squad/squad-dev-v1.1.json';
-    const evaluationCommand = `
-allennlp evaluate \\
-    ${models.selectedModel.card.archive_file} \\
-    ${evalDataPath}`.trim();
+    const evaluationNote = (
+        <span>
+            The NER model was evaluated on the{' '}
+            <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset.
+            Unfortunately we cannot release this data due to licensing restrictions.
+        </span>
+    );
 
-    // TODO: Get this from the model card.
-    const trainingDataPath =
-        'https://raw.githubusercontent.com/allenai/allennlp-models/v1.0.0/training_config/rc/bidaf_elmo.jsonnet';
-    const trainingCommand = `allennlp train \\
-    ${trainingDataPath} \\
-    -s /path/to/output`.trim();
+    const trainingNote = (
+        <span>
+            The NER model was trained on the{' '}
+            <a href="https://www.clips.uantwerpen.be/conll2003/ner/">CoNLL-2003</a> NER dataset.
+            Unfortunately we cannot release this data due to licensing restrictions.
+        </span>
+    );
 
     // TODO: The AllenNLP version could be pulled from the model's info route.
     return (
@@ -63,8 +63,8 @@ allennlp evaluate \\
             installCommand={installCommand}
             bashCommand={bashCommand}
             pythonCommand={pythonCommand}
-            evaluationCommand={evaluationCommand}
-            trainingCommand={trainingCommand}
+            evaluationNote={evaluationNote}
+            trainingNote={trainingNote}
         />
     );
 };

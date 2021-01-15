@@ -17,11 +17,10 @@ import {
     TaskTitle,
 } from '../../tugboat/components';
 import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
-import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Input, Prediction, getBasicAnswer, InterpreterData } from './types';
+import { Input, Prediction, getBasicAnswer, InterpreterData, isWithTokenizedInput } from './types';
 
 export const Main = () => {
     return (

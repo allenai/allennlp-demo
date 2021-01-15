@@ -12,10 +12,10 @@ interface Props {
     bashCommand: string;
     pythonNote?: string;
     pythonCommand: string;
-    evaluationNote?: string;
-    evaluationCommand: string;
-    trainingNote?: string;
-    trainingCommand: string;
+    evaluationNote?: React.ReactNode | JSX.Element;
+    evaluationCommand?: string;
+    trainingNote?: React.ReactNode | JSX.Element;
+    trainingCommand?: string;
 }
 
 export const ModelUsage = (props: Props) => {

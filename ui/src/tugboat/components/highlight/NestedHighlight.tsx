@@ -260,16 +260,18 @@ export const withHighlightClickHandling = (
             };
         }
 
-        handleHighlightMouseDown = (id: Value, depth: number) => {
-            const { activeDepths } = this.state;
-            activeDepths.ids.push(id);
-            activeDepths.depths.push(depth);
+        handleHighlightMouseDown = (id: Value, depth?: number) => {
+            if (depth !== undefined) {
+                const { activeDepths } = this.state;
+                activeDepths.ids.push(id);
+                activeDepths.depths.push(depth);
 
-            this.setState({
-                activeIds: [id],
-                activeDepths,
-                isClicking: true,
-            });
+                this.setState({
+                    activeIds: [id],
+                    activeDepths,
+                    isClicking: true,
+                });
+            }
         };
 
         handleHighlightMouseUp = (id: Value) => {
