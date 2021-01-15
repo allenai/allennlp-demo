@@ -12,6 +12,7 @@ import {
     SelectExample,
     Question,
     Passage,
+    Saliency,
     ShareLink,
     Submit,
 } from '../../tugboat/components';
@@ -58,22 +59,23 @@ export const Main = () => {
                                         {isWithTokenizedInput(output) ? (
                                             <Interpreters<Input, InterpreterData>
                                                 model={model}
-                                                input={input}
-                                                saliencyData={[
-                                                    {
-                                                        header: 'Question',
-                                                        tokens: output.question_tokens,
-                                                        interpretData: (o: InterpreterData) =>
-                                                            o.instance_1.grad_input_2,
-                                                    },
-                                                    {
-                                                        header: 'Passage',
-                                                        tokens: output.passage_tokens,
-                                                        interpretData: (o: InterpreterData) =>
-                                                            o.instance_1.grad_input_1,
-                                                    },
-                                                ]}
-                                            />
+                                                input={input}>
+                                                {(interpreterOutput) => (
+                                                    <Saliency
+                                                        interpretData={[
+                                                            interpreterOutput.instance_1
+                                                                .grad_input_2,
+                                                            interpreterOutput.instance_1
+                                                                .grad_input_1,
+                                                        ]}
+                                                        inputTokens={[
+                                                            output.question_tokens,
+                                                            output.passage_tokens,
+                                                        ]}
+                                                        inputHeaders={['Question', 'Passage']}
+                                                    />
+                                                )}
+                                            </Interpreters>
                                         ) : null}
                                         <Attackers
                                             model={model}

@@ -4,26 +4,19 @@ import { Collapse, Popover } from 'antd';
 
 import { LinkCSS } from '@allenai/varnish/components';
 
-import { Output, Saliency } from '../tugboat/components';
+import { Output } from '../tugboat/components';
 import { Model } from '../tugboat/lib';
 
 import { Interpret } from '.';
 import { ModelInfoList } from '../context';
 import { InterpreterId } from '../lib';
-
-export interface SaliencyData<O> {
-    interpretData: (output: O) => number[];
-    tokens: string[];
-    header: string;
-}
-
 interface Props<I, O> {
     model: Model;
     input: I;
-    saliencyData: SaliencyData<O>[];
+    children: (output: O) => React.ReactNode;
 }
 
-export const Interpreters = <I, O>({ model, input, saliencyData }: Props<I, O>) => {
+export const Interpreters = <I, O>({ model, input, children }: Props<I, O>) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -77,9 +70,7 @@ export const Interpreters = <I, O>({ model, input, saliencyData }: Props<I, O>) 
                                     .{' '}
                                 </p>
                             }>
-                            {({ output }) => (
-                                <Interpreter output={output} saliencyData={saliencyData} />
-                            )}
+                            {({ output }) => children(output)}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
@@ -102,9 +93,7 @@ export const Interpreters = <I, O>({ model, input, saliencyData }: Props<I, O>) 
                                     .
                                 </p>
                             }>
-                            {({ output }) => (
-                                <Interpreter output={output} saliencyData={saliencyData} />
-                            )}
+                            {({ output }) => children(output)}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
@@ -127,30 +116,12 @@ export const Interpreters = <I, O>({ model, input, saliencyData }: Props<I, O>) 
                                     .
                                 </p>
                             }>
-                            {({ output }) => (
-                                <Interpreter output={output} saliencyData={saliencyData} />
-                            )}
+                            {({ output }) => children(output)}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
             </Collapse>
         </Output.Section>
-    );
-};
-
-const Interpreter = <O,>({
-    output,
-    saliencyData,
-}: {
-    output: O;
-    saliencyData: SaliencyData<O>[];
-}) => {
-    return (
-        <Saliency
-            interpretData={saliencyData.map((d) => d.interpretData(output))}
-            inputTokens={saliencyData.map((d) => d.tokens)}
-            inputHeaders={saliencyData.map((d) => d.header)}
-        />
     );
 };
 
