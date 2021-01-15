@@ -4,23 +4,24 @@ import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import {
-    TaskTitle,
-    TaskDescription,
     ModelCard,
     Output,
-    SelectModelAndDescription,
-    SelectExample,
-    Question,
     Passage,
+    Question,
+    Saliency,
+    SelectExample,
+    SelectModelAndDescription,
     ShareLink,
     Submit,
+    TaskDescription,
+    TaskTitle,
 } from '../../tugboat/components';
 import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
 import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Input, Prediction, getBasicAnswer } from './types';
+import { Input, Prediction, getBasicAnswer, InterpreterData } from './types';
 
 export const Main = () => {
     return (
@@ -56,11 +57,25 @@ export const Main = () => {
                                         }>
                                         <Predictions model={model} input={input} output={output} />
                                         {isWithTokenizedInput(output) ? (
-                                            <Interpreters
+                                            <Interpreters<Input, InterpreterData>
                                                 model={model}
-                                                input={input}
-                                                tokens={output}
-                                            />
+                                                input={input}>
+                                                {(interpreterOutput) => (
+                                                    <Saliency
+                                                        interpretData={[
+                                                            interpreterOutput.instance_1
+                                                                .grad_input_2,
+                                                            interpreterOutput.instance_1
+                                                                .grad_input_1,
+                                                        ]}
+                                                        inputTokens={[
+                                                            output.question_tokens,
+                                                            output.passage_tokens,
+                                                        ]}
+                                                        inputHeaders={['Question', 'Passage']}
+                                                    />
+                                                )}
+                                            </Interpreters>
                                         ) : null}
                                         <Attackers
                                             model={model}

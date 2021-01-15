@@ -1,8 +1,7 @@
 import React from 'react';
-import { Collapse } from 'antd';
 
+import { DebugInfo } from '../../components';
 import {
-    PrettyPrintedJSON,
     TextWithHighlight,
     Output,
     ArithmeticEquation,
@@ -33,19 +32,7 @@ export const Predictions = ({ input, output, model }: ModelSuccess<Input, Predic
     <Output.Section>
         <OutputByModel input={input} output={output} model={model} />
 
-        <Output.SubSection title="Debug Output">
-            <Collapse>
-                <Collapse.Panel key="model-debug" header="Model">
-                    <PrettyPrintedJSON json={model} />
-                </Collapse.Panel>
-                <Collapse.Panel key="input-debug" header="Input">
-                    <PrettyPrintedJSON json={input} />
-                </Collapse.Panel>
-                <Collapse.Panel key="output-debug" header="Output">
-                    <PrettyPrintedJSON json={output} />
-                </Collapse.Panel>
-            </Collapse>
-        </Output.SubSection>
+        <DebugInfo input={input} output={output} model={model} />
     </Output.Section>
 );
 

@@ -4,27 +4,19 @@ import { Collapse, Popover } from 'antd';
 
 import { LinkCSS } from '@allenai/varnish/components';
 
-import { Output, Saliency } from '../tugboat/components';
+import { Output } from '../tugboat/components';
 import { Model } from '../tugboat/lib';
 
 import { Interpret } from '.';
 import { ModelInfoList } from '../context';
-import { InterpreterId, WithTokenizedInput } from '../lib';
-
-export interface InterpreterData {
-    instance_1: {
-        grad_input_1: number[];
-        grad_input_2: number[];
-    };
-}
-
-interface Props<I> {
+import { InterpreterId } from '../lib';
+interface Props<I, O> {
     model: Model;
     input: I;
-    tokens: WithTokenizedInput;
+    children: (output: O) => React.ReactNode;
 }
 
-export const Interpreters = <I,>({ model, input, tokens }: Props<I>) => {
+export const Interpreters = <I, O>({ model, input, children }: Props<I, O>) => {
     const modelInfoList = React.useContext(ModelInfoList);
 
     const info = modelInfoList.find((i) => i.id === model.id);
@@ -63,7 +55,7 @@ export const Interpreters = <I,>({ model, input, tokens }: Props<I>) => {
                     <Collapse.Panel
                         key={InterpreterId.SimpleGradient}
                         header="Simple Gradient Visualization">
-                        <Interpret<I, InterpreterData>
+                        <Interpret<I, O>
                             interpreter={InterpreterId.SimpleGradient}
                             input={input}
                             description={
@@ -78,7 +70,7 @@ export const Interpreters = <I,>({ model, input, tokens }: Props<I>) => {
                                     .{' '}
                                 </p>
                             }>
-                            {({ output }) => <Interpreter output={output} tokens={tokens} />}
+                            {({ output }) => children(output)}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
@@ -86,7 +78,7 @@ export const Interpreters = <I,>({ model, input, tokens }: Props<I>) => {
                     <Collapse.Panel
                         key={InterpreterId.IntegratedGradient}
                         header="Integrated Gradient Visualization">
-                        <Interpret<I, InterpreterData>
+                        <Interpret<I, O>
                             interpreter={InterpreterId.IntegratedGradient}
                             input={input}
                             description={
@@ -101,7 +93,7 @@ export const Interpreters = <I,>({ model, input, tokens }: Props<I>) => {
                                     .
                                 </p>
                             }>
-                            {({ output }) => <Interpreter output={output} tokens={tokens} />}
+                            {({ output }) => children(output)}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
@@ -109,7 +101,7 @@ export const Interpreters = <I,>({ model, input, tokens }: Props<I>) => {
                     <Collapse.Panel
                         key={InterpreterId.SmoothGradient}
                         header="Smooth Gradient Visualization">
-                        <Interpret<I, InterpreterData>
+                        <Interpret<I, O>
                             interpreter={InterpreterId.SmoothGradient}
                             input={input}
                             description={
@@ -124,28 +116,12 @@ export const Interpreters = <I,>({ model, input, tokens }: Props<I>) => {
                                     .
                                 </p>
                             }>
-                            {({ output }) => <Interpreter output={output} tokens={tokens} />}
+                            {({ output }) => children(output)}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
             </Collapse>
         </Output.Section>
-    );
-};
-
-const Interpreter = ({
-    output,
-    tokens,
-}: {
-    output: InterpreterData;
-    tokens: WithTokenizedInput;
-}) => {
-    return (
-        <Saliency
-            interpretData={[output.instance_1.grad_input_2, output.instance_1.grad_input_1]}
-            inputTokens={[tokens.question_tokens, tokens.passage_tokens]}
-            inputHeaders={['Question', 'Passage']}
-        />
     );
 };
 
