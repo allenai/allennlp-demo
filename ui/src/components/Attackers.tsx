@@ -3,6 +3,7 @@ import { Collapse } from 'antd';
 
 import { Output } from '../tugboat/components';
 import { Model } from '../tugboat/lib';
+
 import {
     Attack,
     InputReduction,
@@ -10,22 +11,21 @@ import {
     Hotflip,
     HotflipAttackOutput,
 } from '.';
-import { ModelInfoList } from '../context';
+import { ModelInfoList, findModelInfo } from '../context';
 import { AttackType, GradientInputField } from '../lib';
 
 interface Props<I, O> {
-    model: Model;
     input: I;
+    model: Model;
     prediction: O;
     target: keyof I & string;
     children?: (pred: O) => React.ReactNode | JSX.Element;
 }
 
-export const Attackers = <I, O>({ model, input, target, prediction, children }: Props<I, O>) => {
+export const Attackers = <I, O>({ input, model, target, prediction, children }: Props<I, O>) => {
     const modelInfoList = React.useContext(ModelInfoList);
-
-    const info = modelInfoList.find((i) => i.id === model.id);
-    if (!info || info.attackers.length === 0) {
+    const info = findModelInfo(modelInfoList, model);
+    if (info.attackers.length === 0) {
         return null;
     }
 
@@ -54,7 +54,7 @@ export const Attackers = <I, O>({ model, input, target, prediction, children }: 
                                     changing the model's prediction.
                                 </p>
                             }>
-                            {({ output }) => <InputReduction {...output} />}
+                            {(output) => <InputReduction {...output} />}
                         </Attack>
                     </Collapse.Panel>
                 ) : null}
@@ -79,7 +79,7 @@ export const Attackers = <I, O>({ model, input, target, prediction, children }: 
                                     the prediction changes.
                                 </p>
                             }>
-                            {({ output }) => (
+                            {(output) => (
                                 <Hotflip
                                     newTokens={output.final ? output.final[0] : undefined}
                                     originalTokens={output.original}

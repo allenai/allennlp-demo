@@ -27,15 +27,3 @@ export class InvalidModelResponseError extends Error {
         super(`Unexpected response from model: ${msg}`);
     }
 }
-
-export class UnknownActionError extends Error {
-    constructor(actionName: string) {
-        super(`Unknown action: ${actionName}`);
-    }
-}
-
-export class UnknownStateError extends Error {
-    constructor(state: any) {
-        super(`Unknown state: ${state.constructor.name}`);
-    }
-}

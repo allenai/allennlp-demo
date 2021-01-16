@@ -1,21 +1,15 @@
-import React from 'react';
+import React, { DependencyList } from 'react';
 
-import { usePromise } from '../lib';
+import { usePromise, PromiseState } from '../lib';
 import { Loading } from './shared';
 import { ErrorMessage } from './ErrorMessage';
-import { UnknownStateError } from '../error';
 
-export interface Success<I, O> {
-    input: I;
-    output: O;
-}
-export type SuccessRenderer<I, O> = (io: Success<I, O>) => React.ReactNode | JSX.Element;
+type View<T> = (s: T) => React.ReactNode | JSX.Element;
 
-interface Props<I, O> {
-    input?: I;
-    fetch: (i?: I) => Promise<O>;
-    children: SuccessRenderer<I, O>;
-    errorMessage?: string;
+interface Props<T> {
+    promise: () => Promise<T>;
+    deps: DependencyList;
+    children: View<T>;
 }
 
 /**
@@ -24,28 +18,29 @@ interface Props<I, O> {
  * is rendered, and when things fail an `<ErrorMessage />` is rendered.
  *
  * The component expects a single child that's a function. The function will be passed the
- * `Success` state, which has two properties, `input` and `output`.
+ * the value returned by the promise upon success. The function will only be called when the
+ * promise succeeds.
  *
- * @example
- *  <Promised input={"modelId"} fn={fetchModelInfo}>{
- *      (output, input) => <FancyOutputDisplay output={output} />
- *  }</Promised>
+ * The componet is passed a list of dependencies. When any of these change, the asynchronous
+ * task will be started again.
+ *
+ * Here's an example of how this might be used:
+ *
+ * <Promised promise={() => fetchModelInfo(modelId)} deps={[ modelId ]}>{
+ *    (info) => <ModelInfo info={info} />
+ * }</Promised>
  */
-export const Promised = <I, O>({ input, fetch, children, errorMessage }: Props<I, O>) => {
-    const state = usePromise(fetch, input);
+export const Promised = <T,>({ promise, deps, children }: Props<T>) => {
+    const [state, payload, err] = usePromise(promise, deps);
 
-    if (state.isLoading() || state.isUnitialized()) {
+    if (state === PromiseState.Loading) {
         return <Loading />;
     }
 
-    if (state.isFailure()) {
-        return <ErrorMessage message={errorMessage} />;
+    if (state === PromiseState.Failure || !payload) {
+        console.error('Promise failure:', err);
+        return <ErrorMessage />;
     }
 
-    if (state.isSuccess()) {
-        return <>{children(state)}</>;
-    }
-
-    // We shouldn't ever get here.
-    throw new UnknownStateError(state);
+    return <>{children(payload)}</>;
 };

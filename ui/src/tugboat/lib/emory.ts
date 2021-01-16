@@ -6,12 +6,12 @@
 export namespace emory {
     type AppId = string;
     type DocId = string;
-    type Doc = {};
+    type Doc<T extends {}> = T;
 
-    interface Entry {
+    interface Entry<T> {
         app: AppId;
         type?: string;
-        doc: Doc;
+        doc: Doc<T>;
     }
 
     /**
@@ -27,7 +27,7 @@ export namespace emory {
     /**
      * Creates a document and returns the resulting id.
      */
-    export function createDoc(entry: Entry): Promise<DocId> {
+    export function createDoc<T>(entry: Entry<T>): Promise<DocId> {
         return fetch(`${origin}/api/v1/document/`, {
             method: 'POST',
             body: JSON.stringify(entry),
@@ -39,7 +39,34 @@ export namespace emory {
     /**
      * Retrieves a document by it's id.
      */
-    export function getDoc(id: DocId): Promise<Entry> {
-        return fetch(`${origin}/d/${id}`).then((r) => r.json());
+    export function getDoc<T>(id: DocId): Promise<Entry<T>> {
+        return fetch(`${origin}/d/${id}`).then((r) => {
+            if (!r.ok) {
+                return r.text();
+            }
+            return r.json();
+        });
+    }
+
+    class InvalidDocError extends Error {
+        constructor(field: string & keyof Entry<any>, actual: string, expected: string) {
+            super(`Returned doc had ${field} "${actual}" but "${expected}" was expected.`);
+        }
+    }
+
+    /**
+     * Retrieves a document by it's id. If the returned document doesn't belong to the provided
+     * application or have the provided type, an error is thrown.
+     */
+    export function getDocStrict<T>(id: DocId, app: string, type?: string): Promise<Entry<T>> {
+        return getDoc<T>(id).then((e) => {
+            if (e.app !== app) {
+                return Promise.reject(new InvalidDocError('app', e.app, app));
+            }
+            if (type && e.type !== type) {
+                return Promise.reject(new InvalidDocError('type', `${e.type}`, type));
+            }
+            return e;
+        });
     }
 }

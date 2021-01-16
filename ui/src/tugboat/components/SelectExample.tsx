@@ -3,7 +3,7 @@ import { Form } from 'antd';
 
 import { Field, Select } from './form';
 import { Examples } from '../context';
-import { Example, GroupedExamples, isGroupedExamples } from '../lib';
+import { Example, flattenExamples, isGroupedExamples } from '../lib';
 
 class DuplicateDisplayPropValueError extends Error {
     constructor(propName: string, value: string) {
@@ -17,17 +17,6 @@ class InvalidDisplayPropError extends Error {
     constructor(prop: string) {
         super(`No property named ${prop} exists on the loaded examples.`);
     }
-}
-
-function flattenExamples(examples: GroupedExamples | Example[]): Example[] {
-    if (!isGroupedExamples(examples)) {
-        return examples;
-    }
-    let all: Example[] = [];
-    for (const group of Object.keys(examples)) {
-        all = all.concat(examples[group]);
-    }
-    return all;
 }
 
 interface Props {

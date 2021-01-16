@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const TaskCards = ({ children }: Props) => (
-    <Promised fetch={fetchTaskCards}>
-        {({ output: tasksById }) => <>{children(tasksById)}</>}
+    <Promised promise={fetchTaskCards} deps={[]}>
+        {(t) => <>{children(t)}</>}
     </Promised>
 );
