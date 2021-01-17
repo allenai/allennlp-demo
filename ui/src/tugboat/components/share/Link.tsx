@@ -15,6 +15,18 @@ interface Props<T extends {}> {
     slug: string;
 }
 
+/**
+ * A component that renders a button that, when clicked, produces a URL that can be used
+ * to resume the current state of the application.
+ *
+ * The resulting URL includes an identifier that can be used to retrieve the value of
+ * `doc` at a future time. The `type` indicates what's being stored, and can include
+ * versioning information that can be used downstream.
+ *
+ * The component requires that a URL safe slug be provided, which will be included in
+ * the resulting URL. This is for the end-user -- as it ensures there URL has some intelligble
+ * bits that can be used to infer things about where the URL might take someone.
+ */
 export const Link = <T,>({ app, type, doc, slug }: Props<T>) => {
     const hasExistingShareURL = useRouteMatch(`/:root+${SharePath}`) !== null;
 
