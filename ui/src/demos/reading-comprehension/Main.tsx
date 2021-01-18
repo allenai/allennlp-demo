@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
