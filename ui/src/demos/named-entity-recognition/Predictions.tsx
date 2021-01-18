@@ -1,14 +1,9 @@
 import React from 'react';
 
 import { DebugInfo } from '../../components';
-import {
-    Highlight,
-    HighlightColor,
-    HighlightContainer,
-    ModelSuccess,
-    Output,
-} from '../../tugboat/components';
+import { Highlight, HighlightColor, HighlightContainer, Output } from '../../tugboat/components';
 import { Input, Prediction } from './types';
+import { Model } from '../../tugboat/lib';
 
 interface FormattedToken {
     text: string;
@@ -23,7 +18,13 @@ enum TokenSequence {
     U = 'U', // "Unit" (A single token representing a single entity)
 }
 
-export const Predictions = ({ input, output, model }: ModelSuccess<Input, Prediction>) => {
+interface Props {
+    input: Input;
+    model: Model;
+    output: Prediction;
+}
+
+export const Predictions = ({ input, model, output }: Props) => {
     const { words, tags } = output;
 
     // Defining an empty array for building a list of formatted token objects.

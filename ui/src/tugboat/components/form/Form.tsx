@@ -5,12 +5,9 @@ import { Divider, Form as AntForm } from 'antd';
 
 import { Examples, Models } from '../../context';
 import { Model, flattenExamples } from '../../lib';
-import { Promised, Success } from '../Promised';
+import { Promised } from '../Promised';
 import { NoSelectedModelError } from '../../error';
 import { Share } from '../share';
-
-export type ModelSuccess<I, O> = Success<I, O> & { model: Model };
-export type ModelSuccessRenderer<I, O> = (io: ModelSuccess<I, O>) => React.ReactNode | JSX.Element;
 
 const { useForm } = AntForm;
 

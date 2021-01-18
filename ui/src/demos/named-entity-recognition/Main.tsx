@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
@@ -9,15 +10,17 @@ import {
     SelectExample,
     SelectModelAndDescription,
     Sentence,
+    Share,
     Submit,
     TaskDescription,
     TaskTitle,
 } from '../../tugboat/components';
+import { AppId } from '../../AppId';
 import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Input, Prediction, InterpreterData, isWithTokenizedInput } from './types';
+import { Version, Input, Prediction, InterpreterData, isWithTokenizedInput } from './types';
 
 export const Main = () => {
     return (
@@ -36,30 +39,42 @@ export const Main = () => {
                                     <Submit>Run Model</Submit>
                                 </>
                             }>
-                            {({ model, input, output }) => (
+                            {({ input, model, output }) => (
                                 <Output>
-                                    <Predictions model={model} input={input} output={output} />
-                                    {isWithTokenizedInput(output) ? (
-                                        <Interpreters<Input, InterpreterData>
-                                            model={model}
-                                            input={input}>
-                                            {(interpreterOutput) => (
-                                                <Saliency
-                                                    interpretData={[
-                                                        interpreterOutput.instance_1.grad_input_1,
-                                                    ]}
-                                                    inputTokens={[output.words]}
-                                                    inputHeaders={['Sentence']}
+                                    <Output.Section
+                                        title="Model Output"
+                                        extra={
+                                            <AlignRight>
+                                                <Share.Link
+                                                    doc={input}
+                                                    slug={Share.makeSlug(input.sentence)}
+                                                    type={Version}
+                                                    app={AppId}
                                                 />
-                                            )}
-                                        </Interpreters>
-                                    ) : null}
-                                    <Attackers
-                                        model={model}
-                                        input={input}
-                                        prediction={output}
-                                        target="sentence"
-                                    />
+                                            </AlignRight>
+                                        }>
+                                        <Predictions input={input} model={model} output={output} />
+                                        {isWithTokenizedInput(output) ? (
+                                            <Interpreters<Input, InterpreterData> input={input}>
+                                                {(interpreterOutput) => (
+                                                    <Saliency
+                                                        interpretData={[
+                                                            interpreterOutput.instance_1
+                                                                .grad_input_1,
+                                                        ]}
+                                                        inputTokens={[output.words]}
+                                                        inputHeaders={['Sentence']}
+                                                    />
+                                                )}
+                                            </Interpreters>
+                                        ) : null}
+                                        <Attackers
+                                            input={input}
+                                            model={model}
+                                            prediction={output}
+                                            target="sentence"
+                                        />
+                                    </Output.Section>
                                 </Output>
                             )}
                         </Predict>
@@ -75,3 +90,10 @@ export const Main = () => {
         </Content>
     );
 };
+
+const AlignRight = styled.span`
+    // TODO: [jon] make reusable
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+`;
