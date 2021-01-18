@@ -75,7 +75,7 @@ export const Predictions = ({ input, model, output }: Props) => {
     });
 
     return (
-        <Output.Section title="Model Output">
+        <Output.Section>
             <Output.SubSection title="Entities">
                 <HighlightContainer centerLabels={false}>
                     {formattedTokens.map((token, i) => (
@@ -106,7 +106,7 @@ const TokenSpan = ({ token, id }: { token: FormattedToken; id: number }) => {
     } else {
         // If no entity,
         // Display raw text.
-        return <span>{token.text}</span>;
+        return <span>{token.text} </span>;
     }
 };
 

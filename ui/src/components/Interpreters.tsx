@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Collapse, Popover } from 'antd';
-
 import { LinkCSS } from '@allenai/varnish/components';
 
 import { Output } from '../tugboat/components';
