@@ -81,7 +81,7 @@ export const ModelCard = () => {
             </Descriptions.Item>
 
             <Descriptions.Item label="Citation" span={3}>
-                {models.selectedModel.card.citation || 'Unknown'}
+                {models.selectedModel.card.citation ?? 'Unknown'}
             </Descriptions.Item>
 
             <Descriptions.Item label="Contact" span={3}>
