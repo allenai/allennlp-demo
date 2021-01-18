@@ -14,4 +14,5 @@ function(image, cause, sha, env, branch, repo, buildId)
     // https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes
     local cpu = '50m';
     local memory = '1Gi';
-    common.APIEndpoint(model.id, image, cause, sha, cpu, memory, env, branch, repo, buildId)
+    local altPaths = [ '/api/bidaf' ];
+    common.v1.APIEndpoint(model.id, image, cause, sha, cpu, memory, env, branch, repo, buildId, altPaths=altPaths)
