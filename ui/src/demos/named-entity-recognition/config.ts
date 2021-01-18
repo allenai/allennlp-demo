@@ -5,7 +5,7 @@ export const config: DemoConfig = {
     group: 'Annotate a sentence',
     title: 'Named Entity Recognition',
     order: 1,
-    modelIds: [ModelId.ElmoNer, ModelId.FineGrainedNer],
+    modelIds: [ModelId.ELMONER, ModelId.FineGrainedNER],
     status: 'hidden',
     taskId: 'ner',
 };

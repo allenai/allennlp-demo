@@ -6,10 +6,10 @@ export const config: DemoConfig = {
     title: 'Reading Comprehension',
     order: 1,
     modelIds: [
-        ModelId.BidafElmo,
+        ModelId.BidafELMO,
         ModelId.Bidaf,
-        ModelId.Nmn,
-        ModelId.TransformerQa,
+        ModelId.NMN,
+        ModelId.TransformerQA,
         ModelId.Naqanet,
     ],
     status: 'hidden',

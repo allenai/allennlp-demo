@@ -51,7 +51,7 @@ export const Main = () => {
                             }>
                             {({ input, model, output }) => (
                                 <Output>
-                                    <Output.ShareSection
+                                    <Output.ShareableSection
                                         title="Model Output"
                                         doc={input}
                                         slug={Share.makeSlug(input.question)}
@@ -84,7 +84,7 @@ export const Main = () => {
                                             target="question">
                                             {(pred) => getBasicAnswer(pred)}
                                         </Attackers>
-                                    </Output.ShareSection>
+                                    </Output.ShareableSection>
                                 </Output>
                             )}
                         </Predict>

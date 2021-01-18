@@ -95,7 +95,7 @@ const TitleRow = styled.div`
     }
 `;
 
-interface ShareSectionProps<I> {
+interface ShareableSectionProps<I> {
     title?: string;
     app: string;
     type?: string;
@@ -104,7 +104,14 @@ interface ShareSectionProps<I> {
     children: React.ReactNode;
 }
 
-Output.ShareSection = <I,>({ title, children, doc, type, app, slug }: ShareSectionProps<I>) => (
+Output.ShareableSection = <I,>({
+    title,
+    children,
+    doc,
+    type,
+    app,
+    slug,
+}: ShareableSectionProps<I>) => (
     <Output.Section
         title={title}
         extra={
