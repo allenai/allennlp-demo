@@ -7,8 +7,8 @@ import React from 'react';
 
 import { ModelUsage } from '../../components';
 import { Models, Examples } from '../../tugboat/context';
-import { NoSelectedModelError } from '../../tugboat/error';
-import { isGroupedExamples, GroupedExamplesError } from '../../tugboat/lib';
+import { NoSelectedModelError, GroupedExamplesError } from '../../tugboat/error';
+import { isGroupedExamples } from '../../tugboat/lib';
 
 export const Usage = () => {
     const models = React.useContext(Models);

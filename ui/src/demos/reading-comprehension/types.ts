@@ -10,9 +10,9 @@ export interface WithTokenizedInput {
     question_tokens: string[];
 }
 
-export const isWithTokenizedInput = (x: any): x is WithTokenizedInput => {
-    const xx = x as WithTokenizedInput;
-    return Array.isArray(xx.passage_tokens) && Array.isArray(xx.question_tokens);
+export const isWithTokenizedInput = (pred: any): pred is WithTokenizedInput => {
+    const typedPred = pred as WithTokenizedInput;
+    return Array.isArray(typedPred.passage_tokens) && Array.isArray(typedPred.question_tokens);
 };
 
 export interface BiDAFPrediction extends WithTokenizedInput {

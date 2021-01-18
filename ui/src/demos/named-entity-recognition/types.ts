@@ -6,8 +6,8 @@ export interface WithTokenizedInput {
     words: string[];
 }
 
-export const isWithTokenizedInput = (x: any): x is WithTokenizedInput => {
-    const xx = x as WithTokenizedInput;
+export const isWithTokenizedInput = (pred: any): pred is WithTokenizedInput => {
+    const xx = pred as WithTokenizedInput;
     return Array.isArray(xx.words);
 };
 
