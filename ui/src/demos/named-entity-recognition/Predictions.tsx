@@ -106,7 +106,7 @@ const TokenSpan = ({ token, id }: { token: FormattedToken; id: number }) => {
     } else {
         // If no entity,
         // Display raw text.
-        return <span>{token.text} </span>;
+        return <span>{`${token.text}${' '}`}</span>;
     }
 };
 

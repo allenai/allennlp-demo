@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { LinkCSS } from '@allenai/varnish/components';
 import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
 
 interface Props {
@@ -108,4 +109,17 @@ const OutputSubSection = styled.div`
 const OutputSubSectionTitle = styled.h5`
     margin: 0;
     text-transform: none;
+`;
+
+export const HelpContent = styled.div`
+    width: 60ch;
+
+    p {
+        margin: 0 0 ${({ theme }) => theme.spacing.sm};
+    }
+`;
+
+export const PopoverTarget = styled.span`
+    ${LinkCSS.default()}
+    font-style: italic;
 `;

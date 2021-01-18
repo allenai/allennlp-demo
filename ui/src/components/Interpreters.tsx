@@ -1,9 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Collapse, Popover } from 'antd';
-import { LinkCSS } from '@allenai/varnish/components';
 
-import { Output } from '../tugboat/components';
+import { Output, HelpContent, PopoverTarget } from '../tugboat/components';
 import { Models } from '../tugboat/context';
 import { NoSelectedModelError } from '../tugboat/error';
 
@@ -127,16 +125,3 @@ export const Interpreters = <I, O>({ input, children }: Props<I, O>) => {
         </Output.Section>
     );
 };
-
-const HelpContent = styled.div`
-    width: 60ch;
-
-    p {
-        margin: 0 0 ${({ theme }) => theme.spacing.sm};
-    }
-`;
-
-const PopoverTarget = styled.span`
-    ${LinkCSS.default()}
-    font-style: italic;
-`;
