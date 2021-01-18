@@ -40,7 +40,7 @@ export const Main = () => {
                             }>
                             {({ input, model, output }) => (
                                 <Output>
-                                    <Output.ShareSection
+                                    <Output.ShareableSection
                                         title="Model Output"
                                         doc={input}
                                         slug={Share.makeSlug(input.sentence)}
@@ -67,7 +67,7 @@ export const Main = () => {
                                             prediction={output}
                                             target="sentence"
                                         />
-                                    </Output.ShareSection>
+                                    </Output.ShareableSection>
                                 </Output>
                             )}
                         </Predict>
