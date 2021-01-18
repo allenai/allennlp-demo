@@ -36,7 +36,7 @@ function fetchAllModelInfoAndCard(ids?: string[]): Promise<ModelInfoAndCard[]> {
     return fetchModelInfo(ids).then((info) => {
         const cards: Promise<ModelInfoAndCard>[] = [];
         for (const i of info) {
-            cards.push(NMNchModelCard(i).then((c) => ({ card: c, info: i })));
+            cards.push(fetchModelCard(i).then((c) => ({ card: c, info: i })));
         }
         return Promise.all(cards);
     });
