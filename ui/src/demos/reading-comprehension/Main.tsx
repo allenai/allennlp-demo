@@ -3,7 +3,6 @@ import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import {
-    AlignRight,
     ModelCard,
     Output,
     Passage,
@@ -52,18 +51,12 @@ export const Main = () => {
                             }>
                             {({ input, model, output }) => (
                                 <Output>
-                                    <Output.Section
+                                    <Output.ShareableSection
                                         title="Model Output"
-                                        extra={
-                                            <AlignRight>
-                                                <Share.Link
-                                                    doc={input}
-                                                    slug={Share.makeSlug(input.question)}
-                                                    type={Version}
-                                                    app={AppId}
-                                                />
-                                            </AlignRight>
-                                        }>
+                                        doc={input}
+                                        slug={Share.makeSlug(input.question)}
+                                        type={Version}
+                                        app={AppId}>
                                         <Predictions input={input} model={model} output={output} />
                                         {isWithTokenizedInput(output) ? (
                                             <Interpreters<Input, InterpreterData> input={input}>
@@ -91,7 +84,7 @@ export const Main = () => {
                                             target="question">
                                             {(pred) => getBasicAnswer(pred)}
                                         </Attackers>
-                                    </Output.Section>
+                                    </Output.ShareableSection>
                                 </Output>
                             )}
                         </Predict>

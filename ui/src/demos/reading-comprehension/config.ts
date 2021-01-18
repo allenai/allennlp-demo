@@ -1,10 +1,17 @@
 import { DemoConfig } from '../../tugboat/lib';
+import { ModelId } from '../../lib';
 
 export const config: DemoConfig = {
     group: 'Answer a question',
     title: 'Reading Comprehension',
     order: 1,
-    modelIds: ['bidaf-elmo', 'bidaf', 'nmn', 'transformer-qa', 'naqanet'],
+    modelIds: [
+        ModelId.BidafELMO,
+        ModelId.Bidaf,
+        ModelId.NMN,
+        ModelId.TransformerQA,
+        ModelId.Naqanet,
+    ],
     status: 'hidden',
     taskId: 'rc',
 };

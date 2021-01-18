@@ -56,8 +56,8 @@ const OutputByModel = ({
 }) => {
     switch (model.id) {
         case ModelId.Bidaf:
-        case ModelId.BidafElmo:
-        case ModelId.TransformerQa: {
+        case ModelId.BidafELMO:
+        case ModelId.TransformerQA: {
             if (!isBiDAFPrediction(output) && !isTransformerQAPrediction(output)) {
                 throw new UnexpectedOutputError(model.id);
             }
@@ -69,7 +69,7 @@ const OutputByModel = ({
             }
             return <NaqanetPrediction input={input} output={output} model={model} />;
         }
-        case ModelId.Nmn: {
+        case ModelId.NMN: {
             if (!isNMNPrediction(output)) {
                 throw new UnexpectedOutputError(model.id);
             }
