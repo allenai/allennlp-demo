@@ -3,7 +3,6 @@ import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import {
-    AlignRight,
     ModelCard,
     Output,
     Saliency,
@@ -41,18 +40,12 @@ export const Main = () => {
                             }>
                             {({ input, model, output }) => (
                                 <Output>
-                                    <Output.Section
+                                    <Output.ShareSection
                                         title="Model Output"
-                                        extra={
-                                            <AlignRight>
-                                                <Share.Link
-                                                    doc={input}
-                                                    slug={Share.makeSlug(input.sentence)}
-                                                    type={Version}
-                                                    app={AppId}
-                                                />
-                                            </AlignRight>
-                                        }>
+                                        doc={input}
+                                        slug={Share.makeSlug(input.sentence)}
+                                        type={Version}
+                                        app={AppId}>
                                         <Predictions input={input} model={model} output={output} />
                                         {isWithTokenizedInput(output) ? (
                                             <Interpreters<Input, InterpreterData> input={input}>
@@ -74,7 +67,7 @@ export const Main = () => {
                                             prediction={output}
                                             target="sentence"
                                         />
-                                    </Output.Section>
+                                    </Output.ShareSection>
                                 </Output>
                             )}
                         </Predict>

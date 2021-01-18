@@ -1,10 +1,11 @@
 export enum ModelId {
     Bidaf = 'bidaf',
     BidafElmo = 'bidaf-elmo',
-    ElmoNer = 'named-entity-recognition', // TODO: do we want to change this model enum name?
+    ElmoNer = 'named-entity-recognition',
     FineGrainedNer = 'fine-grained-ner',
     Naqanet = 'naqanet',
     Nmn = 'nmn',
+    OpenIE = 'open-information-extraction',
     TransformerQa = 'transformer-qa',
 }
 

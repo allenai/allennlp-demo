@@ -1,4 +1,6 @@
 {
     "id": "open-information-extraction",
-    "pretrained_model_id": "structured-prediction-srl"
+    "pretrained_model_id": "structured-prediction-srl",
+    "attackers": [],
+    "interpreters": []
 }

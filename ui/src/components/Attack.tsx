@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Button } from 'antd';
 
 import { Promised } from '../tugboat/components';
@@ -53,9 +54,9 @@ export const Attack = <I, O>({
     return (
         <>
             {description}
-            <Button type="primary" onClick={() => setSubmitted(true)}>
+            <SpacedButton type="primary" onClick={() => setSubmitted(true)}>
                 {label}
-            </Button>
+            </SpacedButton>
             {submitted ? (
                 <Promised promise={fetchAttackOutput} deps={[model, attackInput]}>
                     {children}
@@ -64,3 +65,7 @@ export const Attack = <I, O>({
         </>
     );
 };
+
+const SpacedButton = styled(Button)`
+    margin-right: ${({ theme }) => theme.spacing.md};
+`;

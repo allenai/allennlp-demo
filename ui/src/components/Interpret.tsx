@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Button } from 'antd';
 
 import { Promised } from '../tugboat/components';
@@ -36,9 +37,9 @@ export const Interpret = <I extends { [k: string]: any }, O>({
     return (
         <>
             {description}
-            <Button type="primary" onClick={() => setSubmitted(true)}>
+            <SpacedButton type="primary" onClick={() => setSubmitted(true)}>
                 Interpret Prediction
-            </Button>
+            </SpacedButton>
             {submitted ? (
                 <Promised promise={fetchInterpretOutput} deps={[model, interpreter, input]}>
                     {children}
@@ -47,3 +48,7 @@ export const Interpret = <I extends { [k: string]: any }, O>({
         </>
     );
 };
+
+const SpacedButton = styled(Button)`
+    margin-right: ${({ theme }) => theme.spacing.md};
+`;
