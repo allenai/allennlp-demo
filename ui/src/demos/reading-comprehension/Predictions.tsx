@@ -1,12 +1,7 @@
 import React from 'react';
 
 import { DebugInfo } from '../../components';
-import {
-    TextWithHighlight,
-    Output,
-    ArithmeticEquation,
-    ModelSuccess,
-} from '../../tugboat/components';
+import { TextWithHighlight, Output, ArithmeticEquation } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 import { ModelId } from '../../lib';
 import { UnexpectedModelError, InvalidModelResponseError } from '../../tugboat/error';
@@ -28,13 +23,29 @@ import {
 } from './types';
 import { NMNOutput } from './nmn';
 
-export const Predictions = ({ input, output, model }: ModelSuccess<Input, Prediction>) => (
-    <Output.Section>
-        <OutputByModel input={input} output={output} model={model} />
+class UnexpectedOutputError extends Error {
+    constructor(modelId: string) {
+        super(`The output received doesn't match what's expected for model ${modelId}`);
+    }
+}
 
-        <DebugInfo input={input} output={output} model={model} />
-    </Output.Section>
-);
+interface Props {
+    input: Input;
+    model: Model;
+    output: Prediction;
+}
+
+export const Predictions = ({ input, model, output }: Props) => {
+    return (
+        <Output.Section>
+            <Output.SubSection title="Question">{input.question}</Output.SubSection>
+
+            <OutputByModel input={input} output={output} model={model} />
+
+            <DebugInfo input={input} output={output} model={model} />
+        </Output.Section>
+    );
+};
 
 const OutputByModel = ({
     input,
@@ -49,25 +60,25 @@ const OutputByModel = ({
         case ModelId.Bidaf:
         case ModelId.BidafElmo:
         case ModelId.TransformerQa: {
-            if (isBiDAFPrediction(output) || isTransformerQAPrediction(output)) {
-                return <BasicPrediction input={input} output={output} />;
+            if (!isBiDAFPrediction(output) && !isTransformerQAPrediction(output)) {
+                throw new UnexpectedOutputError(model.id);
             }
-            break;
+            return <BasicPrediction input={input} output={output} />;
         }
         case ModelId.Naqanet: {
-            if (isNAQANetPrediction(output)) {
-                return <NaqanetPrediction input={input} output={output} model={model} />;
+            if (!isNAQANetPrediction(output)) {
+                throw new UnexpectedOutputError(model.id);
             }
-            break;
+            return <NaqanetPrediction input={input} output={output} model={model} />;
         }
         case ModelId.Nmn: {
-            if (isNMNPrediction(output)) {
-                return <NMNOutput {...output} />;
+            if (!isNMNPrediction(output)) {
+                throw new UnexpectedOutputError(model.id);
             }
-            break;
+            return <NMNOutput {...output} />;
         }
     }
-    // If we dont have an output throw.
+    // If we dont have any output throw.
     throw new UnexpectedModelError(model.id);
 };
 

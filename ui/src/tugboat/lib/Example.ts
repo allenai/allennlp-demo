@@ -14,3 +14,14 @@ export function isGroupedExamples(
     }
     return true;
 }
+
+export function flattenExamples(examples: GroupedExamples | Example[]): Example[] {
+    if (!isGroupedExamples(examples)) {
+        return examples;
+    }
+    let all: Example[] = [];
+    for (const group of Object.keys(examples)) {
+        all = all.concat(examples[group]);
+    }
+    return all;
+}

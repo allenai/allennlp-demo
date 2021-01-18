@@ -13,7 +13,7 @@ export * from './SelectExample';
 export * from './SelectModel';
 export * from './SelectModelAndDescription';
 export * from './shared';
-export * from './ShareLink';
+export * from './share';
 export * from './SyntaxHighlight';
 export * from './TaskDescription';
 export * from './TaskTitle';
