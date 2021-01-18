@@ -1,16 +1,7 @@
 import { InvalidModelResponseError } from '../../tugboat/error';
+import { emory } from '../../tugboat/lib';
 
-/**
- * If a backwards incompatible change is made to the input or output, you can invalidate
- * all previously shared links (and the data associated with them) by changing the value
- * of Version below.
- *
- * A unique version is used in non-production environments to segment this data from data
- * produced by actual users.
- */
-const isProduction = process.env.NODE_ENV === 'production';
-const envSuffix = !isProduction ? '-dev' : '';
-export const Version = 'rc-v1' + envSuffix;
+export const Version = emory.getVersion('rc-v1');
 
 export interface Input {
     passage: string;

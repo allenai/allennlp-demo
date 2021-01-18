@@ -1,14 +1,6 @@
-/**
- * If a backwards incompatible change is made to the input or output, you can invalidate
- * all previously shared links (and the data associated with them) by changing the value
- * of Version below.
- *
- * A unique version is used in non-production environments to segment this data from data
- * produced by actual users.
- */
-const isProduction = process.env.NODE_ENV === 'production';
-const envSuffix = !isProduction ? '-dev' : '';
-export const Version = 'ner-v1' + envSuffix; // TODO: [jon] move this?
+import { emory } from '../../tugboat/lib';
+
+export const Version = emory.getVersion('ner-v1');
 
 export interface Input {
     sentence: string;

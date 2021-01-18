@@ -1,9 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import {
+    AlignRight,
     ModelCard,
     Output,
     Saliency,
@@ -90,10 +90,3 @@ export const Main = () => {
         </Content>
     );
 };
-
-const AlignRight = styled.span`
-    // TODO: [jon] make reusable
-    display: flex;
-    flex-grow: 1;
-    justify-content: flex-end;
-`;

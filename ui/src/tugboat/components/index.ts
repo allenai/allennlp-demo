@@ -1,3 +1,4 @@
+export * from './AlignRight';
 export * from './ArithmeticEquation';
 export * from './ErrorBoundary';
 export * from './ErrorMessage';

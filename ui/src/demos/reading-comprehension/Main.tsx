@@ -4,6 +4,7 @@ import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import {
+    AlignRight,
     ModelCard,
     Output,
     Passage,
@@ -107,9 +108,3 @@ export const Main = () => {
         </Content>
     );
 };
-
-const AlignRight = styled.span`
-    display: flex;
-    flex-grow: 1;
-    justify-content: flex-end;
-`;
