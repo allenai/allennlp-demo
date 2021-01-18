@@ -77,15 +77,6 @@ export class ConfigError extends Error {
     }
 }
 
-// Form errors
-export class EmptyFormError extends Error {
-    constructor() {
-        super(
-            'The form was submitted while empty. This is indicative of a programming error and should not happen'
-        );
-    }
-}
-
 // Highlight errors
 export class InvalidHighlightRangeError extends Error {
     constructor(msg: string) {

@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 import { Model } from '../lib';
 
-interface ModelList {
+export interface ModelList {
     models: Model[];
     selectedModel?: Model;
     selectModelById: (modelId: string) => void;

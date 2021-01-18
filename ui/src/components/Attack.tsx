@@ -7,12 +7,6 @@ import { NoSelectedModelError } from '../tugboat/error';
 
 import { AttackType, GradientInputField } from '../lib';
 
-class EmptyAttackRequestError extends Error {
-    constructor() {
-        super('An attack request cannot be empty.');
-    }
-}
-
 interface AttackRequest<I> {
     input_field_to_attack: keyof I & string;
     grad_input_field: GradientInputField;
@@ -24,7 +18,7 @@ interface Props<I, O> {
     type: AttackType;
     target: keyof I & string;
     gradient: GradientInputField;
-    children: (io: { input: AttackRequest<I>; output: O }) => React.ReactNode | JSX.Element;
+    children: (o: O) => React.ReactNode | JSX.Element;
     label: string;
     description?: React.ReactNode;
 }
@@ -50,15 +44,11 @@ export const Attack = <I, O>({
         grad_input_field: gradient,
         inputs: input,
     };
-    const fetchAttackOutput = (attack?: AttackRequest<I>) => {
-        if (!attack) {
-            throw new EmptyAttackRequestError();
-        }
-        return fetch(`/api/${model.id}/attack/${type}`, {
+    const fetchAttackOutput = () =>
+        fetch(`/api/${model.id}/attack/${type}`, {
             method: 'POST',
-            body: JSON.stringify(attack),
+            body: JSON.stringify(attackInput),
         }).then((r) => r.json());
-    };
 
     return (
         <>
@@ -67,7 +57,7 @@ export const Attack = <I, O>({
                 {label}
             </Button>
             {submitted ? (
-                <Promised input={attackInput} fetch={fetchAttackOutput}>
+                <Promised promise={fetchAttackOutput} deps={[model, attackInput]}>
                     {children}
                 </Promised>
             ) : null}

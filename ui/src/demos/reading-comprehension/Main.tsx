@@ -11,16 +11,25 @@ import {
     Saliency,
     SelectExample,
     SelectModelAndDescription,
-    ShareLink,
+    Share,
     Submit,
     TaskDescription,
     TaskTitle,
 } from '../../tugboat/components';
+
+import { AppId } from '../../AppId';
 import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Input, Prediction, getBasicAnswer, InterpreterData, isWithTokenizedInput } from './types';
+import {
+    Input,
+    Prediction,
+    getBasicAnswer,
+    InterpreterData,
+    isWithTokenizedInput,
+    Version,
+} from './types';
 
 export const Main = () => {
     return (
@@ -33,6 +42,7 @@ export const Main = () => {
                     <Tabs.TabPane tab="Demo" key="Demo">
                         <SelectExample displayProp="question" placeholder="Select a Question…" />
                         <Predict<Input, Prediction>
+                            version={Version}
                             fields={
                                 <>
                                     <Passage />
@@ -40,25 +50,23 @@ export const Main = () => {
                                     <Submit>Run Model</Submit>
                                 </>
                             }>
-                            {({ model, input, output }) => (
+                            {({ input, model, output }) => (
                                 <Output>
                                     <Output.Section
                                         title="Model Output"
                                         extra={
                                             <AlignRight>
-                                                <ShareLink
-                                                    input={input}
-                                                    type="reading-comprehension-v1"
-                                                    slug={ShareLink.slug(input.question)}
-                                                    app="allennlp-demo"
+                                                <Share.Link
+                                                    doc={input}
+                                                    slug={Share.makeSlug(input.question)}
+                                                    type={Version}
+                                                    app={AppId}
                                                 />
                                             </AlignRight>
                                         }>
-                                        <Predictions model={model} input={input} output={output} />
+                                        <Predictions input={input} model={model} output={output} />
                                         {isWithTokenizedInput(output) ? (
-                                            <Interpreters<Input, InterpreterData>
-                                                model={model}
-                                                input={input}>
+                                            <Interpreters<Input, InterpreterData> input={input}>
                                                 {(interpreterOutput) => (
                                                     <Saliency
                                                         interpretData={[
@@ -77,8 +85,8 @@ export const Main = () => {
                                             </Interpreters>
                                         ) : null}
                                         <Attackers
-                                            model={model}
                                             input={input}
+                                            model={model}
                                             prediction={output}
                                             target="question">
                                             {(pred) => getBasicAnswer(pred)}

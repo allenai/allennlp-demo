@@ -1,10 +1,12 @@
 import React from 'react';
 
+import { Model, ModelCard, Task } from '../tugboat/lib';
+import { Promised, MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
+
+import { AppId } from '../AppId';
 import { TaskCards } from './TaskCards';
 import { TaskCard, fetchModelInfo, fetchModelCard, ModelInfo, ModelId } from '../lib';
-import { Model, ModelCard, Task } from '../tugboat/lib';
 import { ModelInfoList } from '../context';
-import { Promised, MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
 
 class TaskNotFoundError extends Error {
     constructor(taskId: string) {
@@ -76,11 +78,11 @@ interface Props {
  * of a model (which is queried via API routes) to the shape expected by the tugboat package.
  */
 export const MultiModelDemo = ({ ids, taskId, children }: Props) => (
-    <Promised input={ids} fetch={fetchAllModelInfoAndCard}>
-        {({ output }) => {
+    <Promised promise={() => fetchAllModelInfoAndCard(ids)} deps={[ids]}>
+        {(modelInfoAndCards) => {
             const models: Model[] = [];
             const allModelInfo: ModelInfo[] = [];
-            for (const { info, card } of output) {
+            for (const { info, card } of modelInfoAndCards) {
                 models.push(new Model(info.id, card));
                 allModelInfo.push(info);
             }
@@ -93,7 +95,10 @@ export const MultiModelDemo = ({ ids, taskId, children }: Props) => (
                             }
                             const task = tasksById[taskId];
                             return (
-                                <TBMultiModelDemo models={models} task={asTugBoatTask(task)}>
+                                <TBMultiModelDemo
+                                    models={models}
+                                    task={asTugBoatTask(task)}
+                                    appId={AppId}>
                                     {children}
                                 </TBMultiModelDemo>
                             );

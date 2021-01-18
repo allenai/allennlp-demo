@@ -12,7 +12,6 @@ interface Props {
  *
  * Your output might be really simple:
  *
- * @example
  * <Output>
  *     <Output.Section>
  *         <PredictedAnswer answer={output.best_span} />
@@ -22,7 +21,6 @@ interface Props {
  * Other times it might be more complex. When this is the case we recommend grouping related
  * things using the `<Output.Sections>`, `<Output.Section>` and `<Output.SubSection>` components:
  *
- * @example:
  * <Output>
  *     <Output.Section title="Predictions">
  *         <PredictedAnswer answer={output.best_span} />

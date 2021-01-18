@@ -3,19 +3,9 @@ import { Form } from 'antd';
 
 import { Field, Select } from './form';
 import { Examples } from '../context';
-import { Example, GroupedExamples, isGroupedExamples } from '../lib';
-import { InvalidDisplayPropError, DuplicateDisplayPropValueError } from '../error';
 
-function flattenExamples(examples: GroupedExamples | Example[]): Example[] {
-    if (!isGroupedExamples(examples)) {
-        return examples;
-    }
-    let all: Example[] = [];
-    for (const group of Object.keys(examples)) {
-        all = all.concat(examples[group]);
-    }
-    return all;
-}
+import { Example, flattenExamples, isGroupedExamples } from '../lib';
+import { InvalidDisplayPropError, DuplicateDisplayPropValueError } from '../error';
 
 interface Props {
     displayProp: string;

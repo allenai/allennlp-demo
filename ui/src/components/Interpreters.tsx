@@ -5,22 +5,26 @@ import { Collapse, Popover } from 'antd';
 import { LinkCSS } from '@allenai/varnish/components';
 
 import { Output } from '../tugboat/components';
-import { Model } from '../tugboat/lib';
+import { Models } from '../tugboat/context';
+import { NoSelectedModelError } from '../tugboat/error';
 
 import { Interpret } from '.';
-import { ModelInfoList } from '../context';
+import { ModelInfoList, findModelInfo } from '../context';
 import { InterpreterId } from '../lib';
 interface Props<I, O> {
-    model: Model;
     input: I;
     children: (output: O) => React.ReactNode;
 }
 
-export const Interpreters = <I, O>({ model, input, children }: Props<I, O>) => {
+export const Interpreters = <I, O>({ input, children }: Props<I, O>) => {
     const modelInfoList = React.useContext(ModelInfoList);
+    const models = React.useContext(Models);
+    if (!models.selectedModel) {
+        throw new NoSelectedModelError();
+    }
 
-    const info = modelInfoList.find((i) => i.id === model.id);
-    if (!info || info.interpreters.length === 0) {
+    const info = findModelInfo(modelInfoList, models.selectedModel);
+    if (info.interpreters.length === 0) {
         return null;
     }
 
@@ -70,7 +74,7 @@ export const Interpreters = <I, O>({ model, input, children }: Props<I, O>) => {
                                     .{' '}
                                 </p>
                             }>
-                            {({ output }) => children(output)}
+                            {(output) => children(output)}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
@@ -93,7 +97,7 @@ export const Interpreters = <I, O>({ model, input, children }: Props<I, O>) => {
                                     .
                                 </p>
                             }>
-                            {({ output }) => children(output)}
+                            {(output) => children(output)}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
@@ -116,7 +120,7 @@ export const Interpreters = <I, O>({ model, input, children }: Props<I, O>) => {
                                     .
                                 </p>
                             }>
-                            {({ output }) => children(output)}
+                            {(output) => children(output)}
                         </Interpret>
                     </Collapse.Panel>
                 ) : null}
