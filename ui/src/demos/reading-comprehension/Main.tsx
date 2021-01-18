@@ -1,9 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Tabs } from 'antd';
 import { Content } from '@allenai/varnish/components';
 
 import {
+    AlignRight,
     ModelCard,
     Output,
     Passage,
@@ -19,11 +19,17 @@ import {
 
 import { AppId } from '../../AppId';
 import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
-import { isWithTokenizedInput } from '../../lib';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Version, Input, Prediction, getBasicAnswer, InterpreterData } from './types';
+import {
+    Input,
+    Prediction,
+    getBasicAnswer,
+    InterpreterData,
+    isWithTokenizedInput,
+    Version,
+} from './types';
 
 export const Main = () => {
     return (
@@ -101,9 +107,3 @@ export const Main = () => {
         </Content>
     );
 };
-
-const AlignRight = styled.span`
-    display: flex;
-    flex-grow: 1;
-    justify-content: flex-end;
-`;

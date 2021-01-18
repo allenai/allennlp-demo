@@ -3,6 +3,8 @@ import slug from 'slug';
 import { Demo } from './Demo';
 import { DemoConfig } from './DemoConfig';
 
+import { ConfigError } from '../error';
+
 /**
  * TODO: Figure out how the mechanism will work when this code is distributed as it's own module.
  *
@@ -30,12 +32,6 @@ import { DemoConfig } from './DemoConfig';
  *
  */
 const ctx = require.context('../../demos', true, /\/index\.ts$/);
-
-class ConfigError extends Error {
-    constructor(message: string) {
-        super(`Configuration Error: ${message}`);
-    }
-}
 
 class DemoList {
     constructor(readonly demos: Demo[]) {}

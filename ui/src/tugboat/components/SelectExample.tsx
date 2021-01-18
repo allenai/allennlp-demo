@@ -3,21 +3,9 @@ import { Form } from 'antd';
 
 import { Field, Select } from './form';
 import { Examples } from '../context';
+
 import { Example, flattenExamples, isGroupedExamples } from '../lib';
-
-class DuplicateDisplayPropValueError extends Error {
-    constructor(propName: string, value: string) {
-        super(
-            `The ${propName} property isn't unique, "${value}" is duplicated in several examples.`
-        );
-    }
-}
-
-class InvalidDisplayPropError extends Error {
-    constructor(prop: string) {
-        super(`No property named ${prop} exists on the loaded examples.`);
-    }
-}
+import { InvalidDisplayPropError, DuplicateDisplayPropValueError } from '../error';
 
 interface Props {
     displayProp: string;

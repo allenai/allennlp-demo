@@ -38,8 +38,6 @@ interface Props {
 export const Predictions = ({ input, model, output }: Props) => {
     return (
         <Output.Section>
-            <Output.SubSection title="Question">{input.question}</Output.SubSection>
-
             <OutputByModel input={input} output={output} model={model} />
 
             <DebugInfo input={input} output={output} model={model} />
