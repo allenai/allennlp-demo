@@ -41,7 +41,7 @@ class ModelCardService(flask.Flask):
                 cards.append(card)
             if len(cards) == 1:
                 return flask.jsonify(cards.pop().to_dict())
-            return flask.jsonify([ c.to_dict() for c in cards ])
+            return flask.jsonify([c.to_dict() for c in cards])
 
 
 if __name__ == "__main__":
