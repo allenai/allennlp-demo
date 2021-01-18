@@ -2,18 +2,9 @@ import React from 'react';
 import { Divider, Form as AntForm } from 'antd';
 
 import { Models, Examples } from '../../context';
-import { NoSelectedModelError } from '../../error';
+import { NoSelectedModelError, EmptyFormError } from '../../error';
 import { Promised, Success } from '../Promised';
 import { Model } from '../../lib';
-
-class EmptyFormError extends Error {
-    constructor() {
-        super(
-            'The form was submitted while empty. This is indicative of a programming error and ' +
-                'should not happen'
-        );
-    }
-}
 
 export type ModelSuccess<I, O> = Success<I, O> & { model: Model };
 export type ModelSuccessRenderer<I, O> = (io: ModelSuccess<I, O>) => React.ReactNode | JSX.Element;
