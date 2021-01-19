@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { Model, Task } from '../tugboat/lib';
-import { Promised, MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
+import { MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
 
 import { AppId } from '../AppId';
 import { TaskCard, getModelCardId, ModelInfo } from '../lib';
@@ -47,7 +47,7 @@ interface Props {
 export const MultiModelDemo = ({ ids, taskId, children }: Props) => {
     const infos = useContext(ModelInfoList);
     const included = new Set(ids);
-    const demoInfos = infos.filter(info => included.has(info.id));
+    const demoInfos = infos.filter((info) => included.has(info.id));
 
     const tasksById = useContext(TaskCards);
     if (!(taskId in tasksById)) {
@@ -66,10 +66,7 @@ export const MultiModelDemo = ({ ids, taskId, children }: Props) => {
     }
 
     return (
-        <TBMultiModelDemo
-            models={models}
-            task={asTugBoatTask(task)}
-            appId={AppId}>
+        <TBMultiModelDemo models={models} task={asTugBoatTask(task)} appId={AppId}>
             {children}
         </TBMultiModelDemo>
     );

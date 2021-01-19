@@ -61,10 +61,8 @@ export const Main = () => {
                                             {(interpreterOutput) => (
                                                 <Saliency
                                                     interpretData={[
-                                                        interpreterOutput.instance_1
-                                                            .grad_input_2,
-                                                        interpreterOutput.instance_1
-                                                            .grad_input_1,
+                                                        interpreterOutput.instance_1.grad_input_2,
+                                                        interpreterOutput.instance_1.grad_input_1,
                                                     ]}
                                                     inputTokens={[
                                                         output.question_tokens,

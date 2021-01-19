@@ -39,11 +39,9 @@ export interface ModelInfo {
  * Fetch information about all of the models.
  */
 export function fetchModelInfo(): Promise<ModelInfo[]> {
-    return (
-        fetch('/api/info')
-            .then((r) => r.json())
-            .then((endpoints: ModelEndpoint[]) => {
-                return endpoints.map((e) => e.info);
-            })
-    );
+    return fetch('/api/info')
+        .then((r) => r.json())
+        .then((endpoints: ModelEndpoint[]) => {
+            return endpoints.map((e) => e.info);
+        });
 }
