@@ -101,9 +101,15 @@ class InfoService(flask.Flask):
             endpoints: List[Endpoint] = []
             info_requests: List[grequests.AsyncRequest] = []
             for ingress in resp.items:
-                # Don't try to return information for this service, otherwise we'd recursively
-                # call ourselves.
-                if ingress.metadata.labels.get("endpoint") == "info":
+                endpoint = ingress.metadata.labels.get("endpoint")
+                # We only really want information about the model endpoints, so skip everything
+                # else.
+                if (
+                    endpoint == "info"
+                    or endpoint == "tasks"
+                    or endpoint == "model_cards"
+                    or endpoint == "permalinks"
+                ):
                     continue
                 endpoint = Endpoint.from_ingress(ingress)
                 if endpoint is not None:

@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import { Model, ModelCard, Task } from '../tugboat/lib';
+import { Model, Task } from '../tugboat/lib';
 import { Promised, MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
 
 import { AppId } from '../AppId';
-import { TaskCards } from './TaskCards';
-import { TaskCard, fetchModelInfo, fetchModelCard, ModelInfo } from '../lib';
-import { ModelInfoList } from '../context';
+import { TaskCard, getModelCardId, ModelInfo } from '../lib';
+import { ModelCards, ModelInfoList, TaskCards } from '../context';
+
+class ModelCardNotFoundError extends Error {
+    constructor(info: ModelInfo) {
+        super(`No model card found for model ${info.id}.`);
+    }
+}
 
 class TaskNotFoundError extends Error {
     constructor(taskId: string) {
@@ -27,21 +32,6 @@ function asTugBoatTask(card: TaskCard): Task {
     };
 }
 
-interface ModelInfoAndCard {
-    info: ModelInfo;
-    card: ModelCard;
-}
-
-function fetchAllModelInfoAndCard(ids?: string[]): Promise<ModelInfoAndCard[]> {
-    return fetchModelInfo(ids).then((info) => {
-        const cards: Promise<ModelInfoAndCard>[] = [];
-        for (const i of info) {
-            cards.push(fetchModelCard(i).then((c) => ({ card: c, info: i })));
-        }
-        return Promise.all(cards);
-    });
-}
-
 interface Props {
     ids: string[];
     taskId: string;
@@ -54,35 +44,33 @@ interface Props {
  * This component exists primarily to handle the process of converting AllenNLP's specific notion
  * of a model (which is queried via API routes) to the shape expected by the tugboat package.
  */
-export const MultiModelDemo = ({ ids, taskId, children }: Props) => (
-    <Promised promise={() => fetchAllModelInfoAndCard(ids)} deps={[ids]}>
-        {(modelInfoAndCards) => {
-            const models: Model[] = [];
-            const allModelInfo: ModelInfo[] = [];
-            for (const { info, card } of modelInfoAndCards) {
-                models.push(new Model(info.id, card));
-                allModelInfo.push(info);
-            }
-            return (
-                <ModelInfoList.Provider value={allModelInfo}>
-                    <TaskCards>
-                        {(tasksById) => {
-                            if (!(taskId in tasksById)) {
-                                throw new TaskNotFoundError(taskId);
-                            }
-                            const task = tasksById[taskId];
-                            return (
-                                <TBMultiModelDemo
-                                    models={models}
-                                    task={asTugBoatTask(task)}
-                                    appId={AppId}>
-                                    {children}
-                                </TBMultiModelDemo>
-                            );
-                        }}
-                    </TaskCards>
-                </ModelInfoList.Provider>
-            );
-        }}
-    </Promised>
-);
+export const MultiModelDemo = ({ ids, taskId, children }: Props) => {
+    const infos = useContext(ModelInfoList);
+    const included = new Set(ids);
+    const demoInfos = infos.filter(info => included.has(info.id));
+
+    const tasksById = useContext(TaskCards);
+    if (!(taskId in tasksById)) {
+        throw new TaskNotFoundError(taskId);
+    }
+    const task = tasksById[taskId];
+
+    const cardsById = useContext(ModelCards);
+    const models: Model[] = [];
+    for (const info of demoInfos) {
+        const modelCardId = getModelCardId(info);
+        if (!(modelCardId in cardsById)) {
+            throw new ModelCardNotFoundError(info);
+        }
+        models.push(new Model(info.id, cardsById[modelCardId]));
+    }
+
+    return (
+        <TBMultiModelDemo
+            models={models}
+            task={asTugBoatTask(task)}
+            appId={AppId}>
+            {children}
+        </TBMultiModelDemo>
+    );
+};

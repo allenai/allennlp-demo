@@ -5,7 +5,7 @@ import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/co
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
 
 import { Demos } from './tugboat/lib';
-import { ErrorBoundary } from './tugboat/components';
+import { ErrorBoundary, Promised } from './tugboat/components';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
 import Menu from './components/Menu';
@@ -14,6 +14,8 @@ import { modelComponents, modelRedirects } from './models';
 import { PaneTop } from './components/Pane';
 import WaitingForPermalink from './components/WaitingForPermalink';
 import { groups } from './groups';
+import { ModelCards, ModelInfoList, TaskCards } from './context';
+import { fetchModelInfo, fetchTaskCards, fetchModelCards } from './lib';
 
 import './css/App.css';
 import './css/fonts.css';
@@ -54,28 +56,40 @@ for which the route `/task/<model_name>` serves the <SingleTaskDemo> component,
 which delegates to the particular ModelComponent specified in `demo/src/models.js`.
 */
 const App = () => (
-    <Router>
-        <ScrollToTopOnPageChange />
-        <VarnishApp layout="left-aligned">
-            <Switch>
-                <Route exact path="/" render={() => <Redirect to={DEFAULT_PATH} />} />
-                {demos.all().map(({ config, Component }) => (
-                    <Route
-                        key={config.path}
-                        path={config.path}
-                        render={(props) => (
-                            <DemoWrapper>
-                                <ErrorBoundary>
-                                    <Component {...props} />
-                                </ErrorBoundary>
-                            </DemoWrapper>
-                        )}
-                    />
-                ))}
-                <Route path="/:model/:slug?" component={Demo} />
-            </Switch>
-        </VarnishApp>
-    </Router>
+    <VarnishApp layout="left-aligned">
+        <Router>
+            <ScrollToTopOnPageChange />
+            <DemoWrapper>
+                <ErrorBoundary>
+                    <Promised 
+                        promise={() => Promise.all([ 
+                            fetchModelInfo(), 
+                            fetchTaskCards(), 
+                            fetchModelCards() 
+                        ])} 
+                        deps={[]}>
+                            {([infos, tasks, cards]) => (
+                                <ModelInfoList.Provider value={infos}>
+                                    <ModelCards.Provider value={cards}>
+                                        <TaskCards.Provider value={tasks}>
+                                            <Switch>
+                                                <Route exact path="/" render={() => <Redirect to={DEFAULT_PATH} />} />
+                                                {demos.all().map(({ config, Component }) => (
+                                                    <Route key={config.path} path={config.path}>
+                                                        <Component />
+                                                    </Route>
+                                                ))}
+                                                <Route path="/:model/:slug?" component={Demo} />
+                                            </Switch>
+                                        </TaskCards.Provider>
+                                    </ModelCards.Provider>
+                                </ModelInfoList.Provider>
+                            )}
+                    </Promised>
+                </ErrorBoundary>
+            </DemoWrapper>
+        </Router>
+    </VarnishApp>
 );
 
 // This is the top-level demo component.
@@ -123,17 +137,13 @@ const DemoWrapper = (props) => {
             <Layout>
                 <Menu items={demosByGroup} />
                 <Layout>
-                    <FullSizeContent main>{props.children}</FullSizeContent>
+                    <Content main>{props.children}</Content>
                     <Footer />
                 </Layout>
             </Layout>
         </Layout>
     );
 };
-
-const FullSizeContent = styled(Content)`
-    padding: 0;
-`;
 
 const Logo = styled.img.attrs({
     src: allenNlpLogo,

@@ -18,7 +18,7 @@ class NoModelCardIdError extends Error {
  *
  * See: https://github.com/allenai/allennlp-demo/issues/732
  */
-function getModelCardId(info: ModelInfo): string {
+export function getModelCardId(info: ModelInfo): string {
     // When this id exists, we can use it.
     if (info.pretrained_model_id) {
         return info.pretrained_model_id;
@@ -35,9 +35,8 @@ function getModelCardId(info: ModelInfo): string {
     }
 }
 
-/**
- * Returns an AllenNLP model card for the model.
- */
-export function fetchModelCard(info: ModelInfo): Promise<ModelCard> {
-    return fetch(`/api/model-card/${getModelCardId(info)}`).then((r) => r.json());
+export type ModelCardsById = { [id: string]: ModelCard };
+export function fetchModelCards(): Promise<ModelCardsById> {
+    return fetch('/api/model-cards/').then((r) => r.json());
 }
+

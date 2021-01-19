@@ -94,7 +94,7 @@ jobs:
           "vilbert_vqa",
           "wikitables_parser",
           "tasks",
-          "model_card"
+          "model_cards"
         ]
     steps:
     - uses: actions/checkout@v2

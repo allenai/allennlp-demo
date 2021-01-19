@@ -1,4 +1,4 @@
-import React from 'react';
+import { createContext } from 'react';
 
 import { Model } from '../tugboat/lib';
 
@@ -10,7 +10,7 @@ export class ModelInfoForModelNotFoundError extends Error {
     }
 }
 
-export const ModelInfoList = React.createContext<ModelInfo[]>([]);
+export const ModelInfoList = createContext<ModelInfo[]>([]);
 
 export function findModelInfo(modelInfoList: ModelInfo[], selectedModel: Model): ModelInfo {
     const info = modelInfoList.find((i) => i.id === selectedModel?.id);

@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Alert } from 'antd';
-import { Content } from '@allenai/varnish/components';
 
 interface Props {
     children: React.ReactNode;
@@ -35,9 +34,7 @@ export class ErrorBoundary extends React.PureComponent<Props, State> {
         );
 
         return (
-            <Content>
-                <Alert type="error" message="Error" description={description} showIcon />
-            </Content>
+            <Alert type="error" message="Error" description={description} showIcon />
         );
     }
 }
