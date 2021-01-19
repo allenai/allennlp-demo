@@ -1,8 +1,3 @@
-"""
-The model-card endpoint serves AllenNLP models for pretrained models. The data is served from
-a single endpoint so that the latest allennlp_models package can be used. Some modules (like NMN)
-include an older version that doesn't include the model card information.
-"""
 import logging
 import flask
 
