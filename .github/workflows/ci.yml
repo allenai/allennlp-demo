@@ -138,12 +138,11 @@ jobs:
         run: |
           docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml up --build --detach
 
-      - name: Wait for Startup 
+      - name: Wait for Startup
         run: |
           curl --retry-connrefused --retry-delay 5 --retry 240 -f http://localhost:8080
 
       - name: Run Tests
         run: |
-          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml \ 
-            exec it -T yarn test:it 
+          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml exec it -T yarn test:it
 
