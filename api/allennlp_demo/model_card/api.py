@@ -20,16 +20,28 @@ class ModelCardService(flask.Flask):
         super().__init__(name)
         configure_logging(self)
 
+        self.cards_by_id = get_pretrained_models()
+
         @self.route("/", methods=["GET"])
         def info():
-            return flask.jsonify({"id": "model-cards", "allennlp_models": VERSION})
+            return flask.jsonify({"id": "model-card", "allennlp_models": VERSION})
 
         @self.route("/<string:model_id>", methods=["GET"])
         def model_card(model_id: str):
-            card = get_pretrained_models().get(model_id)
-            if card is None:
-                raise NotFound(f"No model with id {model_id} found.")
-            return flask.jsonify(card.to_dict())
+            """
+            Returns the model card for a model. Multiple model cards can be requested at once
+            by passing several model ids, comma delimited.
+            """
+            cards = []
+            model_ids = model_id.split(",")
+            for model_id in model_ids:
+                card = self.cards_by_id.get(model_id)
+                if card is None:
+                    raise NotFound(f"No model with id {model_id} found.")
+                cards.append(card)
+            if len(cards) == 1:
+                return flask.jsonify(cards.pop().to_dict())
+            return flask.jsonify([c.to_dict() for c in cards])
 
 
 if __name__ == "__main__":
