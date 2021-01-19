@@ -14,5 +14,5 @@ function(image, cause, sha, env, branch, repo, buildId)
     local cpu = '50m';
     local memory = '200Mi';
     local startupTime = 30;
-    common.APIEndpoint('model-card', image, cause, sha, cpu, memory, env, branch, repo, buildId,
+    common.APIEndpoint('model-cards', image, cause, sha, cpu, memory, env, branch, repo, buildId,
                        startupTime)
