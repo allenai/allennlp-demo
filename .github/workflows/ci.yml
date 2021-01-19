@@ -124,10 +124,8 @@ jobs:
         # job needs to be updated.
         python dev/check_models_ci.py
 
-  # This test target runs the integration tests against a version of the application that proxies
-  # the info, predict, attack and interpret endpoints to https://demo.allennlp.org.
-  integration:
-    name: UI Integration Tests
+  ui_checks:
+    name: UI Checks
     runs-on: ubuntu-latest
     # Don't run nightly builds for forks.
     if: github.repository == 'allenai/allennlp-demo' || github.event_name != 'schedule'
@@ -138,6 +136,10 @@ jobs:
         run: |
           docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml up --build --detach
 
+      - name: Lint UI
+        run: |
+          docker-compose -f docker-compose.ui-only.yaml exec -T ui yarn lint
+
       - name: Wait for startup
         run: |
           curl --retry-connrefused --retry-delay 5 --retry 240 -f http://localhost:8080
@@ -145,4 +147,7 @@ jobs:
       - name: Run tests
         run: |
           docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml exec -T it yarn test:it
+
+  
+
 
