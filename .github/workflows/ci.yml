@@ -144,5 +144,5 @@ jobs:
 
       - name: Run tests
         run: |
-          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml exec it yarn test:it
+          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml exec -T it yarn test:it
 
