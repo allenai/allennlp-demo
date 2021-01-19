@@ -1,0 +1,18 @@
+{
+  "name": "allennlp-demo-it",
+  "version": "0.0.1",
+  "description": "Integration tests for the AllenNLP demo.",
+  "repository": "https://github.com/allenai/allennlp-demo",
+  "author": "ReViz <reviz@allenai.org>",
+  "license": "Apache 2.0",
+  "scripts": {
+    "test": "cypress run --headless",
+    "test:it": "cypress run --headless --config-file cypress.it.json",
+    "test:prod": "cypress run --headless --config-file cypress.prod.json",
+    "dev": "cypress open"
+  },
+  "dependencies": {
+    "cypress": "^6.2.1",
+    "typescript": "^4.1.3"
+  }
+}
