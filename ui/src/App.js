@@ -93,32 +93,11 @@ const App = () => (
 );
 
 // This is the top-level demo component.
-// It handles the chrome for header and menus,
-// and it renders the specific task.
-// Note, this is older code that will be removed once the conversion is complete
+// It doesn't do much, but will be going away in the next ~3 months.
 const Demo = (props) => {
     const { model, slug } = props.match.params;
     const redirectedModel = modelRedirects[model] || model;
-    return (
-        <Layout bgcolor="white">
-            <Header>
-                <HeaderColumnsWithSpace columns="auto 1fr">
-                    <Header.Logo href="http://www.allennlp.org/">
-                        <Logo width="147px" height="26px" alt="AllenNLP" />
-                    </Header.Logo>
-                </HeaderColumnsWithSpace>
-            </Header>
-            <Layout>
-                <Menu items={demosByGroup} redirectedModel={redirectedModel} />
-                <Layout>
-                    <FullSizeContent main>
-                        <SingleTaskDemo model={redirectedModel} slug={slug} />
-                    </FullSizeContent>
-                    <Footer />
-                </Layout>
-            </Layout>
-        </Layout>
-    );
+    return <SingleTaskDemo model={redirectedModel} slug={slug} />;
 };
 
 // This is the top-level demo component.
