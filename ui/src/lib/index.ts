@@ -1,5 +1,5 @@
 export * from './AttackType';
-export * from './fetchModelCard';
+export * from './fetchModelCards';
 export * from './GradientInputField';
 export * from './InterpreterId';
 export * from './ModelInfo';

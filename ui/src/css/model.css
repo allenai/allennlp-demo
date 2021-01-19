@@ -3,7 +3,7 @@
 }
 
 .model__content {
-  padding: 0.6em 2em 0.875em 2em;
+  padding: 0 0 0.875em 0;
   margin: auto;
   -webkit-transition: padding .2s ease, margin .2s ease;
   transition: padding .2s ease, margin .2s ease;

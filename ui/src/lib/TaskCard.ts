@@ -13,5 +13,5 @@ export interface TaskCard {
 export type TaskCardsById = { [taskId: string]: TaskCard };
 
 export function fetchTaskCards(): Promise<TaskCardsById> {
-    return fetch(`/api/tasks/all`).then((r) => r.json());
+    return fetch(`/api/tasks/`).then((r) => r.json());
 }

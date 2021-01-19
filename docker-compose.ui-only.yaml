@@ -18,6 +18,30 @@ services:
             - ./api/allennlp_demo/common:/app/allennlp_demo/common
         ports:
             - 8001:8000
+    model_cards:
+        build:
+            context: api
+            args:
+                MODULE: model_cards
+        environment:
+            - FLASK_ENV=development
+        volumes:
+            - ./api/allennlp_demo/model_cards:/app/allennlp_demo/model_cards
+            - ./api/allennlp_demo/common:/app/allennlp_demo/common
+        ports:
+            - 8002:8000
+    tasks:
+        build:
+            context: api
+            args:
+                MODULE: tasks 
+        environment:
+            - FLASK_ENV=development
+        volumes:
+            - ./api/allennlp_demo/tasks:/app/allennlp_demo/tasks
+            - ./api/allennlp_demo/common:/app/allennlp_demo/common
+        ports:
+            - 8003:8000
     # This container bootstraps the db if it hasn't been setup before. It just runs dev/setup_db.sh.
     setup_db:
         image: postgres:11.7-alpine
@@ -71,3 +95,5 @@ services:
         depends_on:
             - ui
             - permalinks
+            - model_cards
+            - tasks

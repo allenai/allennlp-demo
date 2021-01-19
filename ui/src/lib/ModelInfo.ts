@@ -36,20 +36,14 @@ export interface ModelInfo {
 }
 
 /**
- * Query the details for a set of models, or for all models.
- *
- * If ids is set, only information for the specified models will be returned. If unset, information
- * for all models will be returned.
+ * Fetch information about all of the models.
  */
-export function fetchModelInfo(ids?: string[]): Promise<ModelInfo[]> {
-    const includeIds = new Set(ids || []);
-    return fetch('/api/info')
-        .then((r) => r.json())
-        .then((endpoints: ModelEndpoint[]) => {
-            const info = endpoints.map((e) => e.info);
-            if (includeIds.size === 0) {
-                return info;
-            }
-            return info.filter((i) => includeIds.has(i.id));
-        });
+export function fetchModelInfo(): Promise<ModelInfo[]> {
+    return (
+        fetch('/api/info')
+            .then((r) => r.json())
+            .then((endpoints: ModelEndpoint[]) => {
+                return endpoints.map((e) => e.info);
+            })
+    );
 }
