@@ -134,15 +134,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Start Application
+      - name: Start application
         run: |
           docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml up --build --detach
 
-      - name: Wait for Startup
+      - name: Wait for startup
         run: |
           curl --retry-connrefused --retry-delay 5 --retry 240 -f http://localhost:8080
 
-      - name: Run Tests
+      - name: Run tests
         run: |
-          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml exec it -T yarn test:it
+          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml exec it yarn test:it
 
