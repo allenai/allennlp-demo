@@ -62,8 +62,7 @@
     "start": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
     "lint": "eslint '**/*.{js,jsx,ts,tsx,json}' && echo '💫  Lint complete.'",
-    "lint:fix": "eslint '**/*.{js,jsx,ts,tsx,json}' --fix && echo '🛠  Lint --fix complete'",
-    "dockerui": "docker-compose -f ../docker-compose.ui-only.yaml up --build"
+    "lint:fix": "eslint '**/*.{js,jsx,ts,tsx,json}' --fix && echo '🛠  Lint --fix complete'"
   },
   "devDependencies": {}
 }

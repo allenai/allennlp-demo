@@ -34,9 +34,27 @@ There's three ways to run things locally:
     docker-compose -f docker-compose.ui-only.yaml up --build
     ```
 
+    or use the script:
+
+    ```
+    ./bin/dockerui
+    ```
+
    Once that's complete you'll be able to access your local version by opening
    [http://localhost:8080](http://localhost:8080) in a browser. Changes to the code should
    be automatically applied.
+
+   Note: To clean up docker containers, be sure to use:
+
+   ```
+   docker-compose -f docker-compose.ui-only.yaml up --build
+   ```
+
+   or
+
+   ```
+   ./bin/dockerui down
+   ```
 
 3. If you're only working on the Permalinks service, you can start things up by running:
 
