@@ -26,7 +26,7 @@ function getModelCardId(info: ModelInfo): string {
 
     // Otherwise try to map the model to the identifier it should be using.
     switch (info.id) {
-        case ModelId.Nmn: {
+        case ModelId.NMN: {
             return 'rc-nmn';
         }
         default: {
