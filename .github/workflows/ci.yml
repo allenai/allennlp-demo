@@ -9,8 +9,6 @@ on:
   pull_request:
     branches:
     - master
-    paths:
-    - 'api/**'
   schedule:
   - cron: '7 6 * * *'
 
@@ -125,3 +123,27 @@ jobs:
         # If this step fails, this means the model matrix in the 'endpoint_test' GitHub Actions
         # job needs to be updated.
         python dev/check_models_ci.py
+
+  # This test target runs the integration tests against a version of the application that proxies
+  # the info, predict, attack and interpret endpoints to https://demo.allennlp.org.
+  integration:
+    name: UI Integration Tests
+    runs-on: ubuntu-latest
+    # Don't run nightly builds for forks.
+    if: github.repository == 'allenai/allennlp-demo' || github.event_name != 'schedule'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Start Application
+        run: |
+          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml up --build --detach
+
+      - name: Wait for Startup 
+        run: |
+          curl --retry-connrefused --retry-delay 5 --retry 240 -f http://localhost:8080
+
+      - name: Run Tests
+        run: |
+          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml \ 
+            exec it -T yarn test:it 
+
