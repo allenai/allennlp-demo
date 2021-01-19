@@ -1,17 +1,59 @@
-/*
-    Note: this file is in development and should only be viewed as example code direction
-*/
-
 import React from 'react';
-import { Content } from '@allenai/varnish/components';
+import { Tabs } from 'antd';
 
-import { TaskTitle } from '../../tugboat/components';
+import {
+    ModelCard,
+    Output,
+    SelectExample,
+    Sentence,
+    Share,
+    Submit,
+    TaskDescription,
+    TaskTitle,
+} from '../../tugboat/components';
+import { AppId } from '../../AppId';
+import { MultiModelDemo, Predict } from '../../components';
+import { config } from './config';
+import { Usage } from './Usage';
+import { Predictions } from './Predictions';
+import { Version, Input, Prediction } from './types';
 
 export const Main = () => {
     return (
-        <Content>
+        <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
-            NOTE: This task is under development
-        </Content>
+            <TaskDescription />
+            <Tabs>
+                <Tabs.TabPane tab="Demo" key="Demo">
+                    <SelectExample displayProp="sentence" placeholder="Select a Sentence" />
+                    <Predict<Input, Prediction>
+                        fields={
+                            <>
+                                <Sentence />
+                                <Submit>Run Model</Submit>
+                            </>
+                        }>
+                        {({ input, model, output }) => (
+                            <Output>
+                                <Output.ShareableSection
+                                    title="Model Output"
+                                    doc={input}
+                                    slug={Share.makeSlug(input.sentence)}
+                                    type={Version}
+                                    app={AppId}>
+                                    <Predictions input={input} model={model} output={output} />
+                                </Output.ShareableSection>
+                            </Output>
+                        )}
+                    </Predict>
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Model Card" key="Card">
+                    <ModelCard />
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Model Usage" key="Usage">
+                    <Usage />
+                </Tabs.TabPane>
+            </Tabs>
+        </MultiModelDemo>
     );
 };
