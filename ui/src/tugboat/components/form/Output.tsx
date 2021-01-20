@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { LinkCSS } from '@allenai/varnish/components';
 import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
 
-import { Share } from '../../components';
-
 interface OutputProps {
     children: React.ReactNode | JSX.Element;
 }
@@ -95,34 +93,6 @@ const TitleRow = styled.div`
     }
 `;
 
-interface ShareableSectionProps<I> {
-    title?: string;
-    app: string;
-    type?: string;
-    doc: I;
-    slug: string;
-    children: React.ReactNode;
-}
-
-Output.ShareableSection = <I,>({
-    title,
-    children,
-    doc,
-    type,
-    app,
-    slug,
-}: ShareableSectionProps<I>) => (
-    <Output.Section
-        title={title}
-        extra={
-            <AlignRight>
-                <Share.Link doc={doc} slug={slug} type={type} app={app} />
-            </AlignRight>
-        }>
-        {children}
-    </Output.Section>
-);
-
 Output.SubSection = ({ title, children }: OutputSectionProps) => (
     <OutputSubSection>
         <OutputSubSectionTitle>{title}</OutputSubSectionTitle>
@@ -152,10 +122,4 @@ export const HelpContent = styled.div`
 export const PopoverTarget = styled.span`
     ${LinkCSS.default()}
     font-style: italic;
-`;
-
-const AlignRight = styled.span`
-    display: flex;
-    flex-grow: 1;
-    justify-content: flex-end;
 `;

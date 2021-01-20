@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Form } from 'antd';
 
-import { Field } from './form';
+import { FieldItem } from './form';
 import { Markdown } from './Markdown';
 import { Models } from '../context';
 import { SelectModel } from './SelectModel';
@@ -15,7 +15,7 @@ export const SelectModelAndDescription = () => {
     const ctx = React.useContext(Models);
     return (
         <Form layout="vertical">
-            <Field label="Model">
+            <FieldItem label="Model">
                 <Frame>
                     <SelectModel />
                     {ctx.selectedModel ? (
@@ -24,7 +24,7 @@ export const SelectModelAndDescription = () => {
                         </Description>
                     ) : null}
                 </Frame>
-            </Field>
+            </FieldItem>
         </Form>
     );
 };

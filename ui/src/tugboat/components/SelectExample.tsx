@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form } from 'antd';
 
-import { Field, Select } from './form';
+import { FieldItem, Select } from './form';
 import { Examples } from '../context';
 
 import { Example, flattenExamples, isGroupedExamples } from '../lib';
@@ -46,7 +46,7 @@ export const SelectExample = ({ displayProp, placeholder }: Props) => {
 
     return (
         <Form layout="vertical">
-            <Field label="Example Inputs">
+            <FieldItem label="Example Inputs">
                 <Select
                     value={ctx.selectedExample ? ctx.selectedExample[displayProp] : undefined}
                     onChange={(id) => ctx.selectExample(examplesById[`${id}`])}
@@ -73,7 +73,7 @@ export const SelectExample = ({ displayProp, placeholder }: Props) => {
                               );
                           })}
                 </Select>
-            </Field>
+            </FieldItem>
         </Form>
     );
 };
