@@ -14,8 +14,7 @@ export const DebugInfo = ({ input, output, model }: Props) => {
     const helpContent = (
         <HelpContent>
             <p>
-                This is the raw request and response, that can be used to debug issues with the
-                demo.
+                This is the raw request and response.  The "Output" shows you what AllenNLP would return if you used it on the CLI.
             </p>
         </HelpContent>
     );
