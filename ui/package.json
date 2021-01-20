@@ -48,7 +48,7 @@
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-syntax-highlighter": "^15.3.0",
-    "react-tooltip": "4.2.10",
+    "react-tooltip": "4.2.13",
     "slug": "^4.0.2",
     "style-loader": "^2.0.0",
     "styled-components": "^5.1.2",
