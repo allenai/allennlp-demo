@@ -39,4 +39,3 @@ export type ModelCardsById = { [id: string]: ModelCard };
 export function fetchModelCards(): Promise<ModelCardsById> {
     return fetch('/api/model-cards/').then((r) => r.json());
 }
-

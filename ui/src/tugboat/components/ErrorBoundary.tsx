@@ -33,9 +33,7 @@ export class ErrorBoundary extends React.PureComponent<Props, State> {
             <>Sorry, something went wrong. Please try again.</>
         );
 
-        return (
-            <Alert type="error" message="Error" description={description} showIcon />
-        );
+        return <Alert type="error" message="Error" description={description} showIcon />;
     }
 }
 

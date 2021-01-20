@@ -61,30 +61,32 @@ const App = () => (
             <ScrollToTopOnPageChange />
             <DemoWrapper>
                 <ErrorBoundary>
-                    <Promised 
-                        promise={() => Promise.all([ 
-                            fetchModelInfo(), 
-                            fetchTaskCards(), 
-                            fetchModelCards() 
-                        ])} 
+                    <Promised
+                        promise={() =>
+                            Promise.all([fetchModelInfo(), fetchTaskCards(), fetchModelCards()])
+                        }
                         deps={[]}>
-                            {([infos, tasks, cards]) => (
-                                <ModelInfoList.Provider value={infos}>
-                                    <ModelCards.Provider value={cards}>
-                                        <TaskCards.Provider value={tasks}>
-                                            <Switch>
-                                                <Route exact path="/" render={() => <Redirect to={DEFAULT_PATH} />} />
-                                                {demos.all().map(({ config, Component }) => (
-                                                    <Route key={config.path} path={config.path}>
-                                                        <Component />
-                                                    </Route>
-                                                ))}
-                                                <Route path="/:model/:slug?" component={Demo} />
-                                            </Switch>
-                                        </TaskCards.Provider>
-                                    </ModelCards.Provider>
-                                </ModelInfoList.Provider>
-                            )}
+                        {([infos, tasks, cards]) => (
+                            <ModelInfoList.Provider value={infos}>
+                                <ModelCards.Provider value={cards}>
+                                    <TaskCards.Provider value={tasks}>
+                                        <Switch>
+                                            <Route
+                                                exact
+                                                path="/"
+                                                render={() => <Redirect to={DEFAULT_PATH} />}
+                                            />
+                                            {demos.all().map(({ config, Component }) => (
+                                                <Route key={config.path} path={config.path}>
+                                                    <Component />
+                                                </Route>
+                                            ))}
+                                            <Route path="/:model/:slug?" component={Demo} />
+                                        </Switch>
+                                    </TaskCards.Provider>
+                                </ModelCards.Provider>
+                            </ModelInfoList.Provider>
+                        )}
                     </Promised>
                 </ErrorBoundary>
             </DemoWrapper>
