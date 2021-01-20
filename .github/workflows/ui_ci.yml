@@ -16,8 +16,6 @@ jobs:
   ui_checks:
     name: UI Checks
     runs-on: ubuntu-latest
-    # Don't run nightly builds for forks.
-    if: github.repository == 'allenai/allennlp-demo' || github.event_name != 'schedule'
     steps:
       - uses: actions/checkout@v2
       - name: Start application
