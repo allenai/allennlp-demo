@@ -4,14 +4,14 @@ on:
     branches:
     - master
     paths:
-    - ui/**
-    - it/**
+    - 'ui/**'
+    - 'it/**'
   pull_request:
     branches:
     - master
     paths: 
-    - ui/**
-    - it/**
+    - 'ui/**'
+    - 'it/**'
 jobs:
   ui_checks:
     name: UI Checks
