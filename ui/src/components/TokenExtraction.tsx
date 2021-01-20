@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { List } from 'antd';
 
 import {
-    Output,
     HighlightContainer,
     Highlight,
     HighlightColor,
@@ -28,38 +27,36 @@ interface Props {
 
 export const TokenExtraction = ({ output }: Props) => {
     return (
-        <Output.SubSection title={`${output.verbs.length} Total Extractions`}>
-            <List
-                itemLayout="vertical"
-                size="small"
-                dataSource={output.verbs}
-                pagination={output.verbs.length > 9 ? { pageSize: 7 } : false}
-                renderItem={(verbData, i) => {
-                    return (
-                        <List.Item>
-                            <List.Item.Meta
-                                title={
-                                    <>
-                                        <b>Extractions for </b>
-                                        <Verb>
-                                            <Highlight id={i} color="B">
-                                                {verbData.verb}
-                                            </Highlight>
-                                        </Verb>
-                                        :
-                                    </>
-                                }
-                            />
-                            <StyledHighlightContainer centerLabels={false}>
-                                {formatTokens(verbData.tags, output.words).map((token, i) => (
-                                    <TokenSpan key={i} id={i} token={token} />
-                                ))}
-                            </StyledHighlightContainer>
-                        </List.Item>
-                    );
-                }}
-            />
-        </Output.SubSection>
+        <List
+            itemLayout="vertical"
+            size="small"
+            dataSource={output.verbs}
+            pagination={output.verbs.length > 9 ? { pageSize: 7 } : false}
+            renderItem={(verbData, i) => {
+                return (
+                    <List.Item>
+                        <List.Item.Meta
+                            title={
+                                <>
+                                    <b>Extractions for </b>
+                                    <Verb>
+                                        <Highlight id={i} color="B">
+                                            {verbData.verb}
+                                        </Highlight>
+                                    </Verb>
+                                    :
+                                </>
+                            }
+                        />
+                        <StyledHighlightContainer centerLabels={false}>
+                            {formatTokens(verbData.tags, output.words).map((token, i) => (
+                                <TokenSpan key={i} id={i} token={token} />
+                            ))}
+                        </StyledHighlightContainer>
+                    </List.Item>
+                );
+            }}
+        />
     );
 };
 
@@ -78,22 +75,22 @@ const TokenSpan = ({ token, id }: { token: FormattedToken; id: number }) => {
     let color: HighlightColor = 'O';
     let nodeType = tagLabel;
     if (tagLabel === 'ARGM') {
-        nodeType = 'modifier';
+        nodeType = 'Modifier';
         color = 'T';
     } else if (tagLabel === 'ARGA') {
-        nodeType = 'argument';
+        nodeType = 'Argument';
         color = 'M';
     } else if (/ARG\d+/.test(tagLabel)) {
-        nodeType = 'argument';
+        nodeType = 'Argument';
         color = 'G';
     } else if (tagLabel === 'R') {
-        nodeType = 'reference';
+        nodeType = 'Reference';
         color = 'P';
     } else if (tagLabel === 'C') {
-        nodeType = 'continuation';
+        nodeType = 'Continuation';
         color = 'A';
     } else if (tagLabel === 'V') {
-        nodeType = 'verb';
+        nodeType = 'Verb';
         color = 'B';
     }
 
@@ -104,14 +101,14 @@ const TokenSpan = ({ token, id }: { token: FormattedToken; id: number }) => {
     } else if (attr) {
         attribute = attributeToDisplayLabel[attr];
     }
-    let label = nodeType;
+    let tooltip = nodeType;
     if (attribute) {
-        label += `-${attribute}`;
+        tooltip += `-${attribute}`;
     }
-    // If token has entity value:
+
     // Display entity text wrapped in a <Highlight /> component.
     return (
-        <Highlight id={id} label={label} color={color}>
+        <Highlight id={id} label={token.entity} color={color} tooltip={tooltip}>
             {token.text}{' '}
         </Highlight>
     );
