@@ -69,6 +69,7 @@ export const formatTokens = (tags: string[], words: string[]) => {
             closeAnyOpenToken(`${' '}${words[i]}`);
         }
     });
+    closeAnyOpenToken();
 
     return formattedTokens;
 };
