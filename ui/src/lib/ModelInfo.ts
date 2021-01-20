@@ -7,6 +7,7 @@ export enum ModelId {
     NMN = 'nmn',
     OpenIE = 'open-information-extraction',
     TransformerQA = 'transformer-qa',
+    SemanticRollLabeling = 'semantic-role-labeling',
 }
 
 /**
