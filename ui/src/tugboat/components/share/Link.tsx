@@ -8,7 +8,7 @@ import { emory, usePromise, PromiseState } from '../../lib';
 import { Path as SharePath } from './Path';
 import { Loading } from '../shared';
 
-interface Props<T extends {}> {
+export interface LinkProps<T extends {}> {
     app: string;
     type?: string;
     doc: T;
@@ -27,7 +27,7 @@ interface Props<T extends {}> {
  * the resulting URL. This is for the end-user -- as it ensures there URL has some intelligble
  * bits that can be used to infer things about where the URL might take someone.
  */
-export const Link = <T,>({ app, type, doc, slug }: Props<T>) => {
+export const Link = <T,>({ app, type, doc, slug }: LinkProps<T>) => {
     const hasExistingShareURL = useRouteMatch(`/:root+${SharePath}`) !== null;
 
     const [hasBeenClicked, setHasBeenClicked] = useState(false);
@@ -89,9 +89,21 @@ export const Link = <T,>({ app, type, doc, slug }: Props<T>) => {
     );
 };
 
+export const ShareButton = <I,>(props: LinkProps<I>) => (
+    <AlignRight>
+        <Link {...props} />
+    </AlignRight>
+);
+
 const URL = styled(Typography.Text).attrs(() => ({ copyable: true }))`
     ${({ theme }) => `
         font-size: ${theme.typography.textStyles.small.fontSize};
         font-weight: ${theme.typography.font.weight.bold};
     `}
+`;
+
+const AlignRight = styled.span`
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
 `;

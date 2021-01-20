@@ -34,25 +34,23 @@ export const Predictions = ({ input, model, output }: Props) => {
 };
 
 const TokenSpan = ({ token, id }: { token: FormattedToken; id: number }) => {
-    const entity = token.entity;
-
-    if (entity !== undefined) {
-        // If token has entity value:
-        // Display entity text wrapped in a <Highlight /> component.
-        return (
-            <Highlight
-                id={id}
-                label={entity}
-                color={entityLookup[entity].color}
-                tooltip={entityLookup[entity].tooltip}>
-                {token.text}{' '}
-            </Highlight>
-        );
-    } else {
+    if (token.entity === undefined) {
         // If no entity,
         // Display raw text.
         return <span>{`${token.text}${' '}`}</span>;
     }
+
+    // If token has entity value:
+    // Display entity text wrapped in a <Highlight /> component.
+    return (
+        <Highlight
+            id={id}
+            label={token.entity}
+            color={entityLookup[token.entity].color}
+            tooltip={entityLookup[token.entity].tooltip}>
+            {token.text}{' '}
+        </Highlight>
+    );
 };
 
 // Lookup table for entity style values

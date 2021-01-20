@@ -43,57 +43,57 @@ export const Predictions = ({ input, model, output }: Props) => {
 };
 
 const TokenSpan = ({ token, id }: { token: FormattedToken; id: number }) => {
-    if (token.entity !== undefined) {
-        const tagParts = token.entity.split('-');
-        const [tagLabel, attr] = tagParts;
-
-        // Convert the tag label to a node type. In the long run this might make sense as
-        // a map / lookup table of some sort -- but for now this works.
-        let color: HighlightColor = 'O';
-        let nodeType = tagLabel;
-        if (tagLabel === 'ARGM') {
-            nodeType = 'modifier';
-            color = 'T';
-        } else if (tagLabel === 'ARGA') {
-            nodeType = 'argument';
-            color = 'M';
-        } else if (/ARG\d+/.test(tagLabel)) {
-            nodeType = 'argument';
-            color = 'G';
-        } else if (tagLabel === 'R') {
-            nodeType = 'reference';
-            color = 'P';
-        } else if (tagLabel === 'C') {
-            nodeType = 'continuation';
-            color = 'A';
-        } else if (tagLabel === 'V') {
-            nodeType = 'verb';
-            color = 'B';
-        }
-
-        let attribute;
-        const isArg = nodeType === 'argument';
-        if (isArg) {
-            attribute = tagLabel.slice(3);
-        } else if (attr) {
-            attribute = attributeToDisplayLabel[attr];
-        }
-        let label = nodeType;
-        if (attribute) {
-            label += `-${attribute}`;
-        }
-        // If token has entity value:
-        // Display entity text wrapped in a <Highlight /> component.
-        return (
-            <Highlight id={id} label={label} color={color}>
-                {token.text}{' '}
-            </Highlight>
-        );
-    } else {
+    if (token.entity === undefined) {
         // If no entity,
         // Display raw text.
         return <span>{`${token.text}${' '}`}</span>;
     }
+
+    const tagParts = token.entity.split('-');
+    const [tagLabel, attr] = tagParts;
+
+    // Convert the tag label to a node type. In the long run this might make sense as
+    // a map / lookup table of some sort -- but for now this works.
+    let color: HighlightColor = 'O';
+    let nodeType = tagLabel;
+    if (tagLabel === 'ARGM') {
+        nodeType = 'modifier';
+        color = 'T';
+    } else if (tagLabel === 'ARGA') {
+        nodeType = 'argument';
+        color = 'M';
+    } else if (/ARG\d+/.test(tagLabel)) {
+        nodeType = 'argument';
+        color = 'G';
+    } else if (tagLabel === 'R') {
+        nodeType = 'reference';
+        color = 'P';
+    } else if (tagLabel === 'C') {
+        nodeType = 'continuation';
+        color = 'A';
+    } else if (tagLabel === 'V') {
+        nodeType = 'verb';
+        color = 'B';
+    }
+
+    let attribute;
+    const isArg = nodeType === 'argument';
+    if (isArg) {
+        attribute = tagLabel.slice(3);
+    } else if (attr) {
+        attribute = attributeToDisplayLabel[attr];
+    }
+    let label = nodeType;
+    if (attribute) {
+        label += `-${attribute}`;
+    }
+    // If token has entity value:
+    // Display entity text wrapped in a <Highlight /> component.
+    return (
+        <Highlight id={id} label={label} color={color}>
+            {token.text}{' '}
+        </Highlight>
+    );
 };
 
 const attributeToDisplayLabel: { [index: string]: string } = {
