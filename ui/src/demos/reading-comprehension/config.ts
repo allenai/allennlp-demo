@@ -12,6 +12,6 @@ export const config: DemoConfig = {
         ModelId.TransformerQA,
         ModelId.Naqanet,
     ],
-    status: 'hidden',
+    status: 'active',
     taskId: 'rc',
 };

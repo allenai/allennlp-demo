@@ -22,7 +22,7 @@ interface Props {
 export const Predictions = ({ input, model, output }: Props) => {
     return (
         <Output.Section>
-            <Output.SubSection title="Extracted Verbs">
+            <Output.SubSection title={`${output.verbs.length} Total Extractions`}>
                 {output.verbs.map((verbData, i) => {
                     return (
                         <Extraction key={verbData.verb}>
