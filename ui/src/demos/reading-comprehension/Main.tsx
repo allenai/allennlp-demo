@@ -4,8 +4,7 @@ import { Tabs } from 'antd';
 import {
     ModelCard,
     Output,
-    Passage,
-    Question,
+    Field,
     Saliency,
     SelectExample,
     SelectModelAndDescription,
@@ -42,8 +41,8 @@ export const Main = () => {
                         version={Version}
                         fields={
                             <>
-                                <Passage />
-                                <Question />
+                                <Field.Passage />
+                                <Field.Question />
                                 <Submit>Run Model</Submit>
                             </>
                         }>

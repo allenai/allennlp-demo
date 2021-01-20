@@ -5,7 +5,7 @@ import {
     ModelCard,
     Output,
     SelectExample,
-    Sentence,
+    Field,
     Share,
     Submit,
     TaskDescription,
@@ -29,7 +29,7 @@ export const Main = () => {
                     <Predict<Input, Prediction>
                         fields={
                             <>
-                                <Sentence />
+                                <Field.Sentence />
                                 <Submit>Run Model</Submit>
                             </>
                         }>
