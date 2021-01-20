@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Field, TextArea } from './controls';
+import { FieldItem, TextArea } from './controls';
 
 /**
  * A component that renders a multiline text input for capturing a large body of text to be
@@ -9,7 +9,7 @@ import { Field, TextArea } from './controls';
  * The component should be a child of the Fields component.
  */
 export const Passage = () => (
-    <Field label="Passage" name="passage" rules={[{ required: true }]}>
+    <FieldItem label="Passage" name="passage" rules={[{ required: true }]}>
         <TextArea />
-    </Field>
+    </FieldItem>
 );
