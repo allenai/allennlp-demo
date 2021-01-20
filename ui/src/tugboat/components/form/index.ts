@@ -1,6 +1,8 @@
+import * as passage from './Passage';
+import * as question from './Question';
+import * as sentence from './Sentence';
+
 export * from './controls';
 export * from './Form';
 export * from './Output';
-export * from './Passage';
-export * from './Question';
-export * from './Sentence';
+export const Field = { ...passage, ...question, ...sentence };

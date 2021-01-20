@@ -83,3 +83,9 @@ export class InvalidHighlightRangeError extends Error {
         super(`Invalid Highlight Range: ${msg}`);
     }
 }
+
+export class InvalidTokenSequenceError extends Error {
+    constructor(msg: string) {
+        super(`Invalid Token Sequence: ${msg}`);
+    }
+}

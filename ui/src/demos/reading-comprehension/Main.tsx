@@ -4,8 +4,7 @@ import { Tabs } from 'antd';
 import {
     ModelCard,
     Output,
-    Passage,
-    Question,
+    Field,
     Saliency,
     SelectExample,
     SelectModelAndDescription,
@@ -42,19 +41,23 @@ export const Main = () => {
                         version={Version}
                         fields={
                             <>
-                                <Passage />
-                                <Question />
+                                <Field.Passage />
+                                <Field.Question />
                                 <Submit>Run Model</Submit>
                             </>
                         }>
                         {({ input, model, output }) => (
                             <Output>
-                                <Output.ShareableSection
+                                <Output.Section
                                     title="Model Output"
-                                    doc={input}
-                                    slug={Share.makeSlug(input.question)}
-                                    type={Version}
-                                    app={AppId}>
+                                    extra={
+                                        <Share.ShareButton
+                                            doc={input}
+                                            slug={Share.makeSlug(input.question)}
+                                            type={Version}
+                                            app={AppId}
+                                        />
+                                    }>
                                     <Predictions input={input} model={model} output={output} />
                                     {isWithTokenizedInput(output) ? (
                                         <Interpreters<Input, InterpreterData> input={input}>
@@ -80,7 +83,7 @@ export const Main = () => {
                                         target="question">
                                         {(pred) => getBasicAnswer(pred)}
                                     </Attackers>
-                                </Output.ShareableSection>
+                                </Output.Section>
                             </Output>
                         )}
                     </Predict>

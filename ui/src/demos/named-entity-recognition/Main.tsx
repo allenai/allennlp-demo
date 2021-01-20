@@ -7,7 +7,7 @@ import {
     Saliency,
     SelectExample,
     SelectModelAndDescription,
-    Sentence,
+    Field,
     Share,
     Submit,
     TaskDescription,
@@ -32,18 +32,22 @@ export const Main = () => {
                     <Predict<Input, Prediction>
                         fields={
                             <>
-                                <Sentence />
+                                <Field.Sentence />
                                 <Submit>Run Model</Submit>
                             </>
                         }>
                         {({ input, model, output }) => (
                             <Output>
-                                <Output.ShareableSection
+                                <Output.Section
                                     title="Model Output"
-                                    doc={input}
-                                    slug={Share.makeSlug(input.sentence)}
-                                    type={Version}
-                                    app={AppId}>
+                                    extra={
+                                        <Share.ShareButton
+                                            doc={input}
+                                            slug={Share.makeSlug(input.sentence)}
+                                            type={Version}
+                                            app={AppId}
+                                        />
+                                    }>
                                     <Predictions input={input} model={model} output={output} />
                                     {isWithTokenizedInput(output) ? (
                                         <Interpreters<Input, InterpreterData> input={input}>
@@ -64,7 +68,7 @@ export const Main = () => {
                                         prediction={output}
                                         target="sentence"
                                     />
-                                </Output.ShareableSection>
+                                </Output.Section>
                             </Output>
                         )}
                     </Predict>
