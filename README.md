@@ -37,7 +37,7 @@ There's three ways to run things locally:
     or use the script:
 
     ```
-    ./bin/dockerui
+    ./bin/startui
     ```
 
    Once that's complete you'll be able to access your local version by opening
@@ -47,13 +47,13 @@ There's three ways to run things locally:
    Note: To clean up docker containers, be sure to use:
 
    ```
-   docker-compose -f docker-compose.ui-only.yaml up --build
+   docker-compose -f docker-compose.ui-only.yaml down --build
    ```
 
    or
 
    ```
-   ./bin/dockerui down
+   ./bin/startui down
    ```
 
 3. If you're only working on the Permalinks service, you can start things up by running:
