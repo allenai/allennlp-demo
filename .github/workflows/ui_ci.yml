@@ -1,0 +1,32 @@
+name: UI CI
+on:
+  push:
+    branches:
+    - master
+    paths:
+    - 'ui/**'
+    - 'it/**'
+  pull_request:
+    branches:
+    - master
+    paths: 
+    - 'ui/**'
+    - 'it/**'
+jobs:
+  ui_checks:
+    name: UI Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Start application
+        run: |
+          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml up --build --detach
+      - name: Lint UI
+        run: |
+          docker-compose -f docker-compose.ui-only.yaml exec -T ui yarn lint
+      - name: Wait for startup
+        run: |
+          curl --retry-connrefused --retry-delay 5 --retry 240 -f http://localhost:8080
+      - name: Run tests
+        run: |
+          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml exec -T it yarn test:it
