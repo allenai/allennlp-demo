@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import * as Sentry from '@sentry/react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/components';
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
@@ -23,6 +24,17 @@ import './css/icons.css';
 import './css/hierplane-overrides.css';
 import './css/visualization-types.css';
 import '@allenai/varnish/dist/theme.css';
+
+// Sentry is a tool that captures JavaScript errors at runtime and aggregates them.
+// If you need access, ask someone on the AllenNLP team.
+Sentry.init({
+    dsn: "https://59686a41b9664bf2a8bbc51a602428c2@o226626.ingest.sentry.io/5599301",
+    autoSessionTracking: true,
+    // This value should be tweaked for production, and should be a value between 0 and 1.
+    tracesSampleRate: 1.0,
+    environment: process.env.SENTRY_ENVIRONMENT || 'dev',
+    release: process.env.SENTRY_RELEASE || 'none'
+});
 
 /*******************************************************************************
   <App /> Container

@@ -20,6 +20,8 @@ steps:
     'build',
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui:$COMMIT_SHA',
     '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui:latest',
+    '--build-arg', 'env=$_ENV',
+    '--build-arg', 'sha=$COMMIT_SHA',
     '--cache-from', 'gcr.io/$PROJECT_ID/$REPO_NAME-ui:latest',
     '.'
   ]
