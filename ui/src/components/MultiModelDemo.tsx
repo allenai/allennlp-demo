@@ -6,6 +6,7 @@ import { MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
 import { AppId } from '../AppId';
 import { TaskCard, getModelCardId, ModelInfo } from '../lib';
 import { ModelCards, ModelInfoList, TaskCards } from '../context';
+import { RedirectLegacyPermalinks } from '../components';
 
 class ModelCardNotFoundError extends Error {
     constructor(info: ModelInfo) {
@@ -66,8 +67,10 @@ export const MultiModelDemo = ({ ids, taskId, children }: Props) => {
     }
 
     return (
-        <TBMultiModelDemo models={models} task={asTugBoatTask(task)} appId={AppId}>
-            {children}
-        </TBMultiModelDemo>
+        <RedirectLegacyPermalinks modelIds={ids}>
+            <TBMultiModelDemo models={models} task={asTugBoatTask(task)} appId={AppId}>
+                {children}
+            </TBMultiModelDemo>
+        </RedirectLegacyPermalinks>
     );
 };
