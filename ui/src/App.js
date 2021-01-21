@@ -28,10 +28,10 @@ import '@allenai/varnish/dist/theme.css';
 // Sentry is a tool that captures JavaScript errors at runtime and aggregates them.
 // If you need access, ask someone on the AllenNLP team.
 Sentry.init({
-    dsn: "https://59686a41b9664bf2a8bbc51a602428c2@o226626.ingest.sentry.io/5599301",
+    dsn: 'https://59686a41b9664bf2a8bbc51a602428c2@o226626.ingest.sentry.io/5599301',
     autoSessionTracking: true,
     environment: process.env.SENTRY_ENVIRONMENT || 'dev',
-    release: process.env.SENTRY_RELEASE || 'none'
+    release: process.env.SENTRY_RELEASE || 'none',
 });
 
 /*******************************************************************************

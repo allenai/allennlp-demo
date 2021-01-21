@@ -64,7 +64,7 @@ module.exports = {
         }),
         // Environment variables named here are embedded into the JavaScript payload so they
         // can be used at runtime.
-        new webpack.EnvironmentPlugin('SENTRY_RELEASE', 'SENTRY_ENVIRONMENT')
+        new webpack.EnvironmentPlugin('SENTRY_RELEASE', 'SENTRY_ENVIRONMENT'),
     ],
     output: {
         filename: 'main.[hash:6].js',
