@@ -8,7 +8,7 @@ export interface Input {
 
 export interface Prediction {
     class_probabilities: number[][];
-    hierplane_tree: any; // TODO: we will remove soon
+    hierplane_tree: {}; // TODO: we will remove soon
     num_spans: number;
     pos_tags: string[];
     spans: number[][];

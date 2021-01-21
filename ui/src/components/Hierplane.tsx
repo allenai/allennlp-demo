@@ -5,10 +5,10 @@ import styled from 'styled-components';
 
 import { Tree } from 'hierplane';
 
-export const Hierplane = ({ tree }: any) => {
+export const Hierplane = ({ tree, theme }: { tree: {}; theme?: string }) => {
     return (
         <HierplaneWrapper>
-            <Tree tree={tree} theme="light" />
+            <Tree tree={tree} theme={theme} />
         </HierplaneWrapper>
     );
 };
