@@ -6,7 +6,7 @@ import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/co
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
 
 import { Demos } from './tugboat/lib';
-import { ErrorBoundary, Promised } from './tugboat/components';
+import { ErrorBoundaryView, Promised } from './tugboat/components';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
 import Menu from './components/Menu';
@@ -70,7 +70,10 @@ const App = () => (
         <Router>
             <ScrollToTopOnPageChange />
             <DemoWrapper>
-                <ErrorBoundary>
+                <Sentry.ErrorBoundary
+                    fallback={({ error, resetError }) => (
+                        <ErrorBoundaryView error={error} resetError={resetError} />
+                    )}>
                     <Promised
                         promise={() =>
                             Promise.all([fetchModelInfo(), fetchTaskCards(), fetchModelCards()])
@@ -88,7 +91,15 @@ const App = () => (
                                             />
                                             {demos.all().map(({ config, Component }) => (
                                                 <Route key={config.path} path={config.path}>
-                                                    <Component />
+                                                    <Sentry.ErrorBoundary
+                                                        fallback={({ error, resetError }) => (
+                                                            <ErrorBoundaryView
+                                                                error={error}
+                                                                resetError={resetError}
+                                                            />
+                                                        )}>
+                                                        <Component />
+                                                    </Sentry.ErrorBoundary>
                                                 </Route>
                                             ))}
                                             <Route path="/:model/:slug?" component={Demo} />
@@ -98,7 +109,7 @@ const App = () => (
                             </ModelInfoList.Provider>
                         )}
                     </Promised>
-                </ErrorBoundary>
+                </Sentry.ErrorBoundary>
             </DemoWrapper>
         </Router>
     </VarnishApp>
