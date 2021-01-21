@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
     entry: './src/index.js',
@@ -61,6 +62,9 @@ module.exports = {
                 },
             ],
         }),
+        // Environment variables named here are embedded into the JavaScript payload so they
+        // can be used at runtime.
+        new webpack.EnvironmentPlugin('SENTRY_RELEASE', 'SENTRY_ENVIRONMENT'),
     ],
     output: {
         filename: 'main.[hash:6].js',
@@ -82,4 +86,5 @@ module.exports = {
         lazy: false,
         sockPort: 8080,
     },
+    devtool: 'source-map',
 };

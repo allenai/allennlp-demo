@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Alert } from 'antd';
+
+import { ErrorMessage } from './ErrorMessage';
 
 interface Props {
     children: React.ReactNode;
@@ -33,7 +34,7 @@ export class ErrorBoundary extends React.PureComponent<Props, State> {
             <>Sorry, something went wrong. Please try again.</>
         );
 
-        return <Alert type="error" message="Error" description={description} showIcon />;
+        return <ErrorMessage message={description} />;
     }
 }
 
