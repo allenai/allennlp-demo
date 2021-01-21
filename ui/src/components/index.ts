@@ -1,6 +1,7 @@
 export * from './Attack';
 export * from './Attackers';
 export * from './DebugInfo';
+export * from './Hierplane';
 export * from './Hotflip';
 export * from './InputReduction';
 export * from './Interpret';
