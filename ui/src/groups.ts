@@ -26,10 +26,6 @@ export const groups: DemoGroup[] = [
         iconSrc: passageIcon,
     },
     {
-        label: 'Semantic parsing',
-        iconSrc: parseIcon,
-    },
-    {
         label: 'Other',
         iconSrc: otherIcon,
     },
