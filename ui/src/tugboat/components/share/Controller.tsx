@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import * as Sentry from '@sentry/react';
 import { useRouteMatch } from 'react-router-dom';
 import { notification } from 'antd';
 
@@ -55,6 +56,7 @@ export const Controller = <T,>({ type, children }: Props<T>) => {
     }
 
     if (state === PromiseState.Failure) {
+        Sentry.captureException(err);
         console.error('Shared document failed to load:', err);
         notification.error({
             message: 'Something went wrong.',
