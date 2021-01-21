@@ -30,8 +30,6 @@ import '@allenai/varnish/dist/theme.css';
 Sentry.init({
     dsn: "https://59686a41b9664bf2a8bbc51a602428c2@o226626.ingest.sentry.io/5599301",
     autoSessionTracking: true,
-    // This value should be tweaked for production, and should be a value between 0 and 1.
-    tracesSampleRate: 1.0,
     environment: process.env.SENTRY_ENVIRONMENT || 'dev',
     release: process.env.SENTRY_RELEASE || 'none'
 });
