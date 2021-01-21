@@ -7,7 +7,6 @@ import { DemoGroup } from './tugboat/lib';
  */
 import annotateIcon from './icons/annotate-14px.svg';
 import otherIcon from './icons/other-14px.svg';
-import parseIcon from './icons/parse-14px.svg';
 import passageIcon from './icons/passage-14px.svg';
 import questionIcon from './icons/question-14px.svg';
 import addIcon from './icons/add-14px.svg';
