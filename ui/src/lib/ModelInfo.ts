@@ -1,13 +1,15 @@
 export enum ModelId {
     Bidaf = 'bidaf',
     BidafELMO = 'bidaf-elmo',
+    ConstituencyParser = 'constituency-parser',
+    DependencyParser = 'dependency-parser',
     ELMONER = 'named-entity-recognition',
     FineGrainedNER = 'fine-grained-ner',
     Naqanet = 'naqanet',
     NMN = 'nmn',
     OpenIE = 'open-information-extraction',
-    TransformerQA = 'transformer-qa',
     SemanticRollLabeling = 'semantic-role-labeling',
+    TransformerQA = 'transformer-qa',
 }
 
 /**

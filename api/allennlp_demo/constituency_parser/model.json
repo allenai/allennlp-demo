@@ -1,4 +1,6 @@
 {
     "id": "constituency-parser",
-    "pretrained_model_id": "structured-prediction-constituency-parser"
+    "pretrained_model_id": "structured-prediction-constituency-parser",
+    "attackers": [],
+    "interpreters": []
 }
