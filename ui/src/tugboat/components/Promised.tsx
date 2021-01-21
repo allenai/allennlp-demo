@@ -1,4 +1,5 @@
 import React, { DependencyList } from 'react';
+import * as Sentry from '@sentry/react';
 
 import { usePromise, PromiseState } from '../lib';
 import { Loading } from './shared';
@@ -39,6 +40,12 @@ export const Promised = <T,>({ promise, deps, children }: Props<T>) => {
 
     if (state === PromiseState.Failure || !payload) {
         console.error('Promise failure:', err);
+
+        // TODO (@codeviking): I'm not sure if we'll want to couple all demos tightly to Sentry.
+        // When we lift @allenai/tugboat into it's own package, we may need to come up with a more
+        // elegant way doing this, so applications are free to pick a client-side error tracker
+        // of their choice (or opt out of one entirely).
+        Sentry.captureException(err);
         return <ErrorMessage />;
     }
 

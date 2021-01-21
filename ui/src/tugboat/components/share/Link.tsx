@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as Sentry from '@sentry/react';
 import { generatePath } from 'react-router';
 import { useRouteMatch } from 'react-router-dom';
 import styled from 'styled-components';
@@ -69,6 +70,7 @@ export const Link = <T,>({ app, type, doc, slug }: LinkProps<T>) => {
     // load what they're trying to view.
     if (state === PromiseState.Failure || !docId) {
         console.error('Failed to create shareable link:', err);
+        Sentry.captureException(err);
         notification.warning({
             message: 'Something went Wrong',
             description:
