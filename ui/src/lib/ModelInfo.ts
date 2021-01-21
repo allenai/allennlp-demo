@@ -2,14 +2,21 @@ export enum ModelId {
     Bidaf = 'bidaf',
     BidafELMO = 'bidaf-elmo',
     ConstituencyParser = 'constituency-parser',
+    CoreferenceResolution = 'coreference-resolution',
     DependencyParser = 'dependency-parser',
     ELMONER = 'named-entity-recognition',
+    ELMOSNLI = 'elmo-snli',
     FineGrainedNER = 'fine-grained-ner',
+    GloveSentimentAnalysis = 'glove-sentiment-analysis',
     Naqanet = 'naqanet',
     NMN = 'nmn',
     OpenIE = 'open-information-extraction',
+    RobertaMNLI = 'roberta-mnli',
+    RobertaSentimentAnalysis = 'roberta-sentiment-analysis',
+    RobertaSNLI = 'roberta-snli',
     SemanticRollLabeling = 'semantic-role-labeling',
     TransformerQA = 'transformer-qa',
+    VilbertVQA = 'vilbert-vqa',
 }
 
 /**
