@@ -6,6 +6,6 @@ export const config: DemoConfig = {
     title: 'Semantic Role Labeling',
     order: 6,
     modelIds: [ModelId.SemanticRollLabeling],
-    status: 'hidden',
+    status: 'active',
     taskId: 'srl',
 };

@@ -6,6 +6,6 @@ export const config: DemoConfig = {
     title: 'Named Entity Recognition',
     order: 1,
     modelIds: [ModelId.ELMONER, ModelId.FineGrainedNER],
-    status: 'hidden',
+    status: 'active',
     taskId: 'ner',
 };
