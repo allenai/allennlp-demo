@@ -8,5 +8,6 @@ export * from './Interpreters';
 export * from './ModelUsage';
 export * from './MultiModelDemo';
 export * from './Predict';
+export * from './RedirectLegacyPermalinks';
 export * from './TokenExtraction';
 export * from './Tokens';

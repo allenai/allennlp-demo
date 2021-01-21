@@ -1,17 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Space } from 'antd';
 
 import { ErrorMessage } from './ErrorMessage';
 
 interface ErrorBoundaryViewProps {
     error: Error;
-    resetError: () => void;
 }
 
-export const ErrorBoundaryView = ({ error, resetError }: ErrorBoundaryViewProps) => {
+export const ErrorBoundaryView = ({ error }: ErrorBoundaryViewProps) => {
     const showErrorDetails = process.env.NODE_ENV === 'development';
-    const details = showErrorDetails ? (
+    const message = showErrorDetails ? (
         <>
             <b>{error.message}:</b>
             <DebugInfo>
@@ -20,13 +18,6 @@ export const ErrorBoundaryView = ({ error, resetError }: ErrorBoundaryViewProps)
         </>
     ) : (
         <>Sorry, something went wrong. Please try again.</>
-    );
-
-    const message = (
-        <Space direction="vertical">
-            <span>{details}</span>
-            <Button onClick={resetError}>Reset</Button>
-        </Space>
     );
 
     return <ErrorMessage message={message} />;
@@ -51,12 +42,7 @@ export class ErrorBoundary extends React.PureComponent<Props, State> {
             return this.props.children;
         }
 
-        return (
-            <ErrorBoundaryView
-                error={this.state.error}
-                resetError={() => window.location.reload()}
-            />
-        );
+        return <ErrorBoundaryView error={this.state.error} />;
     }
 }
 

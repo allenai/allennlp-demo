@@ -29,10 +29,6 @@ import {
 } from './types';
 
 export const Main = () => {
-    // TODO (@codeviking): Remove this once we've verified Sentry is working.
-    if (document.location.search.indexOf('?throw=true') !== -1) {
-        throw Error('⚡️ This is a test error to verify that Sentry is wired up correctly.');
-    }
     return (
         <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
