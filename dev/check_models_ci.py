@@ -7,7 +7,7 @@ import os
 import logging
 from typing import Iterable
 
-WORKFLOW_FILE_PATH = ".github/workflows/ci.yml"
+WORKFLOW_FILE_PATH = ".github/workflows/api_ci.yml"
 logging.basicConfig()
 
 # These are endpoints we have tests for that aren't models. This script skips these.
