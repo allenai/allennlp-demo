@@ -70,10 +70,7 @@ const App = () => (
         <Router>
             <ScrollToTopOnPageChange />
             <DemoWrapper>
-                <Sentry.ErrorBoundary
-                    fallback={({ error, resetError }) => (
-                        <ErrorBoundaryView error={error} resetError={resetError} />
-                    )}>
+                <Sentry.ErrorBoundary fallback={({ error }) => <ErrorBoundaryView error={error} />}>
                     <Promised
                         promise={() =>
                             Promise.all([fetchModelInfo(), fetchTaskCards(), fetchModelCards()])
@@ -92,11 +89,8 @@ const App = () => (
                                             {demos.all().map(({ config, Component }) => (
                                                 <Route key={config.path} path={config.path}>
                                                     <Sentry.ErrorBoundary
-                                                        fallback={({ error, resetError }) => (
-                                                            <ErrorBoundaryView
-                                                                error={error}
-                                                                resetError={resetError}
-                                                            />
+                                                        fallback={({ error }) => (
+                                                            <ErrorBoundaryView error={error} />
                                                         )}>
                                                         <Component />
                                                     </Sentry.ErrorBoundary>

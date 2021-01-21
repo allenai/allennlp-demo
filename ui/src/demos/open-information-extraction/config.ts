@@ -6,6 +6,6 @@ export const config: DemoConfig = {
     title: 'Open Information Extraction',
     order: 2,
     modelIds: [ModelId.OpenIE],
-    status: 'hidden',
+    status: 'active',
     taskId: 'oie',
 };
