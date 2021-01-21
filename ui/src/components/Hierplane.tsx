@@ -42,7 +42,7 @@ const HierplaneWrapper = styled.div`
         user-select: none;
     }
 
-    /* THESE ARE HACKS PUT HERE BY CODEVIKING. */
+    /* THESE ARE HACKS PUT HERE BY @codeviking */
 
     /*
     Center the controls in the toolbar.
