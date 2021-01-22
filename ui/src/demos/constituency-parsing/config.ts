@@ -6,6 +6,6 @@ export const config: DemoConfig = {
     title: 'Constituency Parsing',
     order: 5,
     modelIds: [ModelId.ConstituencyParser],
-    status: 'hidden',
+    status: 'active',
     taskId: 'constituency-parsing',
 };

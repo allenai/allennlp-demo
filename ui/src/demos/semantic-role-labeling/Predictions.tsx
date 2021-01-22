@@ -14,9 +14,7 @@ interface Props {
 export const Predictions = ({ input, model, output }: Props) => {
     return (
         <Output.Section>
-            <Output.SubSection title={`${output.verbs.length} Total Frames`}>
-                <TokenExtraction output={output} />
-            </Output.SubSection>
+            <TokenExtraction output={output} extractionLabel="Frames" />
 
             <DebugInfo input={input} output={output} model={model} />
         </Output.Section>
