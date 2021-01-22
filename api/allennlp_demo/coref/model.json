@@ -1,5 +1,6 @@
 {
     "id": "coreference-resolution",
     "pretrained_model_id": "coref-spanbert",
-    "attackers": ["input_reduction"]
+    "attackers": [],
+    "interpreters": []
 }
