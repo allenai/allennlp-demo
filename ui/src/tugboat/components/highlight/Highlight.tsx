@@ -88,16 +88,16 @@ export const Highlight = ({
             onMouseOut={onMouseOut ? () => onMouseOut(id) : undefined}
             onMouseUp={onMouseUp ? () => onMouseUp(id) : undefined}>
             <Tooltip title={tooltip}>
-                <FlexContainer>
-                    {labelPositionOrDefault === 'left' || labelPositionOrDefault === 'top'
+                <FlexContainer labelPosition={labelPositionOrDefault}>
+                    {label &&
+                    (labelPositionOrDefault === 'left' || labelPositionOrDefault === 'top')
                         ? labelTemplate
                         : null}
                     {children ? (
                         <Content labelPosition={labelPositionOrDefault}>{children}</Content>
                     ) : null}
-                    {(label || label !== null) &&
-                    labelPositionOrDefault !== 'left' &&
-                    labelPositionOrDefault !== 'top'
+                    {label &&
+                    (labelPositionOrDefault === 'right' || labelPositionOrDefault === 'bottom')
                         ? labelTemplate
                         : null}
                 </FlexContainer>
@@ -121,8 +121,12 @@ export const getHighlightColor = (index: number): HighlightColor => {
     return highlightColors[index % highlightColors.length];
 };
 
-const FlexContainer = styled.div`
+const FlexContainer = styled.div<{
+    labelPosition?: LabelPosition;
+}>`
     display: flex;
+    flex-direction: ${({ labelPosition }) =>
+        labelPosition === 'top' || labelPosition === 'bottom' ? 'column' : null};
 `;
 
 const PrimaryLabel = styled.span<{
@@ -216,6 +220,7 @@ const HighlightSpan = styled.span<{
     /* TODO: lets remove line-height and use flex with align-items */
     line-height: 22px;
     display: flex;
+    color: ${({ theme }) => theme.palette.text.primary};
     background: ${({ theme, color }) => theme.color[color + '1']};
     border-color: ${({ theme, color }) => theme.color[color + '5']};
     transition: background-color 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
@@ -247,15 +252,13 @@ const HighlightSpan = styled.span<{
     ${({ active, theme, color }) =>
         active &&
         css`
-            color: ${theme.palette.common.white};
-            background: ${theme.color[color + '5']};
-            span {
+            && {
                 color: ${theme.palette.common.white};
+                background: ${theme.color[color + '5']};
             }
         `}
 
     span {
-        color: #232323;
         transition: background-color 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
     }
 
