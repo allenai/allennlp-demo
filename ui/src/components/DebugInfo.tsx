@@ -10,7 +10,7 @@ export interface Props {
 }
 
 export const DebugInfo = ({ input, output, model }: Props) => {
-    const title = 'Debug Output';
+    const title = 'API Output';
     const helpContent = (
         <HelpContent>
             <p>

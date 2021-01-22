@@ -60,7 +60,7 @@ export const Predictions = ({ input, model, output }: Props) => {
                     <Hierplane tree={output.hierplane_tree} theme="light" />
                 </Output.SubSection>
             ) : (
-                <span>Unable to render output. See debug output below.</span>
+                <span>Unable to render output. See API Output below.</span>
             )}
 
             <DebugInfo input={input} output={output} model={model} />
