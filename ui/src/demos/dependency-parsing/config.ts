@@ -6,6 +6,6 @@ export const config: DemoConfig = {
     title: 'Dependency Parsing',
     order: 4,
     modelIds: [ModelId.DependencyParser],
-    status: 'hidden',
+    status: 'active',
     taskId: 'dependency-parsing',
 };
