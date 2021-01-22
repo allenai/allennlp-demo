@@ -67,7 +67,7 @@ export const Highlight = ({
         return typeof val === 'string';
     };
     const labelTemplate = (
-        <PrimaryLabel color={colorOrDefault}>
+        <PrimaryLabel color={colorOrDefault} active={isActiveOrClicking}>
             <strong>{label}</strong>
             {secondaryLabel ? <SecondaryLabel>{secondaryLabel}</SecondaryLabel> : null}
         </PrimaryLabel>
@@ -88,17 +88,19 @@ export const Highlight = ({
             onMouseOut={onMouseOut ? () => onMouseOut(id) : undefined}
             onMouseUp={onMouseUp ? () => onMouseUp(id) : undefined}>
             <Tooltip title={tooltip}>
-                {labelPositionOrDefault === 'left' || labelPositionOrDefault === 'top'
-                    ? labelTemplate
-                    : null}
-                {children ? (
-                    <Content labelPosition={labelPositionOrDefault}>{children}</Content>
-                ) : null}
-                {(label || label !== null) &&
-                labelPositionOrDefault !== 'left' &&
-                labelPositionOrDefault !== 'top'
-                    ? labelTemplate
-                    : null}
+                <FlexContainer>
+                    {labelPositionOrDefault === 'left' || labelPositionOrDefault === 'top'
+                        ? labelTemplate
+                        : null}
+                    {children ? (
+                        <Content labelPosition={labelPositionOrDefault}>{children}</Content>
+                    ) : null}
+                    {(label || label !== null) &&
+                    labelPositionOrDefault !== 'left' &&
+                    labelPositionOrDefault !== 'top'
+                        ? labelTemplate
+                        : null}
+                </FlexContainer>
             </Tooltip>
         </HighlightSpan>
     );
@@ -119,14 +121,22 @@ export const getHighlightColor = (index: number): HighlightColor => {
     return highlightColors[index % highlightColors.length];
 };
 
-const PrimaryLabel = styled.span<{ labelPosition?: LabelPosition; color: string }>`
+const FlexContainer = styled.div`
+    display: flex;
+`;
+
+const PrimaryLabel = styled.span<{
+    labelPosition?: LabelPosition;
+    color: string;
+    active?: boolean;
+}>`
     align-items: center;
     justify-content: center;
     display: flex;
     padding: 0 ${({ theme }) => theme.spacing.xs};
     text-align: center;
     user-select: none;
-    background: ${({ theme, color }) => theme.color[color + '5']};
+    background: ${({ theme, color }) => theme.color[color + '4']};
     font-size: ${({ theme }) => theme.typography.textStyles.micro.fontSize};
 
     strong {
@@ -150,6 +160,12 @@ const PrimaryLabel = styled.span<{ labelPosition?: LabelPosition; color: string 
             /* TODO: lets remove line-height and use flex with align-items */
             line-height: 14px;
             padding-top: 1px;
+        `}
+
+    ${({ active, theme, color }) =>
+        !active &&
+        css`
+            background-color: ${theme.color[color + '5']};
         `}
 `;
 
@@ -231,21 +247,16 @@ const HighlightSpan = styled.span<{
     ${({ active, theme, color }) =>
         active &&
         css`
-            color: ${({ theme }) => theme.palette.common.white};
+            color: ${theme.palette.common.white};
             background: ${theme.color[color + '5']};
-
             span {
-                color: ${({ theme }) => theme.palette.common.white};
-            }
-
-            ${PrimaryLabel} {
-                background: ${theme.color[color + '4']};
+                color: ${theme.palette.common.white};
             }
         `}
 
     span {
-        transition: background-color 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
         color: #232323;
+        transition: background-color 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
     }
 
     ${({ shortText }) =>
