@@ -8,6 +8,7 @@ import {
     HighlightColor,
     formatTokens,
     FormattedToken,
+    Output,
 } from '../tugboat/components';
 
 interface VerbData {
@@ -23,40 +24,43 @@ export interface TokenExtractionPrediction {
 
 interface Props {
     output: TokenExtractionPrediction;
+    extractionLabel?: string;
 }
 
-export const TokenExtraction = ({ output }: Props) => {
+export const TokenExtraction = ({ output, extractionLabel = 'Extractions' }: Props) => {
     return (
-        <List
-            itemLayout="vertical"
-            size="small"
-            dataSource={output.verbs}
-            pagination={output.verbs.length > 9 ? { pageSize: 7 } : false}
-            renderItem={(verbData, i) => {
-                return (
-                    <List.Item>
-                        <List.Item.Meta
-                            title={
-                                <>
-                                    <b>Extractions for </b>
-                                    <Verb>
-                                        <Highlight id={i} color="B">
-                                            {verbData.verb}
-                                        </Highlight>
-                                    </Verb>
-                                    :
-                                </>
-                            }
-                        />
-                        <StyledHighlightContainer centerLabels={false}>
-                            {formatTokens(verbData.tags, output.words).map((token, i) => (
-                                <TokenSpan key={i} id={i} token={token} />
-                            ))}
-                        </StyledHighlightContainer>
-                    </List.Item>
-                );
-            }}
-        />
+        <Output.SubSection title={`${output.verbs.length} Total ${extractionLabel}`}>
+            <List
+                itemLayout="vertical"
+                size="small"
+                dataSource={output.verbs}
+                pagination={output.verbs.length > 9 ? { pageSize: 7 } : false}
+                renderItem={(verbData, i) => {
+                    return (
+                        <List.Item>
+                            <List.Item.Meta
+                                title={
+                                    <>
+                                        <b>{extractionLabel} for </b>
+                                        <Extraction>
+                                            <Highlight id={i} color="B">
+                                                {verbData.verb}
+                                            </Highlight>
+                                        </Extraction>
+                                        :
+                                    </>
+                                }
+                            />
+                            <StyledHighlightContainer centerLabels={false}>
+                                {formatTokens(verbData.tags, output.words).map((token, i) => (
+                                    <TokenSpan key={i} id={i} token={token} />
+                                ))}
+                            </StyledHighlightContainer>
+                        </List.Item>
+                    );
+                }}
+            />
+        </Output.SubSection>
     );
 };
 
@@ -136,7 +140,7 @@ const attributeToDisplayLabel: { [index: string]: string } = {
     PNC: 'Purpose not cause',
 };
 
-const Verb = styled.span`
+const Extraction = styled.span`
     display: inline-flex;
 `;
 
