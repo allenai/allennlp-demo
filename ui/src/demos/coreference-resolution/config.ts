@@ -7,5 +7,5 @@ export const config: DemoConfig = {
     order: 1,
     modelIds: [ModelId.CoreferenceResolution],
     status: 'hidden',
-    taskId: 'Unknown',
+    taskId: 'coref',
 };

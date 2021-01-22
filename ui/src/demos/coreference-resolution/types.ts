@@ -6,4 +6,10 @@ export interface Input {
     document: string;
 }
 
-export interface Prediction {}
+export interface Prediction {
+    antecedent_indices: number[][];
+    clusters: number[][][];
+    document: string[];
+    predicted_antecedents: number[];
+    top_spans: number[][];
+}
