@@ -11,7 +11,7 @@
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.1",
-    "@sentry/react": "^6.0.0",
+    "@sentry/react": "^6.0.1",
     "@types/commonmark": "^0.27.4",
     "@types/node": "^14.14.7",
     "@types/react": "^16.9.56",
