@@ -1,9 +1,7 @@
-import * as document from './Document';
-import * as passage from './Passage';
-import * as question from './Question';
-import * as sentence from './Sentence';
+import * as input from './Input';
+import * as textArea from './TextArea';
 
 export * from './controls';
 export * from './Form';
 export * from './Output';
-export const Field = { ...passage, ...question, ...sentence, ...document };
+export const Field = { ...textArea, ...input };

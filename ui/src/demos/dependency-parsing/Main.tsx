@@ -29,7 +29,7 @@ export const Main = () => {
                     <Predict<Input, Prediction>
                         fields={
                             <>
-                                <Field.Sentence />
+                                <Field.Input property="sentence" />
                                 <Submit>Run Model</Submit>
                             </>
                         }>

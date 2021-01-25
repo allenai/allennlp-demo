@@ -41,8 +41,8 @@ export const Main = () => {
                         version={Version}
                         fields={
                             <>
-                                <Field.Passage />
-                                <Field.Question />
+                                <Field.TextArea property="passage" />
+                                <Field.Input property="question" />
                                 <Submit>Run Model</Submit>
                             </>
                         }>
