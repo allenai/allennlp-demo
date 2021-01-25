@@ -29,7 +29,7 @@ export const Main = () => {
                     <Predict<Input, Prediction>
                         fields={
                             <>
-                                <Field.TextArea property="document" />
+                                <Field.Document />
                                 <Submit>Run Model</Submit>
                             </>
                         }>
