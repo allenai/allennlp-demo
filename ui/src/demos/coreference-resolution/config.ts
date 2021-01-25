@@ -6,6 +6,6 @@ export const config: DemoConfig = {
     title: 'Coreference Resolution',
     order: 1,
     modelIds: [ModelId.CoreferenceResolution],
-    status: 'hidden',
+    status: 'active',
     taskId: 'coref',
 };
