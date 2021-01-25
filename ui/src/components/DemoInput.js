@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Button, Select, Radio } from 'antd';
 import RightOutlined from '@ant-design/icons/RightOutlined';
 
-import BeamSearch from './BeamSearch';
 import { ImageParamControl, blobToString } from './ImageParamControl';
 import { Tooltip } from './Shared';
 import '../css/Button.css';
@@ -149,14 +148,7 @@ class DemoInput extends React.Component {
     }
 
     render() {
-        const {
-            fields,
-            selectedModel,
-            outputState,
-            responseData,
-            inputState,
-            exampleLabel,
-        } = this.props;
+        const { fields, selectedModel, outputState, exampleLabel } = this.props;
 
         // Only enable running the model if every required field has a value.
         const canRun = fields.every((field) => field.optional || this.state[field.name]);
@@ -235,23 +227,6 @@ class DemoInput extends React.Component {
                             ))}
                         </FormSelect>
                     );
-                    break;
-
-                case 'BEAM_SEARCH':
-                    if (outputState !== 'working') {
-                        const { best_action_sequence, choices } = responseData || {};
-                        const runSequenceModel = (extraState) =>
-                            this.props.runModel({ ...this.state, ...extraState }, true);
-
-                        input = (
-                            <BeamSearch
-                                inputState={inputState}
-                                bestActionSequence={best_action_sequence}
-                                choices={choices}
-                                runSequenceModel={runSequenceModel}
-                            />
-                        );
-                    }
                     break;
 
                 case 'RADIO':
