@@ -147,8 +147,8 @@ const FormImpl = <I, O>({ action, children, fields, shared }: FormImplProps<I, O
  * <Form<Input, Prediction>
  *     fields={
  *         <>
- *             <Field.Passage />
  *             <Field.Question />
+ *             <Field.Passage />
  *         </>
  *     }>
  *     {({ input, model, output }) => (
