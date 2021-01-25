@@ -1,7 +1,7 @@
 import { DemoConfig } from '../../tugboat/lib';
 
 export const config: DemoConfig = {
-    group: 'Other',
+    group: 'Generate a passage',
     title: 'Language Modeling',
     path: '/next-token-lm',
     order: 2,

@@ -5,8 +5,9 @@ import { DemoGroup } from './tugboat/lib';
  * as part of the DOM. They'll be faster, look better and we can change colors n' such via
  * CSS.
  */
+import addIcon from './icons/add-14px.svg';
 import annotateIcon from './icons/annotate-14px.svg';
-import otherIcon from './icons/other-14px.svg';
+import parseIcon from './icons/parse-14px.svg';
 import passageIcon from './icons/passage-14px.svg';
 import questionIcon from './icons/question-14px.svg';
 
@@ -24,7 +25,11 @@ export const groups: DemoGroup[] = [
         iconSrc: passageIcon,
     },
     {
-        label: 'Other',
-        iconSrc: otherIcon,
+        label: 'Generate a passage',
+        iconSrc: addIcon,
+    },
+    {
+        label: 'Compare two sentences',
+        iconSrc: parseIcon,
     },
 ];
