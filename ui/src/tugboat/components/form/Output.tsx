@@ -41,7 +41,7 @@ export const Output = ({ children }: OutputProps) => <Container>{children}</Cont
 const Container = styled.section`
     display: grid;
     grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing.xl};
+    grid-gap: ${({ theme }) => theme.spacing.xl};
 `;
 
 interface OutputSectionProps {
@@ -70,7 +70,7 @@ Output.Section = ({ title, extra, children }: OutputSectionProps) => (
 const OutputSection = styled.section`
     display: grid;
     grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing.lg};
+    grid-gap: ${({ theme }) => theme.spacing.lg};
 `;
 
 const OutputSectionTitle = styled.h4`
@@ -103,7 +103,7 @@ Output.SubSection = ({ title, children }: OutputSectionProps) => (
 const OutputSubSection = styled.div`
     display: grid;
     grid-template-columns: 1fr;
-    gap: ${({ theme }) => theme.spacing.xs};
+    grid-gap: ${({ theme }) => theme.spacing.xs};
 `;
 
 const OutputSubSectionTitle = styled.h5`

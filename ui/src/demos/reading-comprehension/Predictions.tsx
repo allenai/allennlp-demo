@@ -4,7 +4,11 @@ import { DebugInfo } from '../../components';
 import { TextWithHighlight, Output, ArithmeticEquation } from '../../tugboat/components';
 import { Model } from '../../tugboat/lib';
 import { ModelId } from '../../lib';
-import { UnexpectedModelError, InvalidModelResponseError } from '../../tugboat/error';
+import {
+    InvalidModelResponseError,
+    UnexpectedModelError,
+    UnexpectedOutputError,
+} from '../../tugboat/error';
 import {
     Input,
     Prediction,
@@ -22,12 +26,6 @@ import {
     getBasicAnswer,
 } from './types';
 import { NMNOutput } from './nmn';
-
-class UnexpectedOutputError extends Error {
-    constructor(modelId: string) {
-        super(`The output received doesn't match what's expected for model ${modelId}`);
-    }
-}
 
 interface Props {
     input: Input;
