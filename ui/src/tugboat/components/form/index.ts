@@ -5,7 +5,6 @@ import * as passage from './Passage';
 import * as premise from './Premise';
 import * as question from './Question';
 import * as sentence from './Sentence';
-import * as text from './Text';
 
 export * from './controls';
 export * from './Form';
@@ -18,5 +17,4 @@ export const Field = {
     ...premise,
     ...question,
     ...sentence,
-    ...text,
 };

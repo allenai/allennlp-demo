@@ -20,21 +20,18 @@ import { Predictions } from './Predictions';
 import { Version, Input, Prediction, InterpreterData, isWithTokenizedInput } from './types';
 
 export const Main = () => {
+    // The hidden fields below are passing parameters to the api that the user does not need to set
     return (
         <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
             <TaskDescription />
             <Tabs>
                 <Tabs.TabPane tab="Demo" key="Demo">
-                    <SelectExample displayProp="text" placeholder="Select a Text" />
+                    <SelectExample displayProp="sentence" placeholder="Select a Sentence" />
                     <Predict<Input, Prediction>
                         fields={
                             <>
-                                <Field.Text validator={validateHasAtLeastOnceMaskToken} />
-                                <Field.Hidden
-                                    name="sentence"
-                                    value="The doctor ran to the emergency room to see [MASK] patient."
-                                />
+                                <Field.Sentence validator={validateHasAtLeastOnceMaskToken} />
                                 <Field.Hidden name="model_name" value="345M" />
                                 <Field.Hidden name="numsteps" value="5" />
                                 <Submit>Run Model</Submit>
@@ -47,7 +44,7 @@ export const Main = () => {
                                     extra={
                                         <Share.ShareButton
                                             doc={input}
-                                            slug={Share.makeSlug(input.text)}
+                                            slug={Share.makeSlug(input.sentence)}
                                             type={Version}
                                             app={AppId}
                                         />

@@ -4,7 +4,6 @@ export const Version = emory.getVersion('ner-v1');
 
 export interface Input {
     sentence: string;
-    text: string; // TODO: [jon] remove this
 }
 
 export interface WithTokenizedInput {
