@@ -30,7 +30,7 @@ export const Main = () => {
                     <Predict<Input, Prediction>
                         fields={
                             <>
-                                <Field.Text validator={Validator} />
+                                <Field.Text validator={validateHasAtLeastOnceMaskToken} />
                                 <Field.Hidden
                                     name="sentence"
                                     value="The doctor ran to the emergency room to see [MASK] patient."
@@ -79,7 +79,7 @@ export const Main = () => {
     );
 };
 
-const Validator = async (_: RuleObject, text: string) => {
+const validateHasAtLeastOnceMaskToken = async (_: RuleObject, text: string) => {
     if (!text || text.indexOf('[MASK]') === -1) {
         return Promise.reject(new Error('The sentence must include one or more "[MASK]" tokens.'));
     }
