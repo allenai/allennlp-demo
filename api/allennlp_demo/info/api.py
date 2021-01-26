@@ -107,7 +107,7 @@ class InfoService(flask.Flask):
                 if (
                     endpoint == "info"
                     or endpoint == "tasks"
-                    or endpoint == "model_cards"
+                    or endpoint == "model-cards"
                     or endpoint == "permalinks"
                 ):
                     continue
