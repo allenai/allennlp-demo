@@ -8,6 +8,7 @@ export enum ModelId {
     ELMOSNLI = 'pair-classification-decomposable-attention-elmo',
     FineGrainedNER = 'fine-grained-ner',
     GloveSentimentAnalysis = 'glove-sentiment-analysis',
+    MaskedLM = 'masked-lm',
     Naqanet = 'naqanet',
     NMN = 'nmn',
     OpenIE = 'open-information-extraction',

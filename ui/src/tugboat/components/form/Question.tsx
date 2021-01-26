@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { FieldItem, Input } from './controls';
+import { Input } from './controls';
+import { BaseInput, BaseInputProps } from './BaseInput';
 
 /**
  * A component that renders a single line text input for capturing a question that's to be
@@ -8,8 +9,8 @@ import { FieldItem, Input } from './controls';
  *
  * The component should be a child of the Fields component.
  */
-export const Question = () => (
-    <FieldItem label="Question" name="question" rules={[{ required: true }]}>
+export const Question = (props: BaseInputProps) => (
+    <BaseInput label="Question" name="question" {...props}>
         <Input />
-    </FieldItem>
+    </BaseInput>
 );

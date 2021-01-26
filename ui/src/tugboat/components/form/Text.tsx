@@ -9,8 +9,8 @@ import { BaseInput, BaseInputProps } from './BaseInput';
  *
  * The component should be a child of the Fields component.
  */
-export const Passage = (props: BaseInputProps) => (
-    <BaseInput label="Passage" name="passage" {...props}>
+export const Text = (props: BaseInputProps) => (
+    <BaseInput label="Text" name="text" {...props}>
         <TextArea />
     </BaseInput>
 );

@@ -1,3 +1,4 @@
+import { ModelId } from '../../lib';
 import { DemoConfig } from '../../tugboat/lib';
 
 export const config: DemoConfig = {
@@ -5,7 +6,7 @@ export const config: DemoConfig = {
     title: 'Masked Language Modeling',
     path: '/masked-lm',
     order: 3,
-    modelIds: [],
+    modelIds: [ModelId.MaskedLM],
     status: 'hidden',
     taskId: 'masked-language-modeling',
 };
