@@ -29,6 +29,12 @@ export class InvalidModelResponseError extends Error {
     }
 }
 
+export class UnexpectedOutputError extends Error {
+    constructor(modelId: string) {
+        super(`The output received doesn't match what's expected for model ${modelId}`);
+    }
+}
+
 // Action errors
 export class UnknownActionError extends Error {
     constructor(actionName: string) {
