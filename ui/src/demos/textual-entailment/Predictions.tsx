@@ -118,10 +118,6 @@ const BasicPrediction = ({ probs }: { probs: number[] }) => {
         summaryText = <div>The model is not confident in its judgment.</div>;
     }
 
-    const formatProb = (n: number) => {
-        return parseFloat((n * 100).toFixed(1)) + '%';
-    };
-
     const dataSource = [
         {
             key: 'entailment',
@@ -150,7 +146,10 @@ const BasicPrediction = ({ probs }: { probs: number[] }) => {
             title: 'Probability',
             dataIndex: 'probability',
             key: 'probability',
-            render: formatProb,
+            render: new Intl.NumberFormat(navigator.language, {
+                style: 'percent',
+                maximumFractionDigits: 1,
+            }).format,
         },
     ];
 
@@ -174,11 +173,11 @@ const BasicPrediction = ({ probs }: { probs: number[] }) => {
 const Columns = styled.div`
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: ${({ theme }) => theme.spacing.xl};
+    grid-gap: ${({ theme }) => theme.spacing.xl};
 
     @media ${({ theme }) => belowOrEqualTo(theme.breakpoints.lg)} {
         grid-template-columns: 1fr;
-        gap: ${({ theme }) => theme.spacing.md};
+        grid-gap: ${({ theme }) => theme.spacing.md};
     }
 `;
 
@@ -192,13 +191,13 @@ interface TernaryGraphProps {
 }
 
 const TernaryGraph = ({ contradiction, neutral, entailment }: TernaryGraphProps) => {
-    const containerWidth = 290;
-    const containerHeight = 260;
-    const triangleWidth = 224;
-    const triangleHeight = 194;
+    const fixedContainerWidth = 290;
+    const fixedContainerHeight = 260;
+    const fixedTriangleWidth = 224;
+    const fixedTriangleHeight = 194;
     const triangleTopMargin = 10;
-    const widthPad = (containerWidth - triangleWidth) / 2;
-    const heightPad = triangleTopMargin + (containerHeight - triangleHeight) / 2;
+    const widthPad = (fixedContainerWidth - fixedTriangleWidth) / 2;
+    const heightPad = triangleTopMargin + (fixedContainerHeight - fixedTriangleHeight) / 2;
 
     // https://en.wikipedia.org/wiki/Ternary_plot#Plotting_a_ternary_plot
     const a = contradiction;
@@ -206,15 +205,15 @@ const TernaryGraph = ({ contradiction, neutral, entailment }: TernaryGraphProps)
     const c = entailment;
     const x = (0.5 * (2 * b + c)) / (a + b + c);
     const y = c / (a + b + c);
-    const absoluteX = Math.round(x * triangleWidth) + widthPad;
-    const absoluteY = Math.round((1.0 - y) * triangleHeight) + heightPad;
+    const absoluteX = Math.round(x * fixedTriangleWidth) + widthPad;
+    const absoluteY = Math.round((1.0 - y) * fixedTriangleHeight) + heightPad;
 
     return (
-        <TernaryContainer width={containerWidth} height={containerHeight}>
+        <TernaryContainer width={fixedContainerWidth} height={fixedContainerHeight}>
             <TernaryLabels />
             <TernaryTrangle
-                width={triangleWidth}
-                height={triangleHeight}
+                width={fixedTriangleWidth}
+                height={fixedTriangleHeight}
                 left={widthPad}
                 top={heightPad}
             />
