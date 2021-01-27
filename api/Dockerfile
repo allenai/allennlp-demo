@@ -1,6 +1,6 @@
 # This is the common Dockerfile that is used to build all demos unless the demo
 # overrides this with its own Dockerfile in its directory.
-FROM allennlp/models:1.4.0
+FROM allennlp/models:v1.4.0-cuda11.0
 
 # Ensure allennlp_demo module can be found by Python.
 ENV PYTHONPATH /app/
