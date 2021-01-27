@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { FieldItem, TextArea } from './controls';
+import { TextArea } from './controls';
+import { BaseInput, BaseInputProps } from './BaseInput';
 
 /**
  * A component that renders a multiline text input for capturing a large body of text to be
@@ -8,8 +9,8 @@ import { FieldItem, TextArea } from './controls';
  *
  * The component should be a child of the Fields component.
  */
-export const Document = () => (
-    <FieldItem label="Document" name="document" rules={[{ required: true }]}>
+export const Document = (props: BaseInputProps) => (
+    <BaseInput label="Document" name="document" {...props}>
         <TextArea />
-    </FieldItem>
+    </BaseInput>
 );

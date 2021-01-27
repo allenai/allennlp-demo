@@ -6,6 +6,6 @@ export const config: DemoConfig = {
     title: 'Textual Entailment',
     order: 1,
     modelIds: [ModelId.ELMOSNLI, ModelId.RobertaSNLI, ModelId.RobertaMNLI],
-    status: 'hidden',
+    status: 'active',
     taskId: 'textual_entailment',
 };
