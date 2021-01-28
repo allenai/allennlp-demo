@@ -3,8 +3,18 @@ import { emory } from '../../tugboat/lib';
 export const Version = emory.getVersion('vqa-v1');
 
 export interface Input {
-    image: any; // TODO: we need to port an image input type
+    image: {
+        imgSrc: string;
+        imageName: string;
+        image: File;
+        image_base64: string;
+    };
     question: string;
 }
 
-export interface Prediction {}
+export interface Answer {
+    answer: string;
+    confidence: number;
+}
+
+export type Prediction = Answer[];
