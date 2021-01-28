@@ -1,6 +1,5 @@
 import React from 'react';
 import { Tabs } from 'antd';
-import { RuleObject } from 'antd/lib/form';
 
 import {
     ModelCard,
