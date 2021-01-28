@@ -6,7 +6,7 @@ import { NoSelectedModelError } from '../tugboat/error';
 
 interface Props<I, O> {
     fields: React.ReactNode | JSX.Element;
-    fieldChanges?: FormFieldDict;
+    overrides?: FormFieldDict;
     children: FormOutputView<I, O>;
     version?: string;
 }
@@ -14,7 +14,7 @@ interface Props<I, O> {
 /**
  * Top level container for a demo that showcases a Model's predictor.
  */
-export const Predict = <I, O>({ fields, fieldChanges, children, version }: Props<I, O>) => {
+export const Predict = <I, O>({ fields, overrides, children, version }: Props<I, O>) => {
     const { selectedModel } = React.useContext(Models);
     if (!selectedModel) {
         throw new NoSelectedModelError();
@@ -22,7 +22,7 @@ export const Predict = <I, O>({ fields, fieldChanges, children, version }: Props
     return (
         <Form<I, O>
             fields={fields}
-            fieldChanges={fieldChanges}
+            overrides={overrides}
             action={`/api/${selectedModel.id}/predict`}
             version={version}>
             {children}

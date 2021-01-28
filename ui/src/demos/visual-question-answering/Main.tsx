@@ -31,7 +31,7 @@ import livingRoomSrc from '../exampleImages/living_room.jpg';
 export const Main = () => {
     // Fields on the form to force an update to the value, this is needed because the input control
     // does not know about the form, and the form is not available at field construction time.
-    const [fieldChanges, setFieldChanges] = useState<FormFieldDict>();
+    const [overrides, setOverrides] = useState<FormFieldDict>();
     // Holding on to selected example because the fields need to know about changes and the Example
     // context is not ready at form construction time.
     const [selectedExample, setSelectedExample] = useState<Example>();
@@ -71,7 +71,7 @@ export const Main = () => {
                     <SelectExample
                         displayProp="snippet"
                         placeholder="Select an Example"
-                        overrides={examples}
+                        examples={examples}
                         onChange={(ex?: Example) => setSelectedExample(ex)}
                     />
                     <Predict<Input, Prediction>
@@ -79,13 +79,13 @@ export const Main = () => {
                             <>
                                 <Field.Image
                                     value={selectedExample?.image}
-                                    onChange={(v) => setFieldChanges(v)}
+                                    onChange={(v) => setOverrides(v)}
                                 />
                                 <Field.Question />
                                 <Submit>Run Model</Submit>
                             </>
                         }
-                        fieldChanges={fieldChanges}>
+                        overrides={overrides}>
                         {({ input, model, output }) => (
                             <Output>
                                 <Output.Section title="Model Output">

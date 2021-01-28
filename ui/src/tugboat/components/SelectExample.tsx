@@ -7,10 +7,10 @@ import { Examples } from '../context';
 import { Example, flattenExamples, isGroupedExamples } from '../lib';
 import { InvalidDisplayPropError, DuplicateDisplayPropValueError } from '../error';
 
-interface Props<I> {
+interface Props {
     displayProp: string;
     placeholder?: string;
-    overrides?: I[];
+    examples?: Example[];
     onChange?: (val?: Example) => void;
 }
 
@@ -24,7 +24,7 @@ interface Props<I> {
  *
  * See: https://github.com/allenai/allennlp-models/blob/master/allennlp_models/pretrained.py#L24
  */
-export const SelectExample = <I,>({ displayProp, placeholder, overrides, onChange }: Props<I>) => {
+export const SelectExample = ({ displayProp, placeholder, examples, onChange }: Props) => {
     const ctx = React.useContext(Examples);
 
     // The `<Select />` component we use expects that each value has a string value for uniquely
@@ -35,13 +35,13 @@ export const SelectExample = <I,>({ displayProp, placeholder, overrides, onChang
     // the user to tell them a part, which is bad for the end UX. We prevent that from happening
     // by insisting that it's unique.
     const examplesById: { [id: string]: Example } = {};
-    const flatExamples = flattenExamples(ctx.examples);
-    // override any examples by index
-    flatExamples.forEach((fe, i) => {
-        if (overrides && overrides[i]) {
-            flatExamples[i] = { ...fe, ...overrides[i] };
-        }
-    });
+
+    // We will use any examples passed in, if none are passed, we will use the ones from the api.
+    let flatExamples = examples;
+    if (!flatExamples) {
+        flatExamples = flattenExamples(ctx.examples);
+    }
+
     for (const example of flatExamples) {
         const id = example[displayProp];
         if (!id) {
