@@ -2,7 +2,7 @@ import React from 'react';
 import { Table } from 'antd';
 
 import { DebugInfo } from '../../components';
-import { Output } from '../../tugboat/components';
+import { Output, Spark, SparkEnvelope, SparkValue } from '../../tugboat/components';
 import { Input, Prediction } from './types';
 import { Model } from '../../tugboat/lib';
 
@@ -47,6 +47,11 @@ export const Predictions = ({ input, model, output }: Props) => {
         };
     });
 
+    const percent = new Intl.NumberFormat(navigator.language, {
+        style: 'percent',
+        maximumFractionDigits: 1,
+    });
+
     const columns = [
         {
             title: 'Prediction',
@@ -57,10 +62,14 @@ export const Predictions = ({ input, model, output }: Props) => {
             title: 'Score',
             dataIndex: 'probability',
             key: 'probability',
-            render: new Intl.NumberFormat(navigator.language, {
-                style: 'percent',
-                maximumFractionDigits: 1,
-            }).format,
+            render: (val: number) => (
+                <div title={val.toString()}>
+                    <SparkEnvelope>
+                        <Spark value={100 * val} />
+                    </SparkEnvelope>{' '}
+                    <SparkValue>{percent.format(val)}</SparkValue>
+                </div>
+            ),
         },
     ];
 
