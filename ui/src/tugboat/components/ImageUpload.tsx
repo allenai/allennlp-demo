@@ -5,30 +5,33 @@ import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 
-export interface ModelParams {
-    imgSrc?: string;
-    imageName?: string;
+export interface UploadedImage {
+    imageSrc?: string;
+    fileName?: string;
     image?: File;
     image_base64?: string;
 }
 
 interface Props {
-    modelParams: ModelParams;
-    onChange: (newParams: ModelParams) => void;
+    uploadedImage: UploadedImage;
+    onChange: (newParams: UploadedImage) => void;
 }
 
 export const ImageUpload = (props: Props) => {
-    const [localState, setLocalState] = useState<ModelParams>({});
+    const [localState, setLocalState] = useState<UploadedImage>({});
     const [imageLoading, setImageLoading] = useState(false);
 
     useEffect(
         () => {
-            if (props.modelParams.imgSrc && props.modelParams.imgSrc !== localState.imgSrc) {
-                fetchImage(props.modelParams.imgSrc);
+            if (
+                props.uploadedImage.imageSrc &&
+                props.uploadedImage.imageSrc !== localState.imageSrc
+            ) {
+                fetchImage(props.uploadedImage.imageSrc);
             }
         },
         // eslint-disable-next-line
-        [props.modelParams.imgSrc]
+        [props.uploadedImage.imageSrc]
     );
 
     const compressAndSubmit = (
@@ -67,9 +70,9 @@ export const ImageUpload = (props: Props) => {
                     file,
                     1024 * 1024, // compressing if larger than 1MB
                     (compressedFile: File) => {
-                        setStateAndSendEvent({
-                            imgSrc: URL.createObjectURL(compressedFile),
-                            imageName: compressedFile.name,
+                        setStateAndTriggerOnChange({
+                            imageSrc: URL.createObjectURL(compressedFile),
+                            fileName: compressedFile.name,
                             image: compressedFile,
                         });
                         setImageLoadingAndSendEvent(false);
@@ -78,9 +81,9 @@ export const ImageUpload = (props: Props) => {
                         message.error(
                             `${info.file.name} file upload failed: ${info.file.error.message}`
                         );
-                        setStateAndSendEvent({
-                            imgSrc: undefined,
-                            imageName: undefined,
+                        setStateAndTriggerOnChange({
+                            imageSrc: undefined,
+                            fileName: undefined,
                             image: undefined,
                         });
                         setImageLoadingAndSendEvent(false);
@@ -103,40 +106,40 @@ export const ImageUpload = (props: Props) => {
                 message.error(`${info.file.name} file upload failed: ${info.file.error.message}`);
             }
 
-            setStateAndSendEvent({
-                imgSrc: undefined,
-                imageName: undefined,
+            setStateAndTriggerOnChange({
+                imageSrc: undefined,
+                fileName: undefined,
                 image: undefined,
             });
             setImageLoadingAndSendEvent(false);
         }
     };
 
-    async function fetchImage(imgSrc: string) {
+    async function fetchImage(imageSrc: string) {
         setImageLoadingAndSendEvent(true);
-        let s: ModelParams = {
-            imgSrc: imgSrc,
-            imageName: undefined,
+        let s: UploadedImage = {
+            imageSrc,
+            fileName: undefined,
             image: undefined,
         };
-        if (imgSrc) {
-            const response = await fetch(imgSrc);
+        if (imageSrc) {
+            const response = await fetch(imageSrc);
             const blob = await response.blob();
 
             const file = blob as any; // convert blob to file
             file.lastModifiedDate = new Date();
-            file.name = imgSrc;
+            file.name = imageSrc;
             s = {
-                imgSrc: imgSrc,
-                imageName: file.name,
+                imageSrc,
+                fileName: file.name,
                 image: file as File,
             };
         }
-        setStateAndSendEvent(s);
+        setStateAndTriggerOnChange(s);
         setImageLoadingAndSendEvent(false);
     }
 
-    const setStateAndSendEvent = (s: ModelParams) => {
+    const setStateAndTriggerOnChange = (s: UploadedImage) => {
         const val = { ...localState, ...s };
         setLocalState(val);
         props.onChange(val);
@@ -161,10 +164,10 @@ export const ImageUpload = (props: Props) => {
                             <LoadingOutlined /> Loading...
                         </DraggerMessage>
                     ) : null}
-                    {!imageLoading && localState.imgSrc ? (
-                        <DraggerImg src={localState.imgSrc} />
+                    {!imageLoading && localState.imageSrc ? (
+                        <DraggerImg src={localState.imageSrc} />
                     ) : null}
-                    {!imageLoading && !localState.imgSrc ? (
+                    {!imageLoading && !localState.imageSrc ? (
                         <DraggerMessage>
                             <UploadOutlined /> Upload an Image
                         </DraggerMessage>

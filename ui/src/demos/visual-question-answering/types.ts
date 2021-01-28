@@ -4,8 +4,8 @@ export const Version = emory.getVersion('vqa-v1');
 
 export interface Input {
     image: {
-        imgSrc: string;
-        imageName: string;
+        imageSrc: string;
+        fileName: string;
         image: File;
         image_base64: string;
     };

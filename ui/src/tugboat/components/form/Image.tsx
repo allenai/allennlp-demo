@@ -27,7 +27,7 @@ export const Image = (props: Props) => {
                         })
                         .catch((e) => console.log(e));
                 }}
-                modelParams={{ imgSrc: props.value }}
+                uploadedImage={{ imageSrc: props.value }}
             />
         </FieldItem>
     );

@@ -79,6 +79,6 @@ const AnswerTable = (p: any) => Table<Answer>(p);
 
 const StyledTable = styled(AnswerTable)`
     table {
-        min-width: 98% !important; // boo! there seems to be an error in the width of the inner table
+        min-width: 98vw !important; // boo! there seems to be an error in the width of the inner table
     }
 `;
