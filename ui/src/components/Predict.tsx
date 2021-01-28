@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { Form, FormOutputView, FormFieldDict } from '../tugboat/components';
+import { Form, FormOutputView, Fields } from '../tugboat/components';
 import { Models } from '../tugboat/context';
 import { NoSelectedModelError } from '../tugboat/error';
 
 interface Props<I, O> {
     fields: React.ReactNode | JSX.Element;
-    overrides?: FormFieldDict;
+    overrides?: Fields;
     children: FormOutputView<I, O>;
     version?: string;
 }

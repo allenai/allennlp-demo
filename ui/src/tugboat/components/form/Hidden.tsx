@@ -14,11 +14,7 @@ interface Props {
 
 export const Hidden = ({ name, value }: Props) => {
     return (
-        <FieldItem
-            hidden
-            name={name}
-            initialValue={JSON.stringify(value)}
-            dependencies={name ? [name] : undefined}>
+        <FieldItem hidden name={name} initialValue={JSON.stringify(value)}>
             <TextArea />
         </FieldItem>
     );

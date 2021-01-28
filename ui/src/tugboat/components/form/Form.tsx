@@ -17,8 +17,8 @@ export type FormOutputView<I, O> = (io: {
     output: O;
 }) => React.ReactNode | JSX.Element;
 
-export interface FormFieldDict {
-    [fieldId: string]: any;
+export interface Fields {
+    [name: string]: any;
 }
 
 interface Props<I, O> {
@@ -27,7 +27,7 @@ interface Props<I, O> {
     /* The form fields defining the data that will be submitted. */
     fields: React.ReactNode | JSX.Element;
     /* Pass to set a field on the form directly. */
-    overrides?: FormFieldDict;
+    overrides?: Fields;
     /* A version string for the data that's sent and received.
      * Used for fetching saved input that's assocaited with a shareable URL */
     version?: string;

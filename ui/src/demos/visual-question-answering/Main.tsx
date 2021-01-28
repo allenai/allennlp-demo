@@ -14,7 +14,7 @@ import {
     Submit,
     TaskDescription,
     TaskTitle,
-    FormFieldDict,
+    Fields,
 } from '../../tugboat/components';
 import { Example } from '../../tugboat/lib';
 import { MultiModelDemo, Predict } from '../../components';
@@ -31,7 +31,7 @@ import livingRoomSrc from '../exampleImages/living_room.jpg';
 export const Main = () => {
     // Fields on the form to force an update to the value, this is needed because the input control
     // does not know about the form, and the form is not available at field construction time.
-    const [overrides, setOverrides] = useState<FormFieldDict>();
+    const [overrides, setOverrides] = useState<Fields>();
     // Holding on to selected example because the fields need to know about changes and the Example
     // context is not ready at form construction time.
     const [selectedExample, setSelectedExample] = useState<Example>();
