@@ -48,6 +48,17 @@ export const Main = () => {
                                         />
                                     }>
                                     <Predictions input={input} model={model} output={output} />
+                                    <Interpreters<Input, InterpreterData> input={input}>
+                                        {(interpreterOutput) => (
+                                            <Saliency
+                                                interpretData={[
+                                                    interpreterOutput.instance_1.grad_input_1,
+                                                ]}
+                                                inputTokens={[output.tokens]}
+                                                inputHeaders={['Sentence']}
+                                            />
+                                        )}
+                                    </Interpreters>
                                 </Output.Section>
                             </Output>
                         )}
