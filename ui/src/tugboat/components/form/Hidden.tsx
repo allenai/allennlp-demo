@@ -8,7 +8,7 @@ import { FieldItem, TextArea } from './controls';
  * The component should be a child of the Fields component.
  */
 interface Props {
-    name?: string;
+    name: string;
     value?: any;
 }
 

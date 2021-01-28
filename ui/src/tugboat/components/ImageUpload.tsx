@@ -156,8 +156,8 @@ export const ImageUpload = (props: Props) => {
                 <Dragger
                     onChange={handleImageChange}
                     showUploadList={false}
-                    // this is just a noop endpoint, we need an endpoint, but we dont need
-                    // to save the image
+                    // This is just a noop endpoint, we need an endpoint, but we dont need
+                    // to save the image.  This is just a hoop we need ofr the antd Dragger/Upload.
                     action="/api/permalink/noop"
                     beforeUpload={beforeUpload}>
                     {imageLoading ? (
