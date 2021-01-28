@@ -1,4 +1,5 @@
 import React from 'react';
+import * as Sentry from '@sentry/react';
 
 import { FieldItem } from './controls';
 import { ImageUpload, blobToString } from '../ImageUpload';
@@ -17,15 +18,18 @@ export const Image = (props: Props) => {
     return (
         <FieldItem label="Image" name="image" rules={[{ required: true }]}>
             <ImageUpload
-                onChange={(img) => {
-                    blobToString(img.image)
+                onChange={(image) => {
+                    blobToString(image.image)
                         .then((str) => {
-                            img.image_base64 = str;
+                            image.image_base64 = str;
                             props.onChange({
-                                image: img,
+                                image,
                             });
                         })
-                        .catch((e) => console.log(e));
+                        .catch((e) => {
+                            Sentry.captureException(e);
+                            console.log(e);
+                        });
                 }}
                 uploadedImage={{ imageSrc: props.value }}
             />

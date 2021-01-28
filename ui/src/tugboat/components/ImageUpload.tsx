@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import * as Sentry from '@sentry/react';
 import { Upload, message } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -235,6 +236,7 @@ export const downscaleImage = ({
             }
         };
         reader.onerror = (error) => {
+            Sentry.captureException(error);
             console.log(error);
             if (onError) {
                 onError('Error compressing image.');
