@@ -41,7 +41,7 @@ export const ImageUpload = (props: Props) => {
         onError: Function
     ) => {
         if (file.size > maxFileBytes) {
-            compressImage({ file, maxFileBytes, onSuccess, onError });
+            downscaleImage({ file, maxFileBytes, onSuccess, onError });
         } else {
             onSuccess(file);
         }
@@ -180,7 +180,7 @@ export const ImageUpload = (props: Props) => {
 
 // TODO: consider making a Promise<Image> instead of callback
 // TODO: consider moving to a webworker
-export const compressImage = ({
+export const downscaleImage = ({
     file,
     maxFileBytes,
     newFileName,
