@@ -7,9 +7,11 @@ import { Examples } from '../context';
 import { Example, flattenExamples, isGroupedExamples } from '../lib';
 import { InvalidDisplayPropError, DuplicateDisplayPropValueError } from '../error';
 
-interface Props {
+interface Props<I> {
     displayProp: string;
     placeholder?: string;
+    overrides?: I[];
+    onChange?: (val?: Example) => void;
 }
 
 /**
@@ -22,7 +24,7 @@ interface Props {
  *
  * See: https://github.com/allenai/allennlp-models/blob/master/allennlp_models/pretrained.py#L24
  */
-export const SelectExample = ({ displayProp, placeholder }: Props) => {
+export const SelectExample = <I,>({ displayProp, placeholder, overrides, onChange }: Props<I>) => {
     const ctx = React.useContext(Examples);
 
     // The `<Select />` component we use expects that each value has a string value for uniquely
@@ -33,10 +35,17 @@ export const SelectExample = ({ displayProp, placeholder }: Props) => {
     // the user to tell them a part, which is bad for the end UX. We prevent that from happening
     // by insisting that it's unique.
     const examplesById: { [id: string]: Example } = {};
-    for (const example of flattenExamples(ctx.examples)) {
+    const flatExamples = flattenExamples(ctx.examples);
+    // override any examples by index
+    flatExamples.forEach((fe, i) => {
+        if (overrides && overrides[i]) {
+            flatExamples[i] = { ...fe, ...overrides[i] };
+        }
+    });
+    for (const example of flatExamples) {
         const id = example[displayProp];
         if (!id) {
-            throw new InvalidDisplayPropError(id);
+            throw new InvalidDisplayPropError(displayProp);
         }
         if (id in examplesById) {
             throw new DuplicateDisplayPropValueError(displayProp, id);
@@ -49,7 +58,11 @@ export const SelectExample = ({ displayProp, placeholder }: Props) => {
             <FieldItem label="Example Inputs">
                 <Select
                     value={ctx.selectedExample ? ctx.selectedExample[displayProp] : undefined}
-                    onChange={(id) => ctx.selectExample(examplesById[`${id}`])}
+                    onChange={(id) => {
+                        const selValue = examplesById[`${id}`];
+                        onChange && onChange(selValue);
+                        return ctx.selectExample(selValue);
+                    }}
                     placeholder={placeholder || 'Select an Example…'}>
                     {isGroupedExamples(ctx.examples)
                         ? Object.entries(ctx.examples).map(([g, ex]) => (
