@@ -8,12 +8,18 @@ import { FieldItem, TextArea } from './controls';
  * The component should be a child of the Fields component.
  */
 interface Props {
-    name: string;
-    value: string;
+    name?: string;
+    value?: any;
 }
 
-export const Hidden = ({ name, value }: Props) => (
-    <FieldItem hidden name={name} initialValue={value}>
-        <TextArea />
-    </FieldItem>
-);
+export const Hidden = ({ name, value }: Props) => {
+    return (
+        <FieldItem
+            hidden
+            name={name}
+            initialValue={JSON.stringify(value)}
+            dependencies={name ? [name] : undefined}>
+            <TextArea />
+        </FieldItem>
+    );
+};
