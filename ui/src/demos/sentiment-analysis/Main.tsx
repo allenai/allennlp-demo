@@ -17,7 +17,7 @@ import { AppId } from '../../AppId';
 import { MultiModelDemo, Predict, Interpreters } from '../../components';
 import { config } from './config';
 import { Predictions } from './Predictions';
-import { Version, Input, Prediction, InterpreterData, isWithTokenizedInput } from './types';
+import { Version, Input, Prediction, InterpreterData, } from './types';
 
 export const Main = () => {
     // The hidden fields below are passing parameters to the api that the user does not need to set
@@ -31,7 +31,7 @@ export const Main = () => {
                     <Predict<Input, Prediction>
                         fields={
                             <>
-							    <Field.Sentence />
+                                <Field.Sentence />
                                 <Submit>Run Model</Submit>
                             </>
                         }>

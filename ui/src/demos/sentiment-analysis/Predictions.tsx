@@ -1,5 +1,4 @@
 import React from 'react';
-import { Table } from 'antd';
 
 import { DebugInfo } from '../../components';
 import { Output } from '../../tugboat/components';
@@ -15,7 +14,7 @@ interface Props {
 export const Predictions = ({ input, model, output }: Props) => {
     return (
         <Output.Section>
-			<SummaryText output={output} />
+            <SummaryText output={output} />
 
             <DebugInfo input={input} output={output} model={model} />
         </Output.Section>
@@ -71,9 +70,9 @@ const SummaryText = ({ output }: { output: Prediction }) => {
         summaryText = <div>The model is not confident in its judgment.</div>;
     }
 
-	return (
-	    <>
+    return (
+        <>
             <Output.SubSection>{summaryText}</Output.SubSection>
-		</>
+        </>
     );
 };
