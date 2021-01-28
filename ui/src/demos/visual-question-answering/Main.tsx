@@ -29,7 +29,7 @@ import kitchenSrc from '../exampleImages/kitchen.jpg';
 import livingRoomSrc from '../exampleImages/living_room.jpg';
 
 export const Main = () => {
-    // Fields on the for to force an update to the value, this is needed because the input control
+    // Fields on the form to force an update to the value, this is needed because the input control
     // does not know about the form, and the form is not available at field construction time.
     const [fieldChanges, setFieldChanges] = useState<FormFieldDict>();
     // Holding on to selected example because the fields need to know about changes and the Example
