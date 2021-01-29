@@ -18,7 +18,7 @@ import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../componen
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Version, Input, Prediction, InterpreterData, isWithTokenizedInput } from './types';
+import { Version, Input, Prediction, InterpreterData } from './types';
 
 export const Main = () => {
     return (
@@ -49,19 +49,17 @@ export const Main = () => {
                                         />
                                     }>
                                     <Predictions input={input} model={model} output={output} />
-                                    {isWithTokenizedInput(output) ? (
-                                        <Interpreters<Input, InterpreterData> input={input}>
-                                            {(interpreterOutput) => (
-                                                <Saliency
-                                                    interpretData={[
-                                                        interpreterOutput.instance_1.grad_input_1,
-                                                    ]}
-                                                    inputTokens={[output.words]}
-                                                    inputHeaders={['Sentence']}
-                                                />
-                                            )}
-                                        </Interpreters>
-                                    ) : null}
+                                    <Interpreters<Input, InterpreterData> input={input}>
+                                        {(interpreterOutput) => (
+                                            <Saliency
+                                                interpretData={[
+                                                    interpreterOutput.instance_1.grad_input_1,
+                                                ]}
+                                                inputTokens={[output.words]}
+                                                inputHeaders={['Sentence']}
+                                            />
+                                        )}
+                                    </Interpreters>
                                     <Attackers
                                         input={input}
                                         model={model}
