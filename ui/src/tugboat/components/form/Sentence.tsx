@@ -14,3 +14,10 @@ export const Sentence = (props: BaseInputProps) => (
         <Input />
     </BaseInput>
 );
+
+// TODO: [jon] remove once backend is fixed
+export const Text = (props: BaseInputProps) => (
+    <BaseInput label="Text" name="text" {...props}>
+        <Input />
+    </BaseInput>
+);

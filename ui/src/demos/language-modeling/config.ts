@@ -1,3 +1,4 @@
+import { ModelId } from '../../lib';
 import { DemoConfig } from '../../tugboat/lib';
 
 export const config: DemoConfig = {
@@ -5,7 +6,7 @@ export const config: DemoConfig = {
     title: 'Language Modeling',
     path: '/next-token-lm',
     order: 2,
-    modelIds: [],
+    modelIds: [ModelId.NextTokenLM],
     status: 'hidden',
-    taskId: 'Unknown',
+    taskId: 'language-modeling',
 };
