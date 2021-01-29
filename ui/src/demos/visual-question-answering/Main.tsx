@@ -3,7 +3,7 @@
  * control.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Tabs } from 'antd';
 
 import {
@@ -15,8 +15,9 @@ import {
     TaskDescription,
     TaskTitle,
     Fields,
+    UploadedImage,
 } from '../../tugboat/components';
-import { Example } from '../../tugboat/lib';
+import { Examples } from '../../tugboat/context';
 import { MultiModelDemo, Predict } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
@@ -28,13 +29,19 @@ import busStopSrc from '../exampleImages/bus_stop.jpg';
 import kitchenSrc from '../exampleImages/kitchen.jpg';
 import livingRoomSrc from '../exampleImages/living_room.jpg';
 
+interface Props {
+    onChange: (i: UploadedImage) => void;
+}
+
+const UploadImage = ({ onChange }: Props) => {
+    const examples = useContext(Examples);
+    return <Field.Image value={examples.selectedExample?.image} onChange={onChange} />;
+};
+
 export const Main = () => {
     // Fields on the form to force an update to the value, this is needed because the input control
     // does not know about the form, and the form is not available at field construction time.
     const [overrides, setOverrides] = useState<Fields>();
-    // Holding on to selected example because the fields need to know about changes and the Example
-    // context is not ready at form construction time.
-    const [selectedExample, setSelectedExample] = useState<Example>();
 
     // Need to override examples so we have access to the images.
     // TODO: get the backend to supply the images in examples and update ui to be able to point to a
@@ -68,18 +75,11 @@ export const Main = () => {
             <TaskDescription />
             <Tabs>
                 <Tabs.TabPane tab="Demo" key="Demo">
-                    <SelectExample
-                        displayProp="snippet"
-                        placeholder="Select an Example"
-                        onChange={(ex?: Example) => setSelectedExample(ex)}
-                    />
+                    <SelectExample displayProp="snippet" placeholder="Select an Example" />
                     <Predict<Input, Prediction>
                         fields={
                             <>
-                                <Field.Image
-                                    value={selectedExample?.image}
-                                    onChange={(v) => setOverrides(v)}
-                                />
+                                <UploadImage onChange={(image) => setOverrides({ image })} />
                                 <Field.Question />
                                 <Submit>Run Model</Submit>
                             </>

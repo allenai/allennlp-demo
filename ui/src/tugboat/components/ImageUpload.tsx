@@ -237,7 +237,7 @@ export const downscaleImage = ({
         };
         reader.onerror = (error) => {
             Sentry.captureException(error);
-            console.log(error);
+            console.error(error);
             if (onError) {
                 onError('Error compressing image.');
             }

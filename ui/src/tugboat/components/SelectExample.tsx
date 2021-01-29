@@ -10,7 +10,6 @@ import { InvalidDisplayPropError, DuplicateDisplayPropValueError } from '../erro
 interface Props {
     displayProp: string;
     placeholder?: string;
-    onChange?: (val?: Example) => void;
 }
 
 /**
@@ -23,7 +22,7 @@ interface Props {
  *
  * See: https://github.com/allenai/allennlp-models/blob/master/allennlp_models/pretrained.py#L24
  */
-export const SelectExample = ({ displayProp, placeholder, onChange }: Props) => {
+export const SelectExample = ({ displayProp, placeholder }: Props) => {
     const ctx = React.useContext(Examples);
 
     // The `<Select />` component we use expects that each value has a string value for uniquely
@@ -51,11 +50,7 @@ export const SelectExample = ({ displayProp, placeholder, onChange }: Props) => 
             <FieldItem label="Example Inputs">
                 <Select
                     value={ctx.selectedExample ? ctx.selectedExample[displayProp] : undefined}
-                    onChange={(id) => {
-                        const selValue = examplesById[`${id}`];
-                        onChange && onChange(selValue);
-                        return ctx.selectExample(selValue);
-                    }}
+                    onChange={(id) => ctx.selectExample(examplesById[`${id}`])}
                     placeholder={placeholder || 'Select an Example…'}>
                     {isGroupedExamples(ctx.examples)
                         ? Object.entries(ctx.examples).map(([g, ex]) => (

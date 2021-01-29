@@ -2,7 +2,7 @@ import React from 'react';
 import * as Sentry from '@sentry/react';
 
 import { FieldItem } from './controls';
-import { ImageUpload, blobToString } from '../ImageUpload';
+import { UploadedImage, ImageUpload, blobToString } from '../ImageUpload';
 
 /**
  * A component that renders an image uploader for capturing an image to be processed by a model.
@@ -11,7 +11,7 @@ import { ImageUpload, blobToString } from '../ImageUpload';
  */
 interface Props {
     value?: string;
-    onChange: (v: any) => void;
+    onChange: (i: UploadedImage) => void;
 }
 
 export const Image = (props: Props) => {
@@ -22,13 +22,11 @@ export const Image = (props: Props) => {
                     blobToString(image.image)
                         .then((str) => {
                             image.image_base64 = str;
-                            props.onChange({
-                                image,
-                            });
+                            props.onChange(image);
                         })
                         .catch((e) => {
                             Sentry.captureException(e);
-                            console.log(e);
+                            console.error(e);
                         });
                 }}
                 uploadedImage={{ imageSrc: props.value }}
