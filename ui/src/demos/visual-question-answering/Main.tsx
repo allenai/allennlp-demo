@@ -33,6 +33,7 @@ interface Props {
     onChange: (i: UploadedImage) => void;
 }
 
+// We wrap the Image field in order to gain access to the example context.
 const UploadImage = ({ onChange }: Props) => {
     const examples = useContext(Examples);
     return <Field.Image value={examples.selectedExample?.image} onChange={onChange} />;

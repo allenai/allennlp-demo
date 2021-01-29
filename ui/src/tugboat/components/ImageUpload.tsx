@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import * as Sentry from '@sentry/react';
-import { Upload, message } from 'antd';
+import { Upload, notification } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { LoadingOutlined, UploadOutlined } from '@ant-design/icons';
@@ -56,7 +56,10 @@ export const ImageUpload = (props: Props) => {
             file.type === 'image/jpeg' ||
             file.type === 'image/tiff';
         if (!isImage) {
-            message.error('You can only upload JPG/PNG/BMP/GIF/TIFF files');
+            notification.error({
+                message: 'Failed to upload image.',
+                description: <span>You can only upload JPG/PNG/BMP/GIF/TIFF files.</span>,
+            });
         } else {
             setImageLoadingAndSendEvent(true);
         }
@@ -79,9 +82,10 @@ export const ImageUpload = (props: Props) => {
                         setImageLoadingAndSendEvent(false);
                     },
                     () => {
-                        message.error(
-                            `${info.file.name} file upload failed: ${info.file.error.message}`
-                        );
+                        notification.error({
+                            message: `${info.file.name} file upload failed:`,
+                            description: <span>{info.file.error.message}</span>,
+                        });
                         setStateAndTriggerOnChange({
                             imageSrc: undefined,
                             fileName: undefined,
@@ -99,12 +103,20 @@ export const ImageUpload = (props: Props) => {
             const maxFileSize = 5 * 1024 * 1024;
             if (errorIs413 && info.file.size > maxFileSize) {
                 // Show a friendly "too large" error if it's appropriate to do so
-                message.error(
-                    `${info.file.name} file is too large; must be smaller than ${maxFileSize} bytes`
-                );
+                notification.error({
+                    message: `${info.file.name} file upload failed:`,
+                    description: (
+                        <span>
+                            `The file is too large; must be smaller than ${maxFileSize} bytes`
+                        </span>
+                    ),
+                });
             } else {
                 // Otherwise, it's a different error.
-                message.error(`${info.file.name} file upload failed: ${info.file.error.message}`);
+                notification.error({
+                    message: `${info.file.name} file upload failed:`,
+                    description: <span>{info.file.error.message}</span>,
+                });
             }
 
             setStateAndTriggerOnChange({
