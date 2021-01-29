@@ -9,11 +9,13 @@ import { FieldItem, TextArea } from './controls';
  */
 interface Props {
     name: string;
-    value: string;
+    value?: any;
 }
 
-export const Hidden = ({ name, value }: Props) => (
-    <FieldItem hidden name={name} initialValue={value}>
-        <TextArea />
-    </FieldItem>
-);
+export const Hidden = ({ name, value }: Props) => {
+    return (
+        <FieldItem hidden name={name} initialValue={JSON.stringify(value)}>
+            <TextArea />
+        </FieldItem>
+    );
+};

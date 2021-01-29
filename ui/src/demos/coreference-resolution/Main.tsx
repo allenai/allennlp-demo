@@ -4,6 +4,7 @@ import { Tabs } from 'antd';
 import {
     ModelCard,
     Output,
+    SelectedModelDescription,
     SelectExample,
     Field,
     Share,
@@ -23,6 +24,7 @@ export const Main = () => {
         <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
             <TaskDescription />
+            <SelectedModelDescription />
             <Tabs>
                 <Tabs.TabPane tab="Demo" key="Demo">
                     <SelectExample displayProp="document" placeholder="Select a Document" />

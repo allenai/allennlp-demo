@@ -5,6 +5,7 @@ import { RuleObject } from 'antd/lib/form';
 import {
     ModelCard,
     Output,
+    SelectedModelDescription,
     Saliency,
     SelectExample,
     Field,
@@ -25,6 +26,7 @@ export const Main = () => {
         <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
             <TaskDescription />
+            <SelectedModelDescription />
             <Tabs>
                 <Tabs.TabPane tab="Demo" key="Demo">
                     <SelectExample displayProp="sentence" placeholder="Select a Sentence" />

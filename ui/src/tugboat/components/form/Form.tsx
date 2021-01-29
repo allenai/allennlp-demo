@@ -17,11 +17,17 @@ export type FormOutputView<I, O> = (io: {
     output: O;
 }) => React.ReactNode | JSX.Element;
 
+export interface Fields {
+    [name: string]: any;
+}
+
 interface Props<I, O> {
     /* The url the form will be sumitted to. */
     action: string;
     /* The form fields defining the data that will be submitted. */
     fields: React.ReactNode | JSX.Element;
+    /* Pass to set a field on the form directly. */
+    overrides?: Fields;
     /* A version string for the data that's sent and received.
      * Used for fetching saved input that's assocaited with a shareable URL */
     version?: string;
@@ -30,7 +36,7 @@ interface Props<I, O> {
 
 type FormImplProps<I, O> = Omit<Props<I, O>, 'version'> & { shared?: I };
 
-const FormImpl = <I, O>({ action, children, fields, shared }: FormImplProps<I, O>) => {
+const FormImpl = <I, O>({ action, children, fields, overrides, shared }: FormImplProps<I, O>) => {
     const [form] = useForm<I>();
     const [input, setInput] = useState<I>();
     const [modelId, setModelId] = useState<string>();
@@ -63,6 +69,16 @@ const FormImpl = <I, O>({ action, children, fields, shared }: FormImplProps<I, O
             form.setFieldsValue(exampleCtx.selectedExample as any);
         }
     }, [exampleCtx.selectedExample]);
+
+    // Update fields from outside callers.
+    useEffect(() => {
+        if (overrides) {
+            // The antd API wants a `RecursivePartial<I>` here, which I can't figure out how to
+            // satisfy. What's interesting is the method only assigns values for properties whose
+            // name matches that of a form field -- so `Partial<I>` should be ok.
+            form.setFieldsValue({ ...form.getFieldsValue(), ...(overrides as any) });
+        }
+    }, [overrides]);
 
     const models = useContext(Models);
     const model = models.selectedModel;
@@ -161,11 +177,11 @@ const FormImpl = <I, O>({ action, children, fields, shared }: FormImplProps<I, O
  *     )}
  * </Form>
  */
-export const Form = <I, O>({ action, children, fields, version }: Props<I, O>) => {
+export const Form = <I, O>({ action, children, fields, overrides, version }: Props<I, O>) => {
     return (
         <Share.Controller<I> type={version}>
             {(shared) => (
-                <FormImpl action={action} fields={fields} shared={shared}>
+                <FormImpl action={action} fields={fields} overrides={overrides} shared={shared}>
                     {children}
                 </FormImpl>
             )}

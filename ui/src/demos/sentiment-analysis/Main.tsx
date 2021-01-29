@@ -4,6 +4,7 @@ import { Tabs } from 'antd';
 import {
     ModelCard,
     Output,
+    SelectedModelDescription,
     Saliency,
     SelectExample,
     Field,
@@ -24,6 +25,7 @@ export const Main = () => {
         <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
             <TaskDescription />
+            <SelectedModelDescription />
             <Tabs>
                 <Tabs.TabPane tab="Demo" key="Demo">
                     <SelectExample displayProp="sentence" placeholder="Select a Sentence" />
@@ -58,12 +60,12 @@ export const Main = () => {
                                             />
                                         )}
                                     </Interpreters>
-                                    // TODO: [jon] this needs to be "grad_input_1" here
+                                    {/* TODO: [jon] this needs to be "grad_input_1" here */}
                                     <Attackers
                                         input={input}
                                         model={model}
                                         prediction={output}
-                                        target="tokens"
+                                        target="sentence"
                                     />
                                 </Output.Section>
                             </Output>

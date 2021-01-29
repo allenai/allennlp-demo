@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import { Model, Task } from '../tugboat/lib';
+import { Model, Task, Example } from '../tugboat/lib';
 import { MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
 
 import { AppId } from '../AppId';
@@ -37,6 +37,7 @@ interface Props {
     ids: string[];
     taskId: string;
     children: React.ReactNode;
+    examples?: Example[];
 }
 
 /**
@@ -45,7 +46,7 @@ interface Props {
  * This component exists primarily to handle the process of converting AllenNLP's specific notion
  * of a model (which is queried via API routes) to the shape expected by the tugboat package.
  */
-export const MultiModelDemo = ({ ids, taskId, children }: Props) => {
+export const MultiModelDemo = ({ ids, taskId, children, examples }: Props) => {
     const infos = useContext(ModelInfoList);
     const included = new Set(ids);
     const demoInfos = infos.filter((info) => included.has(info.id));
@@ -68,7 +69,11 @@ export const MultiModelDemo = ({ ids, taskId, children }: Props) => {
 
     return (
         <RedirectLegacyPermalinks modelIds={ids}>
-            <TBMultiModelDemo models={models} task={asTugBoatTask(task)} appId={AppId}>
+            <TBMultiModelDemo
+                models={models}
+                task={asTugBoatTask(task)}
+                appId={AppId}
+                examples={examples}>
                 {children}
             </TBMultiModelDemo>
         </RedirectLegacyPermalinks>

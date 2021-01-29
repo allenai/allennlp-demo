@@ -1,6 +1,7 @@
 import * as document from './Document';
 import * as hidden from './Hidden';
 import * as hypothesis from './Hypothesis';
+import * as image from './Image';
 import * as passage from './Passage';
 import * as premise from './Premise';
 import * as question from './Question';
@@ -13,6 +14,7 @@ export const Field = {
     ...document,
     ...hidden,
     ...hypothesis,
+    ...image,
     ...passage,
     ...premise,
     ...question,

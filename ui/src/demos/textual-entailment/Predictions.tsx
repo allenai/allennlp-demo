@@ -4,7 +4,7 @@ import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
 import { Table } from 'antd';
 
 import { DebugInfo } from '../../components';
-import { Output } from '../../tugboat/components';
+import { Output, Spark, SparkEnvelope, SparkValue } from '../../tugboat/components';
 import { Input, Prediction, isElmoPrediction, isRobertaPrediction } from './types';
 import { Model } from '../../tugboat/lib';
 import {
@@ -136,6 +136,11 @@ const BasicPrediction = ({ probs }: { probs: number[] }) => {
         },
     ];
 
+    const percent = new Intl.NumberFormat(navigator.language, {
+        style: 'percent',
+        maximumFractionDigits: 1,
+    });
+
     const columns = [
         {
             title: 'Judgement',
@@ -146,10 +151,14 @@ const BasicPrediction = ({ probs }: { probs: number[] }) => {
             title: 'Probability',
             dataIndex: 'probability',
             key: 'probability',
-            render: new Intl.NumberFormat(navigator.language, {
-                style: 'percent',
-                maximumFractionDigits: 1,
-            }).format,
+            render: (val: number) => (
+                <div title={val.toString()}>
+                    <SparkEnvelope>
+                        <Spark value={100 * val} />
+                    </SparkEnvelope>{' '}
+                    <SparkValue>{percent.format(val)}</SparkValue>
+                </div>
+            ),
         },
     ];
 

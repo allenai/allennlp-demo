@@ -33,10 +33,11 @@ export const SelectExample = ({ displayProp, placeholder }: Props) => {
     // the user to tell them a part, which is bad for the end UX. We prevent that from happening
     // by insisting that it's unique.
     const examplesById: { [id: string]: Example } = {};
+
     for (const example of flattenExamples(ctx.examples)) {
         const id = example[displayProp];
         if (!id) {
-            throw new InvalidDisplayPropError(id);
+            throw new InvalidDisplayPropError(displayProp);
         }
         if (id in examplesById) {
             throw new DuplicateDisplayPropValueError(displayProp, id);

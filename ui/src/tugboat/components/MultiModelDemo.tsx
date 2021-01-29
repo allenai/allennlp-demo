@@ -40,9 +40,10 @@ interface Props {
     task: Task;
     children: React.ReactNode;
     appId: string;
+    examples?: Example[];
 }
 
-export const MultiModelDemo = ({ models, task, children, appId }: Props) => {
+export const MultiModelDemo = ({ models, task, children, appId, examples }: Props) => {
     if (models.length === 0) {
         throw new NoModelsError();
     }
@@ -57,7 +58,7 @@ export const MultiModelDemo = ({ models, task, children, appId }: Props) => {
         <Config.Provider value={{ appId }}>
             <CurrentTask.Provider value={{ task }}>
                 <Examples.Provider
-                    value={{ examples: task.examples, selectedExample, selectExample }}>
+                    value={{ examples: examples || task.examples, selectedExample, selectExample }}>
                     <Switch>
                         <Route path={modelPath}>
                             <SelectedModelRoute models={models}>{children}</SelectedModelRoute>
