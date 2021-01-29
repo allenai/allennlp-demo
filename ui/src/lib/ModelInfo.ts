@@ -10,6 +10,7 @@ export enum ModelId {
     GloveSentimentAnalysis = 'glove-sentiment-analysis',
     MaskedLM = 'masked-lm',
     Naqanet = 'naqanet',
+    NextTokenLM = 'next-token-lm',
     NMN = 'nmn',
     OpenIE = 'open-information-extraction',
     RobertaMNLI = 'roberta-mnli',
