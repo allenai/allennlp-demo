@@ -2,7 +2,7 @@ import React, { DependencyList } from 'react';
 import * as Sentry from '@sentry/react';
 
 import { usePromise, PromiseState } from '../lib';
-import { Loading } from './shared';
+import { Loading } from './Loading';
 import { ErrorMessage } from './ErrorMessage';
 
 type View<T> = (s: T) => React.ReactNode | JSX.Element;
