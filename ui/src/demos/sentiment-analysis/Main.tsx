@@ -60,12 +60,12 @@ export const Main = () => {
                                             />
                                         )}
                                     </Interpreters>
-                                    {/* TODO: [jon] this needs to be "grad_input_1" here */}
                                     <Attackers
                                         input={input}
                                         model={model}
                                         prediction={output}
-                                        target="sentence"
+                                        gradient={'grad_input_1'}
+                                        target="tokens"
                                     />
                                 </Output.Section>
                             </Output>

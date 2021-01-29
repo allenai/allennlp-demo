@@ -4,6 +4,7 @@ export const Version = emory.getVersion('sa-v1');
 
 export interface Input {
     sentence: string;
+    tokens: string[]; // tokens are used as the attack inpour prop
 }
 
 export interface Prediction {

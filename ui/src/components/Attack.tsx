@@ -6,11 +6,11 @@ import { Promised } from '../tugboat/components';
 import { Models } from '../tugboat/context';
 import { NoSelectedModelError } from '../tugboat/error';
 
-import { AttackType, GradientInputField } from '../lib';
+import { AttackType } from '../lib';
 
 interface AttackRequest<I> {
     input_field_to_attack: keyof I & string;
-    grad_input_field: GradientInputField;
+    grad_input_field: string;
     inputs: I;
 }
 
@@ -18,7 +18,7 @@ interface Props<I, O> {
     input: I;
     type: AttackType;
     target: keyof I & string;
-    gradient: GradientInputField;
+    gradient: string;
     children: (o: O) => React.ReactNode | JSX.Element;
     label: string;
     description?: React.ReactNode;
