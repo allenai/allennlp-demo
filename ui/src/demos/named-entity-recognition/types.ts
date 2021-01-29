@@ -6,16 +6,8 @@ export interface Input {
     sentence: string;
 }
 
-export interface WithTokenizedInput {
+export interface Prediction {
     words: string[];
-}
-
-export const isWithTokenizedInput = (pred: any): pred is WithTokenizedInput => {
-    const xx = pred as WithTokenizedInput;
-    return Array.isArray(xx.words);
-};
-
-export interface Prediction extends WithTokenizedInput {
     mask: boolean[];
     tags: string[];
     logits: number[][];

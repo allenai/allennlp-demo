@@ -7,6 +7,6 @@ export const config: DemoConfig = {
     path: '/masked-lm',
     order: 3,
     modelIds: [ModelId.MaskedLM],
-    status: 'hidden',
+    status: 'active',
     taskId: 'masked-language-modeling',
 };

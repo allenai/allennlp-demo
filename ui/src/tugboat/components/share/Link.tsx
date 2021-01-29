@@ -7,7 +7,7 @@ import { Button, Space, Popover, notification, Typography } from 'antd';
 
 import { emory, usePromise, PromiseState } from '../../lib';
 import { Path as SharePath } from './Path';
-import { Loading } from '../shared';
+import { Loading } from '../Loading';
 
 export interface LinkProps<T extends {}> {
     app: string;
