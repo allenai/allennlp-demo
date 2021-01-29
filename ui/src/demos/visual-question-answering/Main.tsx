@@ -8,13 +8,14 @@ import { Tabs } from 'antd';
 
 import {
     Field,
+    Fields,
     ModelCard,
     Output,
+    SelectedModelDescription,
     SelectExample,
     Submit,
     TaskDescription,
     TaskTitle,
-    Fields,
     UploadedImage,
 } from '../../tugboat/components';
 import { Examples } from '../../tugboat/context';
@@ -29,12 +30,12 @@ import busStopSrc from '../exampleImages/bus_stop.jpg';
 import kitchenSrc from '../exampleImages/kitchen.jpg';
 import livingRoomSrc from '../exampleImages/living_room.jpg';
 
-interface Props {
+interface UploadImageProps {
     onChange: (i: UploadedImage) => void;
 }
 
 // We wrap the Image field in order to gain access to the example context.
-const UploadImage = ({ onChange }: Props) => {
+const UploadImage = ({ onChange }: UploadImageProps) => {
     const examples = useContext(Examples);
     return <Field.Image value={examples.selectedExample?.image} onChange={onChange} />;
 };
@@ -74,6 +75,7 @@ export const Main = () => {
         <MultiModelDemo ids={config.modelIds} taskId={config.taskId} examples={examples}>
             <TaskTitle />
             <TaskDescription />
+            <SelectedModelDescription />
             <Tabs>
                 <Tabs.TabPane tab="Demo" key="Demo">
                     <SelectExample displayProp="snippet" placeholder="Select an Example" />

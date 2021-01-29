@@ -9,7 +9,7 @@ import { SelectModel } from './SelectModel';
 
 /**
  * A component that's used in to select and display a single model for demonstration purposes.
- * If your demo only has a single modle, you don't need this component.
+ * If your demo only has a single model, you don't need this component.
  */
 export const SelectModelAndDescription = () => {
     const ctx = React.useContext(Models);
@@ -37,6 +37,6 @@ const Frame = styled.div`
 
 const Description = styled.div`
     padding: ${({ theme }) => theme.spacing.md};
-    max-height: 300px;
+    max-height: 215px;
     overflow-y: auto;
 `;

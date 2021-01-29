@@ -10,6 +10,7 @@ export * from './MultiModelDemo';
 export * from './PrettyPrintedJSON';
 export * from './Promised';
 export * from './Saliency';
+export * from './SelectedModelDescription';
 export * from './SelectExample';
 export * from './SelectModel';
 export * from './SelectModelAndDescription';
