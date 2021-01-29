@@ -4,7 +4,7 @@ import { Tabs } from 'antd';
 import {
     ModelCard,
     Output,
-    SelectedModelDescription,
+    SelectModelAndDescription,
     Saliency,
     SelectExample,
     Field,
@@ -16,6 +16,7 @@ import {
 import { AppId } from '../../AppId';
 import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
 import { config } from './config';
+import { Usage } from './Usage';
 import { Predictions } from './Predictions';
 import { Version, Input, Prediction, InterpreterData } from './types';
 
@@ -25,7 +26,7 @@ export const Main = () => {
         <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
             <TaskDescription />
-            <SelectedModelDescription />
+            <SelectModelAndDescription />
             <Tabs>
                 <Tabs.TabPane tab="Demo" key="Demo">
                     <SelectExample displayProp="sentence" placeholder="Select a Sentence" />
@@ -74,6 +75,9 @@ export const Main = () => {
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Model Card" key="Card">
                     <ModelCard />
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Model Usage" key="Usage">
+                    <Usage />
                 </Tabs.TabPane>
             </Tabs>
         </MultiModelDemo>
