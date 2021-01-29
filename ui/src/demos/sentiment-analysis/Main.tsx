@@ -13,7 +13,7 @@ import {
     TaskTitle,
 } from '../../tugboat/components';
 import { AppId } from '../../AppId';
-import { MultiModelDemo, Predict, Interpreters } from '../../components';
+import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
 import { config } from './config';
 import { Predictions } from './Predictions';
 import { Version, Input, Prediction, InterpreterData } from './types';
@@ -58,6 +58,13 @@ export const Main = () => {
                                             />
                                         )}
                                     </Interpreters>
+                                    // TODO: [jon] this needs to be "grad_input_1" here
+                                    <Attackers
+                                        input={input}
+                                        model={model}
+                                        prediction={output}
+                                        target="tokens"
+                                    />
                                 </Output.Section>
                             </Output>
                         )}
