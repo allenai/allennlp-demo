@@ -63,7 +63,7 @@ export const Main = () => {
     ];
 
     return (
-        <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
+        <MultiModelDemo ids={config.modelIds} taskId={config.taskId} examples={examples}>
             <TaskTitle />
             <TaskDescription />
             <Tabs>
@@ -71,7 +71,6 @@ export const Main = () => {
                     <SelectExample
                         displayProp="snippet"
                         placeholder="Select an Example"
-                        examples={examples}
                         onChange={(ex?: Example) => setSelectedExample(ex)}
                     />
                     <Predict<Input, Prediction>

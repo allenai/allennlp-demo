@@ -10,7 +10,6 @@ import { InvalidDisplayPropError, DuplicateDisplayPropValueError } from '../erro
 interface Props {
     displayProp: string;
     placeholder?: string;
-    examples?: Example[];
     onChange?: (val?: Example) => void;
 }
 
@@ -24,7 +23,7 @@ interface Props {
  *
  * See: https://github.com/allenai/allennlp-models/blob/master/allennlp_models/pretrained.py#L24
  */
-export const SelectExample = ({ displayProp, placeholder, examples, onChange }: Props) => {
+export const SelectExample = ({ displayProp, placeholder, onChange }: Props) => {
     const ctx = React.useContext(Examples);
 
     // The `<Select />` component we use expects that each value has a string value for uniquely
@@ -36,13 +35,7 @@ export const SelectExample = ({ displayProp, placeholder, examples, onChange }: 
     // by insisting that it's unique.
     const examplesById: { [id: string]: Example } = {};
 
-    // We will use any examples passed in, if none are passed, we will use the ones from the api.
-    let flatExamples = examples;
-    if (!flatExamples) {
-        flatExamples = flattenExamples(ctx.examples);
-    }
-
-    for (const example of flatExamples) {
+    for (const example of flattenExamples(ctx.examples)) {
         const id = example[displayProp];
         if (!id) {
             throw new InvalidDisplayPropError(displayProp);
