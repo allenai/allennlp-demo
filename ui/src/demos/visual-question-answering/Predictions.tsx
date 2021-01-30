@@ -32,7 +32,7 @@ export const Predictions = ({ input, model, output }: Props) => {
                     <SparkEnvelope>
                         <Spark value={val} />
                     </SparkEnvelope>{' '}
-                    <SparkValue>{percent.format(val)}</SparkValue>
+                    <SparkValue>{percent.format(val / 100)}</SparkValue>
                 </div>
             ),
             sorter: (a: Answer, b: Answer) => a.confidence - b.confidence,
