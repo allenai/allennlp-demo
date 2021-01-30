@@ -6,6 +6,6 @@ export const config: DemoConfig = {
     title: 'Sentiment Analysis',
     order: 3,
     modelIds: [ModelId.GloveSentimentAnalysis, ModelId.RobertaSentimentAnalysis],
-    status: 'hidden',
+    status: 'active',
     taskId: 'sentiment-analysis',
 };
