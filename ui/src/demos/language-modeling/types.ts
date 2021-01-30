@@ -4,7 +4,6 @@ export const Version = emory.getVersion('ntlm-v1');
 
 export interface Input {
     sentence: string;
-    text: string; // TODO: [jon] remove once backend is fixed
 }
 
 export interface Prediction {

@@ -26,13 +26,11 @@ export const Main = () => {
             <SelectedModelDescription />
             <Tabs>
                 <Tabs.TabPane tab="Demo" key="Demo">
-                    <SelectExample displayProp="text" placeholder="Select a Sentence" />
+                    <SelectExample displayProp="sentence" placeholder="Select a Sentence" />
                     <Predict<Input, Prediction>
                         fields={
                             <>
-                                <Field.Text />
-                                {/* TODO: [jon] replace Text with Sentence once backend is fixed */}
-                                <Field.Hidden name="sentence" value="This is a test " />
+                                <Field.Sentence />
                                 <Submit>Run Model</Submit>
                             </>
                         }>
@@ -43,7 +41,7 @@ export const Main = () => {
                                     extra={
                                         <Share.ShareButton
                                             doc={input}
-                                            slug={Share.makeSlug(input.text)}
+                                            slug={Share.makeSlug(input.sentence)}
                                             type={Version}
                                             app={AppId}
                                         />

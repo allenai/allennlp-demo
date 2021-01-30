@@ -5,7 +5,7 @@ export const config: DemoConfig = {
     group: 'Answer a question',
     title: 'Visual Question Answering',
     order: 2,
-    modelIds: [ModelId.ConstituencyParser], // TODO: [jon] this should be [ModelId.VilbertVQA] once the api is updated
+    modelIds: [ModelId.VilbertVQA],
     status: 'hidden',
     taskId: 'vqa',
 };

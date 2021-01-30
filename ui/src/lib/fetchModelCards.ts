@@ -30,8 +30,8 @@ export function getModelCardId(info: ModelInfo): string {
             return 'rc-nmn';
         }
         case ModelId.VilbertVQA: {
-            // TODO: [jon] the api/info is missing a pretrained_model_id for vqa, remove this after the update?
-            return 'vilbert_vqa';
+            // TODO: [jon] the api/info is missing a pretrained_model_id for vqa
+            return 've-vilbert';
         }
         default: {
             throw new NoModelCardIdError(info);
