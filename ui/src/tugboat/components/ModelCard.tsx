@@ -1,11 +1,12 @@
 import React from 'react';
-import { Descriptions } from 'antd';
+import { Descriptions, Space } from 'antd';
 import styled from 'styled-components';
 import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
 
 import { Models } from '../context';
 import { NoSelectedModelError } from '../error';
 import { Markdown } from './Markdown';
+import { Link } from '../lib';
 
 export const ModelCard = () => {
     const models = React.useContext(Models);
@@ -55,11 +56,19 @@ export const ModelCard = () => {
             </Descriptions.Item>
 
             <Descriptions.Item label="Evaluation Dataset" span={3}>
-                {models.selectedModel.card.evaluation_dataset ?? 'Unknown'}
+                {models.selectedModel.card.evaluation_dataset ? (
+                    <MaybeLink link={models.selectedModel.card.evaluation_dataset} />
+                ) : (
+                    'Unknown'
+                )}
             </Descriptions.Item>
 
             <Descriptions.Item label="Training Dataset" span={3}>
-                {models.selectedModel.card.training_dataset ?? 'Unknown'}
+                {models.selectedModel.card.training_dataset ? (
+                    <MaybeLink link={models.selectedModel.card.training_dataset} />
+                ) : (
+                    'Unknown'
+                )}
             </Descriptions.Item>
 
             <Descriptions.Item label="Archive File" span={3}>
@@ -77,11 +86,19 @@ export const ModelCard = () => {
             </Descriptions.Item>
 
             <Descriptions.Item label="Paper" span={3}>
-                <Markdown>{models.selectedModel.card.paper ?? 'Unknown'}</Markdown>
-            </Descriptions.Item>
-
-            <Descriptions.Item label="Citation" span={3}>
-                {models.selectedModel.card.citation ?? 'Unknown'}
+                {models.selectedModel.card.paper ? (
+                    <Space direction="vertical">
+                        <MaybeLink
+                            link={{
+                                name: models.selectedModel.card.paper.title,
+                                url: models.selectedModel.card.paper.url,
+                            }}
+                        />
+                        <p>{models.selectedModel.card.paper.citation}</p>
+                    </Space>
+                ) : (
+                    'Unknown'
+                )}
             </Descriptions.Item>
 
             <Descriptions.Item label="Contact" span={3}>
@@ -107,3 +124,7 @@ const ResponsiveDescriptions = styled(Descriptions)`
         }
     }
 `;
+
+const MaybeLink = ({ link }: { link: Link }) => {
+    return link.url ? <a href={link.url}>{link.name}</a> : <span>{link.name}</span>;
+};
