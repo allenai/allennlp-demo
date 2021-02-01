@@ -6,6 +6,6 @@ export const config: DemoConfig = {
     title: 'Visual Question Answering',
     order: 2,
     modelIds: [ModelId.VilbertVQA],
-    status: 'hidden',
+    status: 'active',
     taskId: 'vqa',
 };
