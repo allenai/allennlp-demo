@@ -1,0 +1,4 @@
+allennlp==1.4.1
+allennlp-models==1.4.1
+Flask==1.1.2
+pytest==6.2.1
