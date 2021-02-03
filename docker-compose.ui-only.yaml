@@ -79,8 +79,6 @@ services:
         volumes:
             - ./ui/public:/ui/public
             - ./ui/src:/ui/src
-        ports:
-            - 3000:3000
         # This is required to keep the UI development server running. We can remove this
         # once port to our newer UI build toolkit.
         tty: true
