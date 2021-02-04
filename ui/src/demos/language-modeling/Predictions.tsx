@@ -1,10 +1,29 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Table } from 'antd';
 
 import { DebugInfo } from '../../components';
 import { Output, Spark, SparkEnvelope, SparkValue } from '../../tugboat/components';
+import { Form } from '../../tugboat/context';
 import { Input, Prediction } from './types';
 import { Model } from '../../tugboat/lib';
+
+class NoParentFormError extends Error {
+    constructor() {
+        super('The <SingleResult /> must be a child of a <Form />.');
+    }
+}
+
+function cleanTopTokensForDisplay(tokens: string[]): string {
+    // get rid of CRs
+    const cleanWord = tokens
+        .join('')
+        .replace(' ,', ',')
+        .replace(/\n/g, '↵')
+        .replace(/Ġ/g, ' ')
+        .replace(/Ċ/g, '↵');
+
+    return cleanWord.slice(-1) === '.' ? cleanWord : cleanWord.concat(' ...');
+}
 
 interface Props {
     input: Input;
@@ -17,23 +36,20 @@ interface SingleResultProps {
     pred: string[];
 }
 const SingleResult = ({ pred, input }: SingleResultProps) => {
-    const cleanTopTokensForDisplay = (tokens: string[]) => {
-        // get rid of CRs
-        const cleanWord = tokens
-            .join('')
-            .replace(' ,', ',')
-            .replace(/\n/g, '↵')
-            .replace(/Ġ/g, ' ')
-            .replace(/Ċ/g, '↵');
-
-        return cleanWord.slice(-1) === '.' ? cleanWord : cleanWord.concat(' ...');
-    };
-    // TODO: these links need to kick off a new model request like an attack
+    const form = useContext(Form);
+    const completion = cleanTopTokensForDisplay(pred);
     return (
         <span>
-            {input.sentence}{' '}
-            <a href="">
-                <strong>{cleanTopTokensForDisplay(pred)}</strong>
+            {input.sentence}
+            <a
+                onClick={() => {
+                    if (!form) {
+                        throw new NoParentFormError();
+                    }
+                    form.setFieldsValue({ sentence: [input.sentence, completion].join('') });
+                    form.submit();
+                }}>
+                <strong>{completion}</strong>
             </a>
         </span>
     );
