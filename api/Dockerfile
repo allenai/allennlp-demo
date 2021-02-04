@@ -15,6 +15,7 @@ ENV TOKENIZERS_PARALLELISM 0
 WORKDIR /app/
 
 COPY requirements.txt requirements.txt
+ENV ALLENNLP_VERSION_OVERRIDE allennlp
 RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm
