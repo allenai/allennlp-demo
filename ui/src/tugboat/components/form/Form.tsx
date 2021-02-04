@@ -3,7 +3,7 @@ import { generatePath } from 'react-router';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { Divider, Form as AntForm } from 'antd';
 
-import { Examples, Models } from '../../context';
+import { Examples, Form as FormContext, Models } from '../../context';
 import { Model, flattenExamples } from '../../lib';
 import { Promised } from '../Promised';
 import { NoSelectedModelError } from '../../error';
@@ -123,7 +123,7 @@ const FormImpl = <I, O>({ action, children, fields, overrides, shared }: FormImp
         }).then((r) => r.json());
 
     return (
-        <>
+        <FormContext.Provider value={form}>
             <AntForm<I>
                 onFinish={submitFormAndUpdateRoute}
                 form={form}
@@ -139,7 +139,7 @@ const FormImpl = <I, O>({ action, children, fields, overrides, shared }: FormImp
                     </Promised>
                 </>
             ) : null}
-        </>
+        </FormContext.Provider>
     );
 };
 
