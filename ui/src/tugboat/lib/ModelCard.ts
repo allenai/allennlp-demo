@@ -18,11 +18,15 @@ export interface ModelCard {
     task_id: string;
     training_dataset: Link;
     version: string;
+    training_config: string;
+    install_instructions: string;
 }
 
 export interface Link {
     name: string;
     url?: any;
+    processed_url?: any;
+    notes?: any;
 }
 
 export interface Paper {

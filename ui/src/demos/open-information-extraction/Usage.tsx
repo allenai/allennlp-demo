@@ -25,8 +25,6 @@ export const Usage = () => {
     // TODO: This seems brittle. If the examples change this will fail at runtime.
     const ex = examples[0]; // legend of zelda example
 
-    const installCommand = 'pip install allennlp==1.0.0 allennlp-models==1.0.0';
-
     const bashCommand = `
 echo '{"sentence": "${ex.sentence}."}' | \\
     allennlp predict ${models.selectedModel.card.archive_file} -
@@ -41,30 +39,11 @@ predictor.predict(
     sentence="${ex.sentence}."
 )`.trim();
 
-    const evaluationNote = (
-        <span>
-            The Open Information extractor was evaluated on the OIE2016 corpus. Unfortunately we
-            cannot release this data due to licensing restrictions by the LDC. You can get the data
-            on <a href="https://github.com/gabrielStanovsky/oie-benchmark">the corpus homepage</a>.
-        </span>
-    );
-
-    const trainingNote = (
-        <span>
-            The Open Information extractor was evaluated on the OIE2016 corpus. Unfortunately we
-            cannot release this data due to licensing restrictions by the LDC. You can get the data
-            on <a href="https://github.com/gabrielStanovsky/oie-benchmark">the corpus homepage</a>.
-        </span>
-    );
-
-    // TODO: The AllenNLP version could be pulled from the model's info route.
     return (
         <ModelUsage
-            installCommand={installCommand}
             bashCommand={bashCommand}
             pythonCommand={pythonCommand}
-            evaluationNote={evaluationNote}
-            trainingNote={trainingNote}
+            modelCard={models.selectedModel.card}
         />
     );
 };

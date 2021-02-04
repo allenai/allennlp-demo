@@ -2,23 +2,53 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Models } from '../tugboat/context';
+import { ModelCard, Link } from '../tugboat/lib';
 import { NoSelectedModelError } from '../tugboat/error';
 import { SyntaxHighlight } from '../tugboat/components/SyntaxHighlight';
 
 interface Props {
-    installNote?: string;
-    installCommand: string;
+    modelCard: ModelCard;
     bashNote?: string;
     bashCommand: string;
     pythonNote?: string;
     pythonCommand: string;
-    evaluationNote?: React.ReactNode | JSX.Element;
-    evaluationCommand?: string;
-    trainingNote?: React.ReactNode | JSX.Element;
-    trainingCommand?: string;
 }
 
 export const ModelUsage = (props: Props) => {
+
+    let installNote = null;
+    const installCommand = `${props.modelCard.install_instructions}`;
+    const evalDataPath =
+        `${props.modelCard.evaluation_dataset.processed_url}`;
+
+    const trainingDataPath = `${props.modelCard.training_config}`;
+
+    const evalAvailable = evalDataPath !== 'null';
+
+    const trainAvailable = (trainingDataPath !== 'null' && trainingDataPath !== 'undefined');
+
+    let evaluationCommand = null;
+    let evaluationNote = null;
+
+    if (evalAvailable) {
+        evaluationCommand = `
+            allennlp evaluate \\
+        ${props.modelCard.archive_file} \\
+        ${evalDataPath}`.trim();
+    }
+    evaluationNote = props.modelCard.evaluation_dataset.notes;
+
+    let trainingCommand = null;
+    let trainingNote = null;
+
+    if (trainAvailable) {
+        trainingCommand = `allennlp train \\
+        ${trainingDataPath} \\
+        -s /path/to/output`.trim();
+    }
+
+    trainingNote = props.modelCard.training_dataset.notes;
+
     const models = React.useContext(Models);
     if (!models.selectedModel) {
         throw new NoSelectedModelError();
@@ -27,10 +57,10 @@ export const ModelUsage = (props: Props) => {
     return (
         <>
             <h5>Installing AllenNLP</h5>
-            {props.installNote ? <p>{props.installNote}</p> : null}
-            {props.installCommand ? (
+            {installNote ? <p>{installNote}</p> : null}
+            {installCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="bash">{props.installCommand}</SyntaxHighlight>
+                    <SyntaxHighlight language="bash">{installCommand}</SyntaxHighlight>
                 </UsageCode>
             ) : null}
 
@@ -51,23 +81,40 @@ export const ModelUsage = (props: Props) => {
             ) : null}
 
             <h5>Evaluation</h5>
-            {props.evaluationNote ? <p>{props.evaluationNote}</p> : null}
-            {props.evaluationCommand ? (
+            {evaluationNote ? <p>{evaluationNote}</p> : null}
+            {props.modelCard.evaluation_dataset ? (
+                <p>
+                    About the dataset: 
+                    <DatasetLink link={props.modelCard.evaluation_dataset} />
+                </p>
+            ) : (
+                null
+            )}
+            {evaluationCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="python">{props.evaluationCommand}</SyntaxHighlight>
+                    <SyntaxHighlight language="python">{evaluationCommand}</SyntaxHighlight>
                 </UsageCode>
-            ) : null}
+            ) : <p>Evaluation command is unavailable.</p>}
 
             <h5>Training</h5>
-            {props.trainingNote ? <p>{props.trainingNote}</p> : null}
-            {props.trainingCommand ? (
+            {trainingNote ? <p>{trainingNote}</p> : null}
+            {props.modelCard.training_dataset ? (
+                <p>
+                    About the dataset: 
+                    <DatasetLink link={props.modelCard.training_dataset} />
+                </p>
+            ) : (
+                null
+            )}
+            {trainingCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="python">{props.trainingCommand}</SyntaxHighlight>
+                    <SyntaxHighlight language="python">{trainingCommand}</SyntaxHighlight>
                 </UsageCode>
-            ) : null}
+            ) : <p>Training command is unavailable.</p>}
         </>
     );
-};
+    
+}
 
 /**
  * Create a little padding and border around code samples in the
@@ -76,3 +123,7 @@ export const ModelUsage = (props: Props) => {
 const UsageCode = styled.div`
     margin: ${({ theme }) => `${theme.spacing.sm} 0 ${theme.spacing.md}`};
 `;
+
+const DatasetLink = ({ link }: { link: Link }) => {
+    return link.url ? <a href={link.url}>{link.name}</a> : <span>{link.name}</span>;
+};
