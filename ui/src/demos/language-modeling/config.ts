@@ -7,6 +7,6 @@ export const config: DemoConfig = {
     path: '/next-token-lm',
     order: 2,
     modelIds: [ModelId.NextTokenLM],
-    status: 'hidden',
+    status: 'active',
     taskId: 'language-modeling',
 };

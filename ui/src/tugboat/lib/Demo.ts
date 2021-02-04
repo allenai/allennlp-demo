@@ -7,5 +7,5 @@ export interface Demo {
     /**
      * The `<Component />` to render when your demo is active.
      */
-    Component: React.Component;
+    Component: new () => React.Component<any, any>;
 }
