@@ -1,4 +1,4 @@
-FROM allennlp/models:v1.4.0-cuda11.0
+FROM python:3.8
 
 WORKDIR /app/
 
