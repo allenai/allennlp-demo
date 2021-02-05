@@ -61,7 +61,7 @@ interface Props {
     examples?: Example[];
 }
 
-export const Demo = ({ models, task, children, appId, examples }: Props) => {
+export const TaskDemo = ({ models, task, children, appId, examples }: Props) => {
     if (models.length === 0) {
         throw new NoModelsError();
     }

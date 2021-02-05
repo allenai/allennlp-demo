@@ -1,5 +1,4 @@
 export * from './ArithmeticEquation';
-export * from './Demo';
 export * from './ErrorBoundary';
 export * from './ErrorMessage';
 export * from './form';
@@ -18,6 +17,7 @@ export * from './SelectModelAndDescription';
 export * from './share';
 export * from './Spark';
 export * from './SyntaxHighlight';
+export * from './TaskDemo';
 export * from './TaskDescription';
 export * from './TaskTitle';
 export * from './TextWithHighlight';

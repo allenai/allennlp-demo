@@ -15,7 +15,7 @@ import {
 } from '../../tugboat/components';
 
 import { AppId } from '../../AppId';
-import { Demo, Predict, Interpreters, Attackers } from '../../components';
+import { TaskDemo, Predict, Interpreters, Attackers } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
@@ -30,12 +30,12 @@ import {
 
 export const Main = () => {
     return (
-        <Demo ids={config.modelIds} taskId={config.taskId}>
+        <TaskDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
             <TaskDescription />
             <SelectModelAndDescription />
             <Tabs>
-                <Tabs.TabPane tab="Demo" key="Demo">
+                <Tabs.TabPane tab="TaskDemo" key="Demo">
                     <SelectExample displayProp="question" placeholder="Select a Question…" />
                     <Predict<Input, Prediction>
                         version={Version}
@@ -95,6 +95,6 @@ export const Main = () => {
                     <Usage />
                 </Tabs.TabPane>
             </Tabs>
-        </Demo>
+        </TaskDemo>
     );
 };
