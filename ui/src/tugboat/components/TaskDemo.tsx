@@ -6,6 +6,12 @@ import { Config, Models, CurrentTask, Examples } from '../context';
 import { Example, Model, Task } from '../lib';
 import { ModelNotFoundError, NoModelsError } from '../error';
 
+class MoreThanOneModelError extends Error {
+    constructor() {
+        super('<SingleModel /> cannot be used with more than one model.');
+    }
+}
+
 interface ModelRouteProps {
     models: Model[];
     children: React.ReactNode;
@@ -38,6 +44,9 @@ const SelectedModelRoute = ({ models, children }: ModelRouteProps) => {
 const SingleModel = ({ models, children }: ModelRouteProps) => {
     if (models.length === 0) {
         throw new NoModelsError();
+    }
+    if (models.length > 1) {
+        throw new MoreThanOneModelError();
     }
 
     // There can be only one...Model.
