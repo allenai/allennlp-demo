@@ -15,7 +15,6 @@ interface Props {
 }
 
 export const ModelUsage = (props: Props) => {
-
     let evaluationCommand = null;
 
     if (props.modelCard.evaluation_dataset.processed_url) {
@@ -43,7 +42,9 @@ export const ModelUsage = (props: Props) => {
             <h5>Installing AllenNLP</h5>
             {props.modelCard.install_instructions ? (
                 <UsageCode>
-                    <SyntaxHighlight language="bash">{props.modelCard.install_instructions}</SyntaxHighlight>
+                    <SyntaxHighlight language="bash">
+                        {props.modelCard.install_instructions}
+                    </SyntaxHighlight>
                 </UsageCode>
             ) : null}
 
@@ -64,40 +65,43 @@ export const ModelUsage = (props: Props) => {
             ) : null}
 
             <h5>Evaluation</h5>
-            {props.modelCard.evaluation_dataset.notes ? <p>{props.modelCard.evaluation_dataset.notes}</p> : null}
+            {props.modelCard.evaluation_dataset.notes ? (
+                <p>{props.modelCard.evaluation_dataset.notes}</p>
+            ) : null}
             {props.modelCard.evaluation_dataset ? (
                 <p>
-                    About the dataset: 
+                    About the dataset:
                     <DatasetLink link={props.modelCard.evaluation_dataset} />
                 </p>
-            ) : (
-                null
-            )}
+            ) : null}
             {evaluationCommand ? (
                 <UsageCode>
                     <SyntaxHighlight language="python">{evaluationCommand}</SyntaxHighlight>
                 </UsageCode>
-            ) : <p>Evaluation command is unavailable.</p>}
+            ) : (
+                <p>Evaluation command is unavailable.</p>
+            )}
 
             <h5>Training</h5>
-            {props.modelCard.training_dataset.notes ? <p>{props.modelCard.training_dataset.notes}</p> : null}
+            {props.modelCard.training_dataset.notes ? (
+                <p>{props.modelCard.training_dataset.notes}</p>
+            ) : null}
             {props.modelCard.training_dataset ? (
                 <p>
-                    About the dataset: 
+                    About the dataset:
                     <DatasetLink link={props.modelCard.training_dataset} />
                 </p>
-            ) : (
-                null
-            )}
+            ) : null}
             {trainingCommand ? (
                 <UsageCode>
                     <SyntaxHighlight language="python">{trainingCommand}</SyntaxHighlight>
                 </UsageCode>
-            ) : <p>Training command is unavailable.</p>}
+            ) : (
+                <p>Training command is unavailable.</p>
+            )}
         </>
     );
-    
-}
+};
 
 /**
  * Create a little padding and border around code samples in the

@@ -46,5 +46,4 @@ predictor.predict(
             modelCard={models.selectedModel.card}
         />
     );
-    
 };
