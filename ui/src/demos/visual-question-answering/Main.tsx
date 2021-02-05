@@ -19,7 +19,7 @@ import {
     UploadedImage,
 } from '../../tugboat/components';
 import { Examples } from '../../tugboat/context';
-import { MultiModelDemo, Predict } from '../../components';
+import { TaskDemo, Predict } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
@@ -72,12 +72,12 @@ export const Main = () => {
     ];
 
     return (
-        <MultiModelDemo ids={config.modelIds} taskId={config.taskId} examples={examples}>
+        <TaskDemo ids={config.modelIds} taskId={config.taskId} examples={examples}>
             <TaskTitle />
             <TaskDescription />
             <SelectedModelDescription />
             <Tabs>
-                <Tabs.TabPane tab="Demo" key="Demo">
+                <Tabs.TabPane tab="TaskDemo" key="Demo">
                     <SelectExample displayProp="snippet" placeholder="Select an Example" />
                     <Predict<Input, Prediction>
                         fields={
@@ -104,6 +104,6 @@ export const Main = () => {
                     <Usage />
                 </Tabs.TabPane>
             </Tabs>
-        </MultiModelDemo>
+        </TaskDemo>
     );
 };

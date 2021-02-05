@@ -13,19 +13,19 @@ import {
     TaskTitle,
 } from '../../tugboat/components';
 import { AppId } from '../../AppId';
-import { MultiModelDemo, Predict } from '../../components';
+import { TaskDemo, Predict } from '../../components';
 import { config } from './config';
 import { Predictions } from './Predictions';
 import { Version, Input, Prediction } from './types';
 
 export const Main = () => {
     return (
-        <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
+        <TaskDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
             <TaskDescription />
             <SelectedModelDescription />
             <Tabs>
-                <Tabs.TabPane tab="Demo" key="Demo">
+                <Tabs.TabPane tab="TaskDemo" key="Demo">
                     <SelectExample displayProp="sentence" placeholder="Select a Sentence" />
                     <Predict<Input, Prediction>
                         fields={
@@ -56,6 +56,6 @@ export const Main = () => {
                     <ModelCard />
                 </Tabs.TabPane>
             </Tabs>
-        </MultiModelDemo>
+        </TaskDemo>
     );
 };
