@@ -104,11 +104,7 @@ class InfoService(flask.Flask):
                 endpoint = ingress.metadata.labels.get("endpoint")
                 # We only really want information about the model endpoints, so skip everything
                 # else.
-                if (
-                    endpoint == "info"
-                    or endpoint == "tasks"
-                    or endpoint == "model-cards"
-                ):
+                if endpoint == "info" or endpoint == "tasks" or endpoint == "model-cards":
                     continue
                 endpoint = Endpoint.from_ingress(ingress)
                 if endpoint is not None:
