@@ -1,11 +1,11 @@
 {
-  "name": "demo",
-  "version": "0.1.0",
+  "name": "demo.allennlp",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@allenai/eslint-config-varnish": "^1.0.1",
-    "@allenai/varnish": "^2.0.12",
-    "@allenai/varnish-react-router": "^2.0.0",
+    "@allenai/varnish": "^2.0.13",
+    "@allenai/varnish-react-router": "^2.0.2",
     "@ant-design/icons": "^4.2.1",
     "@babel/core": "^7.12.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
@@ -41,7 +41,6 @@
     "file-loader": "^6.2.0",
     "hierplane": "^0.2.1",
     "html-webpack-plugin": "^4.5.0",
-    "lodash": "^4.17.11",
     "prettier": "^2.1.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
@@ -49,7 +48,6 @@
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-syntax-highlighter": "^15.3.0",
-    "react-tooltip": "4.2.10",
     "slug": "^4.0.2",
     "style-loader": "^2.0.0",
     "styled-components": "^5.1.2",
@@ -61,7 +59,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --mode development",
-    "build": "webpack --mode production",
+    "build": "webpack --display-error-details --mode production",
     "lint": "eslint '**/*.{js,jsx,ts,tsx,json}' && echo '💫  Lint complete.'",
     "lint:fix": "eslint '**/*.{js,jsx,ts,tsx,json}' --fix && echo '🛠  Lint --fix complete'"
   },

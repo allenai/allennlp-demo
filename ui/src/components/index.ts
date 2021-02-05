@@ -6,6 +6,7 @@ export * from './Hotflip';
 export * from './InputReduction';
 export * from './Interpret';
 export * from './Interpreters';
+export * from './Menu';
 export * from './ModelUsage';
 export * from './MultiModelDemo';
 export * from './Predict';
