@@ -16,38 +16,22 @@ interface Props {
 
 export const ModelUsage = (props: Props) => {
 
-    let installNote = null;
-    const installCommand = `${props.modelCard.install_instructions}`;
-    const evalDataPath =
-        `${props.modelCard.evaluation_dataset.processed_url}`;
-
-    const trainingDataPath = `${props.modelCard.training_config}`;
-
-    const evalAvailable = evalDataPath !== 'null';
-
-    const trainAvailable = (trainingDataPath !== 'null' && trainingDataPath !== 'undefined');
-
     let evaluationCommand = null;
-    let evaluationNote = null;
 
-    if (evalAvailable) {
+    if (props.modelCard.evaluation_dataset.processed_url) {
         evaluationCommand = `
             allennlp evaluate \\
         ${props.modelCard.archive_file} \\
-        ${evalDataPath}`.trim();
+        ${props.modelCard.evaluation_dataset.processed_url}`.trim();
     }
-    evaluationNote = props.modelCard.evaluation_dataset.notes;
 
     let trainingCommand = null;
-    let trainingNote = null;
 
-    if (trainAvailable) {
+    if (props.modelCard.training_config) {
         trainingCommand = `allennlp train \\
-        ${trainingDataPath} \\
+        ${props.modelCard.training_config} \\
         -s /path/to/output`.trim();
     }
-
-    trainingNote = props.modelCard.training_dataset.notes;
 
     const models = React.useContext(Models);
     if (!models.selectedModel) {
@@ -57,10 +41,9 @@ export const ModelUsage = (props: Props) => {
     return (
         <>
             <h5>Installing AllenNLP</h5>
-            {installNote ? <p>{installNote}</p> : null}
-            {installCommand ? (
+            {props.modelCard.install_instructions ? (
                 <UsageCode>
-                    <SyntaxHighlight language="bash">{installCommand}</SyntaxHighlight>
+                    <SyntaxHighlight language="bash">{props.modelCard.install_instructions}</SyntaxHighlight>
                 </UsageCode>
             ) : null}
 
@@ -81,7 +64,7 @@ export const ModelUsage = (props: Props) => {
             ) : null}
 
             <h5>Evaluation</h5>
-            {evaluationNote ? <p>{evaluationNote}</p> : null}
+            {props.modelCard.evaluation_dataset.notes ? <p>{props.modelCard.evaluation_dataset.notes}</p> : null}
             {props.modelCard.evaluation_dataset ? (
                 <p>
                     About the dataset: 
@@ -97,7 +80,7 @@ export const ModelUsage = (props: Props) => {
             ) : <p>Evaluation command is unavailable.</p>}
 
             <h5>Training</h5>
-            {trainingNote ? <p>{trainingNote}</p> : null}
+            {props.modelCard.training_dataset.notes ? <p>{props.modelCard.training_dataset.notes}</p> : null}
             {props.modelCard.training_dataset ? (
                 <p>
                     About the dataset: 
