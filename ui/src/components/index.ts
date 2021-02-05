@@ -1,6 +1,7 @@
 export * from './Attack';
 export * from './Attackers';
 export * from './DebugInfo';
+export * from './Demo';
 export * from './Hierplane';
 export * from './Hotflip';
 export * from './InputReduction';
@@ -8,7 +9,6 @@ export * from './Interpret';
 export * from './Interpreters';
 export * from './Menu';
 export * from './ModelUsage';
-export * from './MultiModelDemo';
 export * from './Predict';
 export * from './RedirectLegacyPermalinks';
 export * from './TokenExtraction';

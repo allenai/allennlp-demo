@@ -6,12 +6,12 @@ import { Config, Models, CurrentTask, Examples } from '../context';
 import { Example, Model, Task } from '../lib';
 import { ModelNotFoundError, NoModelsError } from '../error';
 
-interface SelectedModelRouteProps {
+interface ModelRouteProps {
     models: Model[];
     children: React.ReactNode;
 }
 
-const SelectedModelRoute = ({ models, children }: SelectedModelRouteProps) => {
+const SelectedModelRoute = ({ models, children }: ModelRouteProps) => {
     if (models.length === 0) {
         throw new NoModelsError();
     }
@@ -35,6 +35,24 @@ const SelectedModelRoute = ({ models, children }: SelectedModelRouteProps) => {
     );
 };
 
+const SingleModel = ({ models, children }: ModelRouteProps) => {
+    if (models.length === 0) {
+        throw new NoModelsError();
+    }
+
+    // There can be only one...Model.
+    const selectedModel = models[0];
+
+    // No-op.
+    const selectModelById = () => {};
+
+    return (
+        <Models.Provider value={{ models, selectedModel, selectModelById }}>
+            {children}
+        </Models.Provider>
+    );
+};
+
 interface Props {
     models: Model[];
     task: Task;
@@ -43,7 +61,7 @@ interface Props {
     examples?: Example[];
 }
 
-export const MultiModelDemo = ({ models, task, children, appId, examples }: Props) => {
+export const Demo = ({ models, task, children, appId, examples }: Props) => {
     if (models.length === 0) {
         throw new NoModelsError();
     }
@@ -59,12 +77,16 @@ export const MultiModelDemo = ({ models, task, children, appId, examples }: Prop
             <CurrentTask.Provider value={{ task }}>
                 <Examples.Provider
                     value={{ examples: examples || task.examples, selectedExample, selectExample }}>
-                    <Switch>
-                        <Route path={modelPath}>
-                            <SelectedModelRoute models={models}>{children}</SelectedModelRoute>
-                        </Route>
-                        <Redirect to={firstModelPath} />
-                    </Switch>
+                    {models.length > 1 ? (
+                        <Switch>
+                            <Route path={modelPath}>
+                                <SelectedModelRoute models={models}>{children}</SelectedModelRoute>
+                            </Route>
+                            <Redirect to={firstModelPath} />
+                        </Switch>
+                    ) : (
+                        <SingleModel models={models}>{children}</SingleModel>
+                    )}
                 </Examples.Provider>
             </CurrentTask.Provider>
         </Config.Provider>

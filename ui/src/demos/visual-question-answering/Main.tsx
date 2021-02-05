@@ -19,7 +19,7 @@ import {
     UploadedImage,
 } from '../../tugboat/components';
 import { Examples } from '../../tugboat/context';
-import { MultiModelDemo, Predict } from '../../components';
+import { Demo, Predict } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
@@ -72,7 +72,7 @@ export const Main = () => {
     ];
 
     return (
-        <MultiModelDemo ids={config.modelIds} taskId={config.taskId} examples={examples}>
+        <Demo ids={config.modelIds} taskId={config.taskId} examples={examples}>
             <TaskTitle />
             <TaskDescription />
             <SelectedModelDescription />
@@ -104,6 +104,6 @@ export const Main = () => {
                     <Usage />
                 </Tabs.TabPane>
             </Tabs>
-        </MultiModelDemo>
+        </Demo>
     );
 };

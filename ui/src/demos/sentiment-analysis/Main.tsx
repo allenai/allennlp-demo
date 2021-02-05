@@ -14,7 +14,7 @@ import {
     TaskTitle,
 } from '../../tugboat/components';
 import { AppId } from '../../AppId';
-import { MultiModelDemo, Predict, Interpreters, Attackers } from '../../components';
+import { Demo, Predict, Interpreters, Attackers } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
@@ -23,7 +23,7 @@ import { Version, Input, Prediction, InterpreterData } from './types';
 export const Main = () => {
     // The hidden fields below are passing parameters to the api that the user does not need to set
     return (
-        <MultiModelDemo ids={config.modelIds} taskId={config.taskId}>
+        <Demo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
             <TaskDescription />
             <SelectModelAndDescription />
@@ -80,6 +80,6 @@ export const Main = () => {
                     <Usage />
                 </Tabs.TabPane>
             </Tabs>
-        </MultiModelDemo>
+        </Demo>
     );
 };

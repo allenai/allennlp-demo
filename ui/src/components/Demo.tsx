@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { Model, Task, Example } from '../tugboat/lib';
-import { MultiModelDemo as TBMultiModelDemo } from '../tugboat/components';
+import { Demo as TBDemo } from '../tugboat/components';
 
 import { AppId } from '../AppId';
 import { TaskCard, getModelCardId, ModelInfo } from '../lib';
@@ -41,12 +41,12 @@ interface Props {
 }
 
 /**
- * An AllenNLP demo featuring multiple models, one of which can be selected at a time.
+ * An AllenNLP demo for a particular task.
  *
  * This component exists primarily to handle the process of converting AllenNLP's specific notion
- * of a model (which is queried via API routes) to the shape expected by the tugboat package.
+ * of a model (which is queried via API routes) to the shape expected by the tugboat module.
  */
-export const MultiModelDemo = ({ ids, taskId, children, examples }: Props) => {
+export const Demo = ({ ids, taskId, children, examples }: Props) => {
     const infos = useContext(ModelInfoList);
     const included = new Set(ids);
     const demoInfos = infos.filter((info) => included.has(info.id));
@@ -69,13 +69,9 @@ export const MultiModelDemo = ({ ids, taskId, children, examples }: Props) => {
 
     return (
         <RedirectLegacyPermalinks modelIds={ids}>
-            <TBMultiModelDemo
-                models={models}
-                task={asTugBoatTask(task)}
-                appId={AppId}
-                examples={examples}>
+            <TBDemo models={models} task={asTugBoatTask(task)} appId={AppId} examples={examples}>
                 {children}
-            </TBMultiModelDemo>
+            </TBDemo>
         </RedirectLegacyPermalinks>
     );
 };
