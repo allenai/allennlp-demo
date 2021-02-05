@@ -1,23 +1,7 @@
 version: '3'
 services:
-    # When running the UI only we still also run a permalinks service so that the permlinks
-    # we generate don't clutter the production database.
-    permalinks:
-        build:
-            context: api
-            dockerfile: allennlp_demo/permalinks/Dockerfile
-        command:
-            - allennlp_demo/permalinks/api.py
-        environment:
-            - FLASK_ENV=development
-            - DEMO_POSTGRES_HOST=db
-            - DEMO_POSTGRES_USER=postgres
-            - DEMO_POSTGRES_DBNAME=demo
-        volumes:
-            - ./api/allennlp_demo/permalinks:/app/allennlp_demo/permalinks
-            - ./api/allennlp_demo/common:/app/allennlp_demo/common
-        ports:
-            - 8001:8000
+    # These two services return information the front-end needs, and are more likely to be
+    # something that we change while working on the UI, so we include them here too.
     model_cards:
         build:
             context: api
@@ -42,27 +26,6 @@ services:
             - ./api/allennlp_demo/common:/app/allennlp_demo/common
         ports:
             - 8003:8000
-    # This container bootstraps the db if it hasn't been setup before. It just runs dev/setup_db.sh.
-    setup_db:
-        image: postgres:11.7-alpine
-        environment:
-            - DEMO_POSTGRES_HOST=db
-            - DEMO_POSTGRES_USER=postgres
-            - DEMO_POSTGRES_DBNAME=demo
-        entrypoint:
-            - /bin/bash
-        command:
-            - /src/dev/setup_db.sh
-        volumes:
-            - .:/src
-        depends_on:
-            - db
-    db:
-        image: postgres:11.7-alpine
-        environment:
-            - POSTGRES_HOST_AUTH_METHOD=trust
-        ports:
-            - 5555:5432
     # Local environments run a HTTP server provided with our JavaScript build tools. It handles
     # incremental recompilation. In production the precompiled UI assets are served from disk
     # via NGINX.
@@ -92,6 +55,5 @@ services:
             - 8080:80
         depends_on:
             - ui
-            - permalinks
             - model_cards
             - tasks

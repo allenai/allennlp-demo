@@ -1,22 +1,5 @@
 version: '3'
 services:
-    # This is the new permalinks service, responsible for having requests to /api/permalink.
-    permalinks:
-        build:
-            context: api
-            dockerfile: allennlp_demo/permalinks/Dockerfile
-        command:
-            - allennlp_demo/permalinks/api.py
-        environment:
-            - FLASK_ENV=development
-            - DEMO_POSTGRES_HOST=db
-            - DEMO_POSTGRES_USER=postgres
-            - DEMO_POSTGRES_DBNAME=demo
-        volumes:
-            - ./api/allennlp_demo/permalinks:/app/allennlp_demo/permalinks
-            - ./api/allennlp_demo/common:/app/allennlp_demo/common
-        ports:
-            - 8001:8000
     # We support running one model. The module's submodule name should be provided as the
     # MODEL environment variable.
     model:
@@ -35,28 +18,6 @@ services:
             - ./api/allennlp_demo/common:/app/allennlp_demo/common
         ports:
             - 8002:8000
-    # This container bootstraps the db if it hasn't been setup before. It just runs dev/setup_db.sh.
-    setup_db:
-        image: postgres:11.7-alpine
-        environment:
-            - DEMO_POSTGRES_HOST=db
-            - DEMO_POSTGRES_USER=postgres
-            - DEMO_POSTGRES_DBNAME=demo
-        entrypoint:
-            - /bin/bash
-        command:
-            - /src/dev/setup_db.sh
-        volumes:
-            - .:/src
-        depends_on:
-            - db
-    # The database is used by the permalinks service.
-    db:
-        image: postgres:11.7-alpine
-        environment:
-            - POSTGRES_HOST_AUTH_METHOD=trust
-        ports:
-            - 5555:5432
     # Local environments run a HTTP server provided with our JavaScript build tools. It handles
     # incremental recompilation. In production the precompiled UI assets are served from disk
     # via NGINX.
@@ -87,4 +48,3 @@ services:
         depends_on:
             - ui
             - model
-            - permalinks

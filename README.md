@@ -37,7 +37,7 @@ There's three ways to run things locally:
     or use the script:
 
     ```
-    ./bin/startui
+    ./bin/ui
     ```
 
    Once that's complete you'll be able to access your local version by opening
@@ -47,25 +47,16 @@ There's three ways to run things locally:
    Note: To clean up docker containers, be sure to use:
 
    ```
-   docker-compose -f docker-compose.ui-only.yaml down --build
+   docker-compose -f docker-compose.ui-only.yaml down
    ```
 
    or
 
    ```
-   ./bin/startui down
+   ./bin/ui down
    ```
 
-3. If you're only working on the Permalinks service, you can start things up by running:
-
-    ```
-    docker-compose -f docker-compose.permalinks.yaml up --build
-    ```
-
-   Once that's complete, follow the instructions in the [Permalinks
-   README](api/allennl_demo/permalinks/).
-
-4. If you'd like to run an end to end environment that includes the user-interface and a model
+3. If you'd like to run an end to end environment that includes the user-interface and a model
    endpoint, you can do so by running:
 
     ```bash

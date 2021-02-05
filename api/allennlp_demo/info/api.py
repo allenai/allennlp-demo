@@ -108,7 +108,6 @@ class InfoService(flask.Flask):
                     endpoint == "info"
                     or endpoint == "tasks"
                     or endpoint == "model-cards"
-                    or endpoint == "permalinks"
                 ):
                     continue
                 endpoint = Endpoint.from_ingress(ingress)
