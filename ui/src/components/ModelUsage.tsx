@@ -69,36 +69,36 @@ export const ModelUsage = (props: Props) => {
                 <p>{props.modelCard.evaluation_dataset.notes}</p>
             ) : null}
             {props.modelCard.evaluation_dataset ? (
-                <p>
-                    About the dataset:
-                    <DatasetLink link={props.modelCard.evaluation_dataset} />
-                </p>
+                <h6>
+                    About the dataset: <DatasetLink link={props.modelCard.evaluation_dataset} />
+                </h6>
             ) : null}
             {evaluationCommand ? (
                 <UsageCode>
                     <SyntaxHighlight language="python">{evaluationCommand}</SyntaxHighlight>
                 </UsageCode>
-            ) : (
+            ) : null}
+            {!(evaluationCommand && props.modelCard.evaluation_dataset.notes) ? (
                 <p>Evaluation command is unavailable.</p>
-            )}
+            ) : null}
 
             <h5>Training</h5>
             {props.modelCard.training_dataset.notes ? (
                 <p>{props.modelCard.training_dataset.notes}</p>
             ) : null}
             {props.modelCard.training_dataset ? (
-                <p>
-                    About the dataset:
-                    <DatasetLink link={props.modelCard.training_dataset} />
-                </p>
+                <h6>
+                    About the dataset: <DatasetLink link={props.modelCard.training_dataset} />
+                </h6>
             ) : null}
             {trainingCommand ? (
                 <UsageCode>
                     <SyntaxHighlight language="python">{trainingCommand}</SyntaxHighlight>
                 </UsageCode>
-            ) : (
+            ) : null}
+            {!(trainingCommand && props.modelCard.training_dataset.notes) ? (
                 <p>Training command is unavailable.</p>
-            )}
+            ) : null}
         </>
     );
 };
