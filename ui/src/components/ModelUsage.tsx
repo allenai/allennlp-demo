@@ -70,7 +70,7 @@ export const ModelUsage = (props: Props) => {
                 <p>{props.modelCard.evaluation_dataset.notes}</p>
             ) : null}
             {props.modelCard.evaluation_dataset ? (
-                <h6>
+                <p>
                     About the dataset:
                     <MaybeLink
                         props={{
@@ -78,14 +78,14 @@ export const ModelUsage = (props: Props) => {
                             url: props.modelCard.evaluation_dataset.url,
                         }}
                     />
-                </h6>
+                </p>
             ) : null}
             {evaluationCommand ? (
                 <UsageCode>
                     <SyntaxHighlight language="python">{evaluationCommand}</SyntaxHighlight>
                 </UsageCode>
             ) : null}
-            {!(evaluationCommand && props.modelCard.evaluation_dataset.notes) ? (
+            {!evaluationCommand && !props.modelCard.evaluation_dataset.notes ? (
                 <p>Evaluation command is unavailable.</p>
             ) : null}
 
@@ -94,7 +94,7 @@ export const ModelUsage = (props: Props) => {
                 <p>{props.modelCard.training_dataset.notes}</p>
             ) : null}
             {props.modelCard.training_dataset ? (
-                <h6>
+                <p>
                     About the dataset:
                     <MaybeLink
                         props={{
@@ -102,14 +102,14 @@ export const ModelUsage = (props: Props) => {
                             url: props.modelCard.evaluation_dataset.url,
                         }}
                     />
-                </h6>
+                </p>
             ) : null}
             {trainingCommand ? (
                 <UsageCode>
                     <SyntaxHighlight language="python">{trainingCommand}</SyntaxHighlight>
                 </UsageCode>
             ) : null}
-            {!(trainingCommand && props.modelCard.training_dataset.notes) ? (
+            {!trainingCommand && !props.modelCard.training_dataset.notes ? (
                 <p>Training command is unavailable.</p>
             ) : null}
         </>
