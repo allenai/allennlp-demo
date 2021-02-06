@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Models } from '../tugboat/context';
-import { ModelCard, Link } from '../tugboat/lib';
+import { ModelCard } from '../tugboat/lib';
+import { MaybeLink } from '../tugboat/components';
 import { NoSelectedModelError } from '../tugboat/error';
 import { SyntaxHighlight } from '../tugboat/components/SyntaxHighlight';
 
@@ -70,7 +71,13 @@ export const ModelUsage = (props: Props) => {
             ) : null}
             {props.modelCard.evaluation_dataset ? (
                 <h6>
-                    About the dataset: <DatasetLink link={props.modelCard.evaluation_dataset} />
+                    About the dataset:
+                    <MaybeLink
+                        props={{
+                            name: props.modelCard.evaluation_dataset.name,
+                            url: props.modelCard.evaluation_dataset.url,
+                        }}
+                    />
                 </h6>
             ) : null}
             {evaluationCommand ? (
@@ -88,7 +95,13 @@ export const ModelUsage = (props: Props) => {
             ) : null}
             {props.modelCard.training_dataset ? (
                 <h6>
-                    About the dataset: <DatasetLink link={props.modelCard.training_dataset} />
+                    About the dataset:
+                    <MaybeLink
+                        props={{
+                            name: props.modelCard.evaluation_dataset.name,
+                            url: props.modelCard.evaluation_dataset.url,
+                        }}
+                    />
                 </h6>
             ) : null}
             {trainingCommand ? (
@@ -110,7 +123,3 @@ export const ModelUsage = (props: Props) => {
 const UsageCode = styled.div`
     margin: ${({ theme }) => `${theme.spacing.sm} 0 ${theme.spacing.md}`};
 `;
-
-const DatasetLink = ({ link }: { link: Link }) => {
-    return link.url ? <a href={link.url}>{link.name}</a> : <span>{link.name}</span>;
-};

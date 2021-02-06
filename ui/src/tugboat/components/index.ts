@@ -22,3 +22,4 @@ export * from './TaskDescription';
 export * from './TaskTitle';
 export * from './TextWithHighlight';
 export * from './WithLogScaleSlider';
+export * from './MaybeLink';
