@@ -2,23 +2,37 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Models } from '../tugboat/context';
+import { ModelCard } from '../tugboat/lib';
+import { MaybeLink } from '../tugboat/components';
 import { NoSelectedModelError } from '../tugboat/error';
 import { SyntaxHighlight } from '../tugboat/components/SyntaxHighlight';
 
 interface Props {
-    installNote?: string;
-    installCommand: string;
+    modelCard: ModelCard;
     bashNote?: string;
     bashCommand: string;
     pythonNote?: string;
     pythonCommand: string;
-    evaluationNote?: React.ReactNode | JSX.Element;
-    evaluationCommand?: string;
-    trainingNote?: React.ReactNode | JSX.Element;
-    trainingCommand?: string;
 }
 
 export const ModelUsage = (props: Props) => {
+    let evaluationCommand = null;
+
+    if (props.modelCard.evaluation_dataset.processed_url) {
+        evaluationCommand = `
+            allennlp evaluate \\
+        ${props.modelCard.archive_file} \\
+        ${props.modelCard.evaluation_dataset.processed_url}`.trim();
+    }
+
+    let trainingCommand = null;
+
+    if (props.modelCard.training_config) {
+        trainingCommand = `allennlp train \\
+        ${props.modelCard.training_config} \\
+        -s /path/to/output`.trim();
+    }
+
     const models = React.useContext(Models);
     if (!models.selectedModel) {
         throw new NoSelectedModelError();
@@ -27,10 +41,11 @@ export const ModelUsage = (props: Props) => {
     return (
         <>
             <h5>Installing AllenNLP</h5>
-            {props.installNote ? <p>{props.installNote}</p> : null}
-            {props.installCommand ? (
+            {props.modelCard.install_instructions ? (
                 <UsageCode>
-                    <SyntaxHighlight language="bash">{props.installCommand}</SyntaxHighlight>
+                    <SyntaxHighlight language="bash">
+                        {props.modelCard.install_instructions}
+                    </SyntaxHighlight>
                 </UsageCode>
             ) : null}
 
@@ -51,19 +66,51 @@ export const ModelUsage = (props: Props) => {
             ) : null}
 
             <h5>Evaluation</h5>
-            {props.evaluationNote ? <p>{props.evaluationNote}</p> : null}
-            {props.evaluationCommand ? (
+            {props.modelCard.evaluation_dataset.notes ? (
+                <p>{props.modelCard.evaluation_dataset.notes}</p>
+            ) : null}
+            {props.modelCard.evaluation_dataset ? (
+                <p>
+                    About the dataset:
+                    <MaybeLink
+                        props={{
+                            name: props.modelCard.evaluation_dataset.name,
+                            url: props.modelCard.evaluation_dataset.url,
+                        }}
+                    />
+                </p>
+            ) : null}
+            {evaluationCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="python">{props.evaluationCommand}</SyntaxHighlight>
+                    <SyntaxHighlight language="python">{evaluationCommand}</SyntaxHighlight>
                 </UsageCode>
+            ) : null}
+            {!evaluationCommand && !props.modelCard.evaluation_dataset.notes ? (
+                <p>Evaluation command is unavailable.</p>
             ) : null}
 
             <h5>Training</h5>
-            {props.trainingNote ? <p>{props.trainingNote}</p> : null}
-            {props.trainingCommand ? (
+            {props.modelCard.training_dataset.notes ? (
+                <p>{props.modelCard.training_dataset.notes}</p>
+            ) : null}
+            {props.modelCard.training_dataset ? (
+                <p>
+                    About the dataset:
+                    <MaybeLink
+                        props={{
+                            name: props.modelCard.evaluation_dataset.name,
+                            url: props.modelCard.evaluation_dataset.url,
+                        }}
+                    />
+                </p>
+            ) : null}
+            {trainingCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="python">{props.trainingCommand}</SyntaxHighlight>
+                    <SyntaxHighlight language="python">{trainingCommand}</SyntaxHighlight>
                 </UsageCode>
+            ) : null}
+            {!trainingCommand && !props.modelCard.training_dataset.notes ? (
+                <p>Training command is unavailable.</p>
             ) : null}
         </>
     );

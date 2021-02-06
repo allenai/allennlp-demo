@@ -8,7 +8,7 @@ export interface ModelCard {
     description: string;
     developed_by: string;
     display_name: string;
-    evaluation_dataset: Link;
+    evaluation_dataset: Dataset;
     model_performance_measures: string;
     model_type: string;
     paper: Paper;
@@ -16,13 +16,17 @@ export interface ModelCard {
     registered_predictor_name: string;
     short_description: string;
     task_id: string;
-    training_dataset: Link;
+    training_dataset: Dataset;
     version: string;
+    training_config: string;
+    install_instructions: string;
 }
 
-export interface Link {
+export interface Dataset {
     name: string;
     url?: any;
+    processed_url?: any;
+    notes?: any;
 }
 
 export interface Paper {

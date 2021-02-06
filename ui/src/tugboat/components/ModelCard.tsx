@@ -6,7 +6,7 @@ import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
 import { Models } from '../context';
 import { NoSelectedModelError } from '../error';
 import { Markdown } from './Markdown';
-import { Link } from '../lib';
+import { MaybeLink } from '../components';
 
 export const ModelCard = () => {
     const models = React.useContext(Models);
@@ -57,7 +57,12 @@ export const ModelCard = () => {
 
             <Descriptions.Item label="Evaluation Dataset" span={3}>
                 {models.selectedModel.card.evaluation_dataset ? (
-                    <MaybeLink link={models.selectedModel.card.evaluation_dataset} />
+                    <MaybeLink
+                        props={{
+                            name: models.selectedModel.card.evaluation_dataset.name,
+                            url: models.selectedModel.card.evaluation_dataset.url,
+                        }}
+                    />
                 ) : (
                     'Unknown'
                 )}
@@ -65,7 +70,12 @@ export const ModelCard = () => {
 
             <Descriptions.Item label="Training Dataset" span={3}>
                 {models.selectedModel.card.training_dataset ? (
-                    <MaybeLink link={models.selectedModel.card.training_dataset} />
+                    <MaybeLink
+                        props={{
+                            name: models.selectedModel.card.training_dataset.name,
+                            url: models.selectedModel.card.training_dataset.url,
+                        }}
+                    />
                 ) : (
                     'Unknown'
                 )}
@@ -89,7 +99,7 @@ export const ModelCard = () => {
                 {models.selectedModel.card.paper ? (
                     <Space direction="vertical">
                         <MaybeLink
-                            link={{
+                            props={{
                                 name: models.selectedModel.card.paper.title,
                                 url: models.selectedModel.card.paper.url,
                             }}
@@ -124,7 +134,3 @@ const ResponsiveDescriptions = styled(Descriptions)`
         }
     }
 `;
-
-const MaybeLink = ({ link }: { link: Link }) => {
-    return link.url ? <a href={link.url}>{link.name}</a> : <span>{link.name}</span>;
-};

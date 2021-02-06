@@ -1,6 +1,6 @@
 # This is the common Dockerfile that is used to build all demos unless the demo
 # overrides this with its own Dockerfile in its directory.
-FROM allennlp/models:v1.4.0-cuda11.0
+FROM python:3.8
 
 # Ensure allennlp_demo module can be found by Python.
 ENV PYTHONPATH /app/
@@ -15,6 +15,7 @@ ENV TOKENIZERS_PARALLELISM 0
 WORKDIR /app/
 
 COPY requirements.txt requirements.txt
+ENV ALLENNLP_VERSION_OVERRIDE allennlp
 RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm

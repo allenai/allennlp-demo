@@ -25,8 +25,6 @@ export const Usage = () => {
     // TODO: This seems brittle. If the examples change this will fail at runtime.
     const ex = examples[2]; // Uriah example
 
-    const installCommand = 'pip install allennlp==1.0.0 allennlp-models==1.0.0';
-
     const bashCommand = `
 echo '{"sentence": "${ex.sentence}."}' | \\
     allennlp predict ${models.selectedModel.card.archive_file} -
@@ -41,39 +39,11 @@ predictor.predict(
     sentence="${ex.sentence}."
 )`.trim();
 
-    const evaluationNote = (
-        <span>
-            The SRL model was evaluated on the CoNLL 2012 dataset. Unfortunately we cannot release
-            this data due to licensing restrictions by the LDC. You can put together evaluation data
-            yourself by following the CoNLL 2012{' '}
-            <a href="http://conll.cemantix.org/2012/data.html">
-                instructions for working with the data
-            </a>
-            .
-        </span>
-    );
-
-    const trainingNote = (
-        <span>
-            The SRL model was evaluated on the CoNLL 2012 dataset. Unfortunately we cannot release
-            this data due to licensing restrictions by the LDC. You can put together evaluation data
-            yourself by following the CoNLL 2012 instructions for working with the data. Once you
-            have compiled the dataset, you can use the configuration file at{' '}
-            <a href="https://github.com/allenai/allennlp/blob/master/training_config/semantic_role_labeler.jsonnet">
-                training_config/semantic_role_labeler.jsonnet
-            </a>{' '}
-            to train.
-        </span>
-    );
-
-    // TODO: The AllenNLP version could be pulled from the model's info route.
     return (
         <ModelUsage
-            installCommand={installCommand}
             bashCommand={bashCommand}
             pythonCommand={pythonCommand}
-            evaluationNote={evaluationNote}
-            trainingNote={trainingNote}
+            modelCard={models.selectedModel.card}
         />
     );
 };

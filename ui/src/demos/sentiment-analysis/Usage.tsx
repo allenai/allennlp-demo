@@ -25,8 +25,6 @@ export const Usage = () => {
     // TODO: This seems brittle. If the examples change this will fail at runtime.
     const ex = examples[0];
 
-    const installCommand = 'pip install allennlp==1.4.0 allennlp-models==1.4.0';
-
     const bashCommand = `
 echo '{"sentence": "${ex.sentence}"}' | \\
     allennlp predict ${models.selectedModel.card.archive_file} -
@@ -40,28 +38,11 @@ predictor = Predictor.from_path("${models.selectedModel.card.archive_file}")
 predictor.predict("${ex.sentence}")
 `.trim();
 
-    // TODO: Get this from the model card.
-    const evalDataPath = 'https://allennlp.s3.amazonaws.com/datasets/sst/test.txt';
-    const evaluationCommand = `
-allennlp evaluate \\
-    ${models.selectedModel.card.archive_file} \\
-    ${evalDataPath}`.trim();
-
-    // TODO: Get this from the model card.
-    const trainingDataPath =
-        'https://raw.githubusercontent.com/allenai/allennlp-models/v1.4.0/training_config/classification/basic_stanford_sentiment_treebank.jsonnet';
-    const trainingCommand = `allennlp train \\
-    ${trainingDataPath} \\
-    -s /path/to/output`.trim();
-
-    // TODO: The AllenNLP version could be pulled from the model's info route.
     return (
         <ModelUsage
-            installCommand={installCommand}
             bashCommand={bashCommand}
             pythonCommand={pythonCommand}
-            evaluationCommand={evaluationCommand}
-            trainingCommand={trainingCommand}
+            modelCard={models.selectedModel.card}
         />
     );
 };

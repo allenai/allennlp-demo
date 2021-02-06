@@ -67,7 +67,7 @@ class Model:
                 from allennlp_models.pretrained import get_pretrained_models
 
                 model_card = get_pretrained_models()[raw["pretrained_model_id"]]
-                raw["archive_file"] = model_card.archive_file
+                raw["archive_file"] = model_card.model_usage.archive_file
                 raw["predictor_name"] = model_card.registered_predictor_name
             out = cls(**raw)
 
