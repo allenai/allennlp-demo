@@ -172,7 +172,7 @@ const BasicPrediction = ({ probs }: { probs: number[] }) => {
                         neutral={neutral}
                         entailment={entailment}
                     />
-                    <Table dataSource={dataSource} columns={columns} pagination={false} />;
+                    <Table dataSource={dataSource} columns={columns} pagination={false} />
                 </Columns>
             </Output.SubSection>
         </>

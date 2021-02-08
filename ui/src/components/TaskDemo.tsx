@@ -50,6 +50,15 @@ export const TaskDemo = ({ ids, taskId, children, examples }: Props) => {
     const infos = useContext(ModelInfoList);
     const included = new Set(ids);
     const demoInfos = infos.filter((info) => included.has(info.id));
+    const missingIds = ids.filter((id) => !demoInfos.find((mi) => mi.id === id));
+    if (missingIds.length > 0) {
+        console.log(
+            "The following models were requested but skipped because they weren't found in the " +
+                "info response. This usually means the API for that model is down, or that there's " +
+                'a typo: ',
+            missingIds
+        );
+    }
 
     const tasksById = useContext(TaskCards);
     if (!(taskId in tasksById)) {
