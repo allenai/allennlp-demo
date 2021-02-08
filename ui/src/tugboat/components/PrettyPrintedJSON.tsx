@@ -14,9 +14,10 @@ export const PrettyPrintedJSON = ({ json }: Props) => <Pre>{JSON.stringify(json,
 
 const Pre = styled.pre`
     ${({ theme }) => `
+        white-space: break-spaces;
         background: ${theme.color.B9};
         border: 1px solid ${theme.color.B10};
-        border-radius: ${theme.shape.borderRadius};
+        border-radius: ${theme.shape.borderRadius.default};
         padding: ${theme.spacing.md};
         color: ${theme.color.O3};
     `}
