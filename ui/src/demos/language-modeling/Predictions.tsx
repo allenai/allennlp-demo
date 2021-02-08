@@ -39,9 +39,7 @@ const SingleResult = ({ pred, input }: SingleResultProps) => {
     const form = useContext(Form);
     const completion = cleanTopTokensForDisplay(pred);
     const displayCompletion =
-        completion.slice(-1) === '.' || completion.slice(-1) === '↵'
-            ? completion
-            : completion.concat(' …');
+        completion.endsWith('.') || completion.endsWith('↵') ? completion : completion.concat(' …');
     const displayInput = input.sentence.trim();
     return (
         <span>

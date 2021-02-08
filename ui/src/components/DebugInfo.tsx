@@ -51,5 +51,5 @@ export const DebugInfo = ({ input, output, model }: Props) => {
 };
 
 const NoOverflowCollapse = styled(Collapse)`
-    overflow: hidden;
+    overflow: auto;
 `;
