@@ -22,7 +22,7 @@
     "@types/styled-components": "^5.1.4",
     "@types/webpack-env": "^1.15.3",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
-    "@typescript-eslint/parser": "^4.7.0",
+    "@typescript-eslint/parser": "^4.14.2",
     "antd": "^4.7.2",
     "babel-loader": "^8.1.0",
     "colormap": "^2.3.1",
