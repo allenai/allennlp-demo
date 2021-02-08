@@ -8,7 +8,7 @@
     "@allenai/varnish-react-router": "^2.0.2",
     "@ant-design/icons": "^4.2.1",
     "@babel/core": "^7.12.3",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.1",
     "@sentry/react": "^6.0.0",
