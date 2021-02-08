@@ -1,7 +1,8 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Collapse, Popover } from 'antd';
 
-import { PrettyPrintedJSON, Output, HelpContent, PopoverTarget } from '../tugboat/components';
+import { SyntaxHighlight, Output, HelpContent, PopoverTarget } from '../tugboat/components';
 
 export interface Props {
     input: {};
@@ -28,17 +29,27 @@ export const DebugInfo = ({ input, output, model }: Props) => {
                     <PopoverTarget>What is this?</PopoverTarget>
                 </Popover>
             }>
-            <Collapse>
+            <NoOverflowCollapse>
                 <Collapse.Panel key="input-debug" header="Input">
-                    <PrettyPrintedJSON json={input} />
+                    <SyntaxHighlight language="json">
+                        {JSON.stringify(input, null, 2)}
+                    </SyntaxHighlight>
                 </Collapse.Panel>
                 <Collapse.Panel key="model-debug" header="Model">
-                    <PrettyPrintedJSON json={model} />
+                    <SyntaxHighlight language="json">
+                        {JSON.stringify(model, null, 2)}
+                    </SyntaxHighlight>
                 </Collapse.Panel>
                 <Collapse.Panel key="output-debug" header="Output">
-                    <PrettyPrintedJSON json={output} />
+                    <SyntaxHighlight language="json">
+                        {JSON.stringify(output, null, 2)}
+                    </SyntaxHighlight>
                 </Collapse.Panel>
-            </Collapse>
+            </NoOverflowCollapse>
         </Output.Section>
     );
 };
+
+const NoOverflowCollapse = styled(Collapse)`
+    overflow: auto;
+`;

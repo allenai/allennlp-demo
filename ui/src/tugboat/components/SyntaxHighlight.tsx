@@ -44,6 +44,7 @@ const StyleOverride = styled.div`
     padding: ${({ theme }) => theme.typography.textStyles.code.padding};
     border: 1px solid ${({ theme }) => theme.palette.border.default};
     font-size: ${({ theme }) => theme.typography.textStyles.code.fontSize};
+    overflow-x: auto;
     code {
         border: none;
         background: transparent;

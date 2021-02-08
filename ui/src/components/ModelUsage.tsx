@@ -71,7 +71,7 @@ export const ModelUsage = (props: Props) => {
             ) : null}
             {props.modelCard.evaluation_dataset ? (
                 <p>
-                    About the dataset:
+                    About the dataset:{' '}
                     <MaybeLink
                         props={{
                             name: props.modelCard.evaluation_dataset.name,
@@ -95,7 +95,7 @@ export const ModelUsage = (props: Props) => {
             ) : null}
             {props.modelCard.training_dataset ? (
                 <p>
-                    About the dataset:
+                    About the dataset:{' '}
                     <MaybeLink
                         props={{
                             name: props.modelCard.evaluation_dataset.name,
