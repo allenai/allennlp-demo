@@ -41,7 +41,7 @@ const SingleResult = ({ pred, input }: SingleResultProps) => {
     const displayCompletion =
         completion.slice(-1) === '.' || completion.slice(-1) === '↵'
             ? completion
-            : completion.concat(' ...');
+            : completion.concat(' …');
     const displayInput = input.sentence.trim();
     return (
         <span>
