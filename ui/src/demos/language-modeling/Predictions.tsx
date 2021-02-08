@@ -18,11 +18,11 @@ function cleanTopTokensForDisplay(tokens: string[]): string {
     const cleanWord = tokens
         .join('')
         .replace(' ,', ',')
-        .replace(/\n/g, '↵')
-        .replace(/Ġ/g, ' ')
-        .replace(/Ċ/g, '↵');
+        .replace(/\n+/g, '↵')
+        .replace(/Ġ+/g, ' ')
+        .replace(/Ċ+/g, '↵');
 
-    return cleanWord.slice(-1) === '.' ? cleanWord : cleanWord.concat(' ...');
+    return cleanWord.trim();
 }
 
 interface Props {
@@ -38,18 +38,25 @@ interface SingleResultProps {
 const SingleResult = ({ pred, input }: SingleResultProps) => {
     const form = useContext(Form);
     const completion = cleanTopTokensForDisplay(pred);
+    const displayCompletion =
+        completion.slice(-1) === '.' || completion.slice(-1) === '↵'
+            ? completion
+            : completion.concat(' ...');
+    const displayInput = input.sentence.trim();
     return (
         <span>
-            {input.sentence}
+            {displayInput}{' '}
             <a
                 onClick={() => {
                     if (!form) {
                         throw new NoParentFormError();
                     }
-                    form.setFieldsValue({ sentence: [input.sentence, completion].join('') });
+                    form.setFieldsValue({
+                        sentence: `${displayInput} ${completion}`,
+                    });
                     form.submit();
                 }}>
-                <strong>{completion}</strong>
+                <strong>{displayCompletion}</strong>
             </a>
         </span>
     );
