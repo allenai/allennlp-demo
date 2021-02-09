@@ -1,5 +1,5 @@
-import { InvalidModelResponseError } from '../../tugboat/error';
-import { emory } from '../../tugboat/lib';
+import { InvalidModelResponseError } from '@allenai/tugboat/error';
+import { emory } from '@allenai/tugboat/lib';
 
 export const Version = emory.getVersion('rc-v1');
 

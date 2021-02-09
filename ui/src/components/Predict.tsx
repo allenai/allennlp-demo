@@ -1,8 +1,7 @@
 import React from 'react';
-
-import { Form, FormOutputView, Fields } from '../tugboat/components';
-import { Models } from '../tugboat/context';
-import { NoSelectedModelError } from '../tugboat/error';
+import { Form, FormOutputView, Fields } from '@allenai/tugboat/components';
+import { Models } from '@allenai/tugboat/context';
+import { NoSelectedModelError } from '@allenai/tugboat/error';
 
 interface Props<I, O> {
     fields: React.ReactNode | JSX.Element;

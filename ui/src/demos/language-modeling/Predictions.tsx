@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { Table } from 'antd';
+import { Output, Spark, SparkEnvelope, SparkValue } from '@allenai/tugboat/components';
+import { Form } from '@allenai/tugboat/context';
+import { Model } from '@allenai/tugboat/lib';
 
 import { DebugInfo } from '../../components';
-import { Output, Spark, SparkEnvelope, SparkValue } from '../../tugboat/components';
-import { Form } from '../../tugboat/context';
 import { Input, Prediction } from './types';
-import { Model } from '../../tugboat/lib';
 
 class NoParentFormError extends Error {
     constructor() {

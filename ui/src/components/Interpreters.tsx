@@ -1,9 +1,8 @@
 import React from 'react';
 import { Collapse, Popover } from 'antd';
-
-import { Output, HelpContent, PopoverTarget } from '../tugboat/components';
-import { Models } from '../tugboat/context';
-import { NoSelectedModelError } from '../tugboat/error';
+import { Output, HelpContent, PopoverTarget } from '@allenai/tugboat/components';
+import { Models } from '@allenai/tugboat/context';
+import { NoSelectedModelError } from '@allenai/tugboat/error';
 
 import { Interpret } from '.';
 import { ModelInfoList, findModelInfo } from '../context';

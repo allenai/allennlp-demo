@@ -1,5 +1,6 @@
+import { DemoConfig } from '@allenai/tugboat/lib';
+
 import { ModelId } from '../../lib';
-import { DemoConfig } from '../../tugboat/lib';
 
 export const config: DemoConfig = {
     group: 'Annotate a sentence',

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Tabs } from 'antd';
-
 import {
     ModelCard,
     Output,
@@ -12,7 +11,7 @@ import {
     Submit,
     TaskDescription,
     TaskTitle,
-} from '../../tugboat/components';
+} from '@allenai/tugboat/components';
 
 import { AppId } from '../../AppId';
 import { TaskDemo, Predict, Interpreters, Attackers } from '../../components';

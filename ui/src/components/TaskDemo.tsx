@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
-
-import { Model, Task, Example } from '../tugboat/lib';
-import { TaskDemo as TBTaskDemo } from '../tugboat/components';
+import { Model, Task, Example } from '@allenai/tugboat/lib';
+import { TaskDemo as TBTaskDemo } from '@allenai/tugboat/components';
 
 import { AppId } from '../AppId';
 import { TaskCard, getModelCardId, ModelInfo } from '../lib';

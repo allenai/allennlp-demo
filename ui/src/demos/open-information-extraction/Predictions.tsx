@@ -1,9 +1,9 @@
 import React from 'react';
+import { Output } from '@allenai/tugboat/components';
+import { Model } from '@allenai/tugboat/lib';
 
 import { DebugInfo, TokenExtraction } from '../../components';
-import { Output } from '../../tugboat/components';
 import { Input, Prediction } from './types';
-import { Model } from '../../tugboat/lib';
 
 interface Props {
     input: Input;

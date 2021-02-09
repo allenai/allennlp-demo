@@ -2,16 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
 import { Table } from 'antd';
-
-import { DebugInfo } from '../../components';
-import { Output, Spark, SparkEnvelope, SparkValue } from '../../tugboat/components';
-import { Input, Prediction, isElmoPrediction, isRobertaPrediction } from './types';
-import { Model } from '../../tugboat/lib';
+import { Output, Spark, SparkEnvelope, SparkValue } from '@allenai/tugboat/components';
+import { Model } from '@allenai/tugboat/lib';
 import {
     UnexpectedModelError,
     UnexpectedOutputError,
     InvalidModelResponseError,
-} from '../../tugboat/error';
+} from '@allenai/tugboat/error';
+
+import { DebugInfo } from '../../components';
+import { Input, Prediction, isElmoPrediction, isRobertaPrediction } from './types';
 import { ModelId } from '../../lib';
 
 /**

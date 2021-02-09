@@ -1,10 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from 'antd';
-
-import { Promised } from '../tugboat/components';
-import { Models } from '../tugboat/context';
-import { NoSelectedModelError } from '../tugboat/error';
+import { Promised } from '@allenai/tugboat/components';
+import { Models } from '@allenai/tugboat/context';
+import { NoSelectedModelError } from '@allenai/tugboat/error';
 
 import { InterpreterId } from '../lib';
 

@@ -1,9 +1,9 @@
 import React from 'react';
+import { Output, NestedHighlight, withHighlightClickHandling } from '@allenai/tugboat/components';
+import { Model } from '@allenai/tugboat/lib';
 
 import { DebugInfo } from '../../components';
-import { Output, NestedHighlight, withHighlightClickHandling } from '../../tugboat/components';
 import { Input, Prediction } from './types';
-import { Model } from '../../tugboat/lib';
 
 interface Props {
     input: Input;

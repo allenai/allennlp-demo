@@ -1,11 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-
-import { Models } from '../tugboat/context';
-import { ModelCard } from '../tugboat/lib';
-import { MaybeLink } from '../tugboat/components';
-import { NoSelectedModelError } from '../tugboat/error';
-import { SyntaxHighlight } from '../tugboat/components/SyntaxHighlight';
+import { Models } from '@allenai/tugboat/context';
+import { ModelCard } from '@allenai/tugboat/lib';
+import { MaybeLink } from '@allenai/tugboat/components';
+import { NoSelectedModelError } from '@allenai/tugboat/error';
+import { SyntaxHighlight } from '@allenai/tugboat/components/SyntaxHighlight';
 
 interface Props {
     modelCard: ModelCard;
@@ -73,10 +72,8 @@ export const ModelUsage = (props: Props) => {
                 <p>
                     About the dataset:{' '}
                     <MaybeLink
-                        props={{
-                            name: props.modelCard.evaluation_dataset.name,
-                            url: props.modelCard.evaluation_dataset.url,
-                        }}
+                        name={props.modelCard.evaluation_dataset.name}
+                        url={props.modelCard.evaluation_dataset.url}
                     />
                 </p>
             ) : null}
@@ -97,10 +94,8 @@ export const ModelUsage = (props: Props) => {
                 <p>
                     About the dataset:{' '}
                     <MaybeLink
-                        props={{
-                            name: props.modelCard.evaluation_dataset.name,
-                            url: props.modelCard.evaluation_dataset.url,
-                        }}
+                        name={props.modelCard.evaluation_dataset.name}
+                        url={props.modelCard.evaluation_dataset.url}
                     />
                 </p>
             ) : null}

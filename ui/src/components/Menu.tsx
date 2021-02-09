@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { Menu as AntdMenu } from 'antd';
 import { textStyles, LeftSider } from '@allenai/varnish/components';
 import { Link } from '@allenai/varnish-react-router';
+import { DemoGroup, Demo } from '@allenai/tugboat/lib';
 
-import { DemoGroup, Demo } from '../tugboat/lib';
 import { ImgIcon } from './ImgIcon';
 
 const { Item, SubMenu } = AntdMenu;

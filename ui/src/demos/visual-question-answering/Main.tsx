@@ -5,7 +5,6 @@
 
 import React, { useState, useContext } from 'react';
 import { Tabs } from 'antd';
-
 import {
     Field,
     Fields,
@@ -17,8 +16,9 @@ import {
     TaskDescription,
     TaskTitle,
     UploadedImage,
-} from '../../tugboat/components';
-import { Examples } from '../../tugboat/context';
+} from '@allenai/tugboat/components';
+import { Examples } from '@allenai/tugboat/context';
+
 import { TaskDemo, Predict } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';

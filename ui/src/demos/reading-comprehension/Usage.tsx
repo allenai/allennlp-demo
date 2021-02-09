@@ -4,11 +4,11 @@
  */
 
 import React from 'react';
+import { Models, Examples } from '@allenai/tugboat/context';
+import { NoSelectedModelError, UngroupedExamplesError } from '@allenai/tugboat/error';
+import { isGroupedExamples } from '@allenai/tugboat/lib';
 
 import { ModelUsage } from '../../components';
-import { Models, Examples } from '../../tugboat/context';
-import { NoSelectedModelError, UngroupedExamplesError } from '../../tugboat/error';
-import { isGroupedExamples } from '../../tugboat/lib';
 
 export const Usage = () => {
     const models = React.useContext(Models);

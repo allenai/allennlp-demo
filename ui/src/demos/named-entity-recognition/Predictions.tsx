@@ -1,6 +1,4 @@
 import React from 'react';
-
-import { DebugInfo } from '../../components';
 import {
     Highlight,
     HighlightColor,
@@ -8,9 +6,11 @@ import {
     Output,
     FormattedToken,
     formatTokens,
-} from '../../tugboat/components';
+} from '@allenai/tugboat/components';
+import { Model } from '@allenai/tugboat/lib';
+
 import { Input, Prediction } from './types';
-import { Model } from '../../tugboat/lib';
+import { DebugInfo } from '../../components';
 
 interface Props {
     input: Input;

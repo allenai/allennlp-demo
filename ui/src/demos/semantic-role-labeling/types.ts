@@ -1,4 +1,5 @@
-import { emory } from '../../tugboat/lib';
+import { emory } from '@allenai/tugboat/lib';
+
 import { TokenExtractionPrediction } from '../../components';
 
 export const Version = emory.getVersion('srl-v1');
