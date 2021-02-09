@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { List } from 'antd';
-
 import {
     HighlightContainer,
     Highlight,
@@ -9,7 +8,7 @@ import {
     formatTokens,
     FormattedToken,
     Output,
-} from '../tugboat/components';
+} from '@allenai/tugboat/components';
 
 interface VerbData {
     description: string;

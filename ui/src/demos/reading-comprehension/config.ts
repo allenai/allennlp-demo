@@ -1,4 +1,5 @@
-import { DemoConfig } from '../../tugboat/lib';
+import { DemoConfig } from '@allenai/tugboat/lib';
+
 import { ModelId } from '../../lib';
 
 export const config: DemoConfig = {

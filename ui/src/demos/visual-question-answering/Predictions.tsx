@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { BasicFilterDropdown, FilterIcon } from '@allenai/varnish/components';
+import { Output, Spark, SparkEnvelope, SparkValue } from '@allenai/tugboat/components';
+import { Model } from '@allenai/tugboat/lib';
 
 import { DebugInfo } from '../../components';
-import { Output, Spark, SparkEnvelope, SparkValue } from '../../tugboat/components';
 import { Input, Prediction, Answer } from './types';
-import { Model } from '../../tugboat/lib';
 
 interface Props {
     input: Input;

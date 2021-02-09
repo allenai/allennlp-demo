@@ -1,4 +1,5 @@
-import { ModelCard } from '../tugboat/lib/ModelCard';
+import { ModelCard } from '@allenai/tugboat/lib/ModelCard';
+
 import { ModelInfo, ModelId } from './ModelInfo';
 
 class NoModelCardIdError extends Error {

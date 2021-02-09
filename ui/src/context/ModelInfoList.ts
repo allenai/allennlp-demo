@@ -1,6 +1,5 @@
 import { createContext } from 'react';
-
-import { Model } from '../tugboat/lib';
+import { Model } from '@allenai/tugboat/lib';
 
 import { ModelInfo } from '../lib';
 

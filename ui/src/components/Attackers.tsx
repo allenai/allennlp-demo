@@ -1,8 +1,7 @@
 import React from 'react';
 import { Collapse } from 'antd';
-
-import { Output } from '../tugboat/components';
-import { Model } from '../tugboat/lib';
+import { Output } from '@allenai/tugboat/components';
+import { Model } from '@allenai/tugboat/lib';
 
 import {
     Attack,

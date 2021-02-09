@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tabs } from 'antd';
+import { Output } from '@allenai/tugboat/components/form';
 
 import { Explanation } from './Explanation';
-import { Output } from '../../../tugboat/components/form';
 import { NMNPrediction, NestedNMNProgram } from '../types';
 import { StepOutput } from './StepOutput';
 

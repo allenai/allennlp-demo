@@ -1,17 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Popover } from 'antd';
-
-import { ModuleInfo, DEFAULT_MIN_ATTN } from './ModuleInfo';
-import { Input, Step } from './Explanation';
 import {
     WithLogScaleSlider,
     NestedHighlight,
     getHighlightColor,
     HighlightColor,
     ClusterMap,
-} from '../../../tugboat/components';
-import { Output } from '../../../tugboat/components/form';
+} from '@allenai/tugboat/components';
+import { Output } from '@allenai/tugboat/components/form';
+
+import { ModuleInfo, DEFAULT_MIN_ATTN } from './ModuleInfo';
+import { Input, Step } from './Explanation';
 
 interface StepOutputProps {
     inputs: Input[];

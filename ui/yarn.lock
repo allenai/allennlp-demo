@@ -7,6 +7,18 @@
   resolved "https://registry.yarnpkg.com/@allenai/eslint-config-varnish/-/eslint-config-varnish-1.0.1.tgz#ea713c1d4ea6e5c8e10ac862a2922a5ec37215b7"
   integrity sha512-0y8MNLB6JVPMmwOhQ6zZfY0mpPcAeEKP0vLkNMigpbMPf/Es3bjZuh/I6XrmrvMIn8Be5ZL1jyPpQKVvv/LfSQ==
 
+"@allenai/tugboat@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@allenai/tugboat/-/tugboat-0.1.2.tgz#7064eeb0e43c278c090d9cc6b41fb4738b8f037d"
+  integrity sha512-xieWAMCL0GrMFbP6XxfJeiLu64e6ZNWJ4t6YPyUFduUTuZyeGGu3Cf1FvfV4ElYZIVqfB+Yr7izPuUB9P4f8CQ==
+  dependencies:
+    colormap "^2.3.1"
+    commonmark "^0.29.2"
+    react-router "^5.0.1"
+    react-router-dom "^5.0.1"
+    react-syntax-highlighter "^15.3.0"
+    slug "^4.0.2"
+
 "@allenai/varnish-react-router@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@allenai/varnish-react-router/-/varnish-react-router-2.0.2.tgz#a2ad3c106b78dc36ebe964dd2df1ab3a4ea54564"

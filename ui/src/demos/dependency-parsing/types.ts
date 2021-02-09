@@ -1,4 +1,4 @@
-import { emory } from '../../tugboat/lib';
+import { emory } from '@allenai/tugboat/lib';
 
 export const Version = emory.getVersion('dp-v1');
 

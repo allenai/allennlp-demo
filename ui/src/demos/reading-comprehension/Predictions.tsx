@@ -1,14 +1,14 @@
 import React from 'react';
-
-import { DebugInfo } from '../../components';
-import { TextWithHighlight, Output, ArithmeticEquation } from '../../tugboat/components';
-import { Model } from '../../tugboat/lib';
-import { ModelId } from '../../lib';
+import { TextWithHighlight, Output, ArithmeticEquation } from '@allenai/tugboat/components';
+import { Model } from '@allenai/tugboat/lib';
 import {
     InvalidModelResponseError,
     UnexpectedModelError,
     UnexpectedOutputError,
-} from '../../tugboat/error';
+} from '@allenai/tugboat/error';
+
+import { DebugInfo } from '../../components';
+import { ModelId } from '../../lib';
 import {
     Input,
     Prediction,

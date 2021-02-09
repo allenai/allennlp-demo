@@ -1,4 +1,4 @@
-import { Example, GroupedExamples } from '../tugboat/lib';
+import { Example, GroupedExamples } from '@allenai/tugboat/lib';
 
 export interface TaskCard {
     id: string;
