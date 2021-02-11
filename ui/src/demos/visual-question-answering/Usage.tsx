@@ -32,7 +32,6 @@ echo '{"question": "${ex.question}", "image": "https://storage.googleapis.com/al
 
     const pythonCommand = `
 from allennlp.predictors.predictor import Predictor
-import allennlp_models.tagging
 
 predictor = Predictor.from_path("${models.selectedModel.card.archive_file}")
 predictor.predict(
