@@ -32,7 +32,7 @@ export function getModelCardId(info: ModelInfo): string {
         }
         case ModelId.VilbertVQA: {
             // The api/info is missing a pretrained_model_id for vqa
-            return 've-vilbert';
+            return 'vqa-vilbert';
         }
         default: {
             throw new NoModelCardIdError(info);
