@@ -1,0 +1,400 @@
+#!/usr/bin/env python3
+
+"""
+This is a script intended to make running a local version of the AllenNLP Demo easier.
+
+The AllenNLP demo is a series of individual services that together make the experience
+available at https://demo.allennlp.org. Weaving these services together locally to make
+changes takes a surprising amount of acrobatics, so rather than expecting you to become
+an expert in docker, we wrap the necessary incanations in a series of simple commands
+provided by this script.
+
+The easiest way to learn more about this script and how it works is likely by viewing
+it's usage information, which you can see by running this command:
+
+    ./demo --help
+
+It's worth noting that this script isn't used anywhere other than local development
+environments, and probably shouldn't be. This means it's safe to make changes without
+worrying about breaking the house of cards that makes the live site work.
+"""
+
+import argparse
+import subprocess
+import logging
+import os
+import sys
+import shlex
+import time
+
+from enum import Enum
+from typing import List, Tuple, Optional
+from pathlib import Path
+
+prefix = "allennlp-demo"
+network = prefix
+
+def name(svc: str) -> str:
+    """
+    Returns a name to use when running a container for the specified service. This makes it
+    easy to determine if one is already running, so that we don't spin up the same endpoint
+    multiple times.
+    """
+    return f"{prefix}-{svc}"
+
+def tag(svc: str) -> str:
+    """
+    Returns the Docker tag to use for images built for the provided service.
+    """
+    # We use `:latest`, which should be avoided for deploying images for use in production,
+    # but is ok in this case.
+    return f"{name(svc)}:latest"
+
+class Status(Enum):
+    """
+    An Enum reflecting the various states of a container.
+    """
+    RUNNING = 0
+    STOPPED = 1
+
+def get_status(svc: str) -> Status:
+    """
+    Returns the status of the specified service.
+    """
+    ps = subprocess.check_output(
+        shlex.split(f"docker ps --quiet --filter name=^{name(svc)}$")
+    )
+    # If there is output, it's the SHA of the container. This means that it's up.
+    if len(ps.strip()) > 0:
+        return Status.RUNNING
+    return Status.STOPPED
+
+def repo_root() -> Path:
+    """
+    Returns an absolute path to the AllenNLP Demo repository root.
+    """
+    return Path(__file__).parent.resolve()
+
+def network_exists() -> bool:
+    """
+    Returns true if the network this script manages exists.
+    """
+    ls = subprocess.check_output(
+        shlex.split(f"docker network ls --quiet --filter name=^{network}$")
+    )
+    if len(ls.strip()) > 0:
+        return True
+    return False
+
+def create_network():
+    """
+    Creates a new network that allows containers spawned by this script to intercommunicate. If
+    the network already exists, this method does nothing.
+    """
+    if network_exists():
+        return
+    subprocess.check_call(
+        shlex.split(f"docker network create {network}"),
+        stdout=subprocess.DEVNULL
+    )
+
+def get_build_cmd(svc: str) -> List[str]:
+    """
+    Returns the command for building the provided service.
+    """
+    # In the AllenNLP demo we have two types of containers. The UI container is a special
+    # amalgamation of the things required to make a fancy web applicationw work. Everything else
+    # is an API endpoint. The build command for these things is a little different, so we branch
+    # and return a commmand that's specific for each.
+    if svc == "ui":
+        return shlex.split(f"""
+            docker build
+                --file {repo_root() / 'ui' / 'Dockerfile.dev'}
+                --tag {tag(svc)}
+                {repo_root() / "ui"}
+        """)
+
+    # Most endpoints use a common Dockerfile that lives at `api/Dockerfile`. But some require
+    # custom versions of AllenNLP, or specialized dependencies. In this case there will be a
+    # Dockerfile in `api/allenlp_demo/${endpoint}` that we should use instead.
+    endpoint_root = repo_root() / "api" / "allennlp_demo" / svc
+
+    # If we can't find a Python module for the endpoint, then complain loudly.
+    if not endpoint_root.exists() or not endpoint_root.is_dir():
+        raise RuntimeError(f"{endpoint_root} doesn't exist.")
+
+    # Check if the endpoint has a custom Dockerfile and use it if that's the case.
+    endpoint_dockerfile = endpoint_root / "Dockerfile"
+    dockerfile = endpoint_dockerfile if endpoint_dockerfile.exists() else repo_root() / "api" / "Dockerfile"
+
+    return shlex.split(f"""
+        docker build
+            --file {dockerfile}
+            --build-arg MODULE={svc}
+            --tag {tag(svc)}
+            {repo_root() / "api"}
+    """)
+
+def get_run_cmd(svc: str) -> List[str]:
+    """
+    Returns the command for running the provided service.
+    """
+    # Again, we have two types of containers the UI and everything else. Here we branch and
+    # produce the run command that's right for each variant. In both cases we mount directories
+    # in the repository in the container, so that changes made to local files propagate to the
+    # container without a restart.
+    if svc == "ui":
+        return shlex.split(f"""
+            docker run
+                --rm
+                --name {name(svc)}
+                --env NODE_ENV=development
+                --network {network}
+                --volume {repo_root() / 'ui' / 'public'}:/ui/public
+                --volume {repo_root() / 'ui' / 'src'}:/ui/src
+                {tag(svc)}
+        """)
+
+    return shlex.split(f"""
+        docker run
+            --rm
+            --name {name(svc)}
+            --env FLASK_ENV=development
+            --network {network}
+            --volume {repo_root() / 'api' / 'allennlp_demo' / svc}:/app/allennlp_demo/{svc}
+            --volume {repo_root() / 'api' / 'allennlp_demo' / 'common'}:/app/allennlp_demo/common
+            --volume {Path.home() / '.allennlp'}:/root/.allennlp
+            --volume {Path.home() / '.cache/huggingface'}:/root/.cache/huggingface
+            --volume {Path.home() / 'nltk_data'}:/root/nltk_data
+            {tag(svc)}
+    """)
+
+def get_health_check_url(svc: str) -> str:
+    """
+    Returns a URL that can be used in the container for the provided service to determine if it's
+    healthy. This URL is not one that's routable from the host.
+    """
+    if svc == "ui":
+        return "http://localhost:3000"
+    else:
+        return "http://localhost:8000"
+
+def is_healthy(svc: str) -> bool:
+    """
+    Returns true if the service is up and responsing to HTTP requests.
+    """
+    url = get_health_check_url(svc)
+    res = subprocess.run(
+        shlex.split(f"""docker exec {name(svc)} curl --fail {url}"""),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    return res.returncode == 0
+
+def list_services() -> List[Tuple[str, Status]]:
+    """
+    Returns a list of service names and their status.
+    """
+    svcs = [ "ui" ]
+    api_root = repo_root() / "api" / "allennlp_demo"
+    for p in api_root.iterdir():
+        if not p.is_dir():
+            continue
+        if p.name == "common" or p.name == "__pycache__" or p.name.startswith("."):
+            continue
+        svcs.append(p.name)
+
+    return [ (svc, get_status(svc)) for svc in svcs ]
+
+def start(svc: str):
+    """
+    Builds and starts the provided service. If the service is already running this does nothing.
+    """
+    log = logging.getLogger("start")
+
+    if get_status(svc) == Status.RUNNING:
+        log.info(f"The {svc} service is already running.")
+        sys.exit(0)
+
+    create_network()
+
+    log.info(f"Building {svc}…")
+    bp = subprocess.run(
+        get_build_cmd(svc),
+        encoding="utf-8",
+        capture_output=True
+    )
+
+    if bp.returncode != 0:
+        log.error(f"Error: {svc} service failed to build:")
+        for l in (bp.stdout + bp.stderr).splitlines():
+            log.error(l)
+        sys.exit(1)
+
+    log.info(f"Starting {svc}…")
+    p = subprocess.Popen(
+        get_run_cmd(svc),
+        start_new_session=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        encoding="utf-8"
+    )
+    # If `p.poll()` returns a value, the process has terminated. We intentionally don't timeout,
+    # we leave that to the user and Ctrl^C.
+    while p.poll() is None and not is_healthy(svc):
+        delay = 5
+        log.info(f"The {svc} service isn't healthy yet, sleeping for {delay}s…")
+        time.sleep(delay)
+
+    if not is_healthy(svc):
+        stdout, stderr = p.communicate()
+        log.error(f"Error: {svc} service failed to start:")
+        for l in (stdout + stderr).splitlines():
+            log.error(l)
+        sys.exit(1)
+
+    log.info(f"Started {svc}.")
+
+def stop(svc: str):
+    """
+    Stops the provided service, if it's running. If the service isn't running, this does nothing.
+    """
+    log = logging.getLogger("stop")
+
+    if get_status(svc) != Status.RUNNING:
+        log.info(f"{svc} isn't running.")
+        return
+
+    log.info(f"Stopping {svc}…")
+    subprocess.check_call(shlex.split(f"docker stop {name(svc)}"), stdout=subprocess.DEVNULL)
+    log.info(f"Stopped {svc}.")
+
+def stop_all():
+    """
+    Stops all running services.
+    """
+    log = logging.getLogger("stop_all")
+
+    log.info("Stopping all services…")
+    for svc, status in list_services():
+        if status == Status.RUNNING:
+            stop(svc)
+
+def restart(svc: str):
+    """
+    Restarts the provided service. The service is built again prior to being started.
+    """
+    if get_status(svc) == Status.RUNNING:
+        stop(svc)
+    start(svc)
+
+def status(only: Optional[Status] = None):
+    """
+    Prints a list of all services and their status.
+    """
+    log = logging.getLogger("status")
+
+    svcs = list_services()
+    spaces = max(len(s[0]) for s in svcs)
+    fmt = "{:<" + str(spaces) + "}\t{:<6}"
+
+    log.info(fmt.format("Service", "Status"))
+    log.info(fmt.format("-" * spaces, "------"))
+    for (svc, status) in svcs:
+        if only is not None and only != status:
+            continue
+        status_label = "Up" if status == Status.RUNNING else "Down"
+        log.info(fmt.format(svc, status_label))
+
+if __name__ == "__main__":
+    logging.basicConfig(level=os.getenv("LOG_LEVEL", logging.INFO), format="%(message)s")
+
+    parser = argparse.ArgumentParser(
+        prog="demo",
+        description="A utility that makes it easier to run a local version of the AllenNLP demo."
+    )
+
+    subparsers = parser.add_subparsers(
+        title="command",
+        description="The command to execute.",
+        dest="command"
+    )
+
+    start_parser = subparsers.add_parser(
+        "start",
+        aliases=["up"],
+        help="Starts the specified services."
+    )
+    start_parser.add_argument(
+        "service",
+        nargs="+",
+        help="The name of the service or services to start.",
+        type=str
+    )
+
+    stop_parser = subparsers.add_parser(
+        "stop",
+        aliases=["down"],
+        help="Stops the specified service or services."
+    )
+    stop_parser.add_argument(
+        "service",
+        nargs="*",
+        help="The name of the service or services to stop. If no services are specified, "
+             "all running services will be stopped.",
+        type=str
+    )
+
+    restart_parser = subparsers.add_parser(
+        "restart",
+        aliases=["hup"],
+        help="Restarts the specified services."
+    )
+    restart_parser.add_argument(
+        "service",
+        nargs="+",
+        help="The name of the service to restart. Multiple can be provided.",
+        type=str
+    )
+
+    status_parser = subparsers.add_parser(
+        "status",
+        aliases=["ps"],
+        help="Displays some information about running services."
+    )
+    status_parser.add_argument(
+        "--only",
+        "-o",
+        type=str,
+        choices=["up", "down"],
+        help="Only displays services with the indicated status."
+    )
+
+    args = parser.parse_args()
+
+    if args.command == "start" or args.command == "up":
+        for svc in args.service:
+            start(svc)
+
+    elif args.command == "stop" or args.command == "down":
+        if len(args.service) == 0:
+            stop_all()
+        else:
+            for svc in args.service:
+                stop(svc)
+
+    elif args.command == "restart" or args.command == "hup":
+        for svc in args.service:
+            restart(svc)
+
+    elif args.command == "status" or args.command == "ps":
+        if args.only is None:
+            status()
+        elif args.only == "up":
+            status(Status.RUNNING)
+        else:
+            status(Status.STOPPED)
+
+
+
+
