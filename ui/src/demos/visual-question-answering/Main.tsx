@@ -8,7 +8,7 @@ import { Tabs } from 'antd';
 import {
     Field,
     Fields,
-    ModelCard,
+    SelectedModelCard,
     Output,
     SelectedModelDescription,
     SelectExample,
@@ -98,7 +98,7 @@ export const Main = () => {
                     </Predict>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Model Card" key="Card">
-                    <ModelCard />
+                    <SelectedModelCard />
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Model Usage" key="Usage">
                     <Usage />

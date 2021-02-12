@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs } from 'antd';
 import { RuleObject } from 'antd/lib/form';
 import {
-    ModelCard,
+    SelectedModelCard,
     Output,
     SelectedModelDescription,
     Saliency,
@@ -69,7 +69,7 @@ export const Main = () => {
                     </Predict>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Model Card" key="Card">
-                    <ModelCard />
+                    <SelectedModelCard />
                 </Tabs.TabPane>
             </Tabs>
         </TaskDemo>
