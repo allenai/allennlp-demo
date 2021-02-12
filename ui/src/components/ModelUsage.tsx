@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Models } from '@allenai/tugboat/context';
 import { ModelCard } from '@allenai/tugboat/lib';
 import { MaybeLink } from '@allenai/tugboat/components';
-import { NoSelectedModelError } from '@allenai/tugboat/error';
 import { SyntaxHighlight } from '@allenai/tugboat/components/SyntaxHighlight';
 
 interface Props {
@@ -32,17 +30,19 @@ export const ModelUsage = (props: Props) => {
         -s /path/to/output`.trim();
     }
 
-    const models = React.useContext(Models);
-    if (!models.selectedModel) {
-        throw new NoSelectedModelError();
-    }
+    // In safari, the SyntaxHighlight component does not update. There is a bug in their code.
+    // This hack causes an explicit key change on prop change.
+    const [updateHighlightingHack, setUpdateHighlightingHack] = useState(0);
+    useEffect(() => {
+        setUpdateHighlightingHack(new Date().valueOf());
+    }, [props.bashCommand]);
 
     return (
         <>
             <h5>Installing AllenNLP</h5>
             {props.modelCard.install_instructions ? (
                 <UsageCode>
-                    <SyntaxHighlight language="bash">
+                    <SyntaxHighlight key={updateHighlightingHack} language="bash">
                         {props.modelCard.install_instructions}
                     </SyntaxHighlight>
                 </UsageCode>
@@ -53,14 +53,18 @@ export const ModelUsage = (props: Props) => {
             {props.bashNote ? <p>{props.bashNote}</p> : null}
             {props.bashCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="bash">{props.bashCommand}</SyntaxHighlight>
+                    <SyntaxHighlight key={updateHighlightingHack} language="bash">
+                        {props.bashCommand}
+                    </SyntaxHighlight>
                 </UsageCode>
             ) : null}
             <h6>As a library (Python):</h6>
             {props.pythonNote ? <p>{props.pythonNote}</p> : null}
             {props.pythonCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="python">{props.pythonCommand}</SyntaxHighlight>
+                    <SyntaxHighlight key={updateHighlightingHack} language="python">
+                        {props.pythonCommand}
+                    </SyntaxHighlight>
                 </UsageCode>
             ) : null}
 
@@ -79,7 +83,9 @@ export const ModelUsage = (props: Props) => {
             ) : null}
             {evaluationCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="python">{evaluationCommand}</SyntaxHighlight>
+                    <SyntaxHighlight key={updateHighlightingHack} language="python">
+                        {evaluationCommand}
+                    </SyntaxHighlight>
                 </UsageCode>
             ) : null}
             {!evaluationCommand && !props.modelCard.evaluation_dataset.notes ? (
@@ -101,7 +107,9 @@ export const ModelUsage = (props: Props) => {
             ) : null}
             {trainingCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="python">{trainingCommand}</SyntaxHighlight>
+                    <SyntaxHighlight key={updateHighlightingHack} language="python">
+                        {trainingCommand}
+                    </SyntaxHighlight>
                 </UsageCode>
             ) : null}
             {!trainingCommand && !props.modelCard.training_dataset.notes ? (
