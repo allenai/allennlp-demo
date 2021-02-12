@@ -322,7 +322,6 @@ if __name__ == "__main__":
 
     start_parser = subparsers.add_parser(
         "start",
-        aliases=["up"],
         help="Starts the specified services."
     )
     start_parser.add_argument(
@@ -334,7 +333,6 @@ if __name__ == "__main__":
 
     stop_parser = subparsers.add_parser(
         "stop",
-        aliases=["down"],
         help="Stops the specified service or services."
     )
     stop_parser.add_argument(
@@ -347,7 +345,6 @@ if __name__ == "__main__":
 
     restart_parser = subparsers.add_parser(
         "restart",
-        aliases=["hup"],
         help="Restarts the specified services."
     )
     restart_parser.add_argument(
@@ -359,7 +356,6 @@ if __name__ == "__main__":
 
     status_parser = subparsers.add_parser(
         "status",
-        aliases=["ps"],
         help="Displays some information about running services."
     )
     status_parser.add_argument(
@@ -372,18 +368,18 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.command == "start" or args.command == "up":
+    if args.command == "start":
         for svc in args.service:
             start(svc)
 
-    elif args.command == "stop" or args.command == "down":
+    elif args.command == "stop":
         if len(args.service) == 0:
             stop_all()
         else:
             for svc in args.service:
                 stop(svc)
 
-    elif args.command == "restart" or args.command == "hup":
+    elif args.command == "restart":
         for svc in args.service:
             restart(svc)
 
