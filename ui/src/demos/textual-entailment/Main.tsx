@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs } from 'antd';
 import {
     Field,
-    ModelCard,
+    SelectedModelCard,
     Output,
     Saliency,
     SelectExample,
@@ -86,7 +86,7 @@ export const Main = () => {
                     </Predict>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Model Card" key="Card">
-                    <ModelCard />
+                    <SelectedModelCard />
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Model Usage" key="Usage">
                     <Usage />
