@@ -130,7 +130,7 @@ class Status(Enum):
 
 class Container:
     """
-    A single, runnable part of the AllenNLP Demo that's managed by docker.
+    A single, runnable part of the AllenNLP Demo that's managed with Docker.
     """
     def __init__(self, cid: str):
         # The container id, which is unique ID for the thing within the scope of the demo.
@@ -711,4 +711,3 @@ if __name__ == "__main__":
         sys.exit(1)
 
     args.func(args)
-
