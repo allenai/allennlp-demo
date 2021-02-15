@@ -528,11 +528,13 @@ class Proxy(Container):
         """
         if self.status() != Status.UP:
             raise RuntimeError(f"The proxy isn't up.")
+        print("Updating proxy", end="...")
         subprocess.check_call(
             shlex.split(f"docker exec {self.fqn} nginx -s reload"),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
+        print("Success")
 
     def upstart(self) -> List[ProxyRoute]:
         """
@@ -542,14 +544,12 @@ class Proxy(Container):
 
         The name comes from the notion of an "upsert" in programs that use databases.
         """
-        print("Updating proxy", end="...")
         routes = self.routes()
         self.update_config(routes)
         if self.status() == Status.UP:
             self.reload()
         else:
             self.start()
-        print("Success")
         return routes
 
     def print_routes(self, routes: List[ProxyRoute]):
