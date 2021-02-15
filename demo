@@ -102,6 +102,23 @@ def create_network():
         stdout=subprocess.DEVNULL
     )
 
+def printFlush(*args, **kwargs):
+    """
+    Prints a message immediately to stdout that's meant to convey the start of an action.
+    Three trailing dots are appended as a suffix to indicate things are in flight.
+    """
+    kw={ "end":"...", **kwargs, "flush":True }
+    print(*args, **kw)
+
+def printLnFlush(*args, **kwargs):
+    """
+    Print a message immediately to stdout with a trailing newline. Use this for regular output,
+    or following a `printFlush()` call to indicate that the previously started action has
+    completed.
+    """
+    kw={ **kwargs, "flush":True }
+    print(*args, **kw)
+
 class NotImplementedError(Exception):
     def __init__(self):
         super().__init__("Method not implemented.")
@@ -154,12 +171,12 @@ class Container:
         """
         Builds the container.
         """
-        print(f"Building {self.cid}", end="...", flush=True)
+        printFlush(f"Building {self.cid}")
         bp = subprocess.run(shlex.split(self.build_cmd()), encoding="utf-8", capture_output=True)
         if bp.returncode != 0:
-            print("Error", flush=True)
+            printLnFlush("Error")
             raise BuildError(self.cid, bp.stdout, bp.stderr)
-        print("Success", flush=True)
+        printLnFlush("Success")
 
     def start_cmd(self) -> str:
         """
@@ -172,10 +189,10 @@ class Container:
         Starts the container.
         """
         if self.status() == Status.UP:
-            print(f"Container {self.cid} is already running.", flush=True)
+            printLnFlush(f"Container {self.cid} is already running.")
             return
 
-        print(f"Starting {self.cid}", end="...", flush=True)
+        printFlush(f"Starting {self.cid}")
         create_network()
 
         p = subprocess.Popen(
@@ -194,22 +211,22 @@ class Container:
         # If the service still isn't healthy, then it failed to start.
         if not self.is_healthy():
             stdout, stderr = p.communicate()
-            print("Error", flush=True)
+            printLnFlush("Error")
             raise StartError(self.cid, stdout, stderr)
 
-        print("Success", flush=True)
+        printLnFlush("Success")
 
     def stop(self):
         """
         Stops the container.
         """
         if self.status() == Status.DOWN:
-            print(f"Container {self.cid} isn't running.", flush=True)
+            printLnFlush(f"Container {self.cid} isn't running.")
             return
 
-        print(f"Stopping {self.cid}", end="...", flush=True)
+        printFlush(f"Stopping {self.cid}")
         subprocess.check_call(shlex.split(f"docker stop {self.fqn}"), stdout=subprocess.DEVNULL)
-        print("Success", flush=True)
+        printLnFlush("Success")
 
     def healthcheck_url(self) -> str:
         """
@@ -527,13 +544,13 @@ class Proxy(Container):
         """
         if self.status() != Status.UP:
             raise RuntimeError(f"The proxy isn't up.")
-        print("Updating proxy", end="...")
+        printFlush("Updating proxy")
         subprocess.check_call(
             shlex.split(f"docker exec {self.fqn} nginx -s reload"),
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-        print("Success")
+        printLnFlush("Success")
 
     def upstart(self) -> List[ProxyRoute]:
         """
@@ -567,20 +584,20 @@ class Proxy(Container):
                 continue
             non_local.append((f"http://localhost:8080{r.path}", r.upstream))
 
-        # This is a bit of code that figures out how to format things nicely given the length 
+        # This is a bit of code that figures out how to format things nicely given the length
         # of the things we're outputting.
         both = local + non_local
         url_spaces = max(len(u) for u, _ in both)
         target_spaces = max(len(t) for _, t in both)
         fmt = "{:<" + str(url_spaces) + "}\t{:<" + str(target_spaces) + "}"
 
-        print()
-        print(fmt.format("Path", "Target"), flush=True)
-        print(fmt.format("-" * url_spaces, "-" * target_spaces))
+        printLnFlush()
+        printLnFlush(fmt.format("Path", "Target"))
+        printLnFlush(fmt.format("-" * url_spaces, "-" * target_spaces))
         for u, t in local:
-            print(fmt.format(u, t), flush=True)
+            printLnFlush(fmt.format(u, t))
         for u, t in non_local:
-            print(fmt.format(u, t), flush=True)
+            printLnFlush(fmt.format(u, t))
 
 
 def filter_cids(cids: List[str]) -> List[str]:
@@ -598,7 +615,7 @@ def start(args: argparse.Namespace):
         for cid in filter_cids(args.service):
             container = Container.from_id(cid)
             if container.status() == Status.UP:
-                print(f"Container {cid} is already running.")
+                printLnFlush(f"Container {cid} is already running.")
                 continue
             container.build()
             container.start()
@@ -607,7 +624,7 @@ def start(args: argparse.Namespace):
     except (StartError, BuildError) as err:
         out = err.stdout + err.stderr
         for line in out.splitlines():
-            print(line)
+            printLnFlush(line)
         sys.exit(1)
 
 def stop(args: argparse.Namespace):
@@ -645,12 +662,12 @@ def status(args: argparse.Namespace):
     spaces = max(len(container.cid) for container, _ in containers)
     fmt = "{:<" + str(spaces) + "}\t{:<6}"
 
-    print(fmt.format("Container", "Status"), flush=True)
-    print(fmt.format("-" * spaces, "------"), flush=True)
+    printLnFlush(fmt.format("Container", "Status"))
+    printLnFlush(fmt.format("-" * spaces, "------"))
     for container, status in containers:
         if args.only is not None and args.only.lower() != status.value.lower():
             continue
-        print(fmt.format(container.cid, status.value), flush=True)
+        printLnFlush(fmt.format(container.cid, status.value))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
