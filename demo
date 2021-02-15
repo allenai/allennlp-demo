@@ -189,8 +189,7 @@ class Container:
         # If `p.poll()` returns a value, the process has terminated. We intentionally don't timeout,
         # we leave that to the user and Ctrl^C.
         while p.poll() is None and not self.is_healthy():
-            delay = 5
-            time.sleep(delay)
+            time.sleep(5)
 
         # If the service still isn't healthy, then it failed to start.
         if not self.is_healthy():
