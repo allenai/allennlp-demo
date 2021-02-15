@@ -47,10 +47,11 @@ from http.client import HTTPResponse, RemoteDisconnected
 
 # When we spawn docker things they need a name that prevents them from colliding with other
 # docker things. We use this prefix to ensure that.
-prefix = "allennlp-demo"
+prefix = "allennlp-demo-"
+api_prefix = f"{prefix}api-"
 
 # The name of the docker network used by this script.
-network = prefix
+network = "allennlp-demo"
 
 # The path to the directory this script lives in.
 root = Path(__file__).parent.resolve()
@@ -156,7 +157,7 @@ class Container:
         # The "fully qualified name". Each thing we run has to have a name that's unique and
         # doesn't collide with something else running within docker on the host machine, so
         # we append a human readable prefix before the cid.
-        self.fqn = f"{prefix}-{self.cid}"
+        self.fqn = f"{prefix}{self.cid}"
 
         # The docker tag to use when building images.
         self.tag = f"{self.fqn}:latest"
@@ -326,7 +327,7 @@ class APIEndpoint(Container):
     def __init__(self, cid: str):
         super().__init__(cid)
         self.path = paths.api_modules / cid
-        self.fqn = f"{prefix}-api-{self.cid}"
+        self.fqn = f"{api_prefix}{self.cid}"
 
     def model_id(self) -> str:
         """
@@ -387,7 +388,7 @@ class APIEndpoint(Container):
         Returns a list of all APIEndpoints used by the demo and their status.
         """
         out = subprocess.check_output(
-            shlex.split(f"docker ps --format {{{{.Names}}}} --filter name=^{prefix}-api"),
+            shlex.split(f"docker ps --format {{{{.Names}}}} --filter name=^{api_prefix}"),
             encoding="utf-8"
         )
         running = set(out.splitlines())
