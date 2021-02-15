@@ -655,12 +655,12 @@ def status(args: argparse.Namespace):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="demo",
-        description="a utility for running the AllenNLP demo locally"
+        description="A utility for running the AllenNLP demo locally."
     )
 
     subparsers = parser.add_subparsers(
         title="command",
-        description="The command to execute.",
+        description="the command to execute.",
         dest="command"
     )
 
