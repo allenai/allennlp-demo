@@ -53,14 +53,25 @@ export const ModelUsage = (props: Props) => {
             {props.bashNote ? <p>{props.bashNote}</p> : null}
             {props.bashCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="bash">{props.bashCommand}</SyntaxHighlight>
+                    {/* We use key below to fix an issue in Safari where the text that's rendered
+                        doesn't update without it. Using a key tells React to replace the DOM node
+                        entirely when the value changes, which prevents whatever fancy diff
+                        mechanism is causing the problem. See:
+                        https://github.com/allenai/allennlp-demo/issues/827 */}
+                    <SyntaxHighlight key={props.bashCommand} language="bash">
+                        {props.bashCommand}
+                    </SyntaxHighlight>
                 </UsageCode>
             ) : null}
             <h6>As a library (Python):</h6>
             {props.pythonNote ? <p>{props.pythonNote}</p> : null}
             {props.pythonCommand ? (
                 <UsageCode>
-                    <SyntaxHighlight language="python">{props.pythonCommand}</SyntaxHighlight>
+                    {/* Again we use key for the same purpose as above. We're not sure why
+                        we only have to do this for these two instances. */}
+                    <SyntaxHighlight key={props.pythonCommand} language="python">
+                        {props.pythonCommand}
+                    </SyntaxHighlight>
                 </UsageCode>
             ) : null}
 
