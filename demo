@@ -662,6 +662,32 @@ def stop(args: argparse.Namespace):
 
     proxy.print_routes(proxy.upstart())
 
+
+def restart(args: argparse.Namespace):
+    """
+    Restarts the specified containers by stopping them, building and then starting them.
+    """
+    try:
+        cids: List[str] = args.container
+
+        # If no ids are provided, restart all running containers
+        if len(cids) == 0:
+            cids = [ c.cid for c, s in Container.all() if s == Status.UP ]
+
+        for cid in filter_cids(cids):
+            container = Container.from_id(cid)
+            container.stop()
+            container.build()
+            container.start()
+        proxy = Proxy()
+        proxy.print_routes(proxy.upstart())
+    except (StartError, BuildError) as err:
+        out = err.stdout + err.stderr
+        for line in out.splitlines():
+            printLnFlush(line)
+        sys.exit(1)
+
+
 def status(args: argparse.Namespace):
     """
     The status command prints some output about the containers that make up the AllenNLP
@@ -725,6 +751,18 @@ if __name__ == "__main__":
         type=str
     )
     stop_parser.set_defaults(func=stop)
+
+    restart_parser = subparsers.add_parser(
+        "restart",
+        help="restarts a container"
+    )
+    restart_parser.add_argument(
+        "container",
+        nargs="*",
+        help="the container or containers to restart, if empy all running containers are restarted",
+        type=str
+    )
+    restart_parser.set_defaults(func=restart)
 
     status_parser = subparsers.add_parser(
         "status",
