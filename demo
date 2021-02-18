@@ -708,9 +708,8 @@ def status(args: argparse.Namespace):
     printLnFlush(fmt.format("Container", "Status"))
     printLnFlush(fmt.format("-" * spaces, "------"))
     for container, status in containers:
-        if status == Status.DOWN and not args.all:
-            continue
-        printLnFlush(fmt.format(container.cid, status.value))
+        if args.all or status == Status.UP:
+            printLnFlush(fmt.format(container.cid, status.value))
 
 def view_logs(args: argparse.Namespace):
     """
