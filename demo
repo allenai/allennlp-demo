@@ -3,7 +3,6 @@
 """
 This script is a WIP. There's still some things TODO:
 
-- Add a command for viewing and following logs for a container.
 - Do something smart for handling `/info` requests locally. Either we have a smart local
   proxy or we modify the UI to query info endpoint by endpoint. I lean towards the latter.
 - Test everything.
@@ -13,8 +12,8 @@ This script is a WIP. There's still some things TODO:
 """
 This is a script intended to make running a local version of the AllenNLP Demo easier.
 
-The AllenNLP demo is a series of individual services that together make the experience
-available at https://demo.allennlp.org. Weaving these services together locally to make
+The AllenNLP demo is a series of individual containers that together make the experience
+available at https://demo.allennlp.org. Weaving these containers together locally to make
 changes takes a surprising amount of acrobatics, so rather than expecting you to become
 an expert in docker, we wrap the necessary incanations in a series of simple commands
 provided by this script.
@@ -72,7 +71,7 @@ paths = Paths()
 
 class ContainerIds:
     """
-    This class provides access to the identifiers for a few services that are hardcoded.
+    This class provides access to the identifiers for a few containers that are hardcoded.
     """
     def __init__(self):
         self.proxy = "proxy"
@@ -209,7 +208,7 @@ class Container:
         while p.poll() is None and not self.is_healthy():
             time.sleep(5)
 
-        # If the service still isn't healthy, then it failed to start.
+        # If the container still isn't healthy, then it failed to start.
         if not self.is_healthy():
             stdout, stderr = p.communicate()
             printLnFlush("Error")
@@ -261,6 +260,14 @@ class Container:
         if len(out.strip()) > 0:
             return Status.UP
         return Status.DOWN
+
+    def logs(self, follow: bool = False):
+        """
+        Outputs logs from the container. If follow is true logs are continuously streamed to
+        stdout.
+        """
+        follow_arg = "--follow" if follow else ""
+        subprocess.check_call(shlex.split(f"docker logs {follow_arg} {self.fqn}"))
 
     @staticmethod
     def all() -> List[Tuple['Container', Status ]]:
@@ -421,7 +428,7 @@ class ProxyRoute:
 
 class Proxy(Container):
     """
-    The AllenNLP Demo, as noted, is a collection of individual services. This class captures
+    The AllenNLP Demo, as noted, is a collection of individual containers. This class captures
     the functionality required to run a local reverse proxy that routes requests as appropriate.
     In production we run something similar, but it's managed by the ReViz team as part of the
     Skiff cluster.
@@ -614,7 +621,7 @@ def start(args: argparse.Namespace):
     standing up a reverse proxy that sends requests to the right places.
     """
     try:
-        for cid in filter_cids(args.service):
+        for cid in filter_cids(args.container):
             container = Container.from_id(cid)
             if container.status() == Status.UP:
                 printLnFlush(f"Container {cid} is already running.")
@@ -634,9 +641,9 @@ def stop(args: argparse.Namespace):
     The stop command stops containers. If no specific container is provided, all running
     containers are stopped.
     """
-    cids: List[str] = args.service
+    cids: List[str] = args.container
 
-    # If no ids are provided, stop all running services
+    # If no ids are provided, stop all running containers
     if len(cids) == 0:
         cids = [ c.cid for c, s in Container.all() if s == Status.UP ]
 
@@ -671,6 +678,17 @@ def status(args: argparse.Namespace):
             continue
         printLnFlush(fmt.format(container.cid, status.value))
 
+def view_logs(args: argparse.Namespace):
+    """
+    Outputs logs for the specified container.
+    """
+    try:
+        container = Container.from_id(args.container)
+        container.logs(args.follow)
+    except KeyboardInterrupt as err:
+        # We don't need to complain when this occurs.
+        pass
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="demo",
@@ -685,12 +703,12 @@ if __name__ == "__main__":
 
     start_parser = subparsers.add_parser(
         "start",
-        help="starts a service"
+        help="starts a container"
     )
     start_parser.add_argument(
-        "service",
+        "container",
         nargs="*",
-        help="the service or services to start",
+        help="the container or containers to start",
         type=str,
         default=[container_ids.ui]
     )
@@ -698,28 +716,45 @@ if __name__ == "__main__":
 
     stop_parser = subparsers.add_parser(
         "stop",
-        help="stops a service"
+        help="stops a container"
     )
     stop_parser.add_argument(
-        "service",
+        "container",
         nargs="*",
-        help="the service or services to stop, if empty all running ones are stopped",
+        help="the container or containers to stop, if empty all running ones are stopped",
         type=str
     )
     stop_parser.set_defaults(func=stop)
 
     status_parser = subparsers.add_parser(
         "status",
-        help="displays services and their status"
+        help="displays containers and their status"
     )
     status_parser.add_argument(
         "--only",
         "-o",
         type=str,
         choices=["up", "down"],
-        help="only show services with this status"
+        help="only show containers with this status"
     )
     status_parser.set_defaults(func=status)
+
+    logs_parser = subparsers.add_parser(
+        "logs",
+        help="provides access to container logs"
+    )
+    logs_parser.add_argument(
+        "-f",
+        "--follow",
+        action="store_true",
+        help="don't stop at EOF"
+    )
+    logs_parser.add_argument(
+        "container",
+        help="the target container",
+        type=str
+    )
+    logs_parser.set_defaults(func=view_logs)
 
     args = parser.parse_args()
 
