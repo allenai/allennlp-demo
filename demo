@@ -674,11 +674,19 @@ def restart(args: argparse.Namespace):
         if len(cids) == 0:
             cids = [ c.cid for c, s in Container.all() if s == Status.UP ]
 
-        for cid in filter_cids(cids):
+        cids = filter_cids(cids)
+
+        # Stop everything first, so the user isn't confused by any interim, partial state.
+        for cid in cids:
             container = Container.from_id(cid)
             container.stop()
+
+        # Now build and start everything.
+        for cid in cids:
+            container = Container.from_id(cid)
             container.build()
             container.start()
+
         proxy = Proxy()
         proxy.print_routes(proxy.upstart())
     except (StartError, BuildError) as err:
