@@ -471,16 +471,25 @@ class Proxy(Container):
         """
         routes = []
         for endpoint, status in APIEndpoint.all():
-            if status != Status.UP:
-                continue
             urlpath = endpoint.urlpath()
-            routes.append(ProxyRoute(
-                urlpath,
-                f"http://{endpoint.fqn}:8000",
-                [f"rewrite {urlpath}(/(.*))? /$2 break"],
-                local_cid=endpoint.cid
-            ))
-        routes.append(ProxyRoute("/api", "https://demo.allennlp.org"))
+            is_local = status == Status.UP
+            if is_local:
+                routes.append(ProxyRoute(
+                    urlpath,
+                    f"http://{endpoint.fqn}:8000",
+                    [f"rewrite {urlpath}(/(.*))? /$2 break"],
+                    local_cid=endpoint.cid
+                ))
+            else:
+                # We can't use a single catch-all that forwards all requests to `/api`
+                # to production because some models share a prefix. For instance, `/api/bidaf`
+                # and `/api/bidaf-elmo` would both get sent to the same place if we made
+                # a rule matching the former. We could affix a trailing `/` to resolve this,
+                # but that makes NGINX behave in weird ways with respect to whether the 
+                # trailing URL path is included in the forwarded request or not. So we avoid
+                # all of these headaches by simply having a route for everything that goes
+                # where we want it to.
+                routes.append(ProxyRoute(urlpath, "https://demo.allennlp.org"))
         ui = UI()
         if ui.status() == Status.UP:
             routes.append(ProxyRoute(
@@ -592,6 +601,12 @@ class Proxy(Container):
                 local.append((f"http://localhost:8080{r.path}", f"Local ({r.local_cid})"))
                 continue
             non_local.append((f"http://localhost:8080{r.path}", r.upstream))
+
+        # Usually the user runs with 1 or 2 local routes, with everything else being pointed
+        # at production. This collapses things so that the non-local endpoints don't dominate
+        # the output.
+        if len(non_local) > 0:
+            non_local = [('http://localhost:8080/api/*', 'https://demo.allennlp.org')]
 
         # This is a bit of code that figures out how to format things nicely given the length
         # of the things we're outputting.
