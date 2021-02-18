@@ -759,7 +759,7 @@ if __name__ == "__main__":
     restart_parser.add_argument(
         "container",
         nargs="*",
-        help="the container or containers to restart, if empy all running containers are restarted",
+        help="the container or containers to restart, if empty all running containers are restarted",
         type=str
     )
     restart_parser.set_defaults(func=restart)
