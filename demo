@@ -708,7 +708,7 @@ def status(args: argparse.Namespace):
     printLnFlush(fmt.format("Container", "Status"))
     printLnFlush(fmt.format("-" * spaces, "------"))
     for container, status in containers:
-        if args.only is not None and args.only.lower() != status.value.lower():
+        if status == Status.DOWN and not args.all:
             continue
         printLnFlush(fmt.format(container.cid, status.value))
 
@@ -777,11 +777,10 @@ if __name__ == "__main__":
         help="displays containers and their status"
     )
     status_parser.add_argument(
-        "--only",
-        "-o",
-        type=str,
-        choices=["up", "down"],
-        help="only show containers with this status"
+        "--all",
+        "-a",
+        action="store_true",
+        help="show status for containers that are down too"
     )
     status_parser.set_defaults(func=status)
 
