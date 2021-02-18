@@ -35,7 +35,7 @@ export function getModelCardId(info: ModelInfo): string {
             return 've-vilbert';
         }
         case ModelId.ELMOSNLI: {
-            return 'elmo-snli';
+            return 'pair-classification-decomposable-attention-elmo';
         }
         default: {
             throw new NoModelCardIdError(info);
