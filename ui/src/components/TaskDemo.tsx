@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Model, Task, Example } from '@allenai/tugboat/lib';
 import { TaskDemo as TBTaskDemo, Promised } from '@allenai/tugboat/components';
 
@@ -48,8 +48,8 @@ interface Props {
 export const TaskDemo = ({ ids, taskId, children, examples }: Props) => {
     const fetchInfoForIncludedModels = () => Promise.all(ids.map(fetchModelInfo));
     return (
-        <Promised promise={fetchInfoForIncludedModels} deps={ids}>{
-            (infos) => {
+        <Promised promise={fetchInfoForIncludedModels} deps={ids}>
+            {(infos) => {
                 const tasksById = useContext(TaskCards);
                 if (!(taskId in tasksById)) {
                     throw new TaskNotFoundError(taskId);
@@ -78,8 +78,7 @@ export const TaskDemo = ({ ids, taskId, children, examples }: Props) => {
                         </RedirectLegacyPermalinks>
                     </ModelInfoList.Provider>
                 );
-
-            }
-        }</Promised>
+            }}
+        </Promised>
     );
 };

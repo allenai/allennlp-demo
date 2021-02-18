@@ -59,9 +59,7 @@ export const App = () => (
             <DemoLayout>
                 <Sentry.ErrorBoundary fallback={({ error }) => <ErrorBoundaryView error={error} />}>
                     <Promised
-                        promise={() =>
-                            Promise.all([fetchTaskCards(), fetchModelCards()])
-                        }
+                        promise={() => Promise.all([fetchTaskCards(), fetchModelCards()])}
                         deps={[]}>
                         {([tasks, cards]) => (
                             <ModelCards.Provider value={cards}>
