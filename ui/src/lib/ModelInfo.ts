@@ -5,7 +5,7 @@ export enum ModelId {
     CoreferenceResolution = 'coreference-resolution',
     DependencyParser = 'dependency-parser',
     ELMONER = 'named-entity-recognition',
-    ELMOSNLI = 'decomposable-attention-elmo',
+    ELMOSNLI = 'elmo-snli',
     FineGrainedNER = 'fine-grained-ner',
     GloveSentimentAnalysis = 'glove-sentiment-analysis',
     MaskedLM = 'masked-lm',

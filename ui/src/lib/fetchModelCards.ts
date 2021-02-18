@@ -34,6 +34,9 @@ export function getModelCardId(info: ModelInfo): string {
             // The api/info is missing a pretrained_model_id for vqa
             return 've-vilbert';
         }
+        case ModelId.ELMOSNLI: {
+            return 'pair-classification-decomposable-attention-elmo';
+        }
         default: {
             throw new NoModelCardIdError(info);
         }
