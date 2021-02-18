@@ -1,5 +1,5 @@
 {
-    "id": "pair-classification-decomposable-attention-elmo",
+    "id": "elmo-snli",
     "archive_file": "https://storage.googleapis.com/allennlp-public-models/esim-elmo-2020.11.11.tar.gz",
     "attackers": [],
     "interpreters": []
