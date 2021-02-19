@@ -331,7 +331,7 @@ class UI(Container):
                 --network {network}
                 --volume {paths.ui / "public"}:/ui/public
                 --volume {paths.ui / "src"}:/ui/src
-                --tty
+                {'--tty' if sys.stdout.isatty() else ''}
                 {self.tag}
         """
 
@@ -339,7 +339,7 @@ class UI(Container):
         return "http://localhost:3000"
 
     def exec_cmd(self) -> str:
-        return f"docker exec --tty {self.fqn}"
+        return f"docker exec {'--tty' if sys.stdout.isatty() else ''} {self.fqn}"
 
 class IT(Container):
     """
@@ -363,13 +363,12 @@ class IT(Container):
                 --name {self.fqn}
                 --network {network}
                 --volume {paths.it / "cypress"}:/it/cypress
-                --tty
+                {'--tty' if sys.stdout.isatty() else ''}
                 {self.tag}
         """
 
     def exec_cmd(self) -> str:
-        return f"docker exec --tty {self.fqn}"
-
+        return f"docker exec {'--tty' if sys.stdout.isatty() else ''} {self.fqn}"
 
     def healthcheck_url(self) -> str:
         return ""
