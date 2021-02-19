@@ -21,7 +21,7 @@ jobs:
       - name: Start application
         run: ./demo start
       - name: Lint UI
-        run: ./demo ui yarn lint
+        run: ./demo run ui yarn lint
       - name: Run tests
         run: ./demo it
 
