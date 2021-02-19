@@ -484,7 +484,7 @@ class Proxy(Container):
                 # We can't use a single catch-all that forwards all requests to `/api`
                 # to production because some models share a prefix. For instance, `/api/bidaf`
                 # and `/api/bidaf-elmo` would both get sent to the same place if we made
-                # a rule matching the former. We could affix a trailing `/` to resolve this,
+                # a rule matching `/api`. We could affix a trailing `/` to resolve this,
                 # but that makes NGINX behave in weird ways with respect to whether the 
                 # trailing URL path is included in the forwarded request or not. So we avoid
                 # all of these headaches by simply having a route for everything that goes
