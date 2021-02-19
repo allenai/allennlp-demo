@@ -3,8 +3,6 @@
 """
 This script is a WIP. There's still some things TODO:
 
-- Do something smart for handling `/info` requests locally. Either we have a smart local
-  proxy or we modify the UI to query info endpoint by endpoint. I lean towards the latter.
 - Test everything.
 - Update documentation and remove things we don't need anymore.
 """
