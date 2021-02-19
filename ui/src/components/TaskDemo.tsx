@@ -46,17 +46,18 @@ interface Props {
  * of a model (which is queried via API routes) to the shape expected by the tugboat module.
  */
 export const TaskDemo = ({ ids, taskId, children, examples }: Props) => {
+    const tasksById = useContext(TaskCards);
+    if (!(taskId in tasksById)) {
+        throw new TaskNotFoundError(taskId);
+    }
+    const task = tasksById[taskId];
+
+    const cardsById = useContext(ModelCards);
+
     const fetchInfoForIncludedModels = () => Promise.all(ids.map(fetchModelInfo));
     return (
         <Promised promise={fetchInfoForIncludedModels} deps={ids}>
             {(infos) => {
-                const tasksById = useContext(TaskCards);
-                if (!(taskId in tasksById)) {
-                    throw new TaskNotFoundError(taskId);
-                }
-                const task = tasksById[taskId];
-
-                const cardsById = useContext(ModelCards);
                 const models: Model[] = [];
                 for (const info of infos) {
                     const modelCardId = getModelCardId(info);
