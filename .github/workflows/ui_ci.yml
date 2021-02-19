@@ -17,11 +17,14 @@ jobs:
     name: UI Checks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Start application
-        run: ./demo start
-      - name: Lint UI
-        run: ./demo run ui yarn lint
-      - name: Run tests
-        run: ./demo it
-
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Start application
+      run: ./demo start
+    - name: Lint UI
+      run: ./demo run ui yarn lint
+    - name: Run tests
+      run: ./demo it
