@@ -21,12 +21,10 @@ yarn test
 
 ## Running the Tests
 
-To run the tests you'll need to run the application locally. Usually when making UI changes
-you'll be running the application in the UI only mode, where most of the API requests are 
-pointed to the live version of the site:
+To run the tests you'll need to run the application locally:
 
 ```
-dc -f docker-compose.ui-only.yaml up --build
+./demo start
 ```
 
 Once the application is up and running, you can open the Cypress application like so:

@@ -9,7 +9,7 @@ on:
   pull_request:
     branches:
     - master
-    paths: 
+    paths:
     - 'ui/**'
     - 'it/**'
 jobs:
@@ -19,14 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Start application
-        run: |
-          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml up --build --detach
+        run: ./demo start
       - name: Lint UI
-        run: |
-          docker-compose -f docker-compose.ui-only.yaml exec -T ui yarn lint
-      - name: Wait for startup
-        run: |
-          curl --retry-connrefused --retry-delay 5 --retry 240 -f http://localhost:8080
+        run: ./demo ui yarn lint
       - name: Run tests
-        run: |
-          docker-compose -f docker-compose.ui-only.yaml -f docker-compose.it.yaml exec -T it yarn test:it
+        run: ./demo it
+

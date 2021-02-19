@@ -1,4 +1,4 @@
 {
-    "baseUrl": "http://nginx",
+    "baseUrl": "http://allennlp-demo-proxy:8080",
     "video": false
 }
