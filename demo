@@ -205,14 +205,19 @@ class Container:
 
         printLnFlush("Success")
 
+
+    def exec_cmd(self) -> str:
+        """
+        Returns the command used to execute arbitrary commands in the container.
+        """
+        return f"docker exec {self.fqn}"
+
     def run(self, entrypoint: str, *args: str):
         """
         Runs the provided command in the container.
         """
         if self.status() == Status.UP:
-            cmd = shlex.split(f"""
-                docker exec -it {self.fqn} {entrypoint}
-            """)
+            cmd = shlex.split(f"{self.exec_cmd()} {entrypoint}")
         else:
             cmd = shlex.split(self.start_cmd())
             cmd.append("--entrypoint")
@@ -333,6 +338,9 @@ class UI(Container):
     def healthcheck_url(self) -> str:
         return "http://localhost:3000"
 
+    def exec_cmd(self) -> str:
+        return f"docker exec --tty {self.fqn}"
+
 class IT(Container):
     """
     A special container that's used to run integration tests.
@@ -358,6 +366,10 @@ class IT(Container):
                 --tty
                 {self.tag}
         """
+
+    def exec_cmd(self) -> str:
+        return f"docker exec --tty {self.fqn}"
+
 
     def healthcheck_url(self) -> str:
         return ""
@@ -772,6 +784,9 @@ def status(args: argparse.Namespace):
     for container, status in containers:
         if args.all or status == Status.UP:
             printLnFlush(fmt.format(container.cid, status.value))
+
+    proxy = Proxy()
+    proxy.print_routes(proxy.routes())
 
 def view_logs(args: argparse.Namespace):
     """
