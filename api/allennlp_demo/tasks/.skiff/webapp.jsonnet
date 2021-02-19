@@ -6,6 +6,7 @@
  */
 
 local common = import '../../common/.skiff/common.libsonnet';
+local config = import '../model.json';
 
 function(image, cause, sha, env, branch, repo, buildId)
     // This tells Kubernetes what resources we need to run.
@@ -14,5 +15,5 @@ function(image, cause, sha, env, branch, repo, buildId)
     local cpu = '50m';
     local memory = '200Mi';
     local startupTime = 30;
-    common.APIEndpoint('tasks', image, cause, sha, cpu, memory, env, branch, repo, buildId,
+    common.APIEndpoint(config.id, image, cause, sha, cpu, memory, env, branch, repo, buildId,
                        startupTime)
