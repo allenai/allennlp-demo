@@ -534,7 +534,7 @@ class Proxy(Container):
 
                     # Add a header that clients can use to determine where a response is
                     # coming from.
-                    add_header X-Served-By {route.upstream};
+                    add_header Via {route.upstream};
 
                     {extra}
                 }}
