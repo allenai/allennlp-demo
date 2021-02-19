@@ -529,6 +529,11 @@ class Proxy(Container):
                     {rewrites}
                     proxy_pass {route.upstream};
                     proxy_set_header X-Forwarded-For $remote_addr;
+
+                    # Add a header that clients can use to determine where a response is
+                    # coming from.
+                    add_header Via {route.upstream};
+
                     {extra}
                 }}
             """)
