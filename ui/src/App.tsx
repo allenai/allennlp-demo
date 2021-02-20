@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import * as Sentry from '@sentry/react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
