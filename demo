@@ -1,13 +1,6 @@
 #!/usr/bin/env python3
 
 """
-This script is a WIP. There's still some things TODO:
-
-- Test everything.
-- Update documentation and remove things we don't need anymore.
-"""
-
-"""
 This is a script intended to make running a local version of the AllenNLP Demo easier.
 
 The AllenNLP demo is a series of individual containers that together make the experience
@@ -63,6 +56,7 @@ class Paths:
         self.api = self.root / "api"
         self.api_modules = self.api / "allennlp_demo"
         self.ui = self.root / "ui"
+        self.it = self.root / "it"
         self.run = self.root / "run"
 
 paths = Paths()
@@ -74,6 +68,7 @@ class ContainerIds:
     def __init__(self):
         self.proxy = "proxy"
         self.ui = "ui"
+        self.it = "it"
 
 container_ids = ContainerIds()
 
@@ -116,10 +111,6 @@ def printLnFlush(*args, **kwargs):
     """
     kw={ **kwargs, "flush":True }
     print(*args, **kw)
-
-class NotImplementedError(Exception):
-    def __init__(self):
-        super().__init__("Method not implemented.")
 
 class ContainerError(Exception):
     def __init__(self, cid: str, msg: str, stdout: str, stderr: str):
@@ -214,6 +205,27 @@ class Container:
 
         printLnFlush("Success")
 
+
+    def exec_cmd(self) -> str:
+        """
+        Returns the command used to execute arbitrary commands in the container.
+        """
+        return f"docker exec {self.fqn}"
+
+    def run(self, entrypoint: str, *args: str):
+        """
+        Runs the provided command in the container.
+        """
+        if self.status() == Status.UP:
+            cmd = shlex.split(f"{self.exec_cmd()} {entrypoint}")
+        else:
+            cmd = shlex.split(self.start_cmd())
+            cmd.append("--entrypoint")
+            cmd.append(entrypoint)
+        for a in args:
+            cmd.append(a)
+        subprocess.check_call(cmd)
+
     def stop(self):
         """
         Stops the container.
@@ -291,6 +303,8 @@ class Container:
             return Proxy()
         if cid == container_ids.ui:
             return UI()
+        if cid == container_ids.it:
+            return IT()
         return APIEndpoint(cid)
 
 class UI(Container):
@@ -317,12 +331,53 @@ class UI(Container):
                 --network {network}
                 --volume {paths.ui / "public"}:/ui/public
                 --volume {paths.ui / "src"}:/ui/src
-                --tty
+                {'--tty' if sys.stdout.isatty() else ''}
                 {self.tag}
         """
 
     def healthcheck_url(self) -> str:
         return "http://localhost:3000"
+
+    def exec_cmd(self) -> str:
+        return f"docker exec {'--tty' if sys.stdout.isatty() else ''} {self.fqn}"
+
+class IT(Container):
+    """
+    A special container that's used to run integration tests.
+    """
+    def __init__(self):
+        super().__init__(container_ids.it)
+
+    def build_cmd(self) -> str:
+        return f"""
+            docker build
+                --file {paths.it / "Dockerfile"}
+                --tag {self.tag}
+                {paths.it}
+        """
+
+    def start_cmd(self) -> str:
+        return f"""
+            docker run
+                --rm
+                --name {self.fqn}
+                --network {network}
+                --volume {paths.it / "cypress"}:/it/cypress
+                {'--tty' if sys.stdout.isatty() else ''}
+                {self.tag}
+        """
+
+    def exec_cmd(self) -> str:
+        return f"docker exec {'--tty' if sys.stdout.isatty() else ''} {self.fqn}"
+
+    def healthcheck_url(self) -> str:
+        return ""
+
+    def is_healthy(self) -> bool:
+        return True
+
+    def start(self):
+        raise NotImplementedError(f"{self.cid} can't be started. Use './demo it' instead.")
 
 class APIEndpoint(Container):
     """
@@ -433,8 +488,8 @@ class Proxy(Container):
     """
     def __init__(self):
         super().__init__(container_ids.proxy)
-        self.run = paths.run / "proxy"
-        self.run.mkdir(parents=True, exist_ok=True)
+        self.conf_dir = paths.run / "proxy"
+        self.conf_dir.mkdir(parents=True, exist_ok=True)
 
     def build(self):
         return
@@ -446,7 +501,7 @@ class Proxy(Container):
                 --name {self.fqn}
                 --network {network}
                 --publish 8080:8080
-                --volume {self.run}:/etc/nginx/conf.d
+                --volume {self.conf_dir}:/etc/nginx/conf.d
                 nginx:1.17.10
         """
 
@@ -483,7 +538,7 @@ class Proxy(Container):
                 # to production because some models share a prefix. For instance, `/api/bidaf`
                 # and `/api/bidaf-elmo` would both get sent to the same place if we made
                 # a rule matching `/api`. We could affix a trailing `/` to resolve this,
-                # but that makes NGINX behave in weird ways with respect to whether the 
+                # but that makes NGINX behave in weird ways with respect to whether the
                 # trailing URL path is included in the forwarded request or not. So we avoid
                 # all of these headaches by simply having a route for everything that goes
                 # where we want it to.
@@ -556,7 +611,7 @@ class Proxy(Container):
         """
         Updates the NGINX config on disk to reflect the provided list of routes.
         """
-        with open(self.run / "default.conf", "w") as fh:
+        with open(self.conf_dir / "default.conf", "w") as fh:
             fh.write(self.config(routes))
 
     def reload(self):
@@ -729,6 +784,9 @@ def status(args: argparse.Namespace):
         if args.all or status == Status.UP:
             printLnFlush(fmt.format(container.cid, status.value))
 
+    proxy = Proxy()
+    proxy.print_routes(proxy.routes())
+
 def view_logs(args: argparse.Namespace):
     """
     Outputs logs for the specified container.
@@ -738,7 +796,22 @@ def view_logs(args: argparse.Namespace):
         container.logs(args.follow)
     except KeyboardInterrupt as err:
         # We don't need to complain when this occurs.
-        pass
+        return
+
+def run_integration_tests(args: argparse.Namespace):
+    """
+    Runs the integration tests.
+    """
+    it = IT()
+    it.build()
+    it.run("yarn", "test:it")
+
+def run(args: argparse.Namespace):
+    """
+    Run a command in a container.
+    """
+    container = Container.from_id(args.container)
+    container.run(args.entrypoint, *args.args)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -817,6 +890,34 @@ if __name__ == "__main__":
         type=str
     )
     logs_parser.set_defaults(func=view_logs)
+
+    it_parser = subparsers.add_parser(
+        "it",
+        help="run integration tests"
+    )
+    it_parser.set_defaults(func=run_integration_tests)
+
+    run_parser = subparsers.add_parser(
+        "run",
+        help="run a command in a container"
+    )
+    run_parser.add_argument(
+        "container",
+        help="the container where you'd like to run the command",
+        type=str
+    )
+    run_parser.add_argument(
+        "entrypoint",
+        type=str,
+        help="the entrypoint to use"
+    )
+    run_parser.add_argument(
+        "args",
+        nargs="*",
+        type=str,
+        help="the command arguments"
+    )
+    run_parser.set_defaults(func=run)
 
     args = parser.parse_args()
 
