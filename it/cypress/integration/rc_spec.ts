@@ -7,7 +7,7 @@ describe('Reading Comprehension', () => {
     });
 
     it('loads without an error', () => {
-        cy.contains('Reading ComprehenZion');
+        cy.contains('Reading Comprehension');
         cy.contains('Reading comprehension is the task of answering questions about a passage of');
         cy.contains('ELMo-BiDAF');
         cy.contains('This is an implementation of the BiDAF model with ELMo embeddings. The');
