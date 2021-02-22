@@ -27,7 +27,7 @@ stream the logs from the UI container to your terminal, so you can see errors wh
 occur:
 
 ```
-docker logs --follow ui
+./demo logs --follow ui
 ```
 
 By default the demo will send requests to API endpoints running in production. If you'd like to 
