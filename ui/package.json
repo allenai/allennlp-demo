@@ -10,7 +10,7 @@
     "@ant-design/icons": "^4.4.0",
     "@babel/core": "^7.12.13",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
-    "@babel/preset-env": "^7.12.13",
+    "@babel/preset-env": "^7.12.17",
     "@babel/preset-react": "^7.12.13",
     "@sentry/react": "^6.1.0",
     "@types/node": "^14.14.25",
