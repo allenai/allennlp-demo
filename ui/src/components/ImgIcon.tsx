@@ -1,5 +1,5 @@
 import React from 'react';
-import AntdIcon from '@ant-design/icons';
+import AntdIcon from '@ant-design/icons/lib';
 
 interface ImgIconProps {
     src: string;

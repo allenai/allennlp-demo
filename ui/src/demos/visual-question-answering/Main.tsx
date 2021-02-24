@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useContext } from 'react';
-import { Tabs } from 'antd';
+import Tabs from 'antd/es/tabs';
 import {
     Field,
     Fields,

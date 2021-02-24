@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect, useRouteMatch } from 'react-router-dom';
-import { notification, Space } from 'antd';
+import notification from 'antd/es/notification';
+import Space from 'antd/es/space';
 
 interface Props {
     modelIds: string[];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table } from 'antd';
+import Table from 'antd/es/table';
 import { Output, Spark, SparkEnvelope, SparkValue } from '@allenai/tugboat/components';
 import { Model } from '@allenai/tugboat/lib';
 
