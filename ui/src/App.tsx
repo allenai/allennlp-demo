@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import * as Sentry from '@sentry/react';
+import { init, ErrorBoundary } from '@sentry/react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/components';
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
@@ -17,7 +17,7 @@ import '@allenai/varnish/dist/theme.css';
 
 // Sentry is a tool that captures JavaScript errors at runtime and aggregates them.
 // If you need access, ask someone on the AllenNLP team.
-Sentry.init({
+init({
     dsn: 'https://59686a41b9664bf2a8bbc51a602428c2@o226626.ingest.sentry.io/5599301',
     autoSessionTracking: true,
     environment: process.env.SENTRY_ENVIRONMENT || 'dev',
@@ -57,7 +57,7 @@ export const App = () => (
         <Router>
             <ScrollToTopOnPageChange />
             <DemoLayout>
-                <Sentry.ErrorBoundary fallback={({ error }) => <ErrorBoundaryView error={error} />}>
+                <ErrorBoundary fallback={({ error }) => <ErrorBoundaryView error={error} />}>
                     <Promised
                         promise={() => Promise.all([fetchTaskCards(), fetchModelCards()])}
                         deps={[]}>
@@ -72,12 +72,12 @@ export const App = () => (
                                         />
                                         {demos.all().map(({ config, Component }) => (
                                             <Route key={config.path} path={config.path}>
-                                                <Sentry.ErrorBoundary
+                                                <ErrorBoundary
                                                     fallback={({ error }) => (
                                                         <ErrorBoundaryView error={error} />
                                                     )}>
                                                     <Component />
-                                                </Sentry.ErrorBoundary>
+                                                </ErrorBoundary>
                                             </Route>
                                         ))}
                                     </Switch>
@@ -85,7 +85,7 @@ export const App = () => (
                             </ModelCards.Provider>
                         )}
                     </Promised>
-                </Sentry.ErrorBoundary>
+                </ErrorBoundary>
             </DemoLayout>
         </Router>
     </VarnishApp>

@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@allenai/eslint-config-varnish/-/eslint-config-varnish-1.0.3.tgz#943da78f3e681f32331c78d1a826400aa6731a6a"
   integrity sha512-/dnXAKJOwhbQbTp17CdeXyRiCUriy576cLGcE3zJmU5R+U5kNDycWDnMJttnrb+/cpKy4Ji4yvzDiISKk3TscA==
 
-"@allenai/tugboat@^1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@allenai/tugboat/-/tugboat-1.0.6.tgz#1961fd8898e9d159eca2bc6bb4bea4e0396edef0"
-  integrity sha512-dwPV3CW5tDgElSEd4Bb99NNoqbp3T+rb23SdC/RAk2qH3ZGzD26SZ/ktRzgor0kBUwvKSHzuGyk0Pd+dMJ02KA==
+"@allenai/tugboat@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@allenai/tugboat/-/tugboat-1.0.7.tgz#a5a2c3fa9b9e79c7d86b0bbd590ae247af1426f0"
+  integrity sha512-99L0vL0SQ32HnmWu4JMzZkKVe6zZKs7+l7mP6hff7H/lt9XB/n7og63aNJL7FWorgMn/Ohb83Gqhs+Gmb0pGiQ==
   dependencies:
     colormap "^2.3.1"
     commonmark "^0.29.2"
@@ -24,10 +24,10 @@
   resolved "https://registry.yarnpkg.com/@allenai/varnish-react-router/-/varnish-react-router-2.0.2.tgz#a2ad3c106b78dc36ebe964dd2df1ab3a4ea54564"
   integrity sha512-gmRymndavTCj/jKEPDjGRoI2Lax52cO4mH4VZ1O7LpMShiYAhPLESGK9JcjkkgdaNp2XNhrQ2prfkvd5w/PY2w==
 
-"@allenai/varnish@^2.0.15":
-  version "2.0.15"
-  resolved "https://registry.yarnpkg.com/@allenai/varnish/-/varnish-2.0.15.tgz#46f9b0653e9d0fd810a2cd012d2a69e670580940"
-  integrity sha512-FjPtn96682d8OVpK2y2tXvtbfR5Nh8wgV66F0OAkBTpQt8BobbDfgSL0bXLZZLKbVUuwcB6we3wZXWmslNoD4A==
+"@allenai/varnish@^2.0.16":
+  version "2.0.16"
+  resolved "https://registry.yarnpkg.com/@allenai/varnish/-/varnish-2.0.16.tgz#2b2fa968b5dc09cd4455ffda307bdbdacbcbf19b"
+  integrity sha512-odGZk3VNJoTHNiODiKkvi8pwdFiIuzQYpqlZVBKcukqkgOWlCKQW8rhYsgAeYIHmOozUpNAoViPgUNVxk+bESQ==
 
 "@ant-design/colors@^5.0.0":
   version "5.0.1"
@@ -1320,13 +1320,6 @@
   integrity sha512-US6C0rq2Wt/7uje1roqO0R++Sr0jqplKaBChDY5sNg5k7GC/79YFK0ZsLEdemqUjW05wq1Y/9YYEUgfNZ8TlvA==
   dependencies:
     "@types/history" "*"
-    "@types/react" "*"
-
-"@types/react-syntax-highlighter@^13.5.0":
-  version "13.5.0"
-  resolved "https://registry.yarnpkg.com/@types/react-syntax-highlighter/-/react-syntax-highlighter-13.5.0.tgz#b93c05f28844e7c35a5f1d38d3819099ffa82fbd"
-  integrity sha512-U7DrUaQRv3b+fsbPXMf7vC21K7DOkdNCQtp14Wm0Z5YLI9fPhndN4YTZ9eVXwmAivIg6lZ3YBVtGYucAS3H76A==
-  dependencies:
     "@types/react" "*"
 
 "@types/react@*":
