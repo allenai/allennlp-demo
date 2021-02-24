@@ -1,6 +1,6 @@
 import React from 'react';
-import { Tabs } from 'antd';
-import { RuleObject } from 'antd/lib/form';
+import Tabs from 'antd/es/tabs';
+import { RuleObject } from 'antd/es/form';
 import {
     SelectedModelCard,
     Output,

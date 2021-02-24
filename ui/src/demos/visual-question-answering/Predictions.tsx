@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Table } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
+import Table, { ColumnsType } from 'antd/es/table';
 import { BasicFilterDropdown, FilterIcon } from '@allenai/varnish/components';
 import { Output, Spark, SparkEnvelope, SparkValue } from '@allenai/tugboat/components';
 import { Model } from '@allenai/tugboat/lib';

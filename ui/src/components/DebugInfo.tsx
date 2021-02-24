@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Collapse, Popover } from 'antd';
+import Popover from 'antd/es/popover';
+import Collapse from 'antd/es/collapse';
 import { SyntaxHighlight, Output, HelpContent, PopoverTarget } from '@allenai/tugboat/components';
 
 export interface Props {

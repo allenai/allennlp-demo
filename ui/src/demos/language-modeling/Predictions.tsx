@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { Table } from 'antd';
 import { Output, Spark, SparkEnvelope, SparkValue } from '@allenai/tugboat/components';
 import { Form } from '@allenai/tugboat/context';
 import { Model } from '@allenai/tugboat/lib';
+import Table from 'antd/es/table';
 
 import { DebugInfo } from '../../components';
 import { Input, Prediction } from './types';

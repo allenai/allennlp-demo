@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collapse } from 'antd';
+import Collapse from 'antd/es/collapse';
 import { Output } from '@allenai/tugboat/components';
 import { Model } from '@allenai/tugboat/lib';
 
