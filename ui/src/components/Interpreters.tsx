@@ -8,6 +8,8 @@ import { NoSelectedModelError } from '@allenai/tugboat/error';
 import { Interpret } from '.';
 import { ModelInfoList, findModelInfo } from '../context';
 import { InterpreterId } from '../lib';
+import { CollapsePanel } from './CollapsePanel';
+
 interface Props<I, O> {
     input: I;
     children: (output: O) => React.ReactNode;
@@ -53,7 +55,7 @@ export const Interpreters = <I, O>({ input, children }: Props<I, O>) => {
             }>
             <Collapse>
                 {supportedInterpreters.has(InterpreterId.SimpleGradient) ? (
-                    <Collapse.Panel
+                    <CollapsePanel
                         key={InterpreterId.SimpleGradient}
                         header="Simple Gradient Visualization">
                         <Interpret<I, O>
@@ -73,10 +75,10 @@ export const Interpreters = <I, O>({ input, children }: Props<I, O>) => {
                             }>
                             {(output) => children(output)}
                         </Interpret>
-                    </Collapse.Panel>
+                    </CollapsePanel>
                 ) : null}
                 {supportedInterpreters.has(InterpreterId.IntegratedGradient) ? (
-                    <Collapse.Panel
+                    <CollapsePanel
                         key={InterpreterId.IntegratedGradient}
                         header="Integrated Gradient Visualization">
                         <Interpret<I, O>
@@ -96,10 +98,10 @@ export const Interpreters = <I, O>({ input, children }: Props<I, O>) => {
                             }>
                             {(output) => children(output)}
                         </Interpret>
-                    </Collapse.Panel>
+                    </CollapsePanel>
                 ) : null}
                 {supportedInterpreters.has(InterpreterId.SmoothGradient) ? (
-                    <Collapse.Panel
+                    <CollapsePanel
                         key={InterpreterId.SmoothGradient}
                         header="Smooth Gradient Visualization">
                         <Interpret<I, O>
@@ -119,7 +121,7 @@ export const Interpreters = <I, O>({ input, children }: Props<I, O>) => {
                             }>
                             {(output) => children(output)}
                         </Interpret>
-                    </Collapse.Panel>
+                    </CollapsePanel>
                 ) : null}
             </Collapse>
         </Output.Section>
