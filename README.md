@@ -3,77 +3,56 @@
     <hr/>
 </div>
 
-This repository contains the code for the [AllenNLP demo](https://demo.allennlp.org).
+This repository contains the code for the [AllenNLP demo](https://demo.allennlp.org), a web 
+application that demonstrates the capabilities of [AllenNLP](https://github.com/allenai/allennlp),
+an open source library for NLP research.
 
-We're actively refactoring some bits and pieces of the codebase, you can expect
-better documentation to land in the near future.
+## Getting Started
 
-For more information see the [AllenNLP project](https://github.com/allenai/allennlp).
+First, make sure you have [Docker](https://www.docker.com/) and [Python 3](https://www.python.org/) 
+installed. After that's complete, you can start things by running this command:
 
-## Prerequisites
+```
+./demo start
+```
 
-You'll need [Docker](https://www.docker.com/) installed on your local machine.
+This will start a local instance of the UI and a reverse proxy that forwards API requests
+to [production](https://demo.allennlp.org). After this command succeeds, you should be able to
+open [http://localhost:8080](http://localhost:8080) in a browser and see a fully functional 
+version of the demo.
 
-## Running a Local Environment
+If you're only working on the UI, you don't need to do anything else. As you make changes
+to the code they'll be automatically applied. While you're working you'll probably want to
+stream the logs from the UI container to your terminal, so you can see errors when they
+occur:
 
-The AllenNLP demo at a high level is composed of two components:
+```
+./demo logs --follow ui
+```
 
-1. A JavaScript application for rendering the user-interface. The code for this can be found
-   in `ui/`.
-2. A series of Python applications that each provide a small HTTP API endpoint for doing interesting
-   things with a single model. The code for this can be found in `api/`.
+By default the demo will send requests to API endpoints running in production. If you'd like to 
+run an endpoint locally, just run the start command with the ID of the endpoint:
 
-There's three ways to run things locally:
+```
+./demo start bidaf
+```
 
-1. If you're working on a single model endpoint consult the
-   [README in the api directory](./api/README.md) for more specific instructions.
+This will build and start that endpoint and update the reverse proxy configuration so that
+requests for that model are routed to your local machine instead of the production site. 
 
-2. If you're only working on the user-interface, you can start things up by running:
+Change to the Python code related to that endpoint will automatically be applied. Again, you'll 
+probably want to view the logs output by the container while working on it, which you can do like 
+so:
 
-    ```
-    docker-compose -f docker-compose.ui-only.yaml up --build
-    ```
+```
+./demo logs --follow bidaf
+```
 
-    or use the script:
+The `./demo` command provides a bunch of other useful commands. You can see full usage information
+like so:
 
-    ```
-    ./bin/ui
-    ```
+```
+./demo --help
+```
 
-   Once that's complete you'll be able to access your local version by opening
-   [http://localhost:8080](http://localhost:8080) in a browser. Changes to the code should
-   be automatically applied.
-
-   Note: To clean up docker containers, be sure to use:
-
-   ```
-   docker-compose -f docker-compose.ui-only.yaml down
-   ```
-
-   or
-
-   ```
-   ./bin/ui down
-   ```
-
-3. If you'd like to run an end to end environment that includes the user-interface and a model
-   endpoint, you can do so by running:
-
-    ```bash
-    MODEL=bidaf_elmo docker-compose up --build
-    ```
-
-   The `MODEL` environment variable specifies which model in `api/` to run locally. The name should
-   match the name of the directory in `api/allenlp_demo`. If the model has a custom `Dockerfile`,
-   set the `MODEL_DOCKERFILE` environment variable to the path to that file:
-
-   ```bash
-   MODEL=masked_lm MODEL_DOCKERFILE=allennlp_demo/masked_lm/Dockerfile docker-compose up --build
-   ```
-
-   Once everything's started open [http://localhost:8080](http://localhost:8080) in the
-   browser of your choice.
-
-   Code changes will be automatically applied, while changes to backend or frontend dependencies
-   require rerunning `docker-compose`.
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Collapse, Popover } from 'antd';
+import Popover from 'antd/es/popover';
+import Collapse from 'antd/es/collapse';
 import { Output, HelpContent, PopoverTarget } from '@allenai/tugboat/components';
 import { Models } from '@allenai/tugboat/context';
 import { NoSelectedModelError } from '@allenai/tugboat/error';

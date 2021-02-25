@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Menu as AntdMenu } from 'antd';
+import AntdMenu from 'antd/es/menu';
 import { textStyles, LeftSider } from '@allenai/varnish/components';
 import { Link } from '@allenai/varnish-react-router';
 import { DemoGroup, Demo } from '@allenai/tugboat/lib';

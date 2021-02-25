@@ -1,0 +1,929 @@
+#!/usr/bin/env python3
+
+"""
+This is a script intended to make running a local version of the AllenNLP Demo easier.
+
+The AllenNLP demo is a series of individual containers that together make the experience
+available at https://demo.allennlp.org. Weaving these containers together locally to make
+changes takes a surprising amount of acrobatics, so rather than expecting you to become
+an expert in docker, we wrap the necessary incanations in a series of simple commands
+provided by this script.
+
+The easiest way to learn more about this script and how it works is likely by viewing
+it's usage information, which you can see by running this command:
+
+    ./demo --help
+
+It's worth noting that this script isn't used anywhere other than local development
+environments, and probably shouldn't be. This means it's safe to make changes without
+worrying about breaking the house of cards that makes the live site work.
+"""
+
+import argparse
+import subprocess
+import os
+import sys
+import shlex
+import time
+import json
+
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import List, Tuple, Optional
+from pathlib import Path
+from urllib.request import urlopen
+from urllib.error import URLError
+from http.client import HTTPResponse, RemoteDisconnected
+
+# When we spawn docker things they need a name that prevents them from colliding with other
+# docker things. We use this prefix to ensure that.
+prefix = "allennlp-demo-"
+api_prefix = f"{prefix}api-"
+
+# The name of the docker network used by this script.
+network = "allennlp-demo"
+
+# The path to the directory this script lives in.
+root = Path(__file__).parent.resolve()
+
+class Paths:
+    """
+    This class provides access to a series of directories in the repository used throughout
+    this script.
+    """
+    def __init__(self):
+        self.root = Path(__file__).parent.resolve()
+        self.api = self.root / "api"
+        self.api_modules = self.api / "allennlp_demo"
+        self.ui = self.root / "ui"
+        self.it = self.root / "it"
+        self.run = self.root / "run"
+
+paths = Paths()
+
+class ContainerIds:
+    """
+    This class provides access to the identifiers for a few containers that are hardcoded.
+    """
+    def __init__(self):
+        self.proxy = "proxy"
+        self.ui = "ui"
+        self.it = "it"
+
+container_ids = ContainerIds()
+
+def network_exists() -> bool:
+    """
+    Returns true if the network this script manages exists.
+    """
+    ls = subprocess.check_output(
+        shlex.split(f"docker network ls --quiet --filter name=^{network}$")
+    )
+    if len(ls.strip()) > 0:
+        return True
+    return False
+
+def create_network():
+    """
+    Creates a new network that allows containers started by this script to intercommunicate. If
+    the network already exists this method does nothing.
+    """
+    if network_exists():
+        return
+    subprocess.check_call(
+        shlex.split(f"docker network create {network}"),
+        stdout=subprocess.DEVNULL
+    )
+
+def printFlush(*args, **kwargs):
+    """
+    Prints a message immediately to stdout that's meant to convey the start of an action.
+    Three trailing dots are appended as a suffix to indicate things are in flight.
+    """
+    kw={ "end":"...", **kwargs, "flush":True }
+    print(*args, **kw)
+
+def printLnFlush(*args, **kwargs):
+    """
+    Print a message immediately to stdout with a trailing newline. Use this for regular output,
+    or following a `printFlush()` call to indicate that the previously started action has
+    completed.
+    """
+    kw={ **kwargs, "flush":True }
+    print(*args, **kw)
+
+class ContainerError(Exception):
+    def __init__(self, cid: str, msg: str, stdout: str, stderr: str):
+        self.cid = cid
+        self.stdout = stdout
+        self.stderr = stderr
+        super().__init__(msg)
+
+class BuildError(ContainerError):
+    def __init__(self, cid: str, stdout: str, stderr: str):
+        super().__init__(cid, f"{cid} failed to build", stdout, stderr)
+
+class StartError(ContainerError):
+    def __init__(self, cid: str, stdout: str, stderr: str):
+        super().__init__(cid, f"{cid} failed to start", stdout, stderr)
+
+class Status(Enum):
+    """
+    An Enum reflecting the various states of a container.
+    """
+    UP = "Up"
+    DOWN = "Down"
+
+class Container:
+    """
+    A single, runnable part of the AllenNLP Demo that's managed with Docker.
+    """
+    def __init__(self, cid: str):
+        # The container id, which is unique ID for the thing within the scope of the demo.
+        self.cid = cid
+
+        # The "fully qualified name". Each thing we run has to have a name that's unique and
+        # doesn't collide with something else running within docker on the host machine, so
+        # we append a human readable prefix before the cid.
+        self.fqn = f"{prefix}{self.cid}"
+
+        # The docker tag to use when building images.
+        self.tag = f"{self.fqn}:latest"
+
+    def build_cmd(self) -> str:
+        """
+        Returns the command, as a string, for building the container.
+        """
+        raise NotImplementedError()
+
+    def build(self):
+        """
+        Builds the container.
+        """
+        printFlush(f"Building {self.cid}")
+        bp = subprocess.run(shlex.split(self.build_cmd()), encoding="utf-8", capture_output=True)
+        if bp.returncode != 0:
+            printLnFlush("Error")
+            raise BuildError(self.cid, bp.stdout, bp.stderr)
+        printLnFlush("Success")
+
+    def start_cmd(self) -> str:
+        """
+        Returns the command, as a string, for starting the container.
+        """
+        raise NotImplementedError()
+
+    def start(self):
+        """
+        Starts the container.
+        """
+        if self.status() == Status.UP:
+            printLnFlush(f"Container {self.cid} is already running.")
+            return
+
+        printFlush(f"Starting {self.cid}")
+        create_network()
+
+        p = subprocess.Popen(
+            shlex.split(self.start_cmd()),
+            start_new_session=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            encoding="utf-8"
+        )
+
+        # If `p.poll()` returns a value, the process has terminated. We intentionally don't timeout,
+        # we leave that to the user and Ctrl^C.
+        while p.poll() is None and not self.is_healthy():
+            time.sleep(5)
+
+        # If the container still isn't healthy, then it failed to start.
+        if not self.is_healthy():
+            stdout, stderr = p.communicate()
+            printLnFlush("Error")
+            raise StartError(self.cid, stdout, stderr)
+
+        printLnFlush("Success")
+
+
+    def exec_cmd(self) -> str:
+        """
+        Returns the command used to execute arbitrary commands in the container.
+        """
+        return f"docker exec {self.fqn}"
+
+    def run(self, entrypoint: str, *args: str):
+        """
+        Runs the provided command in the container.
+        """
+        if self.status() == Status.UP:
+            cmd = shlex.split(f"{self.exec_cmd()} {entrypoint}")
+        else:
+            cmd = shlex.split(self.start_cmd())
+            cmd.append("--entrypoint")
+            cmd.append(entrypoint)
+        for a in args:
+            cmd.append(a)
+        subprocess.check_call(cmd)
+
+    def stop(self):
+        """
+        Stops the container.
+        """
+        if self.status() == Status.DOWN:
+            printLnFlush(f"Container {self.cid} isn't running.")
+            return
+
+        printFlush(f"Stopping {self.cid}")
+        subprocess.check_call(shlex.split(f"docker stop {self.fqn}"), stdout=subprocess.DEVNULL)
+        printLnFlush("Success")
+
+    def healthcheck_url(self) -> str:
+        """
+        Returns a URL that can be used to determine if the container is healthy. The URL should
+        be one that's routable within the container.
+        """
+        raise NotImplementedError()
+
+    def is_healthy(self) -> bool:
+        """
+        Returns true if the container has been started and is healthy. Container health is
+        determined by making a HTTP request to the URL returned by healthcheck_url(). A non-200
+        response indicates that the container is not healthy.
+        """
+        # We execute the command in the container since it might not be routable from the host.
+        p = subprocess.run(
+            shlex.split(f"docker exec {self.fqn} curl --fail {self.healthcheck_url()}"),
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        return p.returncode == 0
+
+    def status(self) -> Status:
+        """
+        Returns whether the container is up or down.
+        """
+        out = subprocess.check_output(
+            shlex.split(f"docker ps --quiet --filter name=^{self.fqn}$"),
+            encoding="utf-8"
+        )
+        if len(out.strip()) > 0:
+            return Status.UP
+        return Status.DOWN
+
+    def logs(self, follow: bool = False):
+        """
+        Outputs logs from the container. If follow is true logs are continuously streamed to
+        stdout.
+        """
+        follow_arg = "--follow" if follow else ""
+        subprocess.check_call(shlex.split(f"docker logs {follow_arg} {self.fqn}"))
+
+    @staticmethod
+    def all() -> List[Tuple['Container', Status ]]:
+        """
+        Returns a list of all containers that make up the AllenNLP Demo and their status.
+        """
+        out = subprocess.check_output(
+            shlex.split(f"docker ps --format {{{{.Names}}}} --filter name=^{prefix}"),
+            encoding="utf-8"
+        )
+        running = set(out.splitlines())
+        containers = []
+        for container in [ UI(), Proxy() ]:
+            containers.append((container, Status.UP if container.fqn in running else Status.DOWN))
+        return [ *APIEndpoint.all(), *containers ]
+
+    @staticmethod
+    def from_id(cid: str) -> 'Container':
+        """
+        Returns a Container instance from its ID.
+        """
+        if cid == container_ids.proxy:
+            return Proxy()
+        if cid == container_ids.ui:
+            return UI()
+        if cid == container_ids.it:
+            return IT()
+        return APIEndpoint(cid)
+
+class UI(Container):
+    """
+    A special container that's used to serve the web GUI locally.
+    """
+    def __init__(self):
+        super().__init__(container_ids.ui)
+
+    def build_cmd(self) -> str:
+        return f"""
+            docker build
+                --file {paths.ui / "Dockerfile.dev"}
+                --tag {self.tag}
+                {paths.ui}
+        """
+
+    def start_cmd(self) -> str:
+        return f"""
+            docker run
+                --rm
+                --name {self.fqn}
+                --env NODE_ENV=development
+                --network {network}
+                --volume {paths.ui / "public"}:/ui/public
+                --volume {paths.ui / "src"}:/ui/src
+                {'--tty' if sys.stdout.isatty() else ''}
+                {self.tag}
+        """
+
+    def healthcheck_url(self) -> str:
+        return "http://localhost:3000"
+
+    def exec_cmd(self) -> str:
+        return f"docker exec {'--tty' if sys.stdout.isatty() else ''} {self.fqn}"
+
+class IT(Container):
+    """
+    A special container that's used to run integration tests.
+    """
+    def __init__(self):
+        super().__init__(container_ids.it)
+
+    def build_cmd(self) -> str:
+        return f"""
+            docker build
+                --file {paths.it / "Dockerfile"}
+                --tag {self.tag}
+                {paths.it}
+        """
+
+    def start_cmd(self) -> str:
+        return f"""
+            docker run
+                --rm
+                --name {self.fqn}
+                --network {network}
+                --volume {paths.it / "cypress"}:/it/cypress
+                {'--tty' if sys.stdout.isatty() else ''}
+                {self.tag}
+        """
+
+    def exec_cmd(self) -> str:
+        return f"docker exec {'--tty' if sys.stdout.isatty() else ''} {self.fqn}"
+
+    def healthcheck_url(self) -> str:
+        return ""
+
+    def is_healthy(self) -> bool:
+        return True
+
+    def start(self):
+        raise NotImplementedError(f"{self.cid} can't be started. Use './demo it' instead.")
+
+class APIEndpoint(Container):
+    """
+    The AllenNLP demo has a series of HTTP APIs, exposed at the `/api` path. Some of these
+    are model specific, and do things like servie predictions. Others return information about
+    the models and other miscellaneous metadata that's used by the demo.
+    """
+    def __init__(self, cid: str):
+        super().__init__(cid)
+        self.path = paths.api_modules / cid
+        self.fqn = f"{api_prefix}{self.cid}"
+
+    def model_id(self) -> str:
+        """
+        Returns a unique ID for the model.
+        """
+        with open(self.path / "model.json", "r") as fh:
+            conf = json.load(fh)
+            return conf["id"]
+
+    def urlpath(self) -> str:
+        """
+        Returns the path portion of the URL that's routed to the endpoint.
+        """
+        return f"/api/{self.model_id()}"
+
+    def dockerfile(self) -> Path:
+        """
+        Returns a path to the Dockerfile that's used to build the endpoint. Most endpoints use
+        the one that's in `api/`. Others have a `Dockerfile` that's a sibling to their code,
+        as to accomodate different AllenNLP versions and customized dependendencies.
+        """
+        custom = self.path / "Dockerfile"
+        if custom.exists() and custom.is_file():
+            return custom
+        return paths.api / "Dockerfile"
+
+    def build_cmd(self) -> str:
+        return f"""
+            docker build
+                --file {self.dockerfile()}
+                --build-arg MODULE={self.cid}
+                --tag {self.tag}
+                {paths.api}
+        """
+
+    def start_cmd(self) -> str:
+        home = Path.home()
+        return f"""
+            docker run
+                --rm
+                --name {self.fqn}
+                --env FLASK_ENV=development
+                --network {network}
+                --volume {self.path}:/app/allennlp_demo/{self.cid}
+                --volume {paths.api_modules / "common"}:/app/allennlp_demo/common
+                --volume {home / ".allennlp"}:/root/.allennlp
+                --volume {home / ".cache/huggingface"}:/root/.cache/huggingface
+                --volume {home / "nltk_data"}:/root/nltk_data
+                {self.tag}
+        """
+
+    def healthcheck_url(self) -> str:
+        return "http://localhost:8000"
+
+    @staticmethod
+    def all() -> List[Tuple['APIEndpoint', Status]]:
+        """
+        Returns a list of all APIEndpoints used by the demo and their status.
+        """
+        out = subprocess.check_output(
+            shlex.split(f"docker ps --format {{{{.Names}}}} --filter name=^{api_prefix}"),
+            encoding="utf-8"
+        )
+        running = set(out.splitlines())
+        endpoints: List[Tuple['APIEndpoint', Status]] = []
+        for p in paths.api_modules.iterdir():
+            if not p.is_dir():
+                continue
+            if p.name == "common" or p.name.startswith(".") or p.name == "__pycache__":
+                continue
+            endpoint = APIEndpoint(p.name)
+            status = Status.UP if endpoint.fqn in running else Status.DOWN
+            endpoints.append((endpoint, status))
+        return endpoints
+
+@dataclass(frozen=True)
+class ProxyRoute:
+    """
+    A route that's handled by the reverse proxy.
+    """
+    path: str
+    upstream: str
+    rewrites: List[str] = field(default_factory=list)
+    local_cid: Optional[str] = None
+    # The webserver that serves the UI locally uses websockets to tell the frontend about code
+    # changes and how to include them dynamically without refreshing the page. The reverse proxy
+    # has to include a special configuration snippet to support this.
+    enable_websockets: bool = False
+    hidden: bool = False
+
+class Proxy(Container):
+    """
+    The AllenNLP Demo, as noted, is a collection of individual containers. This class captures
+    the functionality required to run a local reverse proxy that routes requests as appropriate.
+    In production we run something similar, but it's managed by the ReViz team as part of the
+    Skiff cluster.
+    """
+    def __init__(self):
+        super().__init__(container_ids.proxy)
+        self.conf_dir = paths.run / "proxy"
+        self.conf_dir.mkdir(parents=True, exist_ok=True)
+
+    def build(self):
+        return
+
+    def start_cmd(self) -> str:
+        return f"""
+            docker run
+                --rm
+                --name {self.fqn}
+                --network {network}
+                --publish 8080:8080
+                --volume {self.conf_dir}:/etc/nginx/conf.d
+                nginx:1.17.10
+        """
+
+    def healthcheck_url(self) -> str:
+        return "http://localhost:8080/health"
+
+    def is_healthy(self) -> bool:
+        # For the proxy we make requests from the host, since it's routable from there and
+        # we ultimately don't want to declare things healthy unless that's working.
+        try:
+            url = self.healthcheck_url()
+            resp: HTTPResponse = urlopen(url)
+            return resp.status == 204
+        except (URLError, RemoteDisconnected) as err:
+            return False
+
+    def routes(self) -> List[ProxyRoute]:
+        """
+        Returns a list of routes that the proxy is responsible for.
+        """
+        routes = []
+        for endpoint, status in APIEndpoint.all():
+            urlpath = endpoint.urlpath()
+            is_local = status == Status.UP
+            if is_local:
+                routes.append(ProxyRoute(
+                    urlpath,
+                    f"http://{endpoint.fqn}:8000",
+                    [f"rewrite {urlpath}(/(.*))? /$2 break"],
+                    local_cid=endpoint.cid
+                ))
+            else:
+                # We can't use a single catch-all that forwards all requests to `/api`
+                # to production because some models share a prefix. For instance, `/api/bidaf`
+                # and `/api/bidaf-elmo` would both get sent to the same place if we made
+                # a rule matching `/api`. We could affix a trailing `/` to resolve this,
+                # but that makes NGINX behave in weird ways with respect to whether the
+                # trailing URL path is included in the forwarded request or not. So we avoid
+                # all of these headaches by simply having a route for everything that goes
+                # where we want it to.
+                routes.append(ProxyRoute(urlpath, "https://demo.allennlp.org"))
+        ui = UI()
+        if ui.status() == Status.UP:
+            routes.append(ProxyRoute(
+                "/sockjs-node",
+                f"http://{ui.fqn}:3000",
+                local_cid=ui.cid,
+                enable_websockets=True,
+                hidden=True
+            ))
+            routes.append(ProxyRoute("/", f"http://{ui.fqn}:3000", local_cid=ui.cid))
+        return routes
+
+    def config(self, routes: List[ProxyRoute]) -> str:
+        """
+        Returns the NGINX configuration for the provided sets of routes.
+        """
+        locs = [
+            f"""
+            location /health {{
+                return 204;
+            }}
+            """
+        ]
+
+        for route in routes:
+            rewrites = ""
+            for rw in route.rewrites:
+                rewrites += f"{rw};\n"
+            extra = ""
+            if route.enable_websockets:
+                extra = f"""
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "Upgrade";
+                    proxy_set_header X-Forwarded-For $remote_addr;
+                """
+
+            locs.append(f"""
+                location {route.path} {{
+                    {rewrites}
+                    proxy_pass {route.upstream};
+                    proxy_set_header X-Forwarded-For $remote_addr;
+
+                    # Add a header that clients can use to determine where a response is
+                    # coming from.
+                    add_header Via {route.upstream};
+
+                    {extra}
+                }}
+            """)
+
+        l = "\n".join(locs)
+        return f"""
+            server {{
+                listen [::]:8080;
+                listen 8080;
+                charset utf-8;
+
+                # No HTTP caching.
+                expires -1;
+
+                {l}
+            }}
+        """
+
+    def update_config(self, routes: List[ProxyRoute]):
+        """
+        Updates the NGINX config on disk to reflect the provided list of routes.
+        """
+        with open(self.conf_dir / "default.conf", "w") as fh:
+            fh.write(self.config(routes))
+
+    def reload(self):
+        """
+        Reloads updated NGINX configuration settings by restarting the process.
+        """
+        if self.status() != Status.UP:
+            raise RuntimeError(f"The proxy isn't up.")
+        printFlush("Updating proxy")
+        subprocess.check_call(
+            shlex.split(f"docker exec {self.fqn} nginx -s reload"),
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        printLnFlush("Success")
+
+    def upstart(self) -> List[ProxyRoute]:
+        """
+        If the proxy isn't running, this method generates it's configuration files and restarts it.
+        If the proxy is running, this method updates the configuration files and applies them
+        without starting and stopping the container.
+
+        The name comes from the notion of an "upsert" in programs that use databases.
+        """
+        routes = self.routes()
+        self.update_config(routes)
+        if self.status() == Status.UP:
+            self.reload()
+        else:
+            self.start()
+        return routes
+
+    def print_routes(self, routes: List[ProxyRoute]):
+        """
+        Prints some information about the routes handled by the proxy and where they go.
+        """
+
+        # Partition things into two buckets, those that go to local things and those that don't.
+        local = []
+        non_local = []
+        for r in routes:
+            if r.hidden:
+                continue
+            if r.local_cid is not None:
+                local.append((f"http://localhost:8080{r.path}", f"Local ({r.local_cid})"))
+                continue
+            non_local.append((f"http://localhost:8080{r.path}", r.upstream))
+
+        # Usually the user runs with 1 or 2 local routes, with everything else being pointed
+        # at production. This collapses things so that the non-local endpoints don't dominate
+        # the output.
+        if len(non_local) > 0:
+            non_local = [('http://localhost:8080/api/*', 'https://demo.allennlp.org')]
+
+        # This is a bit of code that figures out how to format things nicely given the length
+        # of the things we're outputting.
+        both = local + non_local
+        url_spaces = max(len(u) for u, _ in both)
+        target_spaces = max(len(t) for _, t in both)
+        fmt = "{:<" + str(url_spaces) + "}\t{:<" + str(target_spaces) + "}"
+
+        printLnFlush()
+        printLnFlush(fmt.format("Path", "Target"))
+        printLnFlush(fmt.format("-" * url_spaces, "-" * target_spaces))
+        for u, t in local:
+            printLnFlush(fmt.format(u, t))
+        for u, t in non_local:
+            printLnFlush(fmt.format(u, t))
+
+
+def filter_cids(cids: List[str]) -> List[str]:
+    """
+    Returns the provided ids without the proxy, since we manage the proxy explicitly.
+    """
+    return [ cid for cid in cids if cid != container_ids.proxy ]
+
+def start(args: argparse.Namespace):
+    """
+    The start command is responsible for building and starting a list of containers, and
+    standing up a reverse proxy that sends requests to the right places.
+    """
+    try:
+        for cid in filter_cids(args.container):
+            container = Container.from_id(cid)
+            if container.status() == Status.UP:
+                printLnFlush(f"Container {cid} is already running.")
+                continue
+            container.build()
+            container.start()
+        proxy = Proxy()
+        proxy.print_routes(proxy.upstart())
+    except (StartError, BuildError) as err:
+        out = err.stdout + err.stderr
+        for line in out.splitlines():
+            printLnFlush(line)
+        sys.exit(1)
+
+def stop(args: argparse.Namespace):
+    """
+    The stop command stops containers. If no specific container is provided, all running
+    containers are stopped.
+    """
+    cids: List[str] = args.container
+
+    # If no ids are provided, stop all running containers
+    if len(cids) == 0:
+        cids = [ c.cid for c, s in Container.all() if s == Status.UP ]
+
+    # Stop 'em
+    for cid in filter_cids(cids):
+        container = Container.from_id(cid)
+        container.stop()
+
+    proxy = Proxy()
+
+    # If only the proxy is left, stop it too, as it's pointless on it's own.
+    running = [ c for c, s in Container.all() if s == Status.UP ]
+    if len(running) == 1 and running[0].cid == container_ids.proxy:
+        proxy.stop()
+        return
+
+    proxy.print_routes(proxy.upstart())
+
+
+def restart(args: argparse.Namespace):
+    """
+    Restarts the specified containers by stopping them, building and then starting them.
+    """
+    try:
+        cids: List[str] = args.container
+
+        # If no ids are provided, restart all running containers
+        if len(cids) == 0:
+            cids = [ c.cid for c, s in Container.all() if s == Status.UP ]
+
+        cids = filter_cids(cids)
+
+        # Stop everything first, so the user isn't confused by any interim, partial state.
+        for cid in cids:
+            container = Container.from_id(cid)
+            container.stop()
+
+        # Now build and start everything.
+        for cid in cids:
+            container = Container.from_id(cid)
+            container.build()
+            container.start()
+
+        proxy = Proxy()
+        proxy.print_routes(proxy.upstart())
+    except (StartError, BuildError) as err:
+        out = err.stdout + err.stderr
+        for line in out.splitlines():
+            printLnFlush(line)
+        sys.exit(1)
+
+
+def status(args: argparse.Namespace):
+    """
+    The status command prints some output about the containers that make up the AllenNLP
+    Demo and whether they're running or not.
+    """
+    containers = Container.all()
+    spaces = max(len(container.cid) for container, _ in containers)
+    fmt = "{:<" + str(spaces) + "}\t{:<6}"
+
+    printLnFlush(fmt.format("Container", "Status"))
+    printLnFlush(fmt.format("-" * spaces, "------"))
+    for container, status in containers:
+        if args.all or status == Status.UP:
+            printLnFlush(fmt.format(container.cid, status.value))
+
+    proxy = Proxy()
+    proxy.print_routes(proxy.routes())
+
+def view_logs(args: argparse.Namespace):
+    """
+    Outputs logs for the specified container.
+    """
+    try:
+        container = Container.from_id(args.container)
+        container.logs(args.follow)
+    except KeyboardInterrupt as err:
+        # We don't need to complain when this occurs.
+        return
+
+def run_integration_tests(args: argparse.Namespace):
+    """
+    Runs the integration tests.
+    """
+    it = IT()
+    it.build()
+    it.run("yarn", "test:it")
+
+def run(args: argparse.Namespace):
+    """
+    Run a command in a container.
+    """
+    container = Container.from_id(args.container)
+    container.run(args.entrypoint, *args.args)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog="demo",
+        description="A utility for running the AllenNLP demo locally."
+    )
+
+    subparsers = parser.add_subparsers(
+        title="command",
+        description="the command to execute.",
+        dest="command"
+    )
+
+    start_parser = subparsers.add_parser(
+        "start",
+        help="starts a container"
+    )
+    start_parser.add_argument(
+        "container",
+        nargs="*",
+        help="the container or containers to start",
+        type=str,
+        default=[container_ids.ui]
+    )
+    start_parser.set_defaults(func=start)
+
+    stop_parser = subparsers.add_parser(
+        "stop",
+        help="stops a container"
+    )
+    stop_parser.add_argument(
+        "container",
+        nargs="*",
+        help="the container or containers to stop, if empty all running ones are stopped",
+        type=str
+    )
+    stop_parser.set_defaults(func=stop)
+
+    restart_parser = subparsers.add_parser(
+        "restart",
+        help="restarts a container"
+    )
+    restart_parser.add_argument(
+        "container",
+        nargs="*",
+        help="the container or containers to restart, if empty all running containers are restarted",
+        type=str
+    )
+    restart_parser.set_defaults(func=restart)
+
+    status_parser = subparsers.add_parser(
+        "status",
+        help="displays containers and their status"
+    )
+    status_parser.add_argument(
+        "--all",
+        "-a",
+        action="store_true",
+        help="show status for containers that are down too"
+    )
+    status_parser.set_defaults(func=status)
+
+    logs_parser = subparsers.add_parser(
+        "logs",
+        help="provides access to container logs"
+    )
+    logs_parser.add_argument(
+        "-f",
+        "--follow",
+        action="store_true",
+        help="don't stop at EOF"
+    )
+    logs_parser.add_argument(
+        "container",
+        help="the target container",
+        type=str
+    )
+    logs_parser.set_defaults(func=view_logs)
+
+    it_parser = subparsers.add_parser(
+        "it",
+        help="run integration tests"
+    )
+    it_parser.set_defaults(func=run_integration_tests)
+
+    run_parser = subparsers.add_parser(
+        "run",
+        help="run a command in a container"
+    )
+    run_parser.add_argument(
+        "container",
+        help="the container where you'd like to run the command",
+        type=str
+    )
+    run_parser.add_argument(
+        "entrypoint",
+        type=str,
+        help="the entrypoint to use"
+    )
+    run_parser.add_argument(
+        "args",
+        nargs="*",
+        type=str,
+        help="the command arguments"
+    )
+    run_parser.set_defaults(func=run)
+
+    args = parser.parse_args()
+
+    if 'func' not in args:
+        sys.stderr.write(f"Error: Unknown command.\n")
+        parser.print_usage()
+        sys.exit(1)
+
+    args.func(args)

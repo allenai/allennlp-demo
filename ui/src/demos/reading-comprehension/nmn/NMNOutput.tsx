@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs } from 'antd';
+import Tabs from 'antd/es/tabs';
 import { Output } from '@allenai/tugboat/components/form';
 
 import { Explanation } from './Explanation';

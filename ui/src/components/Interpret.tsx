@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button } from 'antd';
+import Button from 'antd/es/button';
 import { Promised } from '@allenai/tugboat/components';
 import { Models } from '@allenai/tugboat/context';
 import { NoSelectedModelError } from '@allenai/tugboat/error';

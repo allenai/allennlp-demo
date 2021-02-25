@@ -5,7 +5,7 @@ export enum ModelId {
     CoreferenceResolution = 'coreference-resolution',
     DependencyParser = 'dependency-parser',
     ELMONER = 'named-entity-recognition',
-    ELMOSNLI = 'decomposable-attention-elmo',
+    ELMOSNLI = 'elmo-snli',
     FineGrainedNER = 'fine-grained-ner',
     GloveSentimentAnalysis = 'glove-sentiment-analysis',
     MaskedLM = 'masked-lm',
@@ -19,17 +19,6 @@ export enum ModelId {
     SemanticRollLabeling = 'semantic-role-labeling',
     TransformerQA = 'transformer-qa',
     VilbertVQA = 'vilbert-vqa',
-}
-
-/**
- * Hitting `/api/info` returns a list of these.
- */
-export interface ModelEndpoint {
-    id: string;
-    commit_sha: string;
-    commit_url: string;
-    url: string;
-    info: ModelInfo;
 }
 
 /**
@@ -48,12 +37,8 @@ export interface ModelInfo {
 }
 
 /**
- * Fetch information about all of the models.
+ * Fetch information for a specific model.
  */
-export function fetchModelInfo(): Promise<ModelInfo[]> {
-    return fetch('/api/info')
-        .then((r) => r.json())
-        .then((endpoints: ModelEndpoint[]) => {
-            return endpoints.map((e) => e.info);
-        });
+export function fetchModelInfo(modelId: string): Promise<ModelInfo> {
+    return fetch(`/api/${modelId}`).then((r) => r.json());
 }

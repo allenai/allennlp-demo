@@ -2,6 +2,7 @@ __pycache__
 ui/build/
 **/*.pyc
 .mypy_cache
+run/
 
 # Logs
 logs
