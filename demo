@@ -459,6 +459,8 @@ class APIEndpoint(Container):
                 continue
             if p.name == "common" or p.name.startswith(".") or p.name == "__pycache__":
                 continue
+            if len(list(p.iterdir())) == 0:
+                continue
             endpoint = APIEndpoint(p.name)
             status = Status.UP if endpoint.fqn in running else Status.DOWN
             endpoints.append((endpoint, status))

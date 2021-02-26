@@ -12,6 +12,7 @@ import {
 } from '.';
 import { ModelInfoList, findModelInfo } from '../context';
 import { AttackType } from '../lib';
+import { CollapsePanel } from './CollapsePanel';
 
 interface Props<I, O> {
     input: I;
@@ -42,7 +43,7 @@ export const Attackers = <I, O>({
         <Output.Section title="Model Attacks">
             <Collapse>
                 {supportedAttackTypes.has(AttackType.InputReduction) ? (
-                    <Collapse.Panel key={AttackType.InputReduction} header="Input Reduction">
+                    <CollapsePanel key={AttackType.InputReduction} header="Input Reduction">
                         <Attack<I, InputReductionAttackOutput>
                             type={AttackType.InputReduction}
                             target={target}
@@ -63,10 +64,10 @@ export const Attackers = <I, O>({
                             }>
                             {(output) => <InputReduction {...output} />}
                         </Attack>
-                    </Collapse.Panel>
+                    </CollapsePanel>
                 ) : null}
                 {supportedAttackTypes.has(AttackType.HotFlip) ? (
-                    <Collapse.Panel key={AttackType.HotFlip} header="HotFlip">
+                    <CollapsePanel key={AttackType.HotFlip} header="HotFlip">
                         <Attack<I, HotflipAttackOutput<O>>
                             type={AttackType.HotFlip}
                             target={target}
@@ -99,7 +100,7 @@ export const Attackers = <I, O>({
                                 />
                             )}
                         </Attack>
-                    </Collapse.Panel>
+                    </CollapsePanel>
                 ) : null}
             </Collapse>
         </Output.Section>
