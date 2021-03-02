@@ -160,8 +160,8 @@ class Container:
         """
         Builds the container.
         """
-        printFlush(f"Building {self.cid}")
-        bp = subprocess.run(shlex.split(self.build_cmd()), encoding="utf-8", capture_output=True)
+        printLnFlush(f"Building {self.cid}")
+        bp = subprocess.run(shlex.split(self.build_cmd()))
         if bp.returncode != 0:
             printLnFlush("Error")
             raise BuildError(self.cid, bp.stdout, bp.stderr)
