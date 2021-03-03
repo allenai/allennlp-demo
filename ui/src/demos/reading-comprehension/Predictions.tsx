@@ -97,8 +97,8 @@ const BasicPrediction = ({
     // so we just find the highlightSpan locally.
     const start = input.passage.indexOf(output.best_span_str);
     const highlightSpan = [start, start + output.best_span_str.length];
-
-    if (highlightSpan[0] < 0 || highlightSpan[1] <= highlightSpan[0]) {
+    const hasBestSpan = output.best_span_str !== '';
+    if (hasBestSpan && (highlightSpan[0] < 0 || highlightSpan[1] <= highlightSpan[0])) {
         throw new InvalidModelResponseError(
             `"${output.best_span_str}" does not exist in the passage.`
         );
@@ -109,15 +109,19 @@ const BasicPrediction = ({
             <BasicAnswer output={output} />
 
             <Output.SubSection title="Passage Context">
-                <TextWithHighlight
-                    text={input.passage}
-                    highlights={[
-                        {
-                            start: highlightSpan[0],
-                            end: highlightSpan[1],
-                        },
-                    ]}
-                />
+                {hasBestSpan ? (
+                    <TextWithHighlight
+                        text={input.passage}
+                        highlights={[
+                            {
+                                start: highlightSpan[0],
+                                end: highlightSpan[1],
+                            },
+                        ]}
+                    />
+                ) : (
+                    <div>{input.passage}</div>
+                )}
             </Output.SubSection>
 
             <Output.SubSection title="Question">
