@@ -227,17 +227,18 @@ export interface InterpreterData {
 }
 
 export const getBasicAnswer = (pred: Prediction): number | string => {
+    const noAnswer = 'Answer not found.';
     if (isBiDAFPrediction(pred) || isTransformerQAPrediction(pred)) {
-        return pred.best_span_str;
+        return pred.best_span_str || noAnswer;
     }
     if (isNAQANetPredictionSpan(pred) || isNAQANetPredictionArithmetic(pred)) {
-        return pred.answer.value;
+        return pred.answer.value || noAnswer;
     }
     if (isNAQANetPredictionCount(pred)) {
         return pred.answer.count;
     }
     if (isNMNPrediction(pred)) {
-        return pred.answer;
+        return pred.answer || noAnswer;
     }
-    throw new InvalidModelResponseError('Answer not found.');
+    throw new InvalidModelResponseError(noAnswer);
 };
