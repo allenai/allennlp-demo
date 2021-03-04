@@ -1,5 +1,5 @@
 git+git://github.com/allenai/allennlp.git@v2.1.0
-git+git://github.com/allenai/allennlp-models.git@769cda070a2fd73da677a82f3f01cbbd09a545ec
+git+git://github.com/allenai/allennlp-models.git@6725dad55570b62e2aa15b5d37edc69f6871df1c
 #allennlp-semparse==0.0.2 # TODO
 Flask==1.1.2
 pytest==6.2.2
