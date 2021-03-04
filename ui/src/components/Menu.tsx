@@ -35,7 +35,7 @@ export const Menu = ({ items }: Props) => {
             onCollapse={handleMenuCollapse}>
             <AntdMenu defaultOpenKeys={items.map((g) => g.label)} mode="inline">
                 {items.map((g) => (
-                    <SubMenu
+                    <TransparentSubMenu
                         key={g.label}
                         title={
                             <IconMenuItemColumns>
@@ -52,7 +52,7 @@ export const Menu = ({ items }: Props) => {
                                 </Item>
                             );
                         })}
-                    </SubMenu>
+                    </TransparentSubMenu>
                 ))}
             </AntdMenu>
         </LeftSider>
@@ -64,4 +64,12 @@ const IconMenuItemColumns = styled.div`
     grid-template-columns: min-content 1fr;
     align-items: center;
     height: 100%;
+`;
+
+const TransparentSubMenu = styled(SubMenu)`
+    && {
+        ul {
+            background: transparent;
+        }
+    }
 `;
