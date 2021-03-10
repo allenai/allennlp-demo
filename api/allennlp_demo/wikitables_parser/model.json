@@ -1,5 +1,0 @@
-{
-    "id": "wikitables-parser",
-    "archive_file": "https://storage.googleapis.com/allennlp-public-models/wikitables-model-2020.02.10.tar.gz",
-    "predictor_name": "wikitables-parser"
-}

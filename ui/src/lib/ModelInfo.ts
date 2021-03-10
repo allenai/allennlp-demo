@@ -11,7 +11,6 @@ export enum ModelId {
     MaskedLM = 'masked-lm',
     Naqanet = 'naqanet',
     NextTokenLM = 'next-token-lm',
-    NMN = 'nmn',
     OpenIE = 'open-information-extraction',
     RobertaMNLI = 'roberta-mnli',
     RobertaSentimentAnalysis = 'roberta-sentiment-analysis',

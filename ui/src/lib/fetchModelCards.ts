@@ -27,9 +27,6 @@ export function getModelCardId(info: ModelInfo): string {
 
     // Otherwise try to map the model to the identifier it should be using.
     switch (info.id) {
-        case ModelId.NMN: {
-            return 'rc-nmn';
-        }
         case ModelId.VilbertVQA: {
             // The api/info is missing a pretrained_model_id for vqa
             return 'vqa-vilbert';
