@@ -1,0 +1,8 @@
+{
+    "id": "lerc",
+    "archive_file": "https://storage.googleapis.com/allennlp-public-models/lerc-2020-11-18.tar.gz",
+    "predictor_name": "lerc",
+    "use_old_load_method": true,
+    "attackers": [],
+    "interpreters": []
+}
