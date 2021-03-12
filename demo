@@ -113,15 +113,15 @@ def printLnFlush(*args, **kwargs):
     print(*args, **kw)
 
 class ContainerError(Exception):
-    def __init__(self, cid: str, msg: str, stdout: str, stderr: str):
+    def __init__(self, cid: str, msg: str, stdout: Optional[str], stderr: Optional[str]):
         self.cid = cid
         self.stdout = stdout
         self.stderr = stderr
         super().__init__(msg)
 
 class BuildError(ContainerError):
-    def __init__(self, cid: str, stdout: str, stderr: str):
-        super().__init__(cid, f"{cid} failed to build", stdout, stderr)
+    def __init__(self, cid: str):
+        super().__init__(cid, f"{cid} failed to build", None, None)
 
 class StartError(ContainerError):
     def __init__(self, cid: str, stdout: str, stderr: str):
@@ -164,7 +164,7 @@ class Container:
         bp = subprocess.run(shlex.split(self.build_cmd()))
         if bp.returncode != 0:
             printLnFlush("Error")
-            raise BuildError(self.cid, bp.stdout, bp.stderr)
+            raise BuildError(self.cid)
         printLnFlush("Success")
 
     def start_cmd(self) -> str:
@@ -706,10 +706,12 @@ def start(args: argparse.Namespace):
             container.start()
         proxy = Proxy()
         proxy.print_routes(proxy.upstart())
-    except (StartError, BuildError) as err:
+    except StartError as err:
         out = err.stdout + err.stderr
         for line in out.splitlines():
             printLnFlush(line)
+        sys.exit(1)
+    except BuildError:
         sys.exit(1)
 
 def stop(args: argparse.Namespace):
@@ -765,10 +767,7 @@ def restart(args: argparse.Namespace):
 
         proxy = Proxy()
         proxy.print_routes(proxy.upstart())
-    except (StartError, BuildError) as err:
-        out = err.stdout + err.stderr
-        for line in out.splitlines():
-            printLnFlush(line)
+    except (StartError, BuildError):
         sys.exit(1)
 
 
