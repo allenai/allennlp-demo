@@ -36,7 +36,7 @@ import allennlp_models.tagging
 
 predictor = Predictor.from_path("${models.selectedModel.card.archive_file}")
 predictor.predict(
-    premise="${ex.premise}"
+    premise="${ex.premise}",
     hypothesis="${ex.hypothesis}"
 )`.trim();
 
