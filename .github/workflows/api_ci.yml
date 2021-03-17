@@ -72,6 +72,7 @@ jobs:
         # This should be all of the directory names in api/allennlp_demo that correspond
         # to demo model endpoints.
         model: [
+          "atis_parser",
           "bidaf",
           "bidaf_elmo",
           "constituency_parser",
@@ -84,6 +85,8 @@ jobs:
           "named_entity_recognition",
           "naqanet",
           "next_token_lm",
+          "nlvr_parser",
+          "nmn_drop",
           "open_information_extraction",
           "roberta_mnli",
           "roberta_sentiment_analysis",
@@ -91,6 +94,7 @@ jobs:
           "semantic_role_labeling",
           "transformer_qa",
           "vilbert_vqa",
+          "wikitables_parser",
           "tasks",
           "model_cards"
         ]

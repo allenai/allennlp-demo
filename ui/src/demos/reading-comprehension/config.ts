@@ -9,6 +9,7 @@ export const config: DemoConfig = {
     modelIds: [
         ModelId.BidafELMO,
         ModelId.Bidaf,
+        ModelId.NMN,
         ModelId.TransformerQA,
         ModelId.Naqanet,
     ],

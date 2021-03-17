@@ -1,0 +1,14 @@
+{
+    "id": "nmn",
+    "archive_file": "https://storage.googleapis.com/allennlp-public-models/drop-nmn-2020.04.04.tar.gz",
+    "predictor_name": "drop_demo_predictor",
+    "overrides": {
+        "model": {
+            "debug": true,
+            "beam_size": 1
+       }
+    },
+    "use_old_load_method": true,
+    "attackers": [],
+    "interpreters": []
+}

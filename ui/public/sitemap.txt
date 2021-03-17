@@ -8,6 +8,9 @@ https://demo.allennlp.org/dependency-parsing
 https://demo.allennlp.org/constituency-parsing
 https://demo.allennlp.org/semantic-role-labeling
 https://demo.allennlp.org/coreference-resolution
+https://demo.allennlp.org/wikitables-parser
+https://demo.allennlp.org/nlvr-parser
+https://demo.allennlp.org/atis-parser
 https://demo.allennlp.org/textual-entailment
 https://demo.allennlp.org/next-token-lm
 https://demo.allennlp.org/masked-lm

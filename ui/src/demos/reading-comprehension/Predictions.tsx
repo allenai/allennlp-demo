@@ -19,11 +19,13 @@ import {
     isBiDAFPrediction,
     isNAQANetPrediction,
     isTransformerQAPrediction,
+    isNMNPrediction,
     isNAQANetPredictionSpan,
     isNAQANetPredictionCount,
     isNAQANetPredictionArithmetic,
     getBasicAnswer,
 } from './types';
+import { NMNOutput } from './nmn';
 
 interface Props {
     input: Input;
@@ -64,6 +66,12 @@ const OutputByModel = ({
                 throw new UnexpectedOutputError(model.id);
             }
             return <NaqanetPrediction input={input} output={output} model={model} />;
+        }
+        case ModelId.NMN: {
+            if (!isNMNPrediction(output)) {
+                throw new UnexpectedOutputError(model.id);
+            }
+            return <NMNOutput {...output} />;
         }
     }
     // If we dont have any output throw.
