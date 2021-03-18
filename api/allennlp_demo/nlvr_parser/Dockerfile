@@ -24,21 +24,8 @@ COPY allennlp_demo/nlvr_parser/.allennlp_plugins .allennlp_plugins
 COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
 COPY allennlp_demo/common allennlp_demo/common
 
-# Name / sub-directory name of the demo.
-ARG MODULE
-
 # Copy model-specific stuff.
-COPY allennlp_demo/${MODULE} allennlp_demo/${MODULE}
+COPY allennlp_demo/nlvr_parser allennlp_demo/nlvr_parser
 
-# You might be wondering why we can't just do
-#
-#> ENTRYPOINT [ "python" ]
-#> CMD [ "allennlp_demo/${MODULE}/api.py" ]
-#
-# The reason is that Python will interpret the string in CMD literally as just
-# "allennlp_demo/${MODULE}/api.py" without substituting environment variables.
-# Environment variable evaluation is a something that a shell handles, so we need
-# to wrap the `python` command in a shell (`/bin/bash` in this case).
-ENV MODULE ${MODULE}
-ENTRYPOINT [ "/bin/bash" ]
-CMD [ "-c", "python allennlp_demo/${MODULE}/api.py" ]
+ENTRYPOINT [ "python" ]
+CMD [ "allennlp_demo/nlvr_parser/api.py" ]
