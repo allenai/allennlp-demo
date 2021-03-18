@@ -14,12 +14,13 @@ ENV TOKENIZERS_PARALLELISM 0
 
 WORKDIR /app/
 
-COPY requirements.txt requirements.txt
-ENV ALLENNLP_VERSION_OVERRIDE allennlp>=2.1.0
+COPY allennlp_demo/nlvr_parser/requirements.txt requirements.txt
+ENV ALLENNLP_VERSION_OVERRIDE allennlp<2.0.0
 RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm
 
+COPY allennlp_demo/nlvr_parser/.allennlp_plugins .allennlp_plugins
 COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
 COPY allennlp_demo/common allennlp_demo/common
 
