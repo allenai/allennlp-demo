@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { Models, Examples } from '@allenai/tugboat/context';
-import { NoSelectedModelError, UngroupedExamplesError } from '@allenai/tugboat/error';
-import { isGroupedExamples } from '@allenai/tugboat/lib';
+import { NoSelectedModelError, UncategorizedExamplesError } from '@allenai/tugboat/error';
+import { areCategorized } from '@allenai/tugboat/lib';
 
 import { ModelUsage } from '../../components';
 
@@ -18,12 +18,15 @@ export const Usage = () => {
         throw new NoSelectedModelError();
     }
 
-    if (!isGroupedExamples(examples)) {
-        throw new UngroupedExamplesError();
+    if (!areCategorized(examples)) {
+        throw new UncategorizedExamplesError();
     }
 
     // TODO: This seems brittle. If the examples change this will fail at runtime.
-    const ex = examples['SQuAD-like Argument Finding'][2]; // matrix example
+    const ex = examples.find((ec) => ec.category === 'SQuAD-like Argument Finding')?.examples[2];
+    if (!ex) {
+        throw new Error('No example.');
+    }
 
     const bashCommand = `
 echo '{"passage": "${ex.passage.slice(0, 182)}.", "question": "${ex.question}"}' | \\
