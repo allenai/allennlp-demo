@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@allenai/eslint-config-varnish": "^1.0.3",
-    "@allenai/tugboat": "^1.0.7",
+    "@allenai/tugboat": "2.0.0",
     "@allenai/varnish": "^2.0.16",
     "@allenai/varnish-react-router": "^2.0.2",
     "@ant-design/icons": "^4.4.0",
@@ -19,7 +19,7 @@
     "@babel/preset-env": "^7.12.13",
     "@babel/preset-react": "^7.12.13",
     "@sentry/react": "^6.1.0",
-    "@types/node": "^14.14.25",
+    "@types/node": "^14.14.36",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
     "@types/react-router-dom": "^5.1.6",

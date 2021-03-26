@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@allenai/eslint-config-varnish/-/eslint-config-varnish-1.0.3.tgz#943da78f3e681f32331c78d1a826400aa6731a6a"
   integrity sha512-/dnXAKJOwhbQbTp17CdeXyRiCUriy576cLGcE3zJmU5R+U5kNDycWDnMJttnrb+/cpKy4Ji4yvzDiISKk3TscA==
 
-"@allenai/tugboat@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@allenai/tugboat/-/tugboat-1.0.7.tgz#a5a2c3fa9b9e79c7d86b0bbd590ae247af1426f0"
-  integrity sha512-99L0vL0SQ32HnmWu4JMzZkKVe6zZKs7+l7mP6hff7H/lt9XB/n7og63aNJL7FWorgMn/Ohb83Gqhs+Gmb0pGiQ==
+"@allenai/tugboat@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@allenai/tugboat/-/tugboat-2.0.0.tgz#8a56fe1683f6b0c3cbf272cbc13d9002d04addc6"
+  integrity sha512-V6F+Nrm3AOo9YMMy1HB1gJVqSFZ0pZCpyyvggN5Left1aMbPr5b0JZw3iObIgQEV+pRVJNpgAk9RyDDhkDnDUQ==
   dependencies:
     colormap "^2.3.1"
     commonmark "^0.29.2"
@@ -1283,15 +1283,10 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
-"@types/node@*":
-  version "14.14.20"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.20.tgz#f7974863edd21d1f8a494a73e8e2b3658615c340"
-  integrity sha512-Y93R97Ouif9JEOWPIUyU+eyIdyRqQR0I8Ez1dzku4hDx34NWh4HbtIc3WNzwB1Y9ULvNGeu5B8h8bVL5cAk4/A==
-
-"@types/node@^14.14.25":
-  version "14.14.25"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.25.tgz#15967a7b577ff81383f9b888aa6705d43fbbae93"
-  integrity sha512-EPpXLOVqDvisVxtlbvzfyqSsFeQxltFbluZNRndIb8tr9KiBnYNLzrc1N3pyKUCww2RNrfHDViqDWWE1LCJQtQ==
+"@types/node@*", "@types/node@^14.14.36":
+  version "14.14.36"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.36.tgz#5637905dbb15c30a33a3c65b9ef7c20e3c85ebad"
+  integrity sha512-kjivUwDJfIjngzbhooRnOLhGYz6oRFi+L+EpMjxroDYXwDw9lHrJJ43E+dJ6KAd3V3WxWAJ/qZE9XKYHhjPOFQ==
 
 "@types/prop-types@*":
   version "15.7.3"
