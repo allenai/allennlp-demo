@@ -1,0 +1,4 @@
+git+git://github.com/allenai/allennlp.git@main
+git+git://github.com/allenai/allennlp-models.git@main
+Flask==1.1.2
+pytest==6.2.1
