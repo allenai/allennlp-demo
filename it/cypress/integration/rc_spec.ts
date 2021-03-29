@@ -2,14 +2,14 @@ describe('Reading Comprehension', () => {
     it('is the default demo', () => {
         cy.visit('/')
 
-        const baseUrl = Cypress.config().baseUrl;
+        const baseUrl = Cypress.config().baseUrl
         cy.url().should('equal', `${baseUrl}/reading-comprehension/bidaf-elmo`);
     });
 
     it('loads without an error', () => {
         cy.document().get('body').then((val) => {
-            console.log(val[0].innerText); // TODO: remove
-            cy.log(val[0].innerText); // TODO: remove
+            console.log(val[0].innerHTML); // TODO: remove
+            cy.log(val[0].innerHTML); // TODO: remove
         });
 
         cy.contains('Reading Comprehension');
