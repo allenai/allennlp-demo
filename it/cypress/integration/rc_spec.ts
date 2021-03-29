@@ -3,7 +3,7 @@ describe('Reading Comprehension', () => {
         const baseUrl = Cypress.config().baseUrl;
         cy.visit('/')
 
-        cy.url().then((val) => console.log(`'${val}' should equal -> '${baseUrl}'`)); // TODO: remove
+        cy.url().then((val) => cy.log(`'${val}' should equal -> '${baseUrl}'`)); // TODO: remove
         cy.url().should('equal', `${baseUrl}/reading-comprehension/bidaf-elmo`);
     });
 
@@ -23,13 +23,13 @@ describe('Reading Comprehension', () => {
         cy.get('form').within(() => {
             cy.get('b').then((val) => {
                 const exp = 'ELMo-BiDAF';
-                console.log(`'${val[0].innerText}' should contain -> '${exp}'`); // TODO: remove
+                cy.log(`'${val[0].innerText}' should contain -> '${exp}'`); // TODO: remove
                 cy.contains(exp);
             });
 
             cy.get('p').then((val) => {
                 const exp = 'This is an implementation of the BiDAF model with ELMo embeddings. The';
-                console.log(`'${val[1].innerText}' should contain -> '${exp}'`); // TODO: remove
+                cy.log(`'${val[1].innerText}' should contain -> '${exp}'`); // TODO: remove
                 cy.contains(exp);
             })
         });
@@ -37,18 +37,18 @@ describe('Reading Comprehension', () => {
         cy.get('.ant-tabs').within(() => {
             cy.get('.ant-select-selection-placeholder').then((val) => {
                 const exp = 'Select a Question';
-                console.log(`'${val[0].innerText}' should contain -> '${exp}'`); // TODO: remove
+                cy.log(`'${val[0].innerText}' should contain -> '${exp}'`); // TODO: remove
                 cy.contains(exp);
             });
             cy.get('label').then((val) => {
                 const exp = 'Passage';
-                console.log(`'${val[1].innerText}' should contain -> '${exp}'`); // TODO: remove
+                cy.log(`'${val[1].innerText}' should contain -> '${exp}'`); // TODO: remove
                 cy.contains(exp);
             });
 
             cy.get('label').then((val) => {
                 const exp = 'Question';
-                console.log(`'${val[2].innerText}' should contain -> '${exp}'`); // TODO: remove
+                cy.log(`'${val[2].innerText}' should contain -> '${exp}'`); // TODO: remove
                 cy.contains(exp);
             });
         });
