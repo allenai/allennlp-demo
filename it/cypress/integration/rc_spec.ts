@@ -7,13 +7,6 @@ describe('Reading Comprehension', () => {
     });
 
     it('loads without an error', () => {
-        // TODO: remove this logging once we find the issue with the ui tests.
-        // see: https://github.com/allenai/allennlp-demo/issues/903
-        cy.document().get('body').then((val) => {
-            console.log(val[0].innerHTML);
-            cy.log(val[0].innerHTML);
-        });
-
         cy.contains('Reading Comprehension');
         cy.contains('Reading comprehension is the task of answering questions about a passage of');
         cy.contains('ELMo-BiDAF');
