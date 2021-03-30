@@ -1,4 +1,4 @@
-import { Example, GroupedExamples } from '@allenai/tugboat/lib';
+import { Example, ExampleCategory } from '@allenai/tugboat/lib';
 
 export interface TaskCard {
     id: string;
@@ -7,7 +7,7 @@ export interface TaskCard {
     expected_inputs?: string;
     expected_outputs?: string;
     scope_and_limitations?: string;
-    examples: Example[] | GroupedExamples;
+    examples: Example[] | ExampleCategory[];
 }
 
 export type TaskCardsById = { [taskId: string]: TaskCard };
