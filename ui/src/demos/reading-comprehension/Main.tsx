@@ -18,14 +18,8 @@ import { TaskDemo, Predict, Interpreters, Attackers } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import {
-    Input,
-    Prediction,
-    getBasicAnswer,
-    InterpreterData,
-    isWithTokenizedInput,
-    Version,
-} from './types';
+import { Input, Prediction, getBasicAnswer, isWithTokenizedInput, Version } from './types';
+import { InterpreterData, DoubleGradInput, isDoubleInterpreterData } from '../../lib';
 
 export const Main = () => {
     return (
@@ -59,20 +53,25 @@ export const Main = () => {
                                     }>
                                     <Predictions input={input} model={model} output={output} />
                                     {isWithTokenizedInput(output) ? (
-                                        <Interpreters<Input, InterpreterData> input={input}>
-                                            {(interpreterOutput) => (
-                                                <Saliency
-                                                    interpretData={[
-                                                        interpreterOutput.instance_1.grad_input_2,
-                                                        interpreterOutput.instance_1.grad_input_1,
-                                                    ]}
-                                                    inputTokens={[
-                                                        output.question_tokens,
-                                                        output.passage_tokens,
-                                                    ]}
-                                                    inputHeaders={['Question', 'Passage']}
-                                                />
-                                            )}
+                                        <Interpreters<Input, InterpreterData<DoubleGradInput>>
+                                            input={input}>
+                                            {(interpreterOutput) =>
+                                                isDoubleInterpreterData(interpreterOutput) ? (
+                                                    <Saliency
+                                                        interpretData={[
+                                                            interpreterOutput.instance_1
+                                                                .grad_input_2,
+                                                            interpreterOutput.instance_1
+                                                                .grad_input_1,
+                                                        ]}
+                                                        inputTokens={[
+                                                            output.question_tokens,
+                                                            output.passage_tokens,
+                                                        ]}
+                                                        inputHeaders={['Question', 'Passage']}
+                                                    />
+                                                ) : undefined
+                                            }
                                         </Interpreters>
                                     ) : null}
                                     <Attackers

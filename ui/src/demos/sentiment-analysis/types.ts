@@ -14,9 +14,3 @@ export interface Prediction {
     tokens: string[];
     label: string;
 }
-
-export interface InterpreterData {
-    instance_1: {
-        grad_input_1: number[];
-    };
-}

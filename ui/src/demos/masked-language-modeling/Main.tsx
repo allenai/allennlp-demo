@@ -18,7 +18,8 @@ import { AppId } from '../../AppId';
 import { TaskDemo, Predict, Interpreters } from '../../components';
 import { config } from './config';
 import { Predictions } from './Predictions';
-import { Version, Input, Prediction, InterpreterData } from './types';
+import { Version, Input, Prediction } from './types';
+import { InterpreterData, GradInput, isInterpreterData } from '../../lib';
 
 export const Main = () => {
     // The hidden fields below are passing parameters to the api that the user does not need to set
@@ -52,16 +53,18 @@ export const Main = () => {
                                         />
                                     }>
                                     <Predictions input={input} model={model} output={output} />
-                                    <Interpreters<Input, InterpreterData> input={input}>
-                                        {(interpreterOutput) => (
-                                            <Saliency
-                                                interpretData={[
-                                                    interpreterOutput.instance_1.grad_input_1,
-                                                ]}
-                                                inputTokens={[output.tokens]}
-                                                inputHeaders={['Sentence']}
-                                            />
-                                        )}
+                                    <Interpreters<Input, InterpreterData<GradInput>> input={input}>
+                                        {(interpreterOutput) =>
+                                            isInterpreterData(interpreterOutput) ? (
+                                                <Saliency
+                                                    interpretData={[
+                                                        interpreterOutput.instance_1.grad_input_1,
+                                                    ]}
+                                                    inputTokens={[output.tokens]}
+                                                    inputHeaders={['Sentence']}
+                                                />
+                                            ) : undefined
+                                        }
                                     </Interpreters>
                                 </Output.Section>
                             </Output>
