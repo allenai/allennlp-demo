@@ -14,30 +14,18 @@ ENV TOKENIZERS_PARALLELISM 0
 
 WORKDIR /app/
 
-COPY requirements.txt requirements.txt
-ENV ALLENNLP_VERSION_OVERRIDE allennlp>=2.1.0
+COPY allennlp_demo/wikitables_parser/requirements.txt requirements.txt
+ENV ALLENNLP_VERSION_OVERRIDE allennlp<2.0.0
 RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm
 
+COPY allennlp_demo/wikitables_parser/.allennlp_plugins .allennlp_plugins
 COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
 COPY allennlp_demo/common allennlp_demo/common
 
-# Name / sub-directory name of the demo.
-ARG MODULE
-
 # Copy model-specific stuff.
-COPY allennlp_demo/${MODULE} allennlp_demo/${MODULE}
+COPY allennlp_demo/wikitables_parser allennlp_demo/wikitables_parser
 
-# You might be wondering why we can't just do
-#
-#> ENTRYPOINT [ "python" ]
-#> CMD [ "allennlp_demo/${MODULE}/api.py" ]
-#
-# The reason is that Python will interpret the string in CMD literally as just
-# "allennlp_demo/${MODULE}/api.py" without substituting environment variables.
-# Environment variable evaluation is a something that a shell handles, so we need
-# to wrap the `python` command in a shell (`/bin/bash` in this case).
-ENV MODULE ${MODULE}
-ENTRYPOINT [ "/bin/bash" ]
-CMD [ "-c", "python allennlp_demo/${MODULE}/api.py" ]
+ENTRYPOINT [ "python" ]
+CMD [ "allennlp_demo/wikitables_parser/api.py" ]

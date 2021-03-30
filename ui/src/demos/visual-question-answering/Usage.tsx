@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { Models, Examples } from '@allenai/tugboat/context';
-import { NoSelectedModelError, GroupedExamplesError } from '@allenai/tugboat/error';
-import { isGroupedExamples } from '@allenai/tugboat/lib';
+import { NoSelectedModelError, CategorizedExamplesError } from '@allenai/tugboat/error';
+import { areCategorized } from '@allenai/tugboat/lib';
 
 import { ModelUsage } from '../../components';
 
@@ -18,8 +18,8 @@ export const Usage = () => {
         throw new NoSelectedModelError();
     }
 
-    if (isGroupedExamples(examples)) {
-        throw new GroupedExamplesError();
+    if (areCategorized(examples)) {
+        throw new CategorizedExamplesError();
     }
 
     // TODO: This seems brittle. If the examples change this will fail at runtime.
@@ -32,7 +32,6 @@ echo '{"question": "${ex.question}", "image": "https://storage.googleapis.com/al
 
     const pythonCommand = `
 from allennlp.predictors.predictor import Predictor
-import allennlp_models.tagging
 
 predictor = Predictor.from_path("${models.selectedModel.card.archive_file}")
 predictor.predict(
