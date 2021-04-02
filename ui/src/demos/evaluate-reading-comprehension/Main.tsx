@@ -31,10 +31,10 @@ export const Main = () => {
                     <Predict<Input, Prediction>
                         fields={
                             <>
-                                <Field.Passage />
+                                <Field.Context />
                                 <Field.Question />
-                                <Field.Premise />
-                                <Field.Hypothesis />
+                                <Field.Reference />
+                                <Field.Candidate />
                                 <Submit>Run Model</Submit>
                             </>
                         }>
