@@ -12,10 +12,10 @@ class TestLERCModelEndpoint(ModelEndpointTestCase):
         "context": "Robin wept in front of Skylar who was sick of seeing her cry.",
         "question": "What will happen to Robin?",
         "reference": "be scolded",
-        "candidate": "be sad"
+        "candidate": "be sad",
     }
 
     @overrides
     def check_predict_result(self, result):
         print(result)
-        assert math.isclose(result['pred_score'], 1.89528, abs_tol=1e-5)
+        assert math.isclose(result["pred_score"], 1.89528, abs_tol=1e-5)
