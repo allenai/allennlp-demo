@@ -28,7 +28,7 @@ export const Main = () => {
             <TaskDescription />
             <SelectModelAndDescription />
             <Tabs>
-                <Tabs.TabPane tab="TaskDemo" key="Demo">
+                <Tabs.TabPane tab="Demo" key="Demo">
                     <SelectExample displayProp="question" placeholder="Select a Question…" />
                     <Predict<Input, Prediction>
                         version={Version}
