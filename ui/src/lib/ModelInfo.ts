@@ -8,6 +8,7 @@ export enum ModelId {
     ELMOSNLI = 'elmo-snli',
     FineGrainedNER = 'fine-grained-ner',
     GloveSentimentAnalysis = 'glove-sentiment-analysis',
+    LERC = 'lerc',
     MaskedLM = 'masked-lm',
     Naqanet = 'naqanet',
     NextTokenLM = 'next-token-lm',
