@@ -18,4 +18,4 @@ class TestLERCModelEndpoint(ModelEndpointTestCase):
     @overrides
     def check_predict_result(self, result):
         print(result)
-        assert math.isclose(result["pred_score"], 1.89528, abs_tol=1e-5)
+        assert math.isclose(result["pred_score"], 0.223822, abs_tol=1e-5)
