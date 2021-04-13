@@ -4,7 +4,6 @@ import { Model } from '@allenai/tugboat/lib';
 
 import { DebugInfo } from '../../components';
 import { Input, Prediction } from './types';
-import {ModelId} from "../../lib";
 
 interface Props {
     input: Input;

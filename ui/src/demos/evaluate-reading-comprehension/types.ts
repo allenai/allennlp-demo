@@ -11,5 +11,5 @@ export interface Input {
 }
 
 export interface Prediction {
-    pred_score: number
+    pred_score: number;
 }
