@@ -18,7 +18,8 @@ import { TaskDemo, Predict, Interpreters, Attackers } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Version, Input, Prediction, isWithTokenizedInput, InterpreterData } from './types';
+import { Version, Input, Prediction, isWithTokenizedInput } from './types';
+import { InterpreterData, DoubleGradInput, isDoubleInterpreterData } from '../../lib';
 
 export const Main = () => {
     return (
@@ -27,7 +28,7 @@ export const Main = () => {
             <TaskDescription />
             <SelectModelAndDescription />
             <Tabs>
-                <Tabs.TabPane tab="TaskDemo" key="Demo">
+                <Tabs.TabPane tab="Demo" key="Demo">
                     <SelectExample displayProp="premise" placeholder="Select a Premise" />
                     <Predict<Input, Prediction>
                         fields={
@@ -51,27 +52,30 @@ export const Main = () => {
                                     }>
                                     <Predictions input={input} model={model} output={output} />
                                     {isWithTokenizedInput(output) ? (
-                                        <Interpreters<Input, InterpreterData> input={input}>
-                                            {(interpreterOutput) => (
-                                                <>
-                                                    <Saliency
-                                                        interpretData={[
-                                                            interpreterOutput.instance_1
-                                                                .grad_input_2,
-                                                        ]}
-                                                        inputTokens={[output.tokens]}
-                                                        inputHeaders={['Premise']}
-                                                    />
-                                                    <Saliency
-                                                        interpretData={[
-                                                            interpreterOutput.instance_1
-                                                                .grad_input_1,
-                                                        ]}
-                                                        inputTokens={[output.tokens]}
-                                                        inputHeaders={['Hypothesis']}
-                                                    />
-                                                </>
-                                            )}
+                                        <Interpreters<Input, InterpreterData<DoubleGradInput>>
+                                            input={input}>
+                                            {(interpreterOutput) =>
+                                                isDoubleInterpreterData(interpreterOutput) ? (
+                                                    <>
+                                                        <Saliency
+                                                            interpretData={[
+                                                                interpreterOutput.instance_1
+                                                                    .grad_input_2,
+                                                            ]}
+                                                            inputTokens={[output.tokens]}
+                                                            inputHeaders={['Premise']}
+                                                        />
+                                                        <Saliency
+                                                            interpretData={[
+                                                                interpreterOutput.instance_1
+                                                                    .grad_input_1,
+                                                            ]}
+                                                            inputTokens={[output.tokens]}
+                                                            inputHeaders={['Hypothesis']}
+                                                        />
+                                                    </>
+                                                ) : undefined
+                                            }
                                         </Interpreters>
                                     ) : null}
                                     <Attackers

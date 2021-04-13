@@ -18,7 +18,8 @@ import { TaskDemo, Predict, Interpreters, Attackers } from '../../components';
 import { config } from './config';
 import { Usage } from './Usage';
 import { Predictions } from './Predictions';
-import { Version, Input, Prediction, InterpreterData } from './types';
+import { Version, Input, Prediction } from './types';
+import { InterpreterData, GradInput, isInterpreterData } from '../../lib';
 
 export const Main = () => {
     // The hidden fields below are passing parameters to the api that the user does not need to set
@@ -28,7 +29,7 @@ export const Main = () => {
             <TaskDescription />
             <SelectModelAndDescription />
             <Tabs>
-                <Tabs.TabPane tab="TaskDemo" key="Demo">
+                <Tabs.TabPane tab="Demo" key="Demo">
                     <SelectExample displayProp="sentence" placeholder="Select a Sentence" />
                     <Predict<Input, Prediction>
                         fields={
@@ -50,16 +51,18 @@ export const Main = () => {
                                         />
                                     }>
                                     <Predictions input={input} model={model} output={output} />
-                                    <Interpreters<Input, InterpreterData> input={input}>
-                                        {(interpreterOutput) => (
-                                            <Saliency
-                                                interpretData={[
-                                                    interpreterOutput.instance_1.grad_input_1,
-                                                ]}
-                                                inputTokens={[output.tokens]}
-                                                inputHeaders={['Sentence']}
-                                            />
-                                        )}
+                                    <Interpreters<Input, InterpreterData<GradInput>> input={input}>
+                                        {(interpreterOutput) =>
+                                            isInterpreterData(interpreterOutput) ? (
+                                                <Saliency
+                                                    interpretData={[
+                                                        interpreterOutput.instance_1.grad_input_1,
+                                                    ]}
+                                                    inputTokens={[output.tokens]}
+                                                    inputHeaders={['Sentence']}
+                                                />
+                                            ) : undefined
+                                        }
                                     </Interpreters>
                                     <Attackers
                                         input={input}

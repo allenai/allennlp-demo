@@ -12,9 +12,3 @@ export interface Prediction {
     tags: string[];
     logits: number[][];
 }
-
-export interface InterpreterData {
-    instance_1: {
-        grad_input_1: number[];
-    };
-}

@@ -50,10 +50,3 @@ export const isPrediction = (pred: Prediction): pred is Prediction => {
     const typedPred = pred as Prediction;
     return isElmoPrediction(typedPred) || isRobertaPrediction(typedPred);
 };
-
-export interface InterpreterData {
-    instance_1: {
-        grad_input_1: number[];
-        grad_input_2: number[];
-    };
-}

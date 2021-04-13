@@ -13,9 +13,3 @@ export interface Prediction {
     tokens: string[];
     top_indices: number[][];
 }
-
-export interface InterpreterData {
-    instance_1: {
-        grad_input_1: number[];
-    };
-}

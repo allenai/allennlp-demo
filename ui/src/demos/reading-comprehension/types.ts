@@ -219,13 +219,6 @@ export const isPrediction = (pred: Prediction): pred is Prediction => {
     );
 };
 
-export interface InterpreterData {
-    instance_1: {
-        grad_input_1: number[];
-        grad_input_2: number[];
-    };
-}
-
 export const getBasicAnswer = (pred: Prediction): number | string => {
     const noAnswer = 'Answer not found.';
     if (isBiDAFPrediction(pred) || isTransformerQAPrediction(pred)) {
