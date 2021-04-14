@@ -1,0 +1,4 @@
+allennlp==1.0.0
+jsonlines==1.2.0
+Flask==1.1.2
+pytest==5.3.1

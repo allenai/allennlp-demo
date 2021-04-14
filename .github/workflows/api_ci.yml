@@ -81,6 +81,7 @@ jobs:
           "elmo_snli",
           "fine_grained_ner",
           "glove_sentiment_analysis",
+          "lerc",
           "masked_lm",
           "named_entity_recognition",
           "naqanet",

@@ -8,7 +8,7 @@ More information can be found [here](https://github.com/nitishgupta/nmn-drop).
 The best way to run this locally is via Docker:
 
 ```bash
-docker build -f nmn_drop/Dockerfile -t nmn:latest && \
+docker build -f allennlp_demo/nmn_drop/Dockerfile -t nmn:latest . && \
     docker run --rm -it --name nmn -p 8000:8000 nmn:latest
 ```
 
@@ -23,7 +23,7 @@ If it's not, you can run them like so:
 ```bash
 docker
 docker build -f nmn_drop/Dockerfile -t nmn:latest && \
-    docker run --rm -it --name nmn --entrypoint pytest 8000:8000 nmn:latest -x -ra nmn_drop
+    docker run --rm -it --name nmn --entrypoint pytest -p 8000:8000 nmn:latest -x -ra nmn_drop
 ```
 
 The tests require a lot of memory. You may need to adjust your Docker settings to allow up to
