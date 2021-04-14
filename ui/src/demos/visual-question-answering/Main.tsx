@@ -37,7 +37,13 @@ interface UploadImageProps {
 // We wrap the Image field in order to gain access to the example context.
 const UploadImage = ({ onChange }: UploadImageProps) => {
     const examples = useContext(Examples);
-    return <Field.Image value={examples.selectedExample?.image} onChange={onChange} />;
+    return (
+        <Field.Image
+            uploadAction={`/api/${config.modelIds[0]}/noop`}
+            value={examples.selectedExample?.image}
+            onChange={onChange}
+        />
+    );
 };
 
 export const Main = () => {

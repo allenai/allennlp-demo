@@ -203,6 +203,11 @@ class ModelEndpoint:
         def info_handler():
             return self.info()
 
+        # noop post for image upload, we need an endpoint, but we don't need to save the image
+        @self.app.route("/noop", methods=["POST"])
+        def noop():
+            return ""
+
         @self.app.route("/predict", methods=["POST"])
         def predict_handler():
             if no_cache(request):
