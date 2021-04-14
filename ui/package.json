@@ -17,7 +17,7 @@
     "@allenai/tugboat": "^2.0.2",
     "@allenai/varnish": "^2.0.16",
     "@allenai/varnish-react-router": "^2.0.2",
-    "@ant-design/icons": "^4.4.0",
+    "@ant-design/icons": "^4.6.2",
     "@babel/core": "^7.12.13",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/preset-env": "^7.12.13",
