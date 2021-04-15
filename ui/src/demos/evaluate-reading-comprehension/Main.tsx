@@ -5,7 +5,7 @@ import {
     SelectedModelCard,
     Output,
     SelectExample,
-    SelectModelAndDescription,
+    SelectedModelDescription,
     Share,
     Submit,
     TaskDescription,
@@ -22,9 +22,9 @@ import { Version, Input, Prediction } from './types';
 export const Main = () => {
     return (
         <TaskDemo ids={config.modelIds} taskId={config.taskId}>
-            <TaskTitle />
+           <TaskTitle />
             <TaskDescription />
-            <SelectModelAndDescription />
+            <SelectedModelDescription />
             <Tabs>
                 <Tabs.TabPane tab="TaskDemo" key="Demo">
                     <SelectExample displayProp="context" placeholder="Select a Context" />
