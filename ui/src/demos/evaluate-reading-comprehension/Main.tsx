@@ -22,7 +22,7 @@ import { Version, Input, Prediction } from './types';
 export const Main = () => {
     return (
         <TaskDemo ids={config.modelIds} taskId={config.taskId}>
-           <TaskTitle />
+            <TaskTitle />
             <TaskDescription />
             <SelectedModelDescription />
             <Tabs>
