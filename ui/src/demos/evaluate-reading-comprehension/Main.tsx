@@ -5,7 +5,7 @@ import {
     SelectedModelCard,
     Output,
     SelectExample,
-    SelectModelAndDescription,
+    SelectedModelDescription,
     Share,
     Submit,
     TaskDescription,
@@ -24,7 +24,7 @@ export const Main = () => {
         <TaskDemo ids={config.modelIds} taskId={config.taskId}>
             <TaskTitle />
             <TaskDescription />
-            <SelectModelAndDescription />
+            <SelectedModelDescription />
             <Tabs>
                 <Tabs.TabPane tab="TaskDemo" key="Demo">
                     <SelectExample displayProp="context" placeholder="Select a Context" />
