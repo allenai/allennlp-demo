@@ -71,13 +71,13 @@ selected a model, follow these steps to port it to the new solution:
    figure out what's wrong. If there's issues building the container you may
    need to install additional dependencies or change the AllenNLP version.
    If the endpoint won't start you may need to modify the endpoint code and
-   the tests. You can override methods in the [ModelEndpoint](https://github.com/allenai/allennlp-demo/blob/master/allennlp_demo/common/http.py#L55)
+   the tests. You can override methods in the [ModelEndpoint](https://github.com/allenai/allennlp-demo/blob/main/allennlp_demo/common/http.py#L55)
    class to provide custom behavior as needed. Don't hesitate to ping Sam as
    this point for help, as this can be nuansced.
 
 9. We need to make sure the new test you just made will run in GitHub Actions. For this, all you need
    to do is add the name/directory of your model to the build model matrix list in
-   [.github/workflows/ci.yml](https://github.com/allenai/allennlp-demo/blob/master/.github/workflows/ci.yml).
+   [.github/workflows/ci.yml](https://github.com/allenai/allennlp-demo/blob/main/.github/workflows/ci.yml).
 
 10. Push your code to a branch attached to the origin (Google Cloud Build cannot
     access your fork by default):
@@ -123,9 +123,9 @@ selected a model, follow these steps to port it to the new solution:
     here as this can be a little tricky.
 
 14. Once the deploy is working edit the trigger and change the branch back to
-    `^master$`.
+    `^main$`.
 
-15. Go through the regular PR cycle. Once the code merges to `master` you're
+15. Go through the regular PR cycle. Once the code merges to `main` you're
     all set.
 
 At this point the new endpoint is deployed alongside the old one. The effort
