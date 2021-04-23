@@ -3,12 +3,12 @@ name: API CI
 on:
   push:
     branches:
-    - master
+    - main
     paths:
     - 'api/**'
   pull_request:
     branches:
-    - master
+    - main
     paths:
     - 'api/**'
   schedule:

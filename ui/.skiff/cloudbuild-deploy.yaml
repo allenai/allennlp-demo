@@ -1,5 +1,5 @@
 #
-# This cloudbuild config runs whenever we push code to master or release
+# This cloudbuild config runs whenever we push code to main or release
 # and updates the target cluster (specified via the $_CLUSTER envrionment
 # variable).
 #

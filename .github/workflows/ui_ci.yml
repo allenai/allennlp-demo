@@ -2,13 +2,13 @@ name: UI CI
 on:
   push:
     branches:
-    - master
+    - main
     paths:
     - 'ui/**'
     - 'it/**'
   pull_request:
     branches:
-    - master
+    - main
     paths:
     - 'ui/**'
     - 'it/**'
