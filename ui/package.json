@@ -34,7 +34,7 @@
     "antd": "^4.12.3",
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^6.2.1",
-    "css-loader": "^5.0.2",
+    "css-loader": "^5.2.4",
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.2.0",
     "eslint-config-standard": "^15.0.1",
