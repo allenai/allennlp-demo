@@ -36,7 +36,7 @@
     "copy-webpack-plugin": "^6.2.1",
     "css-loader": "^5.2.4",
     "eslint": "^7.24.0",
-    "eslint-config-prettier": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^15.0.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
