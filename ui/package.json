@@ -31,7 +31,7 @@
     "@types/webpack-env": "^1.15.3",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "antd": "^4.15.2",
+    "antd": "^4.12.3",
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^6.2.1",
     "css-loader": "^5.2.4",
