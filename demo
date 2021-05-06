@@ -33,6 +33,7 @@ from typing import List, Tuple, Optional
 from pathlib import Path
 from urllib.request import urlopen
 from urllib.error import URLError
+from urllib.parse import urlparse
 from http.client import HTTPResponse, RemoteDisconnected
 
 # When we spawn docker things they need a name that prevents them from colliding with other
@@ -582,6 +583,15 @@ class Proxy(Container):
                     proxy_set_header X-Forwarded-For $remote_addr;
                 """
 
+            # If we're proxying to something that uses SSL, set the server name to that of 
+            # the remote resource. Otherwise SSL won't work.
+            upstream_url = urlparse(route.upstream)
+            if upstream_url.scheme == "https":
+                host = upstream_url.netloc.split(":")[0]
+                extra += f"""
+                    proxy_ssl_name {host};
+                    proxy_ssl_server_name on;
+                """
             locs.append(f"""
                 location {route.path} {{
                     {rewrites}

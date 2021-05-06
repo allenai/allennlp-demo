@@ -31,7 +31,7 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('api/requirements.txt') }}-${{ hashFiles('api/dev-requirements.txt') }}
+        key: ${{ runner.os }}-pydeps-${{ env.pythonLocation }}-${{ hashFiles('api/requirements.txt') }}-${{ hashFiles('api/dev-requirements.txt') }}-v2
 
     - name: Install requirements
       working-directory: api
