@@ -18,7 +18,7 @@
     "@allenai/varnish": "^2.0.17",
     "@allenai/varnish-react-router": "^2.0.2",
     "@ant-design/icons": "^4.6.2",
-    "@babel/core": "^7.13.16",
+    "@babel/core": "^7.14.2",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/preset-env": "^7.13.15",
     "@babel/preset-react": "^7.13.13",
