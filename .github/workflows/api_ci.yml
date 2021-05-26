@@ -92,6 +92,7 @@ jobs:
           "roberta_mnli",
           "roberta_sentiment_analysis",
           "roberta_snli",
+	  "binary_gender_bias_mitigated_roberta_snli",
           "semantic_role_labeling",
           "transformer_qa",
           "vilbert_vqa",
