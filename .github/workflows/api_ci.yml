@@ -1,5 +1,9 @@
 name: API CI
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
@@ -46,19 +50,19 @@ jobs:
 
     - name: Format
       working-directory: api
-      if: always()
+      if: '! cancelled()'
       run: |
         make format
 
     - name: Lint
       working-directory: api
-      if: always()
+      if: '! cancelled()'
       run: |
         make lint
 
     - name: Type check
       working-directory: api
-      if: always()
+      if: '! cancelled()'
       run: |
         make typecheck
 
