@@ -20,6 +20,7 @@ export enum ModelId {
     SemanticRollLabeling = 'semantic-role-labeling',
     TransformerQA = 'transformer-qa',
     VilbertVQA = 'vilbert-vqa',
+    BinaryGenderBiasMitigatedRobertaSNLI = 'binary-gender-bias-mitigated-roberta-snli'
 }
 
 /**
