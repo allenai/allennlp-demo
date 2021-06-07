@@ -22,6 +22,18 @@ init({
     autoSessionTracking: true,
     environment: process.env.SENTRY_ENVIRONMENT || 'dev',
     release: process.env.SENTRY_RELEASE || 'none',
+    ignoreErrors: [
+        // This is suggested in the Sentry docs (https://docs.sentry.io/platforms/javascript/guides/react/configuration/filtering/)
+        // Random plugins/extensions
+        'top.GLOBALS',
+    ],
+    denyUrls: [
+        // Chrome extensions
+        /extensions\//i,
+        /^chrome:\/\//i,
+        // Mozilla extensions
+        /moz-extension\//i,
+    ],
 });
 
 /*******************************************************************************
