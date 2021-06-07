@@ -1,4 +1,4 @@
-FROM allennlp/models:v1.4.1-cuda11.0
+FROM allennlp/models:v2.5.0-cuda11.1
 
 WORKDIR /app/
 
