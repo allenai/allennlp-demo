@@ -11,6 +11,7 @@ export const config: DemoConfig = {
         ModelId.RobertaSNLI,
         ModelId.RobertaMNLI,
         ModelId.BinaryGenderBiasMitigatedRobertaSNLI,
+        ModelId.AdversarialBinaryGenderBiasMitigatedRobertaSNLI,
     ],
     status: 'active',
     taskId: 'textual_entailment',

@@ -21,6 +21,7 @@ export enum ModelId {
     TransformerQA = 'transformer-qa',
     VilbertVQA = 'vilbert-vqa',
     BinaryGenderBiasMitigatedRobertaSNLI = 'bin-gender-bias-mitigated-roberta-snli',
+    AdversarialBinaryGenderBiasMitigatedRobertaSNLI = 'adv-bin-gen-bias-mitigated-roberta-snli',
 }
 
 /**

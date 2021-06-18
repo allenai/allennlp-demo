@@ -49,6 +49,7 @@ const OutputByModel = ({ output, model }: { output: Prediction; model: Model }) 
         }
         case ModelId.RobertaSNLI:
         case ModelId.BinaryGenderBiasMitigatedRobertaSNLI:
+        case ModelId.AdversarialBinaryGenderBiasMitigatedRobertaSNLI:
         case ModelId.RobertaMNLI: {
             if (!isRobertaPrediction(output)) {
                 throw new UnexpectedOutputError(model.id);
@@ -244,7 +245,7 @@ const TernaryLabels = styled.img.attrs({ src: TeContainerSrc })`
     position: absolute;
 `;
 
-const TernaryTrangle = styled.img.attrs({ src: TeTriangleSrc })<{
+const TernaryTrangle = styled.img.attrs({ src: TeTriangleSrc }) <{
     width: number;
     height: number;
     top: number;
@@ -257,7 +258,7 @@ const TernaryTrangle = styled.img.attrs({ src: TeTriangleSrc })<{
     top: ${({ top }) => `${top}px`};
 `;
 
-const TernaryPlot = styled.img.attrs({ src: TePlotSrc })<{ top: number; left: number }>`
+const TernaryPlot = styled.img.attrs({ src: TePlotSrc }) <{ top: number; left: number }>`
     position: absolute;
     margin: -7px 0 0 -7px;
     width: 14px;
