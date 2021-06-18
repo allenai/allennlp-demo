@@ -587,8 +587,10 @@ class Proxy(Container):
             # the remote resource. Otherwise SSL won't work.
             upstream_url = urlparse(route.upstream)
             host = upstream_url.netloc.split(":")[0]
-            # TODO: There's probably other things to check for here, but
-            # this is at least a start.
+            # Make sure the hostname isn't longer than 63 characters:
+            # https://datatracker.ietf.org/doc/html/rfc1123#section-2
+            # TODO: There's probably other things about the hostname we should
+            # validate, but this is a good start.
             if len(host) > 63:
                 raise InvalidHostnameError(host, f"{host} is too long, must be < 64 characters")
             if upstream_url.scheme == "https":
