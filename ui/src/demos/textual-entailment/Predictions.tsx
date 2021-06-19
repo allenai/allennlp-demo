@@ -49,6 +49,7 @@ const OutputByModel = ({ output, model }: { output: Prediction; model: Model }) 
         }
         case ModelId.RobertaSNLI:
         case ModelId.BinaryGenderBiasMitigatedRobertaSNLI:
+        case ModelId.AdversarialBinaryGenderBiasMitigatedRobertaSNLI:
         case ModelId.RobertaMNLI: {
             if (!isRobertaPrediction(output)) {
                 throw new UnexpectedOutputError(model.id);

@@ -1,0 +1,6 @@
+{
+    "id": "adv-bin-gen-bias-mitigated-roberta-snli",
+    "pretrained_model_id": "pair-classification-adversarial-binary-gender-bias-mitigated-roberta-snli",
+    "attackers": [],
+    "interpreters": []
+}
