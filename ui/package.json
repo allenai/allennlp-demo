@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@allenai/eslint-config-varnish": "^1.0.3",
-    "@allenai/tugboat": "^2.0.2",
+    "@allenai/tugboat": "^2.0.3",
     "@allenai/varnish": "^2.0.18",
     "@allenai/varnish-react-router": "^2.0.2",
     "@ant-design/icons": "^4.6.2",
@@ -32,7 +32,7 @@
     "@types/webpack-env": "^1.15.3",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "antd": "^4.15.4",
+    "antd": "^4.16.5",
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^6.2.1",
     "css-loader": "^5.2.4",
