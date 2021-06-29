@@ -3,3 +3,5 @@ git+git://github.com/allenai/allennlp-models.git@48150a3cc0114c0bf48ff55d24ad0e3
 allennlp-semparse==0.0.2
 Flask==1.1.2
 pytest==6.2.2
+# Need to pin this to avoid a dependency conflict :(
+tensorboardX==1.2

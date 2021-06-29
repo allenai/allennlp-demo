@@ -72,6 +72,7 @@ jobs:
     # self-hosted runner only available on main repo
     if: github.repository == 'allenai/allennlp-demo'
     strategy:
+      fail-fast: false
       matrix:
         # This should be all of the directory names in api/allennlp_demo that correspond
         # to demo model endpoints.
