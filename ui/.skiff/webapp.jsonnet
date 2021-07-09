@@ -74,6 +74,12 @@ local deployment = {
     },
     spec: {
         revisionHistoryLimit: 3,
+        strategy: {
+            type: 'RollingUpdate',
+            rollingUpdate: {
+                maxSurge: num_replicas // This makes deployments faster.
+            }
+        },
         replicas: num_replicas,
         selector: {
             matchLabels: ui_labels
@@ -169,9 +175,27 @@ local ingress = {
     }
 };
 
+
+local pdb = {
+    apiVersion: 'policy/v1beta1',
+    kind: 'PodDisruptionBudget',
+    metadata: {
+        name: fqn,
+        namespace: namespace_name,
+        labels: labels,
+    },
+    spec: {
+        minAvailable: if num_replicas > 1 then 1 else 0,
+        selector: {
+            matchLabels: ui_labels,
+        },
+    },
+};
+
 [
     namespace,
     ingress,
     deployment,
-    service
+    service,
+    pdb
 ]
