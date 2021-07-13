@@ -109,6 +109,12 @@ local db = import 'db.libsonnet';
                 }
             },
             spec: {
+                strategy: {
+                    type: 'RollingUpdate',
+                    rollingUpdate: {
+                        maxSurge: replicas // This makes deployments faster.
+                    }
+                },
                 revisionHistoryLimit: 3,
                 replicas: replicas,
                 selector: {
@@ -281,10 +287,27 @@ local db = import 'db.libsonnet';
             }
         };
 
+        local pdb = {
+            apiVersion: 'policy/v1beta1',
+            kind: 'PodDisruptionBudget',
+            metadata: {
+                name: fullyQualifiedName,
+                namespace: namespace.metadata.name,
+                labels: labels,
+            },
+            spec: {
+                minAvailable: if replicas > 1 then 1 else 0,
+                selector: {
+                    matchLabels: labels,
+                },
+            },
+        };
+
         [
             namespace,
             deployment,
             service,
-            ingress
+            ingress,
+            pdb
         ]
 }
