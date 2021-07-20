@@ -67,7 +67,7 @@ export const Interpreters = <I, O>({ input, children }: Props<I, O>) => {
                                     <a
                                         href="https://arxiv.org/abs/1312.6034"
                                         target="_blank"
-                                        rel="noopener,noreferrer">
+                                        rel="noopener, noreferrer">
                                         visualizing the gradient
                                     </a>
                                     .{' '}
@@ -90,7 +90,7 @@ export const Interpreters = <I, O>({ input, children }: Props<I, O>) => {
                                     <a
                                         href="https://arxiv.org/abs/1703.01365"
                                         target="_blank"
-                                        rel="noopener,noreferrer">
+                                        rel="noopener, noreferrer">
                                         Integrated Gradients
                                     </a>
                                     .
@@ -113,7 +113,7 @@ export const Interpreters = <I, O>({ input, children }: Props<I, O>) => {
                                     <a
                                         href="https://arxiv.org/abs/1706.03825"
                                         target="_blank"
-                                        rel="noopener,noreferrer">
+                                        rel="noopener, noreferrer">
                                         SmoothGrad
                                     </a>
                                     .

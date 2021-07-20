@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@allenai/eslint-config-varnish@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@allenai/eslint-config-varnish/-/eslint-config-varnish-1.0.3.tgz#943da78f3e681f32331c78d1a826400aa6731a6a"
-  integrity sha512-/dnXAKJOwhbQbTp17CdeXyRiCUriy576cLGcE3zJmU5R+U5kNDycWDnMJttnrb+/cpKy4Ji4yvzDiISKk3TscA==
+"@allenai/eslint-config-varnish@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@allenai/eslint-config-varnish/-/eslint-config-varnish-1.0.4.tgz#61cbd9c0579f1c8e9a2ca52e77c84761a3f8e8db"
+  integrity sha512-6B5KPBjeTDiUQ7rs2NFjdp6DOBDVUjUOeAZqBkxPOpvD6QyD5QnLf7PXsiDnkWqwdzOwOnYFM0SEjm/gEIuysA==
 
 "@allenai/tugboat@^2.0.3":
   version "2.0.3"
@@ -24,10 +24,10 @@
   resolved "https://registry.yarnpkg.com/@allenai/varnish-react-router/-/varnish-react-router-2.0.2.tgz#a2ad3c106b78dc36ebe964dd2df1ab3a4ea54564"
   integrity sha512-gmRymndavTCj/jKEPDjGRoI2Lax52cO4mH4VZ1O7LpMShiYAhPLESGK9JcjkkgdaNp2XNhrQ2prfkvd5w/PY2w==
 
-"@allenai/varnish@^2.0.18":
-  version "2.0.18"
-  resolved "https://registry.yarnpkg.com/@allenai/varnish/-/varnish-2.0.18.tgz#6191d9c0eb456abe665e5a0b91034b9236ad15fb"
-  integrity sha512-xpQ3hKgDb0RfNcsAMxIaDKkZuvTXtfuL5PF8YoDTilG900nqC7+vZe6fJ9Gnw2U17nc6pTL2O6ia62Z3+SbLXQ==
+"@allenai/varnish@^2.0.19":
+  version "2.0.19"
+  resolved "https://registry.yarnpkg.com/@allenai/varnish/-/varnish-2.0.19.tgz#4c48667ae1da36014839fe54ef00fa928aba85b1"
+  integrity sha512-cDAzGQ93dTN6XqGr9luZ4ExAQWInDQbEmobjgvV8ppfB/B1DwlXjnSTXPwA0LcVvViO76ullrOeDKOKtQjsehA==
 
 "@ant-design/colors@^6.0.0":
   version "6.0.0"
@@ -7439,7 +7439,7 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 
-ws@^6.2.1, ws@^6.2.2:
+ws@^6.2.1:
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.2.tgz#dd5cdbd57a9979916097652d78f1cc5faea0c32e"
   integrity sha512-zmhltoSR8u1cnDsD43TX59mzoMZsLKqUweyYBAIvTngR3shc0W6aOZylZmq/7hqyVxPdi+5Ud2QInblgyE72fw==

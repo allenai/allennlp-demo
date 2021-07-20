@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { RedToken, TransparentToken, BlankToken } from './Tokens';
 
 /**

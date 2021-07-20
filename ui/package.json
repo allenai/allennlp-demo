@@ -14,9 +14,9 @@
     "prismjs": "^1.24.0"
   },
   "dependencies": {
-    "@allenai/eslint-config-varnish": "^1.0.3",
+    "@allenai/eslint-config-varnish": "^1.0.4",
     "@allenai/tugboat": "^2.0.3",
-    "@allenai/varnish": "^2.0.18",
+    "@allenai/varnish": "^2.0.19",
     "@allenai/varnish-react-router": "^2.0.2",
     "@ant-design/icons": "^4.6.2",
     "@babel/core": "^7.13.16",
