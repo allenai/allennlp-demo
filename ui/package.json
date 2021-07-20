@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server --mode development",
+    "start": "webpack server --hot --mode development",
     "build": "webpack --display-error-details --mode production",
     "lint": "eslint '**/*.{js,jsx,ts,tsx,json}' && echo '💫  Lint complete.'",
     "lint:fix": "eslint '**/*.{js,jsx,ts,tsx,json}' --fix && npx sort-package-json && echo '🛠  Lint --fix complete'"
