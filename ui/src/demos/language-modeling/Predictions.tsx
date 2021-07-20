@@ -63,10 +63,10 @@ const SingleResult = ({ pred, input }: SingleResultProps) => {
 export const Predictions = ({ input, model, output }: Props) => {
     const formatProbability = (probs: number[], idx: number) => {
         // normalize the displayed probabilities
-        var sum = probs.reduce(function (a, b) {
+        const sum = probs.reduce(function (a, b) {
             return a + b;
         }, 0);
-        var prob = probs[idx] / sum;
+        const prob = probs[idx] / sum;
         return prob;
     };
 
