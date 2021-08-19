@@ -15,8 +15,6 @@ on:
     - main
     paths:
     - 'api/**'
-  schedule:
-  - cron: '7 6 * * *'
 
 jobs:
   api_checks:
