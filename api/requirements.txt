@@ -1,4 +1,4 @@
 allennlp==2.5.0
-allennlp-models==2.5.0
+allennlp-models==2.7.0
 Flask==1.1.2
 pytest==6.2.3
