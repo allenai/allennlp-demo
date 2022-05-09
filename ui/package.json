@@ -36,7 +36,7 @@
     "babel-loader": "^8.1.0",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^5.2.4",
-    "dayjs": "^1.8.30",
+    "dayjs": "^1.11.2",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",
