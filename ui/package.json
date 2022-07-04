@@ -22,7 +22,7 @@
     "@babel/core": "^7.13.16",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/preset-env": "^7.14.7",
-    "@babel/preset-react": "^7.13.13",
+    "@babel/preset-react": "^7.18.6",
     "@sentry/react": "^6.3.1",
     "@types/node": "^16.3.3",
     "@types/react": "^17.0.14",
