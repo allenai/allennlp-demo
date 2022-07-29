@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "webpack server --hot --mode development",
     "build": "webpack --mode production",
     "lint": "eslint '**/*.{js,jsx,ts,tsx,json}' && echo '💫  Lint complete.'",
-    "lint:fix": "eslint '**/*.{js,jsx,ts,tsx,json}' --fix && npx sort-package-json && echo '🛠  Lint --fix complete'"
+    "lint:fix": "eslint '**/*.{js,jsx,ts,tsx,json}' --fix && npx sort-package-json && echo '🛠  Lint --fix complete'",
+    "start": "webpack server --hot --mode development"
   },
   "resolutions": {
     "glob-parent": "^5.1.2",

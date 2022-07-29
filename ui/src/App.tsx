@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-d
 import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/components';
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
 import { Demos } from '@allenai/tugboat/lib';
-import { ErrorBoundaryView, Promised } from '@allenai/tugboat/components';
+import { ErrorBoundary, Promised } from '@allenai/tugboat/components';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
 import { Menu } from './components';
@@ -47,7 +47,7 @@ export const App = () => (
         <Router>
             <ScrollToTopOnPageChange />
             <DemoLayout>
-                <ErrorBoundary fallback={({ error }) => <ErrorBoundaryView error={error} />}>
+                <ErrorBoundary>
                     <Promised
                         promise={() => Promise.all([fetchTaskCards(), fetchModelCards()])}
                         deps={[]}>
@@ -62,10 +62,7 @@ export const App = () => (
                                         />
                                         {demos.all().map(({ config, Component }) => (
                                             <Route key={config.path} path={config.path}>
-                                                <ErrorBoundary
-                                                    fallback={({ error }) => (
-                                                        <ErrorBoundaryView error={error} />
-                                                    )}>
+                                                <ErrorBoundary>
                                                     <Component />
                                                 </ErrorBoundary>
                                             </Route>

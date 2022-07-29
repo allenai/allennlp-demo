@@ -55,7 +55,7 @@ module.exports = {
                     transformPath: (p) => p.replace(/^public\//, ''),
                 },
             ],
-        })
+        }),
     ],
     output: {
         filename: 'main.[hash:6].js',
