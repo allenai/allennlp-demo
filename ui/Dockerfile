@@ -5,12 +5,6 @@ WORKDIR /ui
 COPY package.json yarn.lock ./
 RUN yarn
 
-ARG env
-ARG sha
-
-ENV SENTRY_ENVIRONMENT=${env}
-ENV SENTRY_RELEASE=${sha}
-
 COPY . .
 RUN yarn build
 

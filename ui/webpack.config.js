@@ -1,6 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const webpack = require('webpack');
 
 const path = require('path');
 
@@ -56,10 +55,7 @@ module.exports = {
                     transformPath: (p) => p.replace(/^public\//, ''),
                 },
             ],
-        }),
-        // Environment variables named here are embedded into the JavaScript payload so they
-        // can be used at runtime.
-        new webpack.EnvironmentPlugin('SENTRY_RELEASE', 'SENTRY_ENVIRONMENT'),
+        })
     ],
     output: {
         filename: 'main.[hash:6].js',
