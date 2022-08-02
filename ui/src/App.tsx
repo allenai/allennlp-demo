@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
-import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/components';
+import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish';
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
 import { Demos } from '@allenai/tugboat/lib';
 import { ErrorBoundary, Promised } from '@allenai/tugboat/components';
@@ -12,7 +12,7 @@ import { groups } from './groups';
 import { ModelCards, TaskCards } from './context';
 import { fetchTaskCards, fetchModelCards } from './lib';
 
-import '@allenai/varnish/dist/theme.css';
+import '@allenai/varnish/theme.css';
 
 /*******************************************************************************
   <App /> Container

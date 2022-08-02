@@ -58,7 +58,7 @@ module.exports = {
         }),
     ],
     output: {
-        filename: 'main.[hash:6].js',
+        filename: 'main.[contenthash].js',
         path: path.resolve(__dirname, 'build'),
         publicPath: '/',
     },

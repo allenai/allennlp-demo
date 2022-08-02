@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events */
 import React, { useContext } from 'react';
 import { Output, Spark, SparkEnvelope, SparkValue } from '@allenai/tugboat/components';
 import { Form } from '@allenai/tugboat/context';
