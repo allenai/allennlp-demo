@@ -1,11 +1,9 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const webpack = require('webpack');
 
 const path = require('path');
 
 module.exports = {
-    target: 'node',
     entry: './src/index.tsx',
     module: {
         rules: [
@@ -57,12 +55,9 @@ module.exports = {
                 },
             ],
         }),
-        // Environment variables named here are embedded into the JavaScript payload so they
-        // can be used at runtime.
-        new webpack.EnvironmentPlugin('SENTRY_RELEASE', 'SENTRY_ENVIRONMENT'),
     ],
     output: {
-        filename: 'main.[hash:6].js',
+        filename: 'main.[contenthash].js',
         path: path.resolve(__dirname, 'build'),
         publicPath: '/',
     },

@@ -3,13 +3,7 @@ FROM node:12.16.2 as build
 WORKDIR /ui
 
 COPY package.json yarn.lock ./
-RUN yarn
-
-ARG env
-ARG sha
-
-ENV SENTRY_ENVIRONMENT=${env}
-ENV SENTRY_RELEASE=${sha}
+RUN yarn install --frozen-lockfile
 
 COPY . .
 RUN yarn build

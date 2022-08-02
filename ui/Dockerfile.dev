@@ -11,8 +11,6 @@ RUN yarn
 COPY . .
 
 ENV NODE_ENV=development
-ENV SENTRY_ENVIRONMENT=dev
-ENV SENTRY_RELEASE=none
 
 ENTRYPOINT [ "yarn" ]
 CMD [ "start" ]
