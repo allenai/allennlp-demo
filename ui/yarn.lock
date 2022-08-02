@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@allenai/eslint-config-varnish/-/eslint-config-varnish-1.1.0.tgz#3132e4efef025cc2d350c1120dfe5cec426b2ea2"
   integrity sha512-D/gM8WlqcJphYHl7vaSBdrTpSszktEcI4OBks9gEgZ8O4IyJ1jVkbCd10hADkAy2o+17fmIJt5HJu252BpYZhA==
 
-"@allenai/tugboat@^2.0.11":
-  version "2.0.11"
-  resolved "https://registry.yarnpkg.com/@allenai/tugboat/-/tugboat-2.0.11.tgz#adfe3dbb0a6e696103c553a89cd9fc7e1a5eeef3"
-  integrity sha512-R2Ze1MaN1kT4Oo7SqrwsoyT6bWBhwycUgcEv/Y3z/7S46Smzri4exH9tYyo1BFpPRNK6PAOAzQBGstPwxzUY8w==
+"@allenai/tugboat@^2.0.12":
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/@allenai/tugboat/-/tugboat-2.0.12.tgz#d60f2655894c7cd028b4e7297ae54f5941b89544"
+  integrity sha512-+rBNCNXDkMLS0hQ4tMqmGPkKL1oydiDYQnI6DwWdhg+imMedIJrWy9dO3V8LL8DRLBC386q990+nYxyPNiU0ZA==
   dependencies:
     colormap "^2.3.1"
     commonmark "^0.29.2"
