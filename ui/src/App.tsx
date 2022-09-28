@@ -1,11 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { init, ErrorBoundary } from '@sentry/react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
-import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish/components';
+import { Content, Footer, Header, Layout, VarnishApp } from '@allenai/varnish';
 import { ScrollToTopOnPageChange } from '@allenai/varnish-react-router';
 import { Demos } from '@allenai/tugboat/lib';
-import { ErrorBoundaryView, Promised } from '@allenai/tugboat/components';
+import { ErrorBoundary, Promised } from '@allenai/tugboat/components';
 
 import allenNlpLogo from './components/allennlp_logo.svg';
 import { Menu } from './components';
@@ -13,28 +12,7 @@ import { groups } from './groups';
 import { ModelCards, TaskCards } from './context';
 import { fetchTaskCards, fetchModelCards } from './lib';
 
-import '@allenai/varnish/dist/theme.css';
-
-// Sentry is a tool that captures JavaScript errors at runtime and aggregates them.
-// If you need access, ask someone on the AllenNLP team.
-init({
-    dsn: 'https://59686a41b9664bf2a8bbc51a602428c2@o226626.ingest.sentry.io/5599301',
-    autoSessionTracking: true,
-    environment: process.env.SENTRY_ENVIRONMENT || 'dev',
-    release: process.env.SENTRY_RELEASE || 'none',
-    ignoreErrors: [
-        // This is suggested in the Sentry docs (https://docs.sentry.io/platforms/javascript/guides/react/configuration/filtering/)
-        // Random plugins/extensions
-        'top.GLOBALS',
-    ],
-    denyUrls: [
-        // Chrome extensions
-        /extensions\//i,
-        /^chrome:\/\//i,
-        // Mozilla extensions
-        /moz-extension\//i,
-    ],
-});
+import '@allenai/varnish/theme.css';
 
 /*******************************************************************************
   <App /> Container
@@ -69,7 +47,7 @@ export const App = () => (
         <Router>
             <ScrollToTopOnPageChange />
             <DemoLayout>
-                <ErrorBoundary fallback={({ error }) => <ErrorBoundaryView error={error} />}>
+                <ErrorBoundary>
                     <Promised
                         promise={() => Promise.all([fetchTaskCards(), fetchModelCards()])}
                         deps={[]}>
@@ -84,10 +62,7 @@ export const App = () => (
                                         />
                                         {demos.all().map(({ config, Component }) => (
                                             <Route key={config.path} path={config.path}>
-                                                <ErrorBoundary
-                                                    fallback={({ error }) => (
-                                                        <ErrorBoundaryView error={error} />
-                                                    )}>
+                                                <ErrorBoundary>
                                                     <Component />
                                                 </ErrorBoundary>
                                             </Route>

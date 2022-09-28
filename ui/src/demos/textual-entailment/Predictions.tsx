@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Table from 'antd/es/table';
-import { belowOrEqualTo } from '@allenai/varnish/theme/breakpoints';
+import { belowOrEqualTo } from '@allenai/varnish/';
 import { Output, Spark, SparkEnvelope, SparkValue } from '@allenai/tugboat/components';
 import { Model } from '@allenai/tugboat/lib';
 import {

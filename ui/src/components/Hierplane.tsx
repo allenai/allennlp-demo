@@ -14,6 +14,8 @@ export const Hierplane = ({ tree, theme }: { tree: {}; theme?: string }) => {
 };
 
 const HierplaneWrapper = styled.div`
+    overflow-y: auto;
+
     .hierplane__visualization-verbs {
         background: #f9fafc;
         padding: 1em 1.25em;
