@@ -9,7 +9,7 @@ an open source library for NLP research.
 
 ## Getting Started
 
-First, make sure you have [Docker](https://www.docker.com/) and [Python 3](https://www.python.org/) 
+First, make sure you have [Docker](https://www.docker.com/) and [Python 3](https://www.python.org/) (3.7 or higher)
 installed. After that's complete, you can start things by running this command:
 
 ```
