@@ -68,3 +68,7 @@ typings/
 
 # docker build context
 *.tar.gz
+
+#IntelliJ
+/*.iml
+/.idea/

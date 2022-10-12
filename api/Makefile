@@ -21,7 +21,7 @@ typecheck :
 
 %-build :
 	@if [ -f allennlp_demo/$*/Dockerfile ]; then \
-		echo "Using custom build from allennlp_demo/$*/Dockefile"; \
+		echo "Using custom build from allennlp_demo/$*/Dockerfile"; \
 		docker build \
 			-f allennlp_demo/$*/Dockerfile \
 			-t $(DOCKER_BASE_NAME)-$*:$(DOCKER_TAG) .; \
