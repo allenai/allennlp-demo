@@ -5,7 +5,7 @@ flake8
 mypy==0.812
 
 # Automatic code formatting
-black==22.8.0
+black==22.10.0
 
 # Lets you run tests in forked subprocesses.
 pytest-forked
