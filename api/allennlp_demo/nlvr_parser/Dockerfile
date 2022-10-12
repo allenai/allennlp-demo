@@ -16,6 +16,7 @@ WORKDIR /app/
 
 COPY allennlp_demo/nlvr_parser/requirements.txt requirements.txt
 ENV ALLENNLP_VERSION_OVERRIDE allennlp<2.0.0
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm

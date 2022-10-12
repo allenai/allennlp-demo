@@ -16,6 +16,7 @@ WORKDIR /app/
 
 COPY allennlp_demo/vilbert_vqa/requirements.txt requirements.txt
 ENV ALLENNLP_VERSION_OVERRIDE allennlp>=2.1.0
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 RUN spacy download en_core_web_sm

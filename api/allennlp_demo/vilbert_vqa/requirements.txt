@@ -1,4 +1,4 @@
-git+git://github.com/allenai/allennlp.git@v2.1.0
-git+git://github.com/allenai/allennlp-models.git@bbbf456abf6a1f1c1a852af0d3cfd82147f32a89
-Flask==1.1.2
+allennlp @ git+https://github.com/allenai/allennlp.git@v2.1.0
+allennlp-models @ git+https://github.com/allenai/allennlp-models.git@bbbf456abf6a1f1c1a852af0d3cfd82147f32a89
+Flask>=2.1.0
 pytest==6.2.2

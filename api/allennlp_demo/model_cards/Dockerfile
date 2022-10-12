@@ -4,6 +4,7 @@ WORKDIR /app/
 
 COPY allennlp_demo/model_cards/requirements.txt requirements.txt
 ENV ALLENNLP_VERSION_OVERRIDE allennlp
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY allennlp_demo/__init__.py allennlp_demo/__init__.py
