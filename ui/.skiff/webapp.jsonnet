@@ -135,7 +135,7 @@ local service = {
 };
 
 local ingress = {
-    apiVersion: 'extensions/v1beta1',
+    apiVersion: 'networking.k8s.io/v1',
     kind: 'Ingress',
     metadata: {
         name: fqn + '-ui',
@@ -163,9 +163,15 @@ local ingress = {
                 http: {
                     paths: [
                         {
+                            pathType: 'Prefix',
+                            path: '/',
                             backend: {
-                                serviceName: fqn,
-                                servicePort: port
+                                service: {
+                                    name: fqn,
+                                    port: {
+                                        number: port
+                                    }
+                                }
                             }
                         }
                     ]
