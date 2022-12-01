@@ -245,7 +245,7 @@ local db = import 'db.libsonnet';
 
 
         local ingress = {
-            apiVersion: 'networking.k8s.io/v1beta1',
+            apiVersion: 'networking.k8s.io/v1',
             kind: 'Ingress',
             metadata: {
                 name: fullyQualifiedName,
@@ -275,9 +275,14 @@ local db = import 'db.libsonnet';
                             paths: [
                                 {
                                     backend: {
-                                        serviceName: service.metadata.name,
-                                        servicePort: apiPort
+                                        service: {
+                                            name: service.metadata.name,
+                                            port: {
+                                                number: apiPort
+                                            }
+                                        }
                                     },
+                                    pathType: 'Prefix',
                                     path: '/api/' + id + '(/(.*))?$'
                                 }
                             ]
