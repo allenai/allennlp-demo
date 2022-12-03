@@ -283,7 +283,7 @@ local db = import 'db.libsonnet';
                                         }
                                     },
                                     pathType: 'Prefix',
-                                    path: '/api/' + id
+                                    path: '/api/' + id + '(/(.*))?$'
                                 }
                             ]
                         }
