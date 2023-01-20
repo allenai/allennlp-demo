@@ -3,6 +3,10 @@
     <hr/>
 </div>
 
+⚠️ **NOTICE:** The [AllenNLP library](https://github.com/allenai/allennlp) and this demo are no longer maintained.
+
+## About
+
 This repository contains the code for the [AllenNLP demo](https://demo.allennlp.org), a web 
 application that demonstrates the capabilities of [AllenNLP](https://github.com/allenai/allennlp),
 an open source library for NLP research.
